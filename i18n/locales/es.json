@@ -1,0 +1,175 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "blog": "Blog",
+    "about": "Acerca de"
+  },
+  "home": {
+    "hero": {
+      "title": "Bienvenido a BogDev",
+      "subtitle": "Explorando IA, Desarrollo de Software y Linux",
+      "featuredPost": "Artículo Destacado"
+    },
+    "latestPosts": "Últimos Artículos",
+    "freshArticles": "Artículos frescos del blog",
+    "viewAll": "Ver Todos",
+    "noPostsYet": "Aún no hay artículos",
+    "checkBackSoon": "¡Vuelve pronto para nuevo contenido!"
+  },
+  "blog": {
+    "readMore": "Leer más",
+    "readTime": "{minutes} min de lectura",
+    "noPosts": "No se encontraron artículos",
+    "search": "Buscar artículos...",
+    "categories": "Categorías",
+    "all": "Todos",
+    "related": "Artículos Relacionados",
+    "exploreArticles": "Explora todos los artículos sobre IA, software, Linux y más",
+    "tryAdjustingFilters": "Intenta ajustar los filtros",
+    "noArticlesYet": "Aún no hay artículos publicados",
+    "clearFilters": "Limpiar Filtros"
+  },
+  "post": {
+    "published": "Publicado",
+    "share": "Compartir",
+    "tags": "Etiquetas",
+    "tableOfContents": "Tabla de Contenidos",
+    "backToBlog": "Volver al Blog",
+    "backToAllPosts": "Volver a todos los artículos",
+    "postNotFound": "Artículo No Encontrado",
+    "articleDoesNotExist": "El artículo que buscas no existe.",
+    "minRead": "{minutes} min",
+    "anonymous": "Anónimo"
+  },
+  "comments": {
+    "title": "Comentarios",
+    "placeholder": "Escribe un comentario...",
+    "submit": "Enviar",
+    "name": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "email": "Correo",
+    "emailPlaceholder": "tu{'@'}correo.com",
+    "emailRequired": "Requerido, nunca se muestra públicamente",
+    "comment": "Comentario",
+    "noComments": "Aún no hay comentarios. ¡Sé el primero en comentar!",
+    "replyingTo": "Respondiendo a",
+    "reply": "Responder",
+    "cancel": "Cancelar",
+    "validationName": "El nombre es requerido",
+    "validationEmail": "El correo es requerido",
+    "validationInvalidEmail": "Por favor ingresa un correo válido",
+    "validationComment": "El comentario es requerido",
+    "posting": "Enviando...",
+    "postReply": "Publicar Respuesta",
+    "postComment": "Publicar Comentario",
+    "successMessage": "¡Comentario publicado exitosamente!"
+  },
+  "newsletter": {
+    "title": "Suscribirse al Boletín",
+    "description": "Recibe los últimos artículos en tu bandeja de entrada.",
+    "placeholder": "Tu correo electrónico",
+    "button": "Suscribirse",
+    "success": "¡Gracias por suscribirte!",
+    "error": "Algo salió mal. Por favor intenta de nuevo.",
+    "confirmationSent": "¡Revisa tu correo!",
+    "checkInbox": "Te enviamos un enlace de confirmación. Haz clic para activar tu suscripción.",
+    "alreadySubscribed": "Este correo ya está suscrito.",
+    "invalidEmail": "Por favor ingresa un correo válido."
+  },
+  "about": {
+    "title": "Sobre Mí",
+    "developer": "Desarrollador bogotano, apasionado por la tecnología",
+    "welcome": "¡Bienvenido a BogDev! Soy un desarrollador apasionado por la IA, Linux y crear gran software. Este blog es donde comparto mis pensamientos, tutoriales y experimentos sobre temas que me interesan.",
+    "bogotaBased": "Con base en Bogotá, Colombia, he trabajado en desarrollo de software durante varios años, enfocándome en tecnologías web, infraestructura en la nube y ahora explorando el emocionante mundo de la IA.",
+    "background": "Antecedentes",
+    "whatIWriteAbout": "Sobre lo que escribo",
+    "artificialIntelligence": "Inteligencia Artificial",
+    "aiDescription": "Explorando ML, LLMs y aplicaciones de IA",
+    "softwareDevelopment": "Desarrollo de Software",
+    "softwareDescription": "Consejos, trucos y mejores prácticas",
+    "linuxOpenSource": "Linux y Código Abierto",
+    "linuxDescription": "Mi viaje con Linux y FOSS",
+    "devopsCloud": "DevOps y Cloud",
+    "devopsDescription": "Infraestructura y despliegue",
+    "connect": "Conectar",
+    "feelFree": "No dudes en contactarme en redes sociales o ver mi trabajo de código abierto:",
+    "techStack": "Stack Tecnológico"
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados.",
+    "quickLinks": "Enlaces Rápidos",
+    "topics": "Temas",
+    "subscribe": "Suscribirse",
+    "artificialIntelligence": "Inteligencia Artificial",
+    "softwareDevelopment": "Desarrollo de Software",
+    "linuxOpenSource": "Linux y Código Abierto",
+    "rssFeed": "RSS Feed",
+    "madeWith": "Hecho con",
+    "bogota": "en Bogotá, Colombia"
+  },
+  "search": {
+    "noResults": "No se encontraron resultados para \"{query}\"",
+    "typeToSearch": "Escribe para buscar artículos...",
+    "poweredBy": "Desarrollado por BogDev",
+    "navigate": "para navegar",
+    "select": "para seleccionar",
+    "placeholder": "Buscar artículos...",
+    "esc": "ESC"
+  },
+  "sidebar": {
+    "categories": "Categorías",
+    "popularTags": "Etiquetas Populares",
+    "recentPosts": "Artículos Recientes"
+  },
+  "tableOfContents": {
+    "onThisPage": "En esta página"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "retry": "Intentar de nuevo",
+    "back": "Volver",
+    "menu": "Menú",
+    "connect": "Conectar",
+    "backToTop": "Volver arriba",
+    "ariaSearch": "Buscar",
+    "ariaSwitchLocale": "Cambiar idioma",
+    "ariaToggleTheme": "Cambiar tema",
+    "ariaLinkedIn": "LinkedIn",
+    "ariaMenu": "Menú",
+    "ariaPrevPage": "Página anterior",
+    "ariaNextPage": "Página siguiente",
+    "ariaSkipLinks": "Saltar enlaces",
+    "ariaShareTwitter": "Compartir en Twitter",
+    "ariaShareLinkedIn": "Compartir en LinkedIn",
+    "ariaGitHub": "GitHub",
+    "ariaCodeberg": "Codeberg",
+    "ariaMastodon": "Mastodon",
+    "skipToMain": "Saltar al contenido principal",
+    "skipToSearch": "Saltar a búsqueda"
+  },
+  "buyMeACoffee": {
+    "supportMyWork": "Apoya Mi Trabajo",
+    "description": "Si este contenido te fue útil, ¡invítame un café!",
+    "button": "Cómprame un Café"
+  },
+  "error": {
+    "pageNotFound": "Página No Encontrada",
+    "somethingWentWrong": "Algo Salió Mal",
+    "notExist": "La página que buscas no existe o ha sido movida.",
+    "unexpected": "Ocurrió un error inesperado. Por favor intenta más tarde.",
+    "goHome": "Ir al Inicio",
+    "browseBlog": "Explorar Blog",
+    "contactSupport": "Si crees que esto es un error, por favor contacta al soporte."
+  },
+  "confirm": {
+    "title": "Confirmar Suscripción",
+    "successTitle": "¡Suscripción Confirmada!",
+    "successMessage": "¡Bienvenido a BogDev! Ahora estás suscrito para recibir nuestros últimos artículos.",
+    "errorTitle": "Confirmación Fallida",
+    "alreadyConfirmed": "Esta suscripción ya ha sido confirmada.",
+    "invalidToken": "El enlace de confirmación es inválido o ha expirado.",
+    "browseBlog": "Explorar Blog",
+    "goHome": "Ir al Inicio"
+  }
+}

@@ -1,0 +1,41 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - us-central1-docker.pkg.dev/$PROJECT_ID/devbog-blog/devbog-front:$COMMIT_SHA
+      - -t
+      - us-central1-docker.pkg.dev/$PROJECT_ID/devbog-blog/devbog-front:latest
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - us-central1-docker.pkg.dev/$PROJECT_ID/devbog-blog/devbog-front:$COMMIT_SHA
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - us-central1-docker.pkg.dev/$PROJECT_ID/devbog-blog/devbog-front:latest
+
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - run
+      - deploy
+      - devbog-blog-front
+      - --image=us-central1-docker.pkg.dev/$PROJECT_ID/devbog-blog/devbog-front:$COMMIT_SHA
+      - --region=us-central1
+      - --platform=managed
+      - --allow-unauthenticated
+      - --cpu=1
+      - --memory=512Mi
+      - --concurrency=80
+      - --min-instances=0
+      - --max-instances=5
+      - --timeout=300
+      - --execution-environment=gen2
+      - --cpu-boost
+      - --service-account=devbog-runner@$PROJECT_ID.iam.gserviceaccount.com
+
+images:
+  - us-central1-docker.pkg.dev/$PROJECT_ID/devbog-blog/devbog-front
