@@ -1,5 +1,8 @@
 FROM node:22-slim AS builder
 
+ARG GIT_COMMIT_SHA=unknown
+ARG GIT_COMMIT_DATE=unknown
+
 WORKDIR /build
 
 COPY package*.json ./
@@ -9,6 +12,12 @@ COPY . .
 RUN npm run build
 
 FROM gcr.io/distroless/nodejs22-debian12
+
+LABEL org.opencontainers.image.title="BogDev Blog"
+LABEL org.opencontainers.image.description="DevBlog personal blog application"
+LABEL org.opencontainers.image.source="https://github.com/ale9420/devbog-blog-front"
+LABEL org.opencontainers.image.revision="${GIT_COMMIT_SHA}"
+LABEL org.opencontainers.image.created="${GIT_COMMIT_DATE}"
 
 WORKDIR /app
 
