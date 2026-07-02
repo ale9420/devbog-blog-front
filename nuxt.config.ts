@@ -101,8 +101,8 @@ export default defineNuxtConfig({
     smtpPass: process.env.SMTP_PASS,
     newsletterFrom: process.env.NEWSLETTER_FROM,
     public: {
-      strapiUrl: process.env.STRAPI_URL || "http://localhost:1337",
-      siteUrl: process.env.SITE_URL || "http://localhost:3000",
+      strapiUrl: process.env.STRAPI_URL || "https://api.bogdev.com.co",
+      siteUrl: process.env.SITE_URL || "https://bogdev.com.co",
     },
   },
   css: ["~/assets/css/main.css"],
