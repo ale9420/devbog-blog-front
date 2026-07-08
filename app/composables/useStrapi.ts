@@ -94,8 +94,14 @@ export function useStrapi() {
       },
     });
 
+    const headers: Record<string, string> = {};
+    if (config.strapiApiToken) {
+      headers['Authorization'] = `Bearer ${config.strapiApiToken}`;
+    }
+
     const response = await $fetch<StrapiResponse<StrapiPost[]>>(
       `${config.public.strapiUrl}/api/articles?${query}`,
+      { headers },
     );
     return response.data.map((post: any) => ({
       id: post.id,
