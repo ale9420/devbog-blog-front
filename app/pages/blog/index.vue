@@ -4,7 +4,7 @@ import { Locale } from "~/interfaces";
 const { locale, t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const { useFetchPosts } = useStrapi();
+const { useFetchPosts, useFetchCategories } = useStrapi();
 const { localizePath } = useLocaleUtils();
 const { siteUrl } = useSiteUrl();
 const { canonicalUrl } = useCanonicalUrl('/blog');
@@ -35,21 +35,7 @@ watch(currentPage, () => {
   updateQuery();
 });
 
-const categories = computed(() => {
-  if (!posts.value) return [];
-  const catMap = new Map();
-  posts.value.forEach((post: any) => {
-    if (post.category) {
-      const name = post.category.name;
-      catMap.set(name, {
-        id: post.category.id,
-        name,
-        count: (catMap.get(name)?.count || 0) + 1,
-      });
-    }
-  });
-  return Array.from(catMap.values());
-});
+const { data: categories } = useFetchCategories(locale.value as Locale);
 
 const popularTags = ref([
   "AI",

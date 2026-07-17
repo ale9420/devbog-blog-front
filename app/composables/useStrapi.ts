@@ -113,6 +113,20 @@ export function useStrapi() {
     }));
   }
 
+  function useFetchCategories(locale?: Locale) {
+    return useAsyncData(`categories-${locale || defaultLocale}`, async () => {
+      const query = qs.stringify({
+        locale: locale || undefined,
+      }, { skipNulls: true })
+
+      return $fetch<Array<{ id: number; name: string; count: number }>>(
+        `/api/categories?${query}`,
+      )
+    }, {
+      default: () => [],
+    })
+  }
+
   function getMediaUrl(
     url: string | { url: string } | undefined | null,
   ): string {
@@ -125,6 +139,7 @@ export function useStrapi() {
   return {
     useFetchPosts,
     useFetchPost,
+    useFetchCategories,
     searchPosts,
     getMediaUrl,
   };
