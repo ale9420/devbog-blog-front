@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Locale } from "~/interfaces";
 import { formatDate } from '~/helpers/formatDate'
-import { getInitial } from '~/helpers/string'
 
 const { locale, t } = useI18n();
 const route = useRoute();
@@ -209,11 +208,11 @@ useHead({
                             class="flex flex-wrap items-center gap-4 pb-8 border-b border-[var(--border)]"
                         >
                             <div class="flex items-center gap-3">
-                                <div
-                                    class="w-12 h-12 rounded-full gradient-bogota flex items-center justify-center text-white font-semibold text-lg"
-                                >
-                                    {{ getInitial(post.author?.name, "A") }}
-                                </div>
+                                <SharedAuthorAvatar
+                                    :name="post.author?.name"
+                                    :avatar="post.author?.avatar"
+                                    size="lg"
+                                />
                                 <div>
                                     <p class="font-medium">
                                         {{

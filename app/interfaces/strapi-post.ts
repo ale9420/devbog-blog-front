@@ -28,6 +28,10 @@ export interface StrapiPost {
   author?: {
     id: number
     name: string
+    avatar?: {
+      url: string
+      alternativeText?: string
+    }
   }
   blocks: StrapiBlock[]
 }

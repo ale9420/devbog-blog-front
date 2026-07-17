@@ -9,7 +9,11 @@ export default defineEventHandler(async (event) => {
 
   const params = qs.stringify({
     pagination: { page, pageSize },
-    populate: ['cover', 'category', 'author'],
+    populate: {
+      cover: { populate: '*' },
+      category: { populate: '*' },
+      author: { populate: '*' },
+    },
     sort: 'publishedAt:desc',
     locale,
   }, { skipNulls: true })

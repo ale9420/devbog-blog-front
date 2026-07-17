@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Comment, CommentFormData } from '~/interfaces/comment'
-import { getInitial } from '~/helpers/string'
 const { t } = useI18n()
 
 const props = defineProps<{
@@ -149,9 +148,10 @@ onMounted(() => {
         class="comment-thread"
       >
         <div class="flex gap-4">
-          <div class="w-10 h-10 rounded-full gradient-bogota flex items-center justify-center text-white font-semibold flex-shrink-0">
-            {{ getInitial(comment.author?.name) }}
-          </div>
+          <SharedAuthorAvatar
+            :name="comment.author?.name"
+            :avatar="comment.author?.avatar"
+          />
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 mb-1">
               <span class="font-medium">{{ comment.author?.name || t('post.anonymous') }}</span>
@@ -174,9 +174,11 @@ onMounted(() => {
                 :key="reply.id"
                 class="flex gap-3"
               >
-                <div class="w-8 h-8 rounded-full gradient-bogota flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
-                  {{ getInitial(reply.author?.name) }}
-                </div>
+                <SharedAuthorAvatar
+                  :name="reply.author?.name"
+                  :avatar="reply.author?.avatar"
+                  size="sm"
+                />
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2 mb-1">
                     <span class="font-medium text-sm">{{ reply.author?.name || t('post.anonymous') }}</span>

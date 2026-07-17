@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { formatDate } from '~/helpers/formatDate'
-import { getInitial } from '~/helpers/string'
 
 const { t } = useI18n();
 const { getMediaUrl } = useStrapi();
@@ -14,7 +13,7 @@ const props = defineProps<{
     slug: string;
     publishedAt?: string;
     readTime?: number;
-    author?: { name?: string };
+    author?: { name?: string; avatar?: { url: string } };
     category?: { name?: string };
     cover?: { url: string };
   };
@@ -76,11 +75,11 @@ const delay = computed(() => `${(props.index ?? 0) * 100}ms`);
           class="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border)]"
         >
           <div class="flex items-center gap-2">
-            <div
-              class="w-8 h-8 rounded-full gradient-bogota flex items-center justify-center text-white text-sm font-medium"
-            >
-              {{ getInitial(post.author?.name, "A") }}
-            </div>
+            <SharedAuthorAvatar
+              :name="post.author?.name"
+              :avatar="post.author?.avatar"
+              size="sm"
+            />
             <div class="text-sm">
               <p class="font-medium text-[var(--foreground)]">
                 {{ post.author?.name || t("post.anonymous") }}

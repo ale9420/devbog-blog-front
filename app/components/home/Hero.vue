@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { formatDate } from '~/helpers/formatDate'
-import { getInitial } from '~/helpers/string'
 
 interface HeroPost {
   id: number
@@ -10,7 +9,7 @@ interface HeroPost {
   slug: string
   publishedAt?: string
   readTime?: number
-  author?: { name?: string }
+  author?: { name?: string; avatar?: { url: string } }
   category?: { name?: string }
   cover?: { url: string }
 }
@@ -49,9 +48,10 @@ const props = defineProps({
           
           <div class="flex flex-wrap items-center gap-4 mb-8">
             <div class="flex items-center gap-2">
-              <div class="w-10 h-10 rounded-full gradient-bogota flex items-center justify-center text-white font-semibold">
-                {{ getInitial(post.author?.name, 'A') }}
-              </div>
+              <SharedAuthorAvatar
+                :name="post.author?.name"
+                :avatar="post.author?.avatar"
+              />
               <div>
                 <p class="font-medium text-sm">{{ post.author?.name || t('post.anonymous') }}</p>
                 <p class="text-xs text-[var(--muted)]">{{ formatDate(post.publishedAt) }}</p>
