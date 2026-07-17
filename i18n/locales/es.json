@@ -146,7 +146,13 @@
     "ariaCodeberg": "Codeberg",
     "ariaMastodon": "Mastodon",
     "skipToMain": "Saltar al contenido principal",
-    "skipToSearch": "Saltar a búsqueda"
+    "skipToSearch": "Saltar a búsqueda",
+    "ariaGallery": "Galería de imágenes",
+    "ariaGalleryImage": "Imagen de galería",
+    "ariaPrevSlide": "Diapositiva anterior",
+    "ariaNextSlide": "Siguiente diapositiva",
+    "goToSlide": "Ir a diapositiva",
+    "of": "de"
   },
   "buyMeACoffee": {
     "supportMyWork": "Apoya Mi Trabajo",
