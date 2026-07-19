@@ -93,7 +93,8 @@
     "devopsDescription": "Infraestructura y despliegue",
     "connect": "Conectar",
     "feelFree": "No dudes en contactarme en redes sociales o ver mi trabajo de código abierto:",
-    "techStack": "Stack Tecnológico"
+    "techStack": "Stack Tecnológico",
+    "contentNotAvailable": "El contenido de la página Acerca de no está disponible."
   },
   "footer": {
     "rights": "Todos los derechos reservados.",

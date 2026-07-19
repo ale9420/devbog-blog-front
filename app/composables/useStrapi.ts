@@ -1,5 +1,5 @@
 import qs from 'qs';
-import type { StrapiResponse, StrapiPost } from "~/interfaces";
+import type { StrapiResponse, StrapiPost, StrapiAbout } from "~/interfaces";
 import { Locale, defaultLocale } from "~/interfaces";
 
 export function useStrapi() {
@@ -127,6 +127,19 @@ export function useStrapi() {
     })
   }
 
+  function useFetchAbout(locale?: Locale) {
+    return useAsyncData<StrapiAbout>(
+      `about-${locale || defaultLocale}`,
+      async () => {
+        const query = qs.stringify({
+          locale: locale || undefined,
+        }, { skipNulls: true });
+
+        return $fetch<StrapiAbout>(`/api/about?${query}`);
+      },
+    );
+  }
+
   function getMediaUrl(
     url: string | { url: string } | undefined | null,
   ): string {
@@ -140,6 +153,7 @@ export function useStrapi() {
     useFetchPosts,
     useFetchPost,
     useFetchCategories,
+    useFetchAbout,
     searchPosts,
     getMediaUrl,
   };

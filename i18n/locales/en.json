@@ -93,7 +93,8 @@
     "devopsDescription": "Infrastructure and deployment",
     "connect": "Connect",
     "feelFree": "Feel free to reach out to me on social media or check out my open source work:",
-    "techStack": "Tech Stack"
+    "techStack": "Tech Stack",
+    "contentNotAvailable": "About page content not available."
   },
   "footer": {
     "rights": "All rights reserved.",

@@ -15,11 +15,11 @@ export default defineNuxtConfig({
   },
   routeRules: {
     "/": { prerender: true },
-    "/about": { prerender: true },
+    "/about": { isr: 3600 },
     "/blog": { isr: 300 },
     "/blog/**": { isr: 300 },
     "/es": { prerender: true },
-    "/es/about": { prerender: true },
+    "/es/about": { isr: 3600 },
     "/es/blog": { isr: 300 },
     "/es/blog/**": { isr: 300 },
   },
