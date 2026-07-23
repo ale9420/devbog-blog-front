@@ -38,7 +38,7 @@ useHead({
     </div>
 
     <template v-else-if="about">
-      <StrapiBlocksRenderer :blocks="about.blocks" />
+      <StrapiBlocksRenderer class="prose prose-devbog dark:prose-invert max-w-none" :blocks="about.blocks" />
     </template>
 
     <div v-else class="text-center text-[var(--muted)]">
