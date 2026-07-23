@@ -41,31 +41,11 @@ marked.use({
             const text = token.text || '';
             return `<code>${escapeHtml(text)}</code>`;
         },
-        blockquote(token: Tokens.Blockquote): string {
-            const text = token.text || '';
-            return `<blockquote>${text}</blockquote>`;
-        },
         code(token: Tokens.Code): string {
             const text = token.text || '';
             const lang = token.lang || '';
             const languageClass = lang ? ` language-${lang}` : '';
             return `<pre><code class="font-mono text-sm${languageClass}">${escapeHtml(text)}</code></pre>\n`;
-        },
-        list(token: Tokens.List): string {
-            const type = token.ordered ? 'ol' : 'ul';
-            const items = token.items.map((item: Tokens.ListItem) => {
-                const body = item.text || '';
-                return `<li>${body}</li>`;
-            }).join('\n');
-            return `<${type}>\n${items}\n</${type}>\n`;
-        },
-        listitem(token: Tokens.ListItem): string {
-            let text = token.text || '';
-            if (token.task) {
-                const checked = token.checked ? 'checked disabled' : '';
-                text = `<input type="checkbox" ${checked}> ${text}`;
-            }
-            return `<li>${text}</li>\n`;
         },
     },
     gfm: true,
