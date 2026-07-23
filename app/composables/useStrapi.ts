@@ -42,6 +42,7 @@ export function useStrapi() {
           cover: post.cover,
           category: post.category,
           author: post.author,
+          seo: post.seo,
         })),
         pagination: response.meta.pagination,
       };
@@ -76,6 +77,7 @@ export function useStrapi() {
         cover: response.cover,
         category: response.category,
         author: response.author,
+        seo: response.seo,
         blocks: response.blocks,
       };
     });

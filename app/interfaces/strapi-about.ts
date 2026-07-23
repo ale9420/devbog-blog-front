@@ -1,19 +1,13 @@
 import type { StrapiBlock } from './strapi-blocks'
+import type { StrapiSEO } from './strapi-seo'
 
-export interface StrapiAboutSEO {
-  metaTitle: string
-  metaDescription: string
-  keywords?: string
-  metaRobots?: string
-  metaViewport?: string
-  canonicalURL?: string
-}
+export type { StrapiSEO as StrapiAboutSEO }
 
 export interface StrapiAbout {
   id: number
   documentId: string
   title: string
   locale: string
-  seo?: StrapiAboutSEO
+  seo?: StrapiSEO
   blocks: StrapiBlock[]
 }

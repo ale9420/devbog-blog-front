@@ -17,6 +17,12 @@ const coverUrl = computed(() => {
     return getMediaUrl(post.value.cover);
 });
 
+const seoImageUrl = computed(() => {
+    const metaImage = post.value?.seo?.metaImage;
+    if (!metaImage?.data?.attributes?.url) return "";
+    return getMediaUrl(metaImage.data.attributes.url);
+});
+
 const currentUrl = computed(() => {
     if (typeof window !== "undefined") {
         return window.location.href;
@@ -25,26 +31,42 @@ const currentUrl = computed(() => {
 });
 
 useSeoMeta({
-    title: post.value?.title ? `${post.value.title} - BogDev` : "Post - BogDev",
-    ogTitle: post.value?.title || "Blog Post",
-    description: post.value?.description || "",
-    ogDescription: post.value?.description || "",
-    ogImage: coverUrl.value || undefined,
+    title: post.value?.seo?.metaTitle || (post.value?.title ? `${post.value.title} - BogDev` : "Post - BogDev"),
+    ogTitle: post.value?.seo?.metaTitle || post.value?.title || "Blog Post",
+    description: post.value?.seo?.metaDescription || post.value?.description || "",
+    ogDescription: post.value?.seo?.metaDescription || post.value?.description || "",
+    ogImage: seoImageUrl.value || coverUrl.value || undefined,
     ogImageAlt: post.value?.title || "Blog post cover image",
-    ogUrl: () => canonicalUrl.value,
+    ogUrl: () => post.value?.seo?.canonicalURL || canonicalUrl.value,
     ogType: "article",
     articlePublishedTime: post.value?.publishedAt,
     articleAuthor: post.value?.author?.name,
     articleTag:
-        post.value?.tags?.data?.map((t: any) => t.attributes?.name) || [],
+        post.value?.seo?.keywords
+            ?.split(",")
+            .map((k: string) => k.trim())
+            .filter(Boolean) ||
+        post.value?.tags?.data?.map((t: any) => t.attributes?.name) ||
+        [],
     twitterCard: "summary_large_image",
-    twitterTitle: post.value?.title || "Blog Post",
-    twitterDescription: post.value?.description || "",
-    twitterImage: coverUrl.value || undefined,
+    twitterTitle: post.value?.seo?.metaTitle || post.value?.title || "Blog Post",
+    twitterDescription: post.value?.seo?.metaDescription || post.value?.description || "",
+    twitterImage: seoImageUrl.value || coverUrl.value || undefined,
 });
+
+if (post.value?.seo?.metaRobots) {
+    useHead({
+        meta: [{ name: "robots", content: post.value.seo.metaRobots }],
+    });
+}
 
 const structuredData = computed(() => {
     if (!post.value) return null;
+
+    if (post.value.seo?.structuredData) {
+        return post.value.seo.structuredData;
+    }
+
     return {
         "@context": "https://schema.org",
         "@graph": [

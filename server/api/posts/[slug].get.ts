@@ -17,6 +17,7 @@ export default defineEventHandler(async (event) => {
       cover: { populate: '*' },
       category: { populate: '*' },
       author: { populate: '*' },
+      seo: { populate: '*' },
       blocks: {
         on: {
           'shared.rich-text': { populate: '*' },

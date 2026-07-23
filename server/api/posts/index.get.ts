@@ -13,6 +13,7 @@ export default defineEventHandler(async (event) => {
       cover: { populate: '*' },
       category: { populate: '*' },
       author: { populate: '*' },
+      seo: { populate: '*' },
     },
     sort: 'publishedAt:desc',
     locale,

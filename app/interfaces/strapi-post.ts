@@ -1,4 +1,5 @@
 import type { StrapiBlock } from './strapi-blocks'
+import type { StrapiSEO } from './strapi-seo'
 
 export interface StrapiPost {
   id: number
@@ -33,5 +34,6 @@ export interface StrapiPost {
       alternativeText?: string
     }
   }
+  seo?: StrapiSEO
   blocks: StrapiBlock[]
 }
