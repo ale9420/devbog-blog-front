@@ -10,14 +10,7 @@ export interface StrapiPost {
   content: string
   publishedAt: string
   readTime?: number
-  tags: {
-    data: Array<{
-      id: number
-      attributes: {
-        name: string
-      }
-    }>
-  }
+  tags?: string[] | null
   cover?: {
     url: string
     alternativeText?: string
@@ -45,14 +38,7 @@ export interface PostListItem {
   description: string
   publishedAt: string
   readTime?: number
-  tags?: {
-    data: Array<{
-      id: number
-      attributes: {
-        name: string
-      }
-    }>
-  }
+  tags?: string[] | null
   cover?: {
     url: string
     alternativeText?: string
