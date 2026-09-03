@@ -10,14 +10,14 @@ export function useStrapi() {
     pageSize?: number;
     locale?: Locale;
   }) {
-    const key = `posts-${params?.page || 1}-${params?.locale || defaultLocale}`;
-    return useAsyncData(key, async () => {
-      const query = qs.stringify({
-        page: params?.page,
-        pageSize: params?.pageSize,
-        locale: params?.locale,
-      }, { skipNulls: true });
+    const query = qs.stringify({
+      page: params?.page,
+      pageSize: params?.pageSize,
+      locale: params?.locale,
+    }, { skipNulls: true });
 
+    const key = `posts-${query || 'default'}`;
+    return useAsyncData(key, async () => {
       const response = await $fetch<{
         data: any[];
         meta: {
