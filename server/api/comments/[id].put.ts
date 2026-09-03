@@ -4,6 +4,7 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const id = getRouterParam(event, 'id')
   const relation = query.relation as string
+  const authorId = query.authorId as string || body.authorId
 
   if (!relation || !id) {
     throw createError({
@@ -19,14 +20,34 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  if (!authorId) {
+    throw createError({
+      statusCode: 401,
+      message: 'Author ID is required to update a comment'
+    })
+  }
+
   const headers: Record<string, string> = {}
   if (config.strapiApiToken) {
     headers['Authorization'] = `Bearer ${config.strapiApiToken}`
   }
 
-  const url = `${config.public.strapiUrl}/api/comments/${relation}/comment/${id}`
-
   try {
+    const commentResponse = await $fetch<any>(
+      `${config.public.strapiUrl}/api/comments/${relation}/comment/${id}`,
+      { headers }
+    )
+
+    const commentAuthorId = commentResponse?.data?.author?.id || commentResponse?.author?.id
+    if (commentAuthorId !== authorId) {
+      throw createError({
+        statusCode: 403,
+        message: 'You can only update your own comments'
+      })
+    }
+
+    const url = `${config.public.strapiUrl}/api/comments/${relation}/comment/${id}`
+
     const response = await $fetch(url, {
       method: 'PUT',
       headers,
@@ -34,6 +55,9 @@ export default defineEventHandler(async (event) => {
     })
     return response
   } catch (error: any) {
+    if (error.statusCode) {
+      throw error
+    }
     throw createError({
       statusCode: error.response?.status || 500,
       message: error.message || 'Failed to update comment'
