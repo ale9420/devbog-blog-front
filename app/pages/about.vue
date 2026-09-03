@@ -4,6 +4,7 @@ import { Locale } from "~/interfaces";
 const { locale, t } = useI18n();
 const { useFetchAbout } = useStrapi();
 const { canonicalUrl } = useCanonicalUrl("/about");
+const { siteUrl } = useSiteUrl();
 
 const { data: about, pending } = useFetchAbout(locale.value as Locale);
 
@@ -28,6 +29,39 @@ useHead({
     },
   ],
 });
+
+const structuredData = computed(() => ({
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Alejandro Ramirez',
+  url: `${siteUrl.value}/about`,
+  jobTitle: 'Software Developer',
+  description: 'Colombian software developer passionate about AI, Linux, and open source',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Bogotá',
+    addressCountry: 'CO'
+  },
+  sameAs: [
+    'https://github.com/ale9420',
+    'https://www.linkedin.com/in/alejandro-ramirez-garcia-046713139',
+    'https://codeberg.org/alejo9420',
+    'https://mastodon.social/@bogdev'
+  ],
+  worksFor: {
+    '@type': 'Organization',
+    name: 'BogDev'
+  }
+}))
+
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(structuredData.value)
+    }
+  ]
+})
 </script>
 
 <template>

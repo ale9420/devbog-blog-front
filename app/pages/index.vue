@@ -28,6 +28,56 @@ useSeoMeta({
   twitterTitle: 'BogDev - Personal Blog',
   twitterDescription: 'Explore articles on AI, software development, Linux, and modern tech.'
 })
+
+const structuredData = computed(() => ({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${siteUrl.value}/#website`,
+      url: siteUrl.value,
+      name: 'BogDev',
+      description: 'Personal blog about AI, Software, Linux and more',
+      publisher: {
+        '@id': `${siteUrl.value}/#organization`
+      },
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${siteUrl.value}/blog?search={search_term_string}`
+        },
+        'query-input': 'required name=search_term_string'
+      },
+      inLanguage: locale.value === 'es' ? 'es-CO' : 'en-US'
+    },
+    {
+      '@type': 'Organization',
+      '@id': `${siteUrl.value}/#organization`,
+      name: 'BogDev',
+      url: siteUrl.value,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteUrl.value}/bogdev.svg`
+      },
+      sameAs: [
+        'https://github.com/ale9420',
+        'https://www.linkedin.com/in/alejandro-ramirez-garcia-046713139',
+        'https://codeberg.org/alejo9420',
+        'https://mastodon.social/@bogdev'
+      ]
+    }
+  ]
+}))
+
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(structuredData.value)
+    }
+  ]
+})
 </script>
 
 <template>
