@@ -40,7 +40,7 @@ useSeoMeta({
     ogUrl: () => post.value?.seo?.canonicalURL || canonicalUrl.value,
     ogType: "article",
     articlePublishedTime: post.value?.publishedAt,
-    articleAuthor: post.value?.author?.name,
+    articleAuthor: post.value?.author?.name ? [post.value.author.name] : undefined,
     articleTag:
         post.value?.seo?.keywords
             ?.split(",")

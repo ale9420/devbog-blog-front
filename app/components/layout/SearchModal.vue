@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { SearchPostResult } from '~/interfaces';
+
 const { t } = useI18n();
 const { searchPosts, getMediaUrl } = useStrapi();
 const { localizePath } = useLocaleUtils();
@@ -13,7 +15,7 @@ const emit = defineEmits<{
 
 const searchInput = ref<HTMLInputElement>();
 const query = ref("");
-const results = ref<any[]>([]);
+const results = ref<SearchPostResult[]>([]);
 const isLoading = ref(false);
 const selectedIndex = ref(-1);
 let debounceTimer: ReturnType<typeof setTimeout>;
