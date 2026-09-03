@@ -77,23 +77,6 @@
     "invalidEmail": "Por favor ingresa un correo válido."
   },
   "about": {
-    "title": "Sobre Mí",
-    "developer": "Desarrollador bogotano, apasionado por la tecnología",
-    "welcome": "¡Bienvenido a BogDev! Soy un desarrollador apasionado por la IA, Linux y crear gran software. Este blog es donde comparto mis pensamientos, tutoriales y experimentos sobre temas que me interesan.",
-    "bogotaBased": "Con base en Bogotá, Colombia, he trabajado en desarrollo de software durante varios años, enfocándome en tecnologías web, infraestructura en la nube y ahora explorando el emocionante mundo de la IA.",
-    "background": "Antecedentes",
-    "whatIWriteAbout": "Sobre lo que escribo",
-    "artificialIntelligence": "Inteligencia Artificial",
-    "aiDescription": "Explorando ML, LLMs y aplicaciones de IA",
-    "softwareDevelopment": "Desarrollo de Software",
-    "softwareDescription": "Consejos, trucos y mejores prácticas",
-    "linuxOpenSource": "Linux y Código Abierto",
-    "linuxDescription": "Mi viaje con Linux y FOSS",
-    "devopsCloud": "DevOps y Cloud",
-    "devopsDescription": "Infraestructura y despliegue",
-    "connect": "Conectar",
-    "feelFree": "No dudes en contactarme en redes sociales o ver mi trabajo de código abierto:",
-    "techStack": "Stack Tecnológico",
     "contentNotAvailable": "El contenido de la página Acerca de no está disponible."
   },
   "footer": {
