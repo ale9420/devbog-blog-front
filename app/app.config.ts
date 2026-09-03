@@ -4,7 +4,7 @@ export default defineAppConfig({
     description: "Personal blog about AI, Software, Linux and more",
     url: "https://bogdev.com.co",
     author: {
-      name: "Anonymous",
+      name: "Alejandro Ramirez",
       url: "https://bogdev.com.co/about",
     },
     social: {
