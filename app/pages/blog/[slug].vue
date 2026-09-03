@@ -46,7 +46,7 @@ useSeoMeta({
             ?.split(",")
             .map((k: string) => k.trim())
             .filter(Boolean) ||
-        post.value?.tags?.data?.map((t: any) => t.attributes?.name) ||
+        post.value?.tags ||
         [],
     twitterCard: "summary_large_image",
     twitterTitle: post.value?.seo?.metaTitle || post.value?.title || "Blog Post",
@@ -97,10 +97,7 @@ const structuredData = computed(() => {
                     "@id": `${siteUrl.value}/blog/${slug}`,
                 },
                 articleSection: post.value.category?.name,
-                keywords:
-                    post.value.tags?.data
-                        ?.map((t: any) => t.attributes?.name)
-                        .join(", ") || "",
+                keywords: (post.value.tags || []).join(", "),
                 wordCount: 0,
             },
             {
