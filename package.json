@@ -17,6 +17,7 @@
     "@nuxtjs/i18n": "^10.2.4",
     "@tailwindcss/typography": "^0.5.19",
     "@vueuse/nuxt": "^14.2.1",
+    "isomorphic-dompurify": "^2.36.0",
     "marked": "^18.0.3",
     "nodemailer": "^8.0.5",
     "nuxt": "^4.4.2",
