@@ -85,6 +85,8 @@ const props = defineProps({
               height="600"
               format="webp"
               loading="eager"
+              fetchpriority="high"
+              decoding="async"
               class="w-full aspect-[4/3] object-cover"
             />
             <div v-else class="w-full aspect-[4/3] gradient-bogota flex items-center justify-center">
