@@ -277,6 +277,8 @@ useHead({
                         height="500"
                         format="webp"
                         loading="eager"
+                        fetchpriority="high"
+                        decoding="async"
                         class="w-full h-auto md:h-[500px] object-cover rounded-2xl mb-10 shadow-lg"
                     />
 

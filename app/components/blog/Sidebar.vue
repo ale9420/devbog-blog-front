@@ -82,6 +82,7 @@ defineEmits<{
               height="64"
               format="webp"
               loading="lazy"
+              decoding="async"
               class="w-full h-full object-cover transition-transform group-hover:scale-105"
             />
           </div>
