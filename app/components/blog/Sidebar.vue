@@ -31,12 +31,12 @@ defineEmits<{
           v-for="category in categories" 
           :key="category.id"
           @click="$emit('selectCategory', category.attributes?.name || category.name)"
-          class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all"
+          class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all"
           :class="selectedCategory === (category.attributes?.name || category.name)
             ? 'bg-[var(--primary)] text-white'
             : 'hover:bg-[var(--surface-elevated)] text-[var(--foreground)]'"
         >
-          <span>{{ category.attributes?.name || category.name }}</span>
+          <span class="flex-1 text-left">{{ category.attributes?.name || category.name }}</span>
           <span class="text-xs opacity-60">{{ category.count || 0 }}</span>
         </button>
       </div>
