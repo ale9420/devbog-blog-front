@@ -14,7 +14,7 @@ interface HeroPost {
   cover?: { url: string }
 }
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { getMediaUrl } = useStrapi()
 const { localizePath } = useLocaleUtils()
 
@@ -54,7 +54,7 @@ const props = defineProps({
               />
               <div>
                 <p class="font-medium text-sm">{{ post.author?.name || t('post.anonymous') }}</p>
-                <p class="text-xs text-[var(--muted)]">{{ formatDate(post.publishedAt) }}</p>
+                <p class="text-xs text-[var(--muted)]">{{ formatDate(post.publishedAt, 'full', locale === 'es' ? 'es-CO' : 'en-US') }}</p>
               </div>
             </div>
             <span class="hidden sm:block text-[var(--border)]">|</span>

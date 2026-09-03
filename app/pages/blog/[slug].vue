@@ -243,7 +243,7 @@ useHead({
                                         }}
                                     </p>
                                     <p class="text-sm text-[var(--muted)]">
-                                        {{ formatDate(post.publishedAt) }}
+                                        {{ formatDate(post.publishedAt, 'full', locale === 'es' ? 'es-CO' : 'en-US') }}
                                     </p>
                                 </div>
                             </div>

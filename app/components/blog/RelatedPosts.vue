@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { formatDate } from '~/helpers/formatDate'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { getMediaUrl } = useStrapi()
 const { localizePath } = useLocaleUtils()
 
@@ -55,7 +55,7 @@ const { data: relatedPosts, pending } = await useAsyncData(
             {{ post.title }}
           </h4>
           <p class="text-xs text-[var(--muted)] mt-auto">
-            {{ formatDate(post.publishedAt) }}
+            {{ formatDate(post.publishedAt, 'full', locale === 'es' ? 'es-CO' : 'en-US') }}
           </p>
         </div>
       </NuxtLink>
