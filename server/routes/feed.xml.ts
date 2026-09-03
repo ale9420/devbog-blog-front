@@ -2,7 +2,7 @@ import qs from 'qs';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
-  const baseUrl = "https://devbog.com";
+  const baseUrl = config.public.siteUrl;
 
   setHeader(event, "Content-Type", "application/rss+xml; charset=utf-8");
   setHeader(event, "Cache-Control", "public, s-maxage=1800, stale-while-revalidate=3600");

@@ -3,7 +3,7 @@ import qs from 'qs';
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const strapiUrl = config.public.strapiUrl.replace(/\/$/, "");
-  const siteUrl = "https://devbog.com";
+  const siteUrl = config.public.siteUrl;
 
   setHeader(event, "Content-Type", "application/xml");
   setHeader(event, "Cache-Control", "public, s-maxage=3600, stale-while-revalidate=7200");

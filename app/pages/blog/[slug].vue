@@ -72,7 +72,7 @@ const structuredData = computed(() => {
         "@graph": [
             {
                 "@type": "Article",
-                "@id": `https://devbog.com/blog/${slug}`,
+                "@id": `${siteUrl.value}/blog/${slug}`,
                 headline: post.value.title,
                 description: post.value.description,
                 image: coverUrl.value,
@@ -81,20 +81,20 @@ const structuredData = computed(() => {
                 author: {
                     "@type": "Person",
                     name: post.value.author?.name || t("post.anonymous"),
-                    url: "https://devbog.com/about",
+                    url: `${siteUrl.value}/about`,
                 },
                 publisher: {
                     "@type": "Organization",
                     name: "BogDev",
-                    url: "https://devbog.com",
+                    url: siteUrl.value,
                     logo: {
                         "@type": "ImageObject",
-                        url: "https://devbog.com/logo.png",
+                        url: `${siteUrl.value}/logo.png`,
                     },
                 },
                 mainEntityOfPage: {
                     "@type": "WebPage",
-                    "@id": `https://devbog.com/blog/${slug}`,
+                    "@id": `${siteUrl.value}/blog/${slug}`,
                 },
                 articleSection: post.value.category?.name,
                 keywords:
@@ -105,44 +105,44 @@ const structuredData = computed(() => {
             },
             {
                 "@type": "BreadcrumbList",
-                "@id": `https://devbog.com/blog/${slug}#breadcrumb`,
+                "@id": `${siteUrl.value}/blog/${slug}#breadcrumb`,
                 itemListElement: [
                     {
                         "@type": "ListItem",
                         position: 1,
                         name: "Home",
-                        item: "https://devbog.com",
+                        item: siteUrl.value,
                     },
                     {
                         "@type": "ListItem",
                         position: 2,
                         name: "Blog",
-                        item: "https://devbog.com/blog",
+                        item: `${siteUrl.value}/blog`,
                     },
                     {
                         "@type": "ListItem",
                         position: 3,
                         name: post.value.title,
-                        item: `https://devbog.com/blog/${slug}`,
+                        item: `${siteUrl.value}/blog/${slug}`,
                     },
                 ],
             },
             {
                 "@type": "WebSite",
-                "@id": "https://devbog.com/#website",
-                url: "https://devbog.com",
+                "@id": `${siteUrl.value}/#website`,
+                url: siteUrl.value,
                 name: "BogDev",
                 description: "Personal blog about AI, Software, Linux and more",
                 publisher: {
                     "@type": "Organization",
-                    "@id": "https://devbog.com/#organization",
+                    "@id": `${siteUrl.value}/#organization`,
                 },
                 potentialAction: {
                     "@type": "SearchAction",
                     target: {
                         "@type": "EntryPoint",
                         urlTemplate:
-                            "https://devbog.com/blog?search={search_term_string}",
+                            `${siteUrl.value}/blog?search={search_term_string}`,
                     },
                     "query-input": "required name=search_term_string",
                 },
