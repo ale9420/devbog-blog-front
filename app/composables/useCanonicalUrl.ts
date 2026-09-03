@@ -5,8 +5,8 @@
  * @example
  * ```ts
  * const { canonicalUrl } = useCanonicalUrl('/blog')
- * // siteUrl = "https://bogdev.com", localizePath('/blog') = "/blog"
- * // canonicalUrl = "https://bogdev.com/blog"
+ * // siteUrl = "https://bogdev.com.co", localizePath('/blog') = "/blog"
+ * // canonicalUrl = "https://bogdev.com.co/blog"
  * ```
  */
 export function useCanonicalUrl(path: string) {

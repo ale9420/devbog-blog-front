@@ -61,7 +61,6 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: "icon", type: "image/x-icon", href: "/bogdev.svg" },
-        { rel: "canonical", href: "https://devbog.com" },
         {
           rel: "alternate",
           type: "application/rss+xml",
