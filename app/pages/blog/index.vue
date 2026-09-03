@@ -46,10 +46,20 @@ const { data: sidebarResult } = useFetchPosts({
 
 const sidebarPosts = computed(() => sidebarResult.value?.data || []);
 
+const FALLBACK_POPULAR_TAGS = [
+  "AI",
+  "Linux",
+  "Vue",
+  "TypeScript",
+  "DevOps",
+  "Python",
+  "Docker",
+];
+
 const popularTags = computed(() => {
   const tagCounts = new Map<string, number>();
   for (const post of sidebarPosts.value) {
-    for (const tag of (post.tags as string[]) || []) {
+    for (const tag of post.tags || []) {
       tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
     }
   }
@@ -57,9 +67,7 @@ const popularTags = computed(() => {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 8)
     .map(([tag]) => tag);
-  return tags.length > 0
-    ? tags
-    : ["AI", "Linux", "Vue", "TypeScript", "DevOps", "Python", "Docker"];
+  return tags.length > 0 ? tags : FALLBACK_POPULAR_TAGS;
 });
 
 const recentPosts = computed(() => {

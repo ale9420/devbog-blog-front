@@ -1,22 +1,19 @@
+export interface PaginationMeta {
+  page: number
+  pageSize: number
+  pageCount: number
+  total: number
+}
+
 export interface StrapiResponse<T> {
   data: T
   meta: {
-    pagination?: {
-      page: number
-      pageSize: number
-      pageCount: number
-      total: number
-    }
+    pagination?: PaginationMeta
   }
 }
 
 export interface StrapiPaginatedResponse<T> extends StrapiResponse<T> {
   meta: {
-    pagination: {
-      page: number
-      pageSize: number
-      pageCount: number
-      total: number
-    }
+    pagination: PaginationMeta
   }
 }

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PostListItem } from '~/interfaces'
 import { formatDate } from '~/helpers/formatDate'
 import { getInitial } from '~/helpers/string'
 
@@ -7,17 +8,7 @@ const { getMediaUrl } = useStrapi();
 const { localizePath } = useLocaleUtils();
 
 const props = defineProps<{
-  post: {
-    id: number;
-    title: string;
-    description?: string;
-    slug: string;
-    publishedAt?: string;
-    readTime?: number;
-    author?: { name?: string; avatar?: { url: string } };
-    category?: { name?: string };
-    cover?: { url: string };
-  };
+  post: PostListItem;
   index?: number;
 }>();
 

@@ -1,18 +1,11 @@
 <script setup lang="ts">
+import type { PostListItem } from '~/interfaces'
 import { formatDate } from '~/helpers/formatDate'
 
 interface Category {
   id: number
   name: string
   count: number
-}
-
-interface RecentPost {
-  id: number
-  title: string
-  slug: string
-  publishedAt?: string
-  cover?: { url: string }
 }
 
 const { t, locale } = useI18n()
@@ -22,7 +15,7 @@ const { localizePath } = useLocaleUtils()
 const props = defineProps<{
   categories: Category[]
   popularTags: string[]
-  recentPosts: RecentPost[]
+  recentPosts: PostListItem[]
   selectedCategory?: string
   selectedTag?: string
 }>()
@@ -49,7 +42,7 @@ defineEmits<{
           :class="selectedCategory === category.name
             ? 'bg-[var(--primary)] text-white'
             : 'hover:bg-[var(--surface-elevated)] text-[var(--foreground)]'"
-          :aria-pressed="selectedCategory === (category.attributes?.name || category.name)"
+          :aria-pressed="selectedCategory === category.name"
         >
           <span class="flex-1 text-left">{{ category.name }}</span>
           <span class="text-xs opacity-60">{{ category.count }}</span>
