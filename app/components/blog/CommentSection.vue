@@ -198,11 +198,11 @@ onMounted(() => {
         {{ replyingTo ? `${t('comments.replyingTo')} ${replyingToName}` : t('comments.placeholder') }}
       </h4>
 
-      <div v-if="submitSuccess" class="p-4 rounded-lg mb-4" style="background-color: var(--success-bg); color: var(--success)">
+      <div v-if="submitSuccess" role="status" class="p-4 rounded-lg mb-4" style="background-color: var(--success-bg); color: var(--success)">
         {{ t('comments.successMessage') }}
       </div>
 
-      <div v-if="submitError" class="p-4 rounded-lg mb-4" style="background-color: var(--error-bg); color: var(--error)">
+      <div v-if="submitError" role="alert" class="p-4 rounded-lg mb-4" style="background-color: var(--error-bg); color: var(--error)">
         {{ submitError }}
       </div>
 
@@ -228,8 +228,10 @@ onMounted(() => {
               class="input-field"
               :style="formErrors.name ? { borderColor: 'var(--error)' } : {}"
               :placeholder="t('comments.namePlaceholder')"
+              :aria-invalid="formErrors.name ? 'true' : undefined"
+              :aria-describedby="formErrors.name ? 'author-name-error' : undefined"
             />
-            <p v-if="formErrors.name" class="text-sm mt-1" style="color: var(--error)">{{ formErrors.name }}</p>
+            <p v-if="formErrors.name" id="author-name-error" role="alert" class="text-sm mt-1" style="color: var(--error)">{{ formErrors.name }}</p>
           </div>
           <div>
             <label for="author-email" class="block text-sm font-medium mb-1">{{ t('comments.email') }} *</label>
@@ -240,9 +242,11 @@ onMounted(() => {
               class="input-field"
               :style="formErrors.email ? { borderColor: 'var(--error)' } : {}"
               :placeholder="t('comments.emailPlaceholder')"
+              :aria-invalid="formErrors.email ? 'true' : undefined"
+              :aria-describedby="formErrors.email ? 'author-email-error author-email-hint' : 'author-email-hint'"
             />
-            <p v-if="formErrors.email" class="text-sm mt-1" style="color: var(--error)">{{ formErrors.email }}</p>
-            <p class="text-xs text-[var(--muted)] mt-1">{{ t('comments.emailRequired') }}</p>
+            <p v-if="formErrors.email" id="author-email-error" role="alert" class="text-sm mt-1" style="color: var(--error)">{{ formErrors.email }}</p>
+            <p id="author-email-hint" class="text-xs text-[var(--muted)] mt-1">{{ t('comments.emailRequired') }}</p>
           </div>
         </div>
 
@@ -252,11 +256,13 @@ onMounted(() => {
             id="comment-content"
             v-model="formData.content"
             rows="4"
-              class="input-field resize-none"
-              :style="formErrors.content ? { borderColor: 'var(--error)' } : {}"
-              :placeholder="t('comments.placeholder')"
-            />
-            <p v-if="formErrors.content" class="text-sm mt-1" style="color: var(--error)">{{ formErrors.content }}</p>
+            class="input-field resize-none"
+            :style="formErrors.content ? { borderColor: 'var(--error)' } : {}"
+            :placeholder="t('comments.placeholder')"
+            :aria-invalid="formErrors.content ? 'true' : undefined"
+            :aria-describedby="formErrors.content ? 'comment-content-error' : undefined"
+          />
+          <p v-if="formErrors.content" id="comment-content-error" role="alert" class="text-sm mt-1" style="color: var(--error)">{{ formErrors.content }}</p>
         </div>
 
         <button 
