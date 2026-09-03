@@ -39,7 +39,6 @@ function isActive(path: string) {
             route.path.startsWith("/es")
         );
     }
-    console.log(path);
     return (
         route.path.startsWith(path) || route.path.startsWith(`/${locale.value}`)
     );
