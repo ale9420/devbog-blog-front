@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const route = useRoute()
 const progress = ref(0)
+let rafId: number | null = null
 
 const isBlogPost = computed(() => {
   return route.path.startsWith('/blog/') || route.path.startsWith('/es/blog/')
@@ -12,13 +13,24 @@ function updateProgress() {
   progress.value = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0
 }
 
+function onScroll() {
+  if (rafId !== null) return
+  rafId = requestAnimationFrame(() => {
+    updateProgress()
+    rafId = null
+  })
+}
+
 onMounted(() => {
-  window.addEventListener('scroll', updateProgress, { passive: true })
+  window.addEventListener('scroll', onScroll, { passive: true })
   updateProgress()
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', updateProgress)
+  window.removeEventListener('scroll', onScroll)
+  if (rafId !== null) {
+    cancelAnimationFrame(rafId)
+  }
 })
 </script>
 
