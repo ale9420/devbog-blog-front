@@ -3,16 +3,17 @@ import qs from 'qs'
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const config = useRuntimeConfig()
-  const locale = query.locale as string | undefined
+  const locale = (query.locale as string | undefined) || 'en'
 
   const params = qs.stringify({
-    fields: ['id'],
+    pagination: { pageSize: 100 },
     populate: {
-      category: { fields: ['id', 'name'] },
+      articles: {
+        fields: ['id'],
+        filters: { locale: { $eq: locale } },
+      },
     },
-    pagination: { pageSize: 200 },
-    locale,
-  }, { skipNulls: true })
+  })
 
   const headers: Record<string, string> = {}
   if (config.strapiApiToken) {
@@ -21,23 +22,20 @@ export default defineEventHandler(async (event) => {
 
   setHeader(event, 'Cache-Control', 'public, s-maxage=600, stale-while-revalidate=1200')
 
-  const response = await $fetch<{ data: any[] }>(
-    `${config.public.strapiUrl}/api/articles?${params}`,
-    { headers },
-  )
+  const response = await $fetch<{
+    data: Array<{
+      id: number
+      name: string
+      articles?: Array<{ id: number }>
+    }>
+  }>(`${config.public.strapiUrl}/api/categories?${params}`, { headers })
 
-  const catMap = new Map<number, { id: number; name: string; count: number }>()
-
-  for (const article of response.data) {
-    const cat = article.category
-    if (!cat) continue
-    const existing = catMap.get(cat.id)
-    if (existing) {
-      existing.count++
-    } else {
-      catMap.set(cat.id, { id: cat.id, name: cat.name, count: 1 })
-    }
-  }
-
-  return Array.from(catMap.values()).sort((a, b) => b.count - a.count)
+  return response.data
+    .map((category) => ({
+      id: category.id,
+      name: category.name,
+      count: category.articles?.length || 0,
+    }))
+    .filter((category) => category.count > 0)
+    .sort((a, b) => b.count - a.count)
 })
