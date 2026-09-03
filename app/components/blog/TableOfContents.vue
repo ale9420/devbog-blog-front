@@ -93,7 +93,7 @@ onMounted(() => {
     <a
       v-for="heading in headings"
       :key="heading.id"
-      href="#"
+      :href="`#${heading.id}`"
       @click.prevent="scrollToHeading(heading.id)"
       class="block text-sm py-1.5 transition-colors"
       :class="[
