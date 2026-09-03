@@ -1,14 +1,28 @@
 <script setup lang="ts">
 import { formatDate } from '~/helpers/formatDate'
 
+interface Category {
+  id: number
+  name: string
+  count: number
+}
+
+interface RecentPost {
+  id: number
+  title: string
+  slug: string
+  publishedAt?: string
+  cover?: { url: string }
+}
+
 const { t, locale } = useI18n()
 const { getMediaUrl } = useStrapi()
 const { localizePath } = useLocaleUtils()
 
 const props = defineProps<{
-  categories: any[]
+  categories: Category[]
   popularTags: string[]
-  recentPosts: any[]
+  recentPosts: RecentPost[]
   selectedCategory?: string
   selectedTag?: string
 }>()
@@ -30,14 +44,15 @@ defineEmits<{
         <button 
           v-for="category in categories" 
           :key="category.id"
-          @click="$emit('selectCategory', category.attributes?.name || category.name)"
+          @click="$emit('selectCategory', category.name)"
           class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all"
-          :class="selectedCategory === (category.attributes?.name || category.name)
+          :class="selectedCategory === category.name
             ? 'bg-[var(--primary)] text-white'
             : 'hover:bg-[var(--surface-elevated)] text-[var(--foreground)]'"
+          :aria-pressed="selectedCategory === category.name"
         >
-          <span class="flex-1 text-left">{{ category.attributes?.name || category.name }}</span>
-          <span class="text-xs opacity-60">{{ category.count || 0 }}</span>
+          <span class="flex-1 text-left">{{ category.name }}</span>
+          <span class="text-xs opacity-60">{{ category.count }}</span>
         </button>
       </div>
     </div>
