@@ -122,7 +122,15 @@ function handleKeydown(e: KeyboardEvent) {
                 ref="searchInput"
                 v-model="query"
                 type="text"
+                role="combobox"
+                aria-autocomplete="list"
                 :placeholder="t('blog.search')"
+                :aria-label="t('blog.search')"
+                :aria-expanded="results.length > 0"
+                aria-controls="search-results"
+                :aria-activedescendant="
+                  selectedIndex >= 0 ? `search-result-${selectedIndex}` : undefined
+                "
                 class="flex-1 bg-transparent text-lg outline-none text-[var(--foreground)] placeholder:text-[var(--muted)]"
                 @keydown="handleKeydown"
               />
@@ -152,6 +160,7 @@ function handleKeydown(e: KeyboardEvent) {
               >
                 <NuxtLink
                   v-for="(result, index) in results"
+                  :id="`search-result-${index}`"
                   :key="result.id"
                   :to="`${localizePath('/blog')}/${result.slug}`"
                   role="option"
