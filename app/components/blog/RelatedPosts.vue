@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { RawStrapiArticle } from '~/interfaces'
 import { formatDate } from '~/helpers/formatDate'
 
 const { t, locale } = useI18n()
@@ -10,12 +11,12 @@ const props = defineProps<{
   categoryId?: number
 }>()
 
-const { data: relatedPosts, pending } = await useAsyncData(
+const { data: relatedPosts } = await useAsyncData(
   `related-posts-${props.currentPostId}`,
   async () => {
     if (!props.categoryId) return []
     
-    const response = await $fetch<{ data: any[] }>(
+    const response = await $fetch<{ data: RawStrapiArticle[] }>(
       `${useRuntimeConfig().public.strapiUrl}/api/articles?filters[category][id][$eq]=${props.categoryId}&filters[id][$ne]=${props.currentPostId}&pagination[pageSize]=3&populate[cover]=*&populate[category]=*&sort=publishedAt:desc`
     )
     return response.data || []

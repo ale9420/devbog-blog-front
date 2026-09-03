@@ -1,7 +1,22 @@
 import type { Comment, CommentFormData, CommentsResponse } from '~/interfaces/comment'
 
+interface GuestCommentPayload {
+  author: {
+    id: string
+    name: string
+    email: string
+    avatar?: string
+  }
+  content: string
+  threadOf?: number
+}
+
+function getErrorMessage(err: unknown, fallback: string): string {
+  if (err instanceof Error && err.message) return err.message
+  return fallback
+}
+
 export function useComments(articleSlug: string, articleDocumentId?: string) {
-  const config = useRuntimeConfig()
   
   const relation = computed(() => {
     if (articleDocumentId) {
@@ -22,14 +37,14 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
     error.value = null
     
     try {
-      const response = await $fetch<{ data: Comment[]; meta?: any }>(
+      const response = await $fetch<CommentsResponse>(
         `/api/comments/flat?relation=${relation.value}`
       )
       
       const allComments = response.data || []
       comments.value = allComments.filter(c => !c.threadOf)
-    } catch (err: any) {
-      error.value = err.message || 'Failed to load comments'
+    } catch (err: unknown) {
+      error.value = getErrorMessage(err, 'Failed to load comments')
       console.error('Error fetching comments:', err)
     } finally {
       pending.value = false
@@ -41,7 +56,7 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
     submitError.value = null
     submitSuccess.value = false
     
-    const cleanData: any = {
+    const cleanData: GuestCommentPayload = {
       author: {
         id: `guest-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
         name: data.author.name.trim(),
@@ -72,8 +87,8 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
       }, 3000)
       
       return response
-    } catch (err: any) {
-      submitError.value = err.message || 'Failed to post comment'
+    } catch (err: unknown) {
+      submitError.value = getErrorMessage(err, 'Failed to post comment')
       console.error('Error posting comment:', err)
       throw err
     } finally {

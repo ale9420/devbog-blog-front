@@ -6,6 +6,12 @@ export default defineEventHandler(async (event) => {
   const page = query.page ? Number(query.page) : 1
   const pageSize = query.pageSize ? Number(query.pageSize) : 10
   const locale = query.locale as string | undefined
+  const category = query.category as string | undefined
+  const tag = query.tag as string | undefined
+
+  const filters: Record<string, unknown> = {}
+  if (category) filters.category = { name: { $eq: category } }
+  if (tag) filters.tags = { $contains: tag }
 
   const params = qs.stringify({
     pagination: { page, pageSize },
@@ -17,6 +23,7 @@ export default defineEventHandler(async (event) => {
     },
     sort: 'publishedAt:desc',
     locale,
+    ...(Object.keys(filters).length > 0 ? { filters } : {}),
   }, { skipNulls: true })
 
   const headers: Record<string, string> = {}
@@ -26,7 +33,13 @@ export default defineEventHandler(async (event) => {
 
   setHeader(event, 'Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
 
-  const response = await $fetch(`${config.public.strapiUrl}/api/articles?${params}`, { headers })
-
-  return response
+  try {
+    const response = await $fetch(`${config.public.strapiUrl}/api/articles?${params}`, { headers })
+    return response
+  } catch (error: unknown) {
+    throw createError({
+      statusCode: asUpstreamError(error).response?.status === 400 ? 400 : 502,
+      message: 'Failed to fetch posts',
+    })
+  }
 })

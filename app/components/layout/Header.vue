@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Locale } from "~/interfaces";
+import type { Locale } from "~/interfaces";
 
 const { t, locale, locales, setLocale } = useI18n();
 const route = useRoute();
@@ -97,9 +97,9 @@ const emit = defineEmits<{
                 <div class="flex items-center gap-2">
                     <button
                         type="button"
-                        @click="emit('openSearch')"
                         class="p-2.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all touch-manipulation"
                         :aria-label="t('common.ariaSearch')"
+                        @click="emit('openSearch')"
                     >
                         <UIcon
                             name="i-heroicons-magnifying-glass"
@@ -109,18 +109,18 @@ const emit = defineEmits<{
 
                     <button
                         type="button"
-                        @click="handleLocaleSwitch"
                         class="px-3 py-2 rounded-lg text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all touch-manipulation"
                         :aria-label="t('common.ariaSwitchLocale')"
+                        @click="handleLocaleSwitch"
                     >
                         {{ availableLocales[0]?.name || "EN" }}
                     </button>
 
                     <button
                         type="button"
-                        @click="toggle"
                         class="p-2.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all touch-manipulation"
                         :aria-label="t('common.ariaToggleTheme')"
+                        @click="toggle"
                     >
                         <UIcon
                             v-show="isDark"
@@ -136,9 +136,9 @@ const emit = defineEmits<{
 
                     <button
                         type="button"
-                        @click="emit('openMobileMenu')"
                         class="lg:hidden p-2.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all touch-manipulation"
                         :aria-label="t('common.ariaMenu')"
+                        @click="emit('openMobileMenu')"
                     >
                         <UIcon name="i-heroicons-bars-3" class="w-5 h-5" />
                     </button>

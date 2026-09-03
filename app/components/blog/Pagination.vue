@@ -57,10 +57,10 @@ function goToPage(page: number) {
 <template>
   <div v-if="totalPages > 1" class="flex items-center justify-center gap-2">
     <button
-      @click="goToPage(currentPage - 1)"
       :disabled="currentPage === 1"
       class="p-2 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       :aria-label="t('common.ariaPrevPage')"
+      @click="goToPage(currentPage - 1)"
     >
       <UIcon name="i-heroicons-chevron-left" class="w-5 h-5" />
     </button>
@@ -68,13 +68,13 @@ function goToPage(page: number) {
     <template v-for="(page, index) in visiblePages" :key="index">
       <button
         v-if="page !== '...'"
-        @click="goToPage(page as number)"
         class="w-10 h-10 rounded-lg text-sm font-medium transition-colors"
         :class="[
           currentPage === page
             ? 'bg-[var(--primary)] text-white'
             : 'border border-[var(--border)] text-[var(--muted)] hover:border-[var(--primary)] hover:text-[var(--primary)]'
         ]"
+        @click="goToPage(page as number)"
       >
         {{ page }}
       </button>
@@ -82,10 +82,10 @@ function goToPage(page: number) {
     </template>
     
     <button
-      @click="goToPage(currentPage + 1)"
       :disabled="currentPage === totalPages"
       class="p-2 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       :aria-label="t('common.ariaNextPage')"
+      @click="goToPage(currentPage + 1)"
     >
       <UIcon name="i-heroicons-chevron-right" class="w-5 h-5" />
     </button>

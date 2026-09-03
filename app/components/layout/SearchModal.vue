@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { SearchPostResult } from '~/interfaces';
+
 const { t } = useI18n();
 const { searchPosts, getMediaUrl } = useStrapi();
 const { localizePath } = useLocaleUtils();
@@ -14,7 +16,7 @@ const emit = defineEmits<{
 const searchInput = ref<HTMLInputElement>();
 const dialogRef = ref<HTMLElement>();
 const query = ref("");
-const results = ref<any[]>([]);
+const results = ref<SearchPostResult[]>([]);
 const isLoading = ref(false);
 const selectedIndex = ref(-1);
 let debounceTimer: ReturnType<typeof setTimeout>;
@@ -122,10 +124,18 @@ function handleKeydown(e: KeyboardEvent) {
                 ref="searchInput"
                 v-model="query"
                 type="text"
+                role="combobox"
+                aria-autocomplete="list"
                 :placeholder="t('blog.search')"
+                :aria-label="t('blog.search')"
+                :aria-expanded="results.length > 0"
+                aria-controls="search-results"
+                :aria-activedescendant="
+                  selectedIndex >= 0 ? `search-result-${selectedIndex}` : undefined
+                "
                 class="flex-1 bg-transparent text-lg outline-none text-[var(--foreground)] placeholder:text-[var(--muted)]"
                 @keydown="handleKeydown"
-              />
+              >
               <kbd
                 class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs rounded bg-[var(--surface-elevated)] text-[var(--muted)]"
               >
@@ -152,16 +162,17 @@ function handleKeydown(e: KeyboardEvent) {
               >
                 <NuxtLink
                   v-for="(result, index) in results"
+                  :id="`search-result-${index}`"
                   :key="result.id"
                   :to="`${localizePath('/blog')}/${result.slug}`"
                   role="option"
                   :aria-selected="selectedIndex === index"
                   :aria-label="result.title"
-                  @click="emit('close')"
                   class="flex items-start gap-4 px-6 py-4 hover:bg-[var(--surface-elevated)] transition-colors"
                   :class="{
                     'bg-[var(--surface-elevated)]': selectedIndex === index,
                   }"
+                  @click="emit('close')"
                 >
                   <div
                     v-if="result.cover?.url"

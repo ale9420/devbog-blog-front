@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { Locale } from '~/interfaces'
+import type { Locale } from '~/interfaces'
 
 const { locale, t } = useI18n()
-const { useFetchPosts } = useStrapi()
+const { fetchPosts } = useStrapi()
 const { localizePath } = useLocaleUtils()
 const { siteUrl } = useSiteUrl()
 const { canonicalUrl } = useCanonicalUrl('/')
 
-const { data: postsResult, pending } = useFetchPosts({ pageSize: 7, locale: locale.value as Locale })
+const { data: postsResult, pending } = fetchPosts({ pageSize: 7, locale: locale.value as Locale })
 
 const posts = computed(() => postsResult.value?.data || [])
 
@@ -98,12 +98,12 @@ useHead({
       
       <div v-if="pending" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div v-for="i in 6" :key="i" class="card overflow-hidden animate-pulse">
-          <div class="aspect-[16/10] bg-[var(--surface-elevated)]"></div>
+          <div class="aspect-[16/10] bg-[var(--surface-elevated)]"/>
           <div class="p-5 space-y-3">
-            <div class="h-4 bg-[var(--surface-elevated)] rounded w-1/4"></div>
-            <div class="h-6 bg-[var(--surface-elevated)] rounded w-3/4"></div>
-            <div class="h-4 bg-[var(--surface-elevated)] rounded"></div>
-            <div class="h-4 bg-[var(--surface-elevated)] rounded w-2/3"></div>
+            <div class="h-4 bg-[var(--surface-elevated)] rounded w-1/4"/>
+            <div class="h-6 bg-[var(--surface-elevated)] rounded w-3/4"/>
+            <div class="h-4 bg-[var(--surface-elevated)] rounded"/>
+            <div class="h-4 bg-[var(--surface-elevated)] rounded w-2/3"/>
           </div>
         </div>
       </div>

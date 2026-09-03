@@ -12,6 +12,22 @@ const emit = defineEmits<{
 }>();
 
 const route = useRoute();
+const panelRef = ref<HTMLElement>();
+
+const isMenuOpen = computed(() => props.isOpen);
+
+useFocusTrap(panelRef, isMenuOpen);
+
+watch(
+    () => props.isOpen,
+    (isOpen) => {
+        document.body.style.overflow = isOpen ? "hidden" : "";
+    },
+);
+
+onUnmounted(() => {
+    document.body.style.overflow = "";
+});
 
 const navLinks = computed(() => {
     const baseLinks = [
@@ -61,7 +77,12 @@ function isActive(path: string) {
                     @click="emit('close')"
                 />
                 <div
+                    ref="panelRef"
+                    role="dialog"
+                    aria-modal="true"
+                    :aria-label="t('common.ariaMenu')"
                     class="absolute inset-y-0 right-0 w-full max-w-sm animate-slide-in-right"
+                    @keydown.esc="emit('close')"
                 >
                     <div
                         class="h-full flex flex-col bg-[var(--surface)] shadow-2xl"
@@ -73,8 +94,9 @@ function isActive(path: string) {
                                 t("common.menu")
                             }}</span>
                             <button
-                                @click="emit('close')"
                                 class="p-2 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all"
+                                :aria-label="t('common.close')"
+                                @click="emit('close')"
                             >
                                 <UIcon
                                     name="i-heroicons-x-mark"
@@ -89,13 +111,13 @@ function isActive(path: string) {
                                     v-for="link in navLinks"
                                     :key="link.to"
                                     :to="link.to"
-                                    @click="emit('close')"
                                     class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all"
                                     :class="
                                         isActive(link.to)
                                             ? 'bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white'
                                             : 'text-[var(--foreground)] hover:bg-[var(--surface-elevated)]'
                                     "
+                                    @click="emit('close')"
                                 >
                                     <UIcon :name="link.icon" class="w-5 h-5" />
                                     {{ link.label }}

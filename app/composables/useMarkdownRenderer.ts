@@ -1,15 +1,9 @@
 import { Marked } from 'marked';
 import type { Tokens } from 'marked';
 import DOMPurify from 'isomorphic-dompurify';
+import { slugify } from '~/helpers/slugify';
 
-export function slugify(text: string): string {
-    return text
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
-}
+export { slugify };
 
 function escapeHtml(text: string): string {
     return text

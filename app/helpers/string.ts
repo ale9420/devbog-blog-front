@@ -3,7 +3,7 @@
  * Returns `fallback` (default `"?"`) when name is undefined or empty.
  * Used for avatar placeholders throughout the app.
  */
-export function getInitial(name: string | undefined, fallback = '?'): string {
+export function getInitial(name: string | null | undefined, fallback = '?'): string {
   if (!name) return fallback
   return name.charAt(0).toUpperCase()
 }

@@ -1,4 +1,5 @@
 import qs from 'qs';
+import type { RawStrapiArticle } from '~/interfaces';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -15,7 +16,7 @@ export default defineEventHandler(async (event) => {
       sort: 'publishedAt:desc',
     });
 
-    const response = await $fetch<{ data: any[] }>(
+    const response = await $fetch<{ data: RawStrapiArticle[] }>(
       `${strapiUrl}/api/articles?${params}`,
     );
     const posts = response.data || [];
@@ -51,7 +52,7 @@ export default defineEventHandler(async (event) => {
   ${staticPages.map((page) => generateUrlEntry(page.path, page.changefreq, page.priority)).join("\n  ")}
   ${posts
     .map((post) => {
-      const lastmod = new Date(post.updatedAt || post.publishedAt)
+      const lastmod = new Date(post.updatedAt || post.publishedAt || Date.now())
         .toISOString()
         .split("T")[0];
       return generateUrlEntry(`/blog/${post.slug}`, "monthly", "0.8", lastmod);
@@ -60,7 +61,7 @@ export default defineEventHandler(async (event) => {
 </urlset>`;
 
     return sitemap;
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       message: "Failed to generate sitemap",

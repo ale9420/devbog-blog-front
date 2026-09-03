@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { Locale } from "~/interfaces";
+import type { Locale } from "~/interfaces";
 import { formatDate } from '~/helpers/formatDate'
 
 const { locale, t } = useI18n();
 const route = useRoute();
 const slug = route.params.slug as string;
-const { useFetchPost, getMediaUrl } = useStrapi();
+const { fetchPost, getMediaUrl } = useStrapi();
 const { localizePath } = useLocaleUtils();
 const { siteUrl } = useSiteUrl();
 const { canonicalUrl } = useCanonicalUrl(`/blog/${slug}`);
 
-const { data: post, pending } = useFetchPost(slug, locale.value as Locale);
+const { data: post, pending } = fetchPost(slug, locale.value as Locale);
 
 const coverUrl = computed(() => {
     if (!post.value?.cover) return "";
@@ -40,7 +40,7 @@ useSeoMeta({
     ogUrl: () => post.value?.seo?.canonicalURL || canonicalUrl.value,
     ogType: "article",
     articlePublishedTime: post.value?.publishedAt,
-    articleAuthor: post.value?.author?.name,
+    articleAuthor: post.value?.author?.name ? [post.value.author.name] : undefined,
     articleTag:
         post.value?.seo?.keywords
             ?.split(",")
@@ -165,23 +165,23 @@ useHead({
         <div v-if="pending" class="animate-pulse">
             <div
                 class="h-8 bg-[var(--surface-elevated)] rounded w-1/4 mb-4"
-            ></div>
+            />
             <div
                 class="h-12 bg-[var(--surface-elevated)] rounded w-3/4 mb-6"
-            ></div>
+            />
             <div
                 class="h-96 bg-[var(--surface-elevated)] rounded-2xl mb-8"
-            ></div>
+            />
             <div class="space-y-4">
                 <div
                     class="h-4 bg-[var(--surface-elevated)] rounded w-full"
-                ></div>
+                />
                 <div
                     class="h-4 bg-[var(--surface-elevated)] rounded w-full"
-                ></div>
+                />
                 <div
                     class="h-4 bg-[var(--surface-elevated)] rounded w-2/3"
-                ></div>
+                />
             </div>
         </div>
 

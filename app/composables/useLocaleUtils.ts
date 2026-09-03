@@ -1,5 +1,4 @@
-import { Locale } from "~/interfaces";
-import { defaultLocale } from "~/interfaces";
+import { defaultLocale, type Locale } from "~/interfaces";
 
 export function useLocaleUtils() {
   const { locale, locales } = useI18n();

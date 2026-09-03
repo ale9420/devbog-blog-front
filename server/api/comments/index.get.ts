@@ -30,11 +30,11 @@ export default defineEventHandler(async (event) => {
   try {
     const response = await $fetch(url, { headers })
     return response
-  } catch (error: any) {
-    console.error('Strapi fetch comments error:', error.data || error)
+  } catch (error: unknown) {
+    console.error('Strapi fetch comments error:', asUpstreamError(error).data || error)
     throw createError({
-      statusCode: error.response?.status || 500,
-      message: error.data?.error?.message || error.message || 'Failed to fetch comments'
+      statusCode: asUpstreamError(error).response?.status || 500,
+      message: upstreamErrorMessage(error, 'Failed to fetch comments'),
     })
   }
 })
