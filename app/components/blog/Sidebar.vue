@@ -12,7 +12,7 @@ const { t, locale } = useI18n()
 const { getMediaUrl } = useStrapi()
 const { localizePath } = useLocaleUtils()
 
-const props = defineProps<{
+defineProps<{
   categories: Category[]
   popularTags: string[]
   recentPosts: PostListItem[]
@@ -37,12 +37,12 @@ defineEmits<{
         <button 
           v-for="category in categories" 
           :key="category.id"
-          @click="$emit('selectCategory', category.name)"
           class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all"
           :class="selectedCategory === category.name
             ? 'bg-[var(--primary)] text-white'
             : 'hover:bg-[var(--surface-elevated)] text-[var(--foreground)]'"
           :aria-pressed="selectedCategory === category.name"
+          @click="$emit('selectCategory', category.name)"
         >
           <span class="flex-1 text-left">{{ category.name }}</span>
           <span class="text-xs opacity-60">{{ category.count }}</span>
@@ -59,12 +59,12 @@ defineEmits<{
         <button 
           v-for="tag in popularTags" 
           :key="tag"
-          @click="$emit('selectTag', tag)"
           class="px-3 py-1.5 text-sm rounded-full border transition-all"
           :class="selectedTag === tag
             ? 'bg-[var(--secondary)] text-[var(--foreground)] border-[var(--secondary)]'
             : 'border-[var(--border)] text-[var(--muted)] hover:border-[var(--primary)] hover:text-[var(--primary)]'"
           :aria-pressed="selectedTag === tag"
+          @click="$emit('selectTag', tag)"
         >
           #{{ tag }}
         </button>

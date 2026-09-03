@@ -31,6 +31,9 @@ export interface RawStrapiArticle {
   description?: string | null
   content?: string | null
   publishedAt?: string | null
+  updatedAt?: string | null
+  createdAt?: string | null
+  locale?: string | null
   readTime?: number | null
   tags?: string[] | null
   cover?: StrapiMediaRef | null

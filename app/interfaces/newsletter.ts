@@ -1,5 +1,6 @@
 export interface Subscriber {
   id: number;
+  documentId: string;
   email: string;
   confirmationToken: string;
   confirmed: boolean;

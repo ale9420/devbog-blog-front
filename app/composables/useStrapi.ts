@@ -5,10 +5,9 @@ import type {
   RawStrapiArticle,
   PostListItem,
   StrapiPost,
-  SearchPostResult,
-} from "~/interfaces";
-import type { StrapiPaginatedResponse, PaginationMeta } from "~/interfaces";
-import { Locale, defaultLocale } from "~/interfaces";
+  SearchPostResult, StrapiPaginatedResponse, PaginationMeta 
+, Locale} from "~/interfaces";
+import { defaultLocale } from "~/interfaces";
 
 /**
  * Strapi data access for client pages. Every helper below goes through

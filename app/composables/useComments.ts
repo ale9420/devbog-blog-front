@@ -17,7 +17,6 @@ function getErrorMessage(err: unknown, fallback: string): string {
 }
 
 export function useComments(articleSlug: string, articleDocumentId?: string) {
-  const config = useRuntimeConfig()
   
   const relation = computed(() => {
     if (articleDocumentId) {

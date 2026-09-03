@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const { locale, t } = useI18n();
-const config = useRuntimeConfig();
+import { asApiError } from '~/helpers/apiError'
 
+const { locale, t } = useI18n();
 const email = ref("");
 const isSubmitting = ref(false);
 const isSuccess = ref(false);
@@ -16,7 +16,7 @@ async function handleSubmit() {
   pendingState.value = null;
 
   try {
-    const response = await $fetch<{ success: boolean; message: string }>(
+    await $fetch<{ success: boolean; message: string }>(
       "/api/newsletter/subscribe",
       {
         method: "POST",
@@ -35,7 +35,8 @@ async function handleSubmit() {
       isSuccess.value = false;
       pendingState.value = null;
     }, 5000);
-  } catch (e: any) {
+  } catch (err) {
+    const e = asApiError(err);
     const statusCode = e.response?.status || e.statusCode;
     const statusMessage = e.data?.message || e.message || "";
 
@@ -69,8 +70,8 @@ async function handleSubmit() {
 
       <form
         v-if="!isSuccess && !pendingState"
-        @submit.prevent="handleSubmit"
         class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+        @submit.prevent="handleSubmit"
       >
         <input
           v-model="email"
@@ -79,7 +80,7 @@ async function handleSubmit() {
           required
           class="input-field flex-1"
           :disabled="isSubmitting"
-        />
+        >
         <button
           type="submit"
           class="btn-primary whitespace-nowrap"
