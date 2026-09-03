@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatDate } from '~/helpers/formatDate'
+import { getInitial } from '~/helpers/string'
 
 const { t } = useI18n();
 const { getMediaUrl } = useStrapi();
@@ -45,7 +46,7 @@ const delay = computed(() => `${(props.index ?? 0) * 100}ms`);
           class="w-full h-full gradient-bogota-subtle flex items-center justify-center"
         >
           <span class="text-6xl font-display font-bold text-[var(--border)]"
-            >{{ post.title?.charAt(0) }}!!!</span
+            >{{ getInitial(post.title) }}</span
           >
         </div>
         <div

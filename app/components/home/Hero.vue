@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { formatDate } from '~/helpers/formatDate'
+import { getInitial } from '~/helpers/string'
 
 interface HeroPost {
   id: number
@@ -86,7 +87,7 @@ const props = defineProps({
               class="w-full aspect-[4/3] object-cover"
             />
             <div v-else class="w-full aspect-[4/3] gradient-bogota flex items-center justify-center">
-              <span class="text-8xl font-display font-bold text-white/30">{{ post.title?.charAt(0) }}</span>
+              <span class="text-8xl font-display font-bold text-white/30">{{ getInitial(post.title) }}</span>
             </div>
             <div class="absolute inset-0 bg-gradient-to-t from-[var(--foreground)]/20 to-transparent"></div>
           </div>
