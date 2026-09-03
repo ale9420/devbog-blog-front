@@ -37,15 +37,20 @@ watch(currentPage, () => {
 
 const { data: categories } = useFetchCategories(locale.value as Locale);
 
-const popularTags = ref([
-  "AI",
-  "Linux",
-  "Vue",
-  "TypeScript",
-  "DevOps",
-  "Python",
-  "Docker",
-]);
+const popularTags = computed(() => {
+  if (!posts.value) return [];
+  const tagCounts = new Map<string, number>();
+  for (const post of posts.value) {
+    const tags = post.tags?.data?.map((t: any) => t.attributes?.name) || [];
+    for (const tag of tags) {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    }
+  }
+  return Array.from(tagCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([tag]) => tag);
+});
 
 const recentPosts = computed(() => {
   if (!posts.value) return [];
