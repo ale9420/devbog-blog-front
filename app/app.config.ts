@@ -12,7 +12,7 @@ export default defineAppConfig({
       linkedin:
         "https://www.linkedin.com/in/alejandro-ramirez-garcia-046713139",
       codeberg: "https://codeberg.org/alejo9420",
-      mastodon: "https://mastodon.social/@alejo9420",
+      mastodon: "https://mastodon.social/@bogdev",
     },
     comments: {
       provider: "strapi",
