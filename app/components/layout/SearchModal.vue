@@ -76,18 +76,6 @@ function handleKeydown(e: KeyboardEvent) {
     }
   }
 }
-
-onMounted(() => {
-  const handleGlobalKeydown = (e: KeyboardEvent) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-      e.preventDefault();
-      emit("close");
-    }
-  };
-
-  window.addEventListener("keydown", handleGlobalKeydown);
-  onUnmounted(() => window.removeEventListener("keydown", handleGlobalKeydown));
-});
 </script>
 
 <template>
