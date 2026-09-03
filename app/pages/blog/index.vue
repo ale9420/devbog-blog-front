@@ -113,7 +113,6 @@ useSeoMeta({
     "Browse all articles on AI, software development, Linux, DevOps, and more. Find tutorials, tips, and insights from my tech journey.",
   ogDescription:
     "Browse all articles on AI, software development, Linux, DevOps, and more. Find tutorials, tips, and insights from my tech journey.",
-  ogImage: "/og-image.png",
   ogUrl: () => canonicalUrl.value,
   twitterCard: "summary_large_image",
   twitterTitle: "Blog - BogDev",
