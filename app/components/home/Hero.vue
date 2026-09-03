@@ -32,6 +32,7 @@ const props = defineProps({
     <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-[var(--secondary)]/10 rounded-full blur-3xl"></div>
     
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+      <h1 class="sr-only">{{ t('home.hero.title') }}</h1>
       <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
         <div class="order-2 lg:order-1">
           <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface)]/80 backdrop-blur-sm mb-6">
