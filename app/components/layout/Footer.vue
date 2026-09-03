@@ -7,10 +7,14 @@ const currentYear = new Date().getFullYear();
 
 <template>
     <footer class="bg-[var(--surface)] text-[var(--foreground)] border-t border-[var(--border)] relative overflow-hidden">
-        <img
+        <NuxtImg
             src="/copeton.png"
             class="absolute left-0 bottom-0 h-96 w-auto pointer-events-none select-none opacity-[0.08] dark:opacity-[0.12]"
             alt=""
+            loading="lazy"
+            decoding="async"
+            width="384"
+            height="384"
         />
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
             <div class="grid md:grid-cols-4 gap-8 lg:gap-12 mb-12">
