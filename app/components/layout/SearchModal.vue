@@ -25,6 +25,7 @@ watch(
       nextTick(() => searchInput.value?.focus());
       document.body.style.overflow = "hidden";
     } else {
+      clearTimeout(debounceTimer);
       document.body.style.overflow = "";
       query.value = "";
       results.value = [];
@@ -32,6 +33,10 @@ watch(
     }
   },
 );
+
+onUnmounted(() => {
+  clearTimeout(debounceTimer);
+});
 
 watch(query, (newQuery) => {
   clearTimeout(debounceTimer);
