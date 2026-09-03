@@ -13,6 +13,13 @@ export default defineNuxtConfig({
       inline: [/nodemailer/],
     },
   },
+  // Caching strategy (node-server / Docker preset, no CDN in front):
+  // - Pages: `isr` renders once and revalidates after the TTL via Nitro's
+  //   storage cache. The page HTML embeds the useAsyncData payload, so
+  //   visitors of a cached page never trigger Strapi calls.
+  // - API routes: `Cache-Control` headers below are defensive; they only
+  //   take effect if a shared cache/CDN is introduced later. Do not add
+  //   Vercel-only headers (CDN-Cache-Control / Vercel-CDN-Cache-Control).
   routeRules: {
     "/": { prerender: true },
     "/about": { isr: 3600 },
