@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const { y: scrollY } = useWindowScroll()
-const isVisible = computed(() => scrollY.value > 400)
+const isVisible = computed(() => scrollY.value > 200)
 
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })

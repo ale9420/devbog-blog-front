@@ -42,6 +42,7 @@ const { data: relatedPosts, pending } = await useAsyncData(
             height="250"
             format="webp"
             loading="lazy"
+            decoding="async"
             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div v-else class="w-full h-full gradient-bogota-subtle flex items-center justify-center">

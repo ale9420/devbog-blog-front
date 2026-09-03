@@ -5,6 +5,12 @@ const isMobileMenuOpen = ref(false);
 useKeyboardShortcut('k', () => {
     isSearchOpen.value = !isSearchOpen.value
 })
+
+onMounted(() => {
+    window.addEventListener('skip-to-search', () => {
+        isSearchOpen.value = true
+    })
+})
 </script>
 
 <template>

@@ -10,10 +10,7 @@ function skipToContent() {
 }
 
 function skipToSearch() {
-  const searchInput = document.querySelector('input[type="search"], input[placeholder*="Search"]')
-  if (searchInput instanceof HTMLElement) {
-    searchInput.focus()
-  }
+  window.dispatchEvent(new CustomEvent('skip-to-search'))
 }
 </script>
 
