@@ -2,7 +2,7 @@
 import { formatDate } from '~/helpers/formatDate'
 import { getInitial } from '~/helpers/string'
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { getMediaUrl } = useStrapi();
 const { localizePath } = useLocaleUtils();
 
@@ -86,7 +86,7 @@ const delay = computed(() => `${(props.index ?? 0) * 100}ms`);
                 {{ post.author?.name || t("post.anonymous") }}
               </p>
               <p class="text-xs text-[var(--muted)]">
-                {{ formatDate(post.publishedAt) }}
+                {{ formatDate(post.publishedAt, 'full', locale === 'es' ? 'es-CO' : 'en-US') }}
               </p>
             </div>
           </div>
