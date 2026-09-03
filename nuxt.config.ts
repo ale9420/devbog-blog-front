@@ -81,7 +81,7 @@ export default defineNuxtConfig({
       script: [
         {
           defer: true,
-          "data-domain": "devbog.com",
+          "data-domain": "bogdev.com.co",
           src: "https://plausible.io/js/script.hash.outbound-links.js",
         },
       ],
