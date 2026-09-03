@@ -94,7 +94,6 @@ onMounted(() => {
       v-for="heading in headings"
       :key="heading.id"
       :href="`#${heading.id}`"
-      @click.prevent="scrollToHeading(heading.id)"
       class="block text-sm py-1.5 transition-colors"
       :class="[
         heading.level === 3 ? 'pl-4' : '',
@@ -102,6 +101,7 @@ onMounted(() => {
           ? 'text-[var(--primary)] font-medium'
           : 'text-[var(--muted)] hover:text-[var(--foreground)]'
       ]"
+      @click.prevent="scrollToHeading(heading.id)"
     >
       {{ heading.text }}
     </a>

@@ -1,6 +1,6 @@
 import qs from 'qs';
 import { sendWelcomeEmail } from "../../utils/email";
-import type { ConfirmResponse } from "~/interfaces/newsletter";
+import type { ConfirmResponse, Subscriber } from "~/interfaces/newsletter";
 
 export default defineEventHandler(async (event): Promise<ConfirmResponse> => {
   const config = useRuntimeConfig();
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event): Promise<ConfirmResponse> => {
     },
   });
 
-  const subscribers = await $fetch<{ data: any[] }>(
+  const subscribers = await $fetch<{ data: Subscriber[] }>(
     `${config.public.strapiUrl}/api/subscribers?${subscriberParams}`,
     {
       headers: {
@@ -34,14 +34,14 @@ export default defineEventHandler(async (event): Promise<ConfirmResponse> => {
     },
   );
 
-  if (!subscribers.data || subscribers.data.length === 0) {
+  const subscriber = subscribers.data?.[0];
+
+  if (!subscriber) {
     throw createError({
       statusCode: 404,
       statusMessage: "Invalid confirmation token",
     });
   }
-
-  const subscriber = subscribers.data[0];
 
   if (subscriber.confirmed) {
     throw createError({
@@ -74,7 +74,7 @@ export default defineEventHandler(async (event): Promise<ConfirmResponse> => {
           ? "¡Suscripción confirmada! Revisa tu correo para más información."
           : "Subscription confirmed! Check your email for more information.",
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Newsletter confirmation error:", error);
     throw createError({
       statusCode: 500,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Locale } from "~/interfaces";
+import type { Locale } from "~/interfaces";
 
 const { locale } = useI18n();
 const route = useRoute();

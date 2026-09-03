@@ -33,7 +33,10 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const commentResponse = await $fetch<any>(
+    const commentResponse = await $fetch<{
+      data?: { author?: { id?: string | number } }
+      author?: { id?: string | number }
+    }>(
       `${config.public.strapiUrl}/api/comments/${relation}/comment/${id}`,
       { headers }
     )
@@ -54,13 +57,13 @@ export default defineEventHandler(async (event) => {
       body
     })
     return response
-  } catch (error: any) {
-    if (error.statusCode) {
+  } catch (error: unknown) {
+    if (asUpstreamError(error).statusCode) {
       throw error
     }
     throw createError({
-      statusCode: error.response?.status || 500,
-      message: error.message || 'Failed to update comment'
+      statusCode: asUpstreamError(error).response?.status || 500,
+      message: upstreamErrorMessage(error, 'Failed to update comment'),
     })
   }
 })

@@ -1,4 +1,5 @@
 import qs from 'qs';
+import type { RawStrapiArticle } from '~/interfaces';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -29,18 +30,18 @@ export default defineEventHandler(async (event) => {
   setHeader(event, 'Cache-Control', 'public, s-maxage=60, stale-while-revalidate=120');
 
   try {
-    const response = await $fetch<{ data: any[] }>(
+    const response = await $fetch<{ data: RawStrapiArticle[] }>(
       `${config.public.strapiUrl}/api/articles?${params}`,
       { headers },
     );
 
-    return response.data.map((post: any) => ({
+    return response.data.map((post) => ({
       id: post.id,
       title: post.title,
       slug: post.slug,
-      description: post.description,
+      description: post.description ?? null,
       cover: post.cover ? { url: post.cover.url } : null,
-      category: post.category ? { name: post.category.name } : null,
+      category: post.category?.name ? { name: post.category.name } : null,
     }));
   } catch (error) {
     console.error('Search error:', error);
