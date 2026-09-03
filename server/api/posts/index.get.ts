@@ -25,8 +25,6 @@ export default defineEventHandler(async (event) => {
   }
 
   setHeader(event, 'Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
-  setHeader(event, 'CDN-Cache-Control', 'public, s-maxage=300')
-  setHeader(event, 'Vercel-CDN-Cache-Control', 'public, s-maxage=300')
 
   const response = await $fetch(`${config.public.strapiUrl}/api/articles?${params}`, { headers })
 
