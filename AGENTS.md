@@ -24,7 +24,8 @@ npm run preview      # Preview production build locally
 
 # Type checking and linting
 npm run typecheck    # Run Nuxt type checking
-npm run lint         # Run Nuxt linting (if configured)
+npm run lint         # Run ESLint (flat config, @nuxt/eslint)
+npm run test         # Run unit tests with Vitest (test/*.test.ts)
 
 # Generate static site
 npm run generate     # Generate static output

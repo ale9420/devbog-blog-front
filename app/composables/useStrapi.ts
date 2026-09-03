@@ -1,70 +1,93 @@
 import qs from 'qs';
-import type { StrapiResponse, StrapiPost, StrapiAbout } from "~/interfaces";
-import { Locale, defaultLocale } from "~/interfaces";
+import { toValue, type MaybeRef } from 'vue';
+import type {
+  StrapiAbout,
+  RawStrapiArticle,
+  PostListItem,
+  StrapiPost,
+  SearchPostResult, StrapiPaginatedResponse, PaginationMeta 
+, Locale} from "~/interfaces";
+import { defaultLocale } from "~/interfaces";
 
+/**
+ * Strapi data access for client pages. Every helper below goes through
+ * this app's Nitro server routes (/api/*) — the Strapi URL and API token
+ * are never used from the browser. These are plain functions (not
+ * composables), returned from the useStrapi() factory.
+ */
 export function useStrapi() {
   const config = useRuntimeConfig();
 
-  function useFetchPosts(params?: {
-    page?: number;
+  function fetchPosts(params?: {
+    page?: MaybeRef<number | undefined>;
     pageSize?: number;
-    locale?: Locale;
+    locale?: MaybeRef<Locale | undefined>;
+    category?: MaybeRef<string | undefined>;
+    tag?: MaybeRef<string | undefined>;
   }) {
-    const query = qs.stringify({
-      page: params?.page,
-      pageSize: params?.pageSize,
-      locale: params?.locale,
-    }, { skipNulls: true });
+    const buildQuery = () => {
+      return qs.stringify({
+        page: toValue(params?.page),
+        pageSize: params?.pageSize,
+        locale: toValue(params?.locale),
+        category: toValue(params?.category) || undefined,
+        tag: toValue(params?.tag) || undefined,
+      }, { skipNulls: true });
+    };
 
+    const query = buildQuery();
     const key = `posts-${query || 'default'}`;
     return useAsyncData(key, async () => {
-      const response = await $fetch<{
-        data: any[];
-        meta: {
-          pagination: {
-            total: number;
-            page: number;
-            pageSize: number;
-            pageCount: number;
-          };
-        };
-      }>(`/api/posts?${query}`);
+      const response = await $fetch<StrapiPaginatedResponse<RawStrapiArticle[]>>(
+        `/api/posts?${buildQuery()}`,
+      );
+
+      const data: PostListItem[] = response.data.map((post) => ({
+        id: post.id,
+        title: post.title,
+        slug: post.slug,
+        description: post.description,
+        publishedAt: post.publishedAt,
+        readTime: post.readTime,
+        tags: post.tags,
+        cover: post.cover,
+        category: post.category,
+        author: post.author,
+        seo: post.seo ?? undefined,
+      }));
 
       return {
-        data: response.data.map((post: any) => ({
-          id: post.id,
-          title: post.title,
-          slug: post.slug,
-          description: post.description,
-          publishedAt: post.publishedAt,
-          readTime: post.readTime,
-          tags: post.tags,
-          cover: post.cover,
-          category: post.category,
-          author: post.author,
-          seo: post.seo,
-        })),
+        data,
         pagination: response.meta.pagination,
       };
     }, {
+      watch: [
+        () => toValue(params?.page),
+        () => toValue(params?.locale),
+        () => toValue(params?.category),
+        () => toValue(params?.tag),
+      ],
       transform: (result) => result,
-      default: () => ({ data: [], pagination: { total: 0, page: 1, pageSize: 6, pageCount: 1 } }),
+      default: (): { data: PostListItem[]; pagination: PaginationMeta } => ({
+        data: [],
+        pagination: { total: 0, page: 1, pageSize: 6, pageCount: 1 },
+      }),
     });
   }
 
-  function useFetchPost(slug: string, locale?: Locale) {
-    return useAsyncData(`post-${slug}-${locale}`, async () => {
+  function fetchPost(slug: string, locale?: Locale) {
+    return useAsyncData<StrapiPost | null>(`post-${slug}-${locale}`, async () => {
       const query = qs.stringify({
         locale: locale || undefined,
       }, { skipNulls: true });
 
-      const response = await $fetch<any>(
+      const response = await $fetch<RawStrapiArticle | null>(
         `/api/posts/${slug}?${query}`,
       );
 
       if (!response) return null;
 
-      return {
+      const post: StrapiPost = {
         id: response.id,
         documentId: response.documentId,
         title: response.title,
@@ -77,19 +100,20 @@ export function useStrapi() {
         cover: response.cover,
         category: response.category,
         author: response.author,
-        seo: response.seo,
-        blocks: response.blocks,
+        seo: response.seo ?? undefined,
+        blocks: response.blocks ?? [],
       };
+      return post;
     });
   }
 
-  async function searchPosts(queryStr: string) {
-    return $fetch<any[]>('/api/search', {
+  async function searchPosts(queryStr: string): Promise<SearchPostResult[]> {
+    return $fetch<SearchPostResult[]>('/api/search', {
       query: { q: queryStr },
     });
   }
 
-  function useFetchCategories(locale?: Locale) {
+  function fetchCategories(locale?: Locale) {
     return useAsyncData(`categories-${locale || defaultLocale}`, async () => {
       const query = qs.stringify({
         locale: locale || undefined,
@@ -103,7 +127,7 @@ export function useStrapi() {
     })
   }
 
-  function useFetchAbout(locale?: Locale) {
+  function fetchAbout(locale?: Locale) {
     return useAsyncData<StrapiAbout>(
       `about-${locale || defaultLocale}`,
       async () => {
@@ -126,10 +150,10 @@ export function useStrapi() {
   }
 
   return {
-    useFetchPosts,
-    useFetchPost,
-    useFetchCategories,
-    useFetchAbout,
+    fetchPosts,
+    fetchPost,
+    fetchCategories,
+    fetchAbout,
     searchPosts,
     getMediaUrl,
   };

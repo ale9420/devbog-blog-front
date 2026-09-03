@@ -58,7 +58,8 @@ function onTouchEnd() {
   isDragging.value = false
   const threshold = 50
   if (Math.abs(touchDeltaX.value) > threshold) {
-    touchDeltaX.value < 0 ? next() : prev()
+    if (touchDeltaX.value < 0) next()
+    else prev()
   }
   touchDeltaX.value = 0
 }

@@ -39,8 +39,8 @@ useSeoMeta({
       
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
         <button
-          @click="handleError"
           class="btn-primary"
+          @click="handleError"
         >
           <UIcon name="i-heroicons-home" class="w-4 h-4 mr-2" />
           {{ t('error.goHome') }}

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { asApiError } from '~/helpers/apiError'
+
 const { t } = useI18n();
 const route = useRoute();
 const token = route.query.token as string;
@@ -24,10 +26,11 @@ async function confirmSubscription() {
       params: { token },
     });
     status.value = "success";
-  } catch (e: any) {
+  } catch (err) {
+    const e = asApiError(err);
     status.value = "error";
     const statusCode = e.response?.status || e.statusCode;
-    errorMessage.value = t(`confirm.${errorCodes[statusCode] || "invalidToken"}`);
+    errorMessage.value = t(`confirm.${errorCodes[statusCode ?? 0] || "invalidToken"}`);
   }
 }
 

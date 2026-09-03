@@ -70,7 +70,7 @@ async function handleSubmit() {
   try {
     await postComment({ ...formData })
     resetForm()
-  } catch (err) {
+  } catch {
     // Error handled by composable
   }
 }
@@ -116,11 +116,11 @@ onMounted(() => {
     <div v-if="pending" class="space-y-4">
       <div v-for="i in 3" :key="i" class="animate-pulse">
         <div class="flex gap-4">
-          <div class="w-10 h-10 rounded-full bg-[var(--surface-elevated)]"></div>
+          <div class="w-10 h-10 rounded-full bg-[var(--surface-elevated)]"/>
           <div class="flex-1 space-y-2">
-            <div class="h-4 bg-[var(--surface-elevated)] rounded w-1/4"></div>
-            <div class="h-4 bg-[var(--surface-elevated)] rounded w-3/4"></div>
-            <div class="h-4 bg-[var(--surface-elevated)] rounded w-1/2"></div>
+            <div class="h-4 bg-[var(--surface-elevated)] rounded w-1/4"/>
+            <div class="h-4 bg-[var(--surface-elevated)] rounded w-3/4"/>
+            <div class="h-4 bg-[var(--surface-elevated)] rounded w-1/2"/>
           </div>
         </div>
       </div>
@@ -129,8 +129,8 @@ onMounted(() => {
     <div v-else-if="error" class="p-4 rounded-lg mb-6" style="background-color: var(--error-bg); color: var(--error)">
       <p>{{ error }}</p>
       <button 
-        @click="fetchComments" 
-        class="text-sm underline mt-2 hover:no-underline"
+        class="text-sm underline mt-2 hover:no-underline" 
+        @click="fetchComments"
       >
         {{ t('common.retry') }}
       </button>
@@ -161,8 +161,8 @@ onMounted(() => {
             <div class="mt-2">
               <button 
                 v-if="!comment.blockedThread"
-                @click="startReply(comment.id, comment.author?.name || t('post.anonymous'))"
                 class="text-sm text-[var(--muted)] hover:text-[var(--primary)] transition-colors"
+                @click="startReply(comment.id, comment.author?.name || t('post.anonymous'))"
               >
                 {{ t('comments.reply') }}
               </button>
@@ -206,13 +206,13 @@ onMounted(() => {
         {{ submitError }}
       </div>
 
-      <form @submit.prevent="handleSubmit" class="space-y-4">
+      <form class="space-y-4" @submit.prevent="handleSubmit">
         <div v-if="replyingTo" class="flex items-center gap-2 text-sm text-[var(--muted)] mb-4">
           <span>{{ t('comments.replyingTo') }} {{ replyingToName }}</span>
           <button 
             type="button" 
-            @click="cancelReply"
             class="text-[var(--primary)] hover:underline"
+            @click="cancelReply"
           >
             {{ t('comments.cancel') }}
           </button>
@@ -230,7 +230,7 @@ onMounted(() => {
               :placeholder="t('comments.namePlaceholder')"
               :aria-invalid="formErrors.name ? 'true' : undefined"
               :aria-describedby="formErrors.name ? 'author-name-error' : undefined"
-            />
+            >
             <p v-if="formErrors.name" id="author-name-error" role="alert" class="text-sm mt-1" style="color: var(--error)">{{ formErrors.name }}</p>
           </div>
           <div>
@@ -244,7 +244,7 @@ onMounted(() => {
               :placeholder="t('comments.emailPlaceholder')"
               :aria-invalid="formErrors.email ? 'true' : undefined"
               :aria-describedby="formErrors.email ? 'author-email-error author-email-hint' : 'author-email-hint'"
-            />
+            >
             <p v-if="formErrors.email" id="author-email-error" role="alert" class="text-sm mt-1" style="color: var(--error)">{{ formErrors.email }}</p>
             <p id="author-email-hint" class="text-xs text-[var(--muted)] mt-1">{{ t('comments.emailRequired') }}</p>
           </div>

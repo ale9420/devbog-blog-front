@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { Locale } from "~/interfaces";
+import type { Locale } from "~/interfaces";
 
 const { locale, t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const { useFetchPosts, useFetchCategories } = useStrapi();
-const { localizePath } = useLocaleUtils();
-const { siteUrl } = useSiteUrl();
+const { fetchPosts, fetchCategories } = useStrapi();
 const { canonicalUrl } = useCanonicalUrl('/blog');
 
 const selectedCategory = ref<string>((route.query.category as string) || "");
@@ -14,10 +12,12 @@ const selectedTag = ref<string>((route.query.tag as string) || "");
 const currentPage = ref<number>(Number(route.query.page) || 1);
 const pageSize = 6;
 
-const { data: postsResult, pending } = useFetchPosts({
-  page: currentPage.value,
+const { data: postsResult, pending } = fetchPosts({
+  page: currentPage,
   pageSize,
-  locale: locale.value as Locale,
+  locale: computed(() => locale.value as Locale),
+  category: selectedCategory,
+  tag: selectedTag,
 });
 
 const posts = computed(() => postsResult.value?.data || []);
@@ -35,7 +35,14 @@ watch(currentPage, () => {
   updateQuery();
 });
 
-const { data: categories } = useFetchCategories(locale.value as Locale);
+const { data: categories } = fetchCategories(locale.value as Locale);
+
+const { data: sidebarResult } = fetchPosts({
+  pageSize: 4,
+  locale: computed(() => locale.value as Locale),
+});
+
+const sidebarPosts = computed(() => sidebarResult.value?.data || []);
 
 const FALLBACK_POPULAR_TAGS = [
   "AI",
@@ -49,7 +56,7 @@ const FALLBACK_POPULAR_TAGS = [
 
 const popularTags = computed(() => {
   const tagCounts = new Map<string, number>();
-  for (const post of posts.value) {
+  for (const post of sidebarPosts.value) {
     for (const tag of post.tags || []) {
       tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
     }
@@ -62,25 +69,7 @@ const popularTags = computed(() => {
 });
 
 const recentPosts = computed(() => {
-  if (!posts.value) return [];
-  return posts.value.slice(0, 4);
-});
-
-const filteredPosts = computed(() => {
-  if (!posts.value) return [];
-  let result = posts.value;
-
-  if (selectedCategory.value) {
-    result = result.filter(
-      (p: any) => p.category?.name === selectedCategory.value,
-    );
-  }
-
-  if (selectedTag.value) {
-    result = result.filter((p: any) => (p.tags || []).includes(selectedTag.value));
-  }
-
-  return result;
+  return sidebarPosts.value.slice(0, 4);
 });
 
 function handleCategorySelect(category: string) {
@@ -149,21 +138,21 @@ useSeoMeta({
             :key="i"
             class="card overflow-hidden animate-pulse"
           >
-            <div class="aspect-[16/10] bg-[var(--surface-elevated)]"></div>
+            <div class="aspect-[16/10] bg-[var(--surface-elevated)]"/>
             <div class="p-5 space-y-3">
-              <div class="h-4 bg-[var(--surface-elevated)] rounded w-1/4"></div>
-              <div class="h-6 bg-[var(--surface-elevated)] rounded w-3/4"></div>
-              <div class="h-4 bg-[var(--surface-elevated)] rounded"></div>
+              <div class="h-4 bg-[var(--surface-elevated)] rounded w-1/4"/>
+              <div class="h-6 bg-[var(--surface-elevated)] rounded w-3/4"/>
+              <div class="h-4 bg-[var(--surface-elevated)] rounded"/>
             </div>
           </div>
         </div>
 
         <div
-          v-else-if="filteredPosts.length > 0"
+          v-else-if="posts.length > 0"
           class="grid md:grid-cols-2 gap-6"
         >
           <BlogPostCard
-            v-for="(post, index) in filteredPosts"
+            v-for="(post, index) in posts"
             :key="post.id"
             :post="post"
             :index="index"
@@ -189,15 +178,15 @@ useSeoMeta({
           </p>
           <button
             v-if="selectedCategory || selectedTag"
-            @click="clearFilters"
             class="btn-secondary mt-4"
+            @click="clearFilters"
           >
             {{ t("blog.clearFilters") }}
           </button>
         </div>
 
         <div
-          v-if="!selectedCategory && !selectedTag && filteredPosts.length > 0"
+          v-if="posts.length > 0"
           class="mt-8"
         >
           <BlogPagination
