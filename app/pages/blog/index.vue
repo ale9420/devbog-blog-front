@@ -4,7 +4,7 @@ import { Locale } from "~/interfaces";
 const { locale, t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const { useFetchPosts, useFetchCategories } = useStrapi();
+const { fetchPosts, fetchCategories } = useStrapi();
 const { localizePath } = useLocaleUtils();
 const { siteUrl } = useSiteUrl();
 const { canonicalUrl } = useCanonicalUrl('/blog');
@@ -14,7 +14,7 @@ const selectedTag = ref<string>((route.query.tag as string) || "");
 const currentPage = ref<number>(Number(route.query.page) || 1);
 const pageSize = 6;
 
-const { data: postsResult, pending } = useFetchPosts({
+const { data: postsResult, pending } = fetchPosts({
   page: currentPage,
   pageSize,
   locale: computed(() => locale.value as Locale),
@@ -37,9 +37,9 @@ watch(currentPage, () => {
   updateQuery();
 });
 
-const { data: categories } = useFetchCategories(locale.value as Locale);
+const { data: categories } = fetchCategories(locale.value as Locale);
 
-const { data: sidebarResult } = useFetchPosts({
+const { data: sidebarResult } = fetchPosts({
   pageSize: 4,
   locale: computed(() => locale.value as Locale),
 });

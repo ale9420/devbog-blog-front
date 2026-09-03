@@ -10,10 +10,16 @@ import type {
 import type { StrapiPaginatedResponse, PaginationMeta } from "~/interfaces";
 import { Locale, defaultLocale } from "~/interfaces";
 
+/**
+ * Strapi data access for client pages. Every helper below goes through
+ * this app's Nitro server routes (/api/*) — the Strapi URL and API token
+ * are never used from the browser. These are plain functions (not
+ * composables), returned from the useStrapi() factory.
+ */
 export function useStrapi() {
   const config = useRuntimeConfig();
 
-  function useFetchPosts(params?: {
+  function fetchPosts(params?: {
     page?: MaybeRef<number | undefined>;
     pageSize?: number;
     locale?: MaybeRef<Locale | undefined>;
@@ -70,7 +76,7 @@ export function useStrapi() {
     });
   }
 
-  function useFetchPost(slug: string, locale?: Locale) {
+  function fetchPost(slug: string, locale?: Locale) {
     return useAsyncData<StrapiPost | null>(`post-${slug}-${locale}`, async () => {
       const query = qs.stringify({
         locale: locale || undefined,
@@ -108,7 +114,7 @@ export function useStrapi() {
     });
   }
 
-  function useFetchCategories(locale?: Locale) {
+  function fetchCategories(locale?: Locale) {
     return useAsyncData(`categories-${locale || defaultLocale}`, async () => {
       const query = qs.stringify({
         locale: locale || undefined,
@@ -122,7 +128,7 @@ export function useStrapi() {
     })
   }
 
-  function useFetchAbout(locale?: Locale) {
+  function fetchAbout(locale?: Locale) {
     return useAsyncData<StrapiAbout>(
       `about-${locale || defaultLocale}`,
       async () => {
@@ -145,10 +151,10 @@ export function useStrapi() {
   }
 
   return {
-    useFetchPosts,
-    useFetchPost,
-    useFetchCategories,
-    useFetchAbout,
+    fetchPosts,
+    fetchPost,
+    fetchCategories,
+    fetchAbout,
     searchPosts,
     getMediaUrl,
   };
