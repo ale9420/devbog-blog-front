@@ -38,9 +38,9 @@ export default defineEventHandler(async (event) => {
   try {
     const response = await $fetch(`${config.public.strapiUrl}/api/articles?${params}`, { headers })
     return response
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw createError({
-      statusCode: error.response?.status === 400 ? 400 : 502,
+      statusCode: asUpstreamError(error).response?.status === 400 ? 400 : 502,
       message: 'Failed to fetch posts',
     })
   }

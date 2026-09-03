@@ -34,11 +34,11 @@ export default defineEventHandler(async (event) => {
       body
     })
     return response
-  } catch (error: any) {
-    console.error('Strapi comment error:', error.data || error)
+  } catch (error: unknown) {
+    console.error('Strapi comment error:', asUpstreamError(error).data || error)
     throw createError({
-      statusCode: error.response?.status || 500,
-      message: error.data?.error?.message || error.message || 'Failed to post comment'
+      statusCode: asUpstreamError(error).response?.status || 500,
+      message: upstreamErrorMessage(error, 'Failed to post comment'),
     })
   }
 })

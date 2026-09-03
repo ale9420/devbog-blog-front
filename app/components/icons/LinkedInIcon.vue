@@ -1,13 +1,6 @@
-<script setup lang="ts">
-defineProps<{
-  class?: string
-}>()
-</script>
-
 <template>
   <svg
     class="w-5 h-5"
-    :class="class"
     fill="currentColor"
     viewBox="0 0 24 24"
   >

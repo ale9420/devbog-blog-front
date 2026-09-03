@@ -23,7 +23,7 @@ export default defineNuxtConfig({
     "/es/blog": { isr: 300 },
     "/es/blog/**": { isr: 300 },
   },
-  modules: ["@nuxt/ui", "@nuxt/image", "@vueuse/nuxt", "@nuxtjs/i18n"],
+  modules: ["@nuxt/ui", "@nuxt/image", "@vueuse/nuxt", "@nuxtjs/i18n", "@nuxt/eslint"],
   i18n: {
     locales: [
       { code: Locale.English, iso: "en-US", name: "English", file: "en.json" },

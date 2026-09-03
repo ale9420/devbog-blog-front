@@ -1,4 +1,5 @@
 import qs from 'qs';
+import type { RawStrapiArticle } from '~/interfaces';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
       locale,
     });
 
-    const response = await $fetch<{ data: any[] }>(
+    const response = await $fetch<{ data: RawStrapiArticle[] }>(
       `${config.public.strapiUrl}/api/articles?${params}`,
       { headers },
     );
@@ -77,7 +78,7 @@ export default defineEventHandler(async (event) => {
 </rss>`;
 
     return rss;
-  } catch (error) {
+  } catch {
     throw createError({
       statusCode: 500,
       message: "Failed to generate RSS feed",

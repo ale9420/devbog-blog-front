@@ -116,7 +116,7 @@ function handleKeydown(e: KeyboardEvent) {
                 class="flex-1 bg-transparent text-lg outline-none text-[var(--foreground)] placeholder:text-[var(--muted)]"
                 @keydown.escape="emit('close')"
                 @keydown="handleKeydown"
-              />
+              >
               <kbd
                 class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs rounded bg-[var(--surface-elevated)] text-[var(--muted)]"
               >
@@ -148,11 +148,11 @@ function handleKeydown(e: KeyboardEvent) {
                   role="option"
                   :aria-selected="selectedIndex === index"
                   :aria-label="result.title"
-                  @click="emit('close')"
                   class="flex items-start gap-4 px-6 py-4 hover:bg-[var(--surface-elevated)] transition-colors"
                   :class="{
                     'bg-[var(--surface-elevated)]': selectedIndex === index,
                   }"
+                  @click="emit('close')"
                 >
                   <div
                     v-if="result.cover?.url"

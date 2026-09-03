@@ -11,7 +11,7 @@ const props = defineProps<{
   categoryId?: number
 }>()
 
-const { data: relatedPosts, pending } = await useAsyncData(
+const { data: relatedPosts } = await useAsyncData(
   `related-posts-${props.currentPostId}`,
   async () => {
     if (!props.categoryId) return []

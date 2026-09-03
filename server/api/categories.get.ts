@@ -21,7 +21,9 @@ export default defineEventHandler(async (event) => {
 
   setHeader(event, 'Cache-Control', 'public, s-maxage=600, stale-while-revalidate=1200')
 
-  const response = await $fetch<{ data: any[] }>(
+  const response = await $fetch<{
+    data: Array<{ category?: { id?: number; name?: string } | null }>
+  }>(
     `${config.public.strapiUrl}/api/articles?${params}`,
     { headers },
   )
@@ -30,7 +32,7 @@ export default defineEventHandler(async (event) => {
 
   for (const article of response.data) {
     const cat = article.category
-    if (!cat) continue
+    if (!cat?.id || !cat.name) continue
     const existing = catMap.get(cat.id)
     if (existing) {
       existing.count++

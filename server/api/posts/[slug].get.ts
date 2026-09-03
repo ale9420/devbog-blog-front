@@ -1,4 +1,5 @@
 import qs from 'qs';
+import type { RawStrapiArticle } from '~/interfaces';
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
@@ -38,9 +39,12 @@ export default defineEventHandler(async (event) => {
   setHeader(event, 'CDN-Cache-Control', 'public, s-maxage=300')
   setHeader(event, 'Vercel-CDN-Cache-Control', 'public, s-maxage=300')
 
-  const response = await $fetch(`${config.public.strapiUrl}/api/articles?${params}`, { headers })
+  const response = await $fetch<{ data: RawStrapiArticle[] }>(
+    `${config.public.strapiUrl}/api/articles?${params}`,
+    { headers },
+  )
 
-  const data = (response as any).data
+  const data = response.data
   if (!data || data.length === 0) {
     throw createError({ statusCode: 404, message: 'Post not found' })
   }

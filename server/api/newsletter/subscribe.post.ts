@@ -1,7 +1,7 @@
 import qs from 'qs';
 import { randomUUID } from "crypto";
 import { sendConfirmationEmail } from "../../utils/email";
-import type { SubscribeRequest, SubscribeResponse } from "~/interfaces/newsletter";
+import type { SubscribeRequest, SubscribeResponse, Subscriber } from "~/interfaces/newsletter";
 
 export default defineEventHandler(async (event): Promise<SubscribeResponse> => {
   const config = useRuntimeConfig();
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event): Promise<SubscribeResponse> => {
     },
   });
 
-  const existingSubscriber = await $fetch<{ data: any[] }>(
+  const existingSubscriber = await $fetch<{ data: Subscriber[] }>(
     `${config.public.strapiUrl}/api/subscribers?${subscriberParams}`,
     {
       headers: {
@@ -39,16 +39,16 @@ export default defineEventHandler(async (event): Promise<SubscribeResponse> => {
     },
   );
 
-  if (existingSubscriber.data && existingSubscriber.data.length > 0) {
-    const subscriber = existingSubscriber.data[0];
-    if (subscriber.confirmed) {
+  const existing = existingSubscriber.data?.[0];
+  if (existing) {
+    if (existing.confirmed) {
       throw createError({
         statusCode: 409,
         statusMessage: "Email already subscribed",
       });
     }
 
-    await $fetch(`${config.public.strapiUrl}/api/subscribers/${subscriber.documentId}`, {
+    await $fetch(`${config.public.strapiUrl}/api/subscribers/${existing.documentId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${config.strapiApiToken}`,
@@ -85,7 +85,7 @@ export default defineEventHandler(async (event): Promise<SubscribeResponse> => {
           ? "Revisa tu correo para confirmar la suscripción"
           : "Check your email to confirm subscription",
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Newsletter subscription error:", error);
     throw createError({
       statusCode: 500,

@@ -25,15 +25,15 @@ function skipToSearch() {
     >
       <a 
         href="#main-content"
-        @click.prevent="skipToContent"
         class="text-sm font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-white rounded px-2 py-1"
+        @click.prevent="skipToContent"
       >
         {{ t('common.skipToMain') }}
       </a>
       <a 
         href="#search"
-        @click.prevent="skipToSearch"
         class="text-sm font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-white rounded px-2 py-1"
+        @click.prevent="skipToSearch"
       >
         {{ t('common.skipToSearch') }}
       </a>

@@ -8,24 +8,24 @@ const { t, locale } = useI18n()
 const { getMediaUrl } = useStrapi()
 const { localizePath } = useLocaleUtils()
 
-const props = defineProps({
+defineProps({
   post: Object as PropType<PostListItem | undefined>
 })
 </script>
 
 <template>
   <section v-if="post" class="relative overflow-hidden">
-    <div class="absolute inset-0 gradient-bogota-subtle"></div>
-    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[var(--primary)]/5 to-transparent"></div>
-    <div class="absolute -top-24 -right-24 w-96 h-96 bg-[var(--primary)]/10 rounded-full blur-3xl"></div>
-    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-[var(--secondary)]/10 rounded-full blur-3xl"></div>
+    <div class="absolute inset-0 gradient-bogota-subtle"/>
+    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[var(--primary)]/5 to-transparent"/>
+    <div class="absolute -top-24 -right-24 w-96 h-96 bg-[var(--primary)]/10 rounded-full blur-3xl"/>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-[var(--secondary)]/10 rounded-full blur-3xl"/>
     
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
       <h1 class="sr-only">{{ t('home.hero.title') }}</h1>
       <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
         <div class="order-2 lg:order-1">
           <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface)]/80 backdrop-blur-sm mb-6">
-            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"/>
             <span class="text-sm font-medium">{{ t('home.hero.featuredPost') }}</span>
           </div>
           
@@ -81,7 +81,7 @@ const props = defineProps({
             <div v-else class="w-full aspect-[4/3] gradient-bogota flex items-center justify-center">
               <span class="text-8xl font-display font-bold text-white/30">{{ getInitial(post.title) }}</span>
             </div>
-            <div class="absolute inset-0 bg-gradient-to-t from-[var(--foreground)]/20 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[var(--foreground)]/20 to-transparent"/>
           </div>
         </div>
       </div>

@@ -1,13 +1,6 @@
-<script setup lang="ts">
-defineProps<{
-  class?: string
-}>()
-</script>
-
 <template>
   <svg
     class="w-5 h-5"
-    :class="class"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 512 512"
     aria-label="Codeberg"
