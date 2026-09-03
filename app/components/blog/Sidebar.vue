@@ -35,6 +35,7 @@ defineEmits<{
           :class="selectedCategory === (category.attributes?.name || category.name)
             ? 'bg-[var(--primary)] text-white'
             : 'hover:bg-[var(--surface-elevated)] text-[var(--foreground)]'"
+          :aria-pressed="selectedCategory === (category.attributes?.name || category.name)"
         >
           <span class="flex-1 text-left">{{ category.attributes?.name || category.name }}</span>
           <span class="text-xs opacity-60">{{ category.count || 0 }}</span>
@@ -56,6 +57,7 @@ defineEmits<{
           :class="selectedTag === tag
             ? 'bg-[var(--secondary)] text-[var(--foreground)] border-[var(--secondary)]'
             : 'border-[var(--border)] text-[var(--muted)] hover:border-[var(--primary)] hover:text-[var(--primary)]'"
+          :aria-pressed="selectedTag === tag"
         >
           #{{ tag }}
         </button>
