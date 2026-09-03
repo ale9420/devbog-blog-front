@@ -18,7 +18,7 @@ export default defineAppConfig({
       provider: "strapi",
     },
     support: {
-      buyMeACoffee: "your-username",
+      buyMeACoffee: "ale9420",
     },
   },
 });
