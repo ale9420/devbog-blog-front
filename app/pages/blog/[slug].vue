@@ -5,12 +5,12 @@ import { formatDate } from '~/helpers/formatDate'
 const { locale, t } = useI18n();
 const route = useRoute();
 const slug = route.params.slug as string;
-const { useFetchPost, getMediaUrl } = useStrapi();
+const { fetchPost, getMediaUrl } = useStrapi();
 const { localizePath } = useLocaleUtils();
 const { siteUrl } = useSiteUrl();
 const { canonicalUrl } = useCanonicalUrl(`/blog/${slug}`);
 
-const { data: post, pending } = useFetchPost(slug, locale.value as Locale);
+const { data: post, pending } = fetchPost(slug, locale.value as Locale);
 
 const coverUrl = computed(() => {
     if (!post.value?.cover) return "";

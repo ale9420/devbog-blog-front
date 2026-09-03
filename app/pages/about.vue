@@ -2,11 +2,11 @@
 import { Locale } from "~/interfaces";
 
 const { locale, t } = useI18n();
-const { useFetchAbout } = useStrapi();
+const { fetchAbout } = useStrapi();
 const { canonicalUrl } = useCanonicalUrl("/about");
 const { siteUrl } = useSiteUrl();
 
-const { data: about, pending } = useFetchAbout(locale.value as Locale);
+const { data: about, pending } = fetchAbout(locale.value as Locale);
 
 useSeoMeta({
   title: () => about.value?.seo?.metaTitle || "About - BogDev",

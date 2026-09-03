@@ -2,12 +2,12 @@
 import { Locale } from '~/interfaces'
 
 const { locale, t } = useI18n()
-const { useFetchPosts } = useStrapi()
+const { fetchPosts } = useStrapi()
 const { localizePath } = useLocaleUtils()
 const { siteUrl } = useSiteUrl()
 const { canonicalUrl } = useCanonicalUrl('/')
 
-const { data: postsResult, pending } = useFetchPosts({ pageSize: 7, locale: locale.value as Locale })
+const { data: postsResult, pending } = fetchPosts({ pageSize: 7, locale: locale.value as Locale })
 
 const posts = computed(() => postsResult.value?.data || [])
 
