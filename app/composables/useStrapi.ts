@@ -84,35 +84,9 @@ export function useStrapi() {
   }
 
   async function searchPosts(queryStr: string) {
-    const query = qs.stringify({
-      filters: {
-        title: {
-          $containsi: queryStr,
-        },
-      },
-      populate: ['cover', 'category'],
-      pagination: {
-        pageSize: 10,
-      },
+    return $fetch<any[]>('/api/search', {
+      query: { q: queryStr },
     });
-
-    const headers: Record<string, string> = {};
-    if (config.strapiApiToken) {
-      headers['Authorization'] = `Bearer ${config.strapiApiToken}`;
-    }
-
-    const response = await $fetch<StrapiResponse<StrapiPost[]>>(
-      `${config.public.strapiUrl}/api/articles?${query}`,
-      { headers },
-    );
-    return response.data.map((post: any) => ({
-      id: post.id,
-      title: post.title,
-      slug: post.slug,
-      description: post.description,
-      cover: post.cover ? { url: post.cover.url } : null,
-      category: post.category ? { name: post.category.name } : null,
-    }));
   }
 
   function useFetchCategories(locale?: Locale) {
