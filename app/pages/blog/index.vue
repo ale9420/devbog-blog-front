@@ -15,9 +15,11 @@ const currentPage = ref<number>(Number(route.query.page) || 1);
 const pageSize = 6;
 
 const { data: postsResult, pending } = useFetchPosts({
-  page: currentPage.value,
+  page: currentPage,
   pageSize,
-  locale: locale.value as Locale,
+  locale: computed(() => locale.value as Locale),
+  category: selectedCategory,
+  tag: selectedTag,
 });
 
 const posts = computed(() => postsResult.value?.data || []);
@@ -37,44 +39,31 @@ watch(currentPage, () => {
 
 const { data: categories } = useFetchCategories(locale.value as Locale);
 
+const { data: sidebarResult } = useFetchPosts({
+  pageSize: 4,
+  locale: computed(() => locale.value as Locale),
+});
+
+const sidebarPosts = computed(() => sidebarResult.value?.data || []);
+
 const popularTags = computed(() => {
-  if (!posts.value) return [];
   const tagCounts = new Map<string, number>();
-  for (const post of posts.value) {
-    const tags = post.tags?.data?.map((t: any) => t.attributes?.name) || [];
-    for (const tag of tags) {
+  for (const post of sidebarPosts.value) {
+    for (const tag of (post.tags as string[]) || []) {
       tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
     }
   }
-  return Array.from(tagCounts.entries())
+  const tags = Array.from(tagCounts.entries())
     .sort((a, b) => b[1] - a[1])
     .slice(0, 8)
     .map(([tag]) => tag);
+  return tags.length > 0
+    ? tags
+    : ["AI", "Linux", "Vue", "TypeScript", "DevOps", "Python", "Docker"];
 });
 
 const recentPosts = computed(() => {
-  if (!posts.value) return [];
-  return posts.value.slice(0, 4);
-});
-
-const filteredPosts = computed(() => {
-  if (!posts.value) return [];
-  let result = posts.value;
-
-  if (selectedCategory.value) {
-    result = result.filter(
-      (p: any) => p.category?.name === selectedCategory.value,
-    );
-  }
-
-  if (selectedTag.value) {
-    result = result.filter((p: any) => {
-      const tags = p.tags?.data?.map((t: any) => t.attributes?.name) || [];
-      return tags.includes(selectedTag.value);
-    });
-  }
-
-  return result;
+  return sidebarPosts.value.slice(0, 4);
 });
 
 function handleCategorySelect(category: string) {
@@ -153,11 +142,11 @@ useSeoMeta({
         </div>
 
         <div
-          v-else-if="filteredPosts.length > 0"
+          v-else-if="posts.length > 0"
           class="grid md:grid-cols-2 gap-6"
         >
           <BlogPostCard
-            v-for="(post, index) in filteredPosts"
+            v-for="(post, index) in posts"
             :key="post.id"
             :post="post"
             :index="index"
@@ -191,7 +180,7 @@ useSeoMeta({
         </div>
 
         <div
-          v-if="!selectedCategory && !selectedTag && filteredPosts.length > 0"
+          v-if="posts.length > 0"
           class="mt-8"
         >
           <BlogPagination

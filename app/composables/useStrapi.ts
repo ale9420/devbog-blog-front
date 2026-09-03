@@ -1,4 +1,5 @@
 import qs from 'qs';
+import { toValue, type MaybeRef } from 'vue';
 import type { StrapiResponse, StrapiPost, StrapiAbout } from "~/interfaces";
 import { Locale, defaultLocale } from "~/interfaces";
 
@@ -6,16 +7,23 @@ export function useStrapi() {
   const config = useRuntimeConfig();
 
   function useFetchPosts(params?: {
-    page?: number;
+    page?: MaybeRef<number | undefined>;
     pageSize?: number;
-    locale?: Locale;
+    locale?: MaybeRef<Locale | undefined>;
+    category?: MaybeRef<string | undefined>;
+    tag?: MaybeRef<string | undefined>;
   }) {
-    const query = qs.stringify({
-      page: params?.page,
-      pageSize: params?.pageSize,
-      locale: params?.locale,
-    }, { skipNulls: true });
+    const buildQuery = () => {
+      return qs.stringify({
+        page: toValue(params?.page),
+        pageSize: params?.pageSize,
+        locale: toValue(params?.locale),
+        category: toValue(params?.category) || undefined,
+        tag: toValue(params?.tag) || undefined,
+      }, { skipNulls: true });
+    };
 
+    const query = buildQuery();
     const key = `posts-${query || 'default'}`;
     return useAsyncData(key, async () => {
       const response = await $fetch<{
@@ -28,7 +36,7 @@ export function useStrapi() {
             pageCount: number;
           };
         };
-      }>(`/api/posts?${query}`);
+      }>(`/api/posts?${buildQuery()}`);
 
       return {
         data: response.data.map((post: any) => ({
@@ -47,6 +55,12 @@ export function useStrapi() {
         pagination: response.meta.pagination,
       };
     }, {
+      watch: [
+        () => toValue(params?.page),
+        () => toValue(params?.locale),
+        () => toValue(params?.category),
+        () => toValue(params?.tag),
+      ],
       transform: (result) => result,
       default: () => ({ data: [], pagination: { total: 0, page: 1, pageSize: 6, pageCount: 1 } }),
     });
