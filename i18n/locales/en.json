@@ -77,23 +77,6 @@
     "invalidEmail": "Please enter a valid email address."
   },
   "about": {
-    "title": "About Me",
-    "developer": "Developer, tech enthusiast, and Bogotá native",
-    "welcome": "Welcome to BogDev! I'm a software developer passionate about AI, Linux, and building great software. This blog is where I share my thoughts, tutorials, and experiments on topics that interest me.",
-    "bogotaBased": "Based in Bogotá, Colombia, I've been working in software development for several years, focusing on web technologies, cloud infrastructure, and now exploring the exciting world of AI.",
-    "background": "Background",
-    "whatIWriteAbout": "What I Write About",
-    "artificialIntelligence": "Artificial Intelligence",
-    "aiDescription": "Exploring ML, LLMs, and AI applications",
-    "softwareDevelopment": "Software Development",
-    "softwareDescription": "Tips, tricks, and best practices",
-    "linuxOpenSource": "Linux & Open Source",
-    "linuxDescription": "My journey with Linux and FOSS",
-    "devopsCloud": "DevOps & Cloud",
-    "devopsDescription": "Infrastructure and deployment",
-    "connect": "Connect",
-    "feelFree": "Feel free to reach out to me on social media or check out my open source work:",
-    "techStack": "Tech Stack",
     "contentNotAvailable": "About page content not available."
   },
   "footer": {
