@@ -1,26 +1,15 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import type { PostListItem } from '~/interfaces'
 import { formatDate } from '~/helpers/formatDate'
 import { getInitial } from '~/helpers/string'
-
-interface HeroPost {
-  id: number
-  title: string
-  description?: string
-  slug: string
-  publishedAt?: string
-  readTime?: number
-  author?: { name?: string; avatar?: { url: string } }
-  category?: { name?: string }
-  cover?: { url: string }
-}
 
 const { t, locale } = useI18n()
 const { getMediaUrl } = useStrapi()
 const { localizePath } = useLocaleUtils()
 
 const props = defineProps({
-  post: Object as PropType<HeroPost | undefined>
+  post: Object as PropType<PostListItem | undefined>
 })
 </script>
 
