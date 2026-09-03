@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import type { Tokens } from 'marked';
+import DOMPurify from 'isomorphic-dompurify';
 
 export function slugify(text: string): string {
     return text
@@ -56,7 +57,11 @@ export function useMarkdownRenderer() {
     function renderMarkdown(text: string): string {
         if (!text) return '';
         try {
-            return marked.parse(text) as string;
+            const html = marked.parse(text) as string;
+            return DOMPurify.sanitize(html, {
+                ADD_TAGS: ['iframe'],
+                ADD_ATTR: ['target', 'rel', 'allowfullscreen', 'frameborder', 'scrolling'],
+            });
         } catch {
             return text;
         }
