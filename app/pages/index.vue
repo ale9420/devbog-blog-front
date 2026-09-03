@@ -23,7 +23,6 @@ useSeoMeta({
   ogTitle: 'BogDev - Personal Blog',
   description: 'Explore articles on AI, software development, Linux, and modern tech. Join me on my journey through technology.',
   ogDescription: 'Explore articles on AI, software development, Linux, and modern tech. Join me on my journey through technology.',
-  ogImage: '/og-image.png',
   ogUrl: () => canonicalUrl.value,
   twitterCard: 'summary_large_image',
   twitterTitle: 'BogDev - Personal Blog',

@@ -12,7 +12,7 @@ useSeoMeta({
   ogTitle: () => about.value?.seo?.metaTitle || "About - BogDev",
   description: () => about.value?.seo?.metaDescription || "",
   ogDescription: () => about.value?.seo?.metaDescription || "",
-  ogImage: "/og-image.png",
+  ogImage: () => about.value?.seo?.metaImage?.data?.attributes?.url || undefined,
   ogUrl: () => canonicalUrl.value,
   ogType: "profile",
   twitterCard: "summary",
