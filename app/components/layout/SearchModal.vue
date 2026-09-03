@@ -12,11 +12,16 @@ const emit = defineEmits<{
 }>();
 
 const searchInput = ref<HTMLInputElement>();
+const dialogRef = ref<HTMLElement>();
 const query = ref("");
 const results = ref<any[]>([]);
 const isLoading = ref(false);
 const selectedIndex = ref(-1);
 let debounceTimer: ReturnType<typeof setTimeout>;
+
+const isSearchOpen = computed(() => props.isOpen);
+
+useFocusTrap(dialogRef, isSearchOpen);
 
 watch(
   () => props.isOpen,
@@ -95,7 +100,14 @@ function handleKeydown(e: KeyboardEvent) {
           style="background-color: color-mix(in srgb, var(--foreground) 60%, transparent)"
           @click="emit('close')"
         />
-        <div class="relative w-full max-w-2xl mx-4 animate-slide-up">
+        <div
+          ref="dialogRef"
+          role="dialog"
+          aria-modal="true"
+          :aria-label="t('blog.search')"
+          class="relative w-full max-w-2xl mx-4 animate-slide-up"
+          @keydown.esc="emit('close')"
+        >
           <div
             class="bg-[var(--surface)] rounded-2xl shadow-2xl overflow-hidden"
           >
@@ -112,7 +124,6 @@ function handleKeydown(e: KeyboardEvent) {
                 type="text"
                 :placeholder="t('blog.search')"
                 class="flex-1 bg-transparent text-lg outline-none text-[var(--foreground)] placeholder:text-[var(--muted)]"
-                @keydown.escape="emit('close')"
                 @keydown="handleKeydown"
               />
               <kbd

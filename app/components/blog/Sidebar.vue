@@ -49,7 +49,7 @@ defineEmits<{
           :class="selectedCategory === category.name
             ? 'bg-[var(--primary)] text-white'
             : 'hover:bg-[var(--surface-elevated)] text-[var(--foreground)]'"
-          :aria-pressed="selectedCategory === (category.attributes?.name || category.name)"
+          :aria-pressed="selectedCategory === category.name"
         >
           <span class="flex-1 text-left">{{ category.name }}</span>
           <span class="text-xs opacity-60">{{ category.count }}</span>
