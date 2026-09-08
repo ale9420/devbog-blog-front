@@ -6,6 +6,7 @@ const route = useRoute();
 const router = useRouter();
 const { fetchPosts, fetchCategories } = useStrapi();
 const { canonicalUrl } = useCanonicalUrl('/blog');
+const { siteUrl } = useSiteUrl();
 
 const selectedCategory = ref<string>((route.query.category as string) || "");
 const selectedTag = ref<string>((route.query.tag as string) || "");
@@ -114,7 +115,10 @@ useSeoMeta({
   ogDescription:
     "Browse all articles on AI, software development, Linux, DevOps, and more. Find tutorials, tips, and insights from my tech journey.",
   ogUrl: () => canonicalUrl.value,
+  ogImage: () => `${siteUrl.value}/og-image.png`,
+  ogImageAlt: 'BogDev — Blog',
   twitterCard: "summary_large_image",
+  twitterImage: () => `${siteUrl.value}/og-image.png`,
   twitterTitle: "Blog - BogDev",
   twitterDescription:
     "Browse all articles on AI, software development, Linux, DevOps, and more.",
