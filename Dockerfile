@@ -1,4 +1,4 @@
-FROM node:22-slim AS builder
+FROM node:22.12-slim AS builder
 
 ARG GIT_COMMIT_SHA=unknown
 ARG GIT_COMMIT_DATE=unknown
