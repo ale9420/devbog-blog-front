@@ -1,9 +1,31 @@
 import { Marked } from 'marked';
 import type { Tokens } from 'marked';
-import DOMPurify from 'isomorphic-dompurify';
+import sanitizeHtml from 'sanitize-html';
 import { slugify } from '~/helpers/slugify';
 
 export { slugify };
+
+const sanitizeOptions: sanitizeHtml.IOptions = {
+    allowedTags: [
+        ...sanitizeHtml.defaults.allowedTags,
+        'iframe',
+        'img',
+        'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    ],
+    allowedAttributes: {
+        ...sanitizeHtml.defaults.allowedAttributes,
+        a: ['href', 'title', 'target', 'rel'],
+        iframe: ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'allow', 'title', 'referrerpolicy'],
+        img: ['src', 'alt', 'title', 'width', 'height', 'loading', 'decoding'],
+        code: ['class'],
+        pre: ['class'],
+        '*': ['id', 'class'],
+    },
+    allowedIframeDomains: ['youtube.com', 'www.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com', 'vimeo.com', 'player.vimeo.com'],
+    transformTags: {
+        a: sanitizeHtml.simpleTransform('a', { rel: 'noopener noreferrer' }),
+    },
+};
 
 function escapeHtml(text: string): string {
     return text
@@ -58,10 +80,7 @@ export function useMarkdownRenderer() {
         if (!text) return '';
         try {
             const html = scopedMarked.parse(text) as string;
-            return DOMPurify.sanitize(html, {
-                ADD_TAGS: ['iframe'],
-                ADD_ATTR: ['target', 'rel', 'allowfullscreen', 'frameborder', 'scrolling'],
-            });
+            return sanitizeHtml(html, sanitizeOptions);
         } catch {
             return text;
         }
