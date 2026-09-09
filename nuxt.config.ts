@@ -12,6 +12,9 @@ export default defineNuxtConfig({
     externals: {
       inline: [/nodemailer/],
     },
+    devStorage: {
+      cache: { driver: 'memory' },
+    },
   },
   // Caching strategy (node-server / Docker preset, no CDN in front):
   // - Pages: `isr` renders once and revalidates after the TTL via Nitro's

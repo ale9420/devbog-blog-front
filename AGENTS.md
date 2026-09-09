@@ -26,6 +26,8 @@ npm run preview      # Preview production build locally
 npm run typecheck    # Run Nuxt type checking
 npm run lint         # Run ESLint (flat config, @nuxt/eslint)
 npm run test         # Run unit tests with Vitest (test/*.test.ts)
+npm run test:integration  # Run API-route integration tests (test/integration/, needs a Nuxt build)
+npm run test:e2e          # Run Playwright e2e tests (e2e/, starts mock Strapi + dev server)
 
 # Generate static site
 npm run generate     # Generate static output
