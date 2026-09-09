@@ -35,7 +35,7 @@ useSeoMeta({
     ogTitle: post.value?.seo?.metaTitle || post.value?.title || "Blog Post",
     description: post.value?.seo?.metaDescription || post.value?.description || "",
     ogDescription: post.value?.seo?.metaDescription || post.value?.description || "",
-    ogImage: seoImageUrl.value || coverUrl.value || undefined,
+    ogImage: seoImageUrl.value || coverUrl.value || `${siteUrl.value}/og-image.png`,
     ogImageAlt: post.value?.title || "Blog post cover image",
     ogUrl: () => post.value?.seo?.canonicalURL || canonicalUrl.value,
     ogType: "article",
@@ -51,7 +51,7 @@ useSeoMeta({
     twitterCard: "summary_large_image",
     twitterTitle: post.value?.seo?.metaTitle || post.value?.title || "Blog Post",
     twitterDescription: post.value?.seo?.metaDescription || post.value?.description || "",
-    twitterImage: seoImageUrl.value || coverUrl.value || undefined,
+    twitterImage: seoImageUrl.value || coverUrl.value || `${siteUrl.value}/og-image.png`,
 });
 
 if (post.value?.seo?.metaRobots) {
