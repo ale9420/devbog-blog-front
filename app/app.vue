@@ -13,12 +13,12 @@ const hreflangLinks = computed(() => {
         : `/es${currentPath === "/" ? "" : currentPath}`;
 
     return [
-        { rel: "alternate", hreflang: "en", href: `${siteUrl}${enPath}` },
-        { rel: "alternate", hreflang: "es", href: `${siteUrl}${esPath}` },
+        { rel: "alternate", hreflang: "en", href: `${siteUrl.value}${enPath}` },
+        { rel: "alternate", hreflang: "es", href: `${siteUrl.value}${esPath}` },
         {
             rel: "alternate",
             hreflang: "x-default",
-            href: `${siteUrl}${enPath}`,
+            href: `${siteUrl.value}${enPath}`,
         },
     ];
 });

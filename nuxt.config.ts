@@ -24,11 +24,11 @@ export default defineNuxtConfig({
   //   take effect if a shared cache/CDN is introduced later. Do not add
   //   Vercel-only headers (CDN-Cache-Control / Vercel-CDN-Cache-Control).
   routeRules: {
-    "/": { prerender: true },
+    "/": { isr: 300 },
     "/about": { isr: 3600 },
     "/blog": { isr: 300 },
     "/blog/**": { isr: 300 },
-    "/es": { prerender: true },
+    "/es": { isr: 300 },
     "/es/about": { isr: 3600 },
     "/es/blog": { isr: 300 },
     "/es/blog/**": { isr: 300 },
