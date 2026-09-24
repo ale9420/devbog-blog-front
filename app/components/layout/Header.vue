@@ -6,7 +6,7 @@ const route = useRoute();
 const router = useRouter();
 const { y: scrollY } = useWindowScroll();
 const { localizePath, switchLocale } = useLocaleUtils();
-const { isDark, toggle } = useTheme();
+const { toggle } = useTheme();
 
 const isScrolled = computed(() => scrollY.value > 20);
 
@@ -64,13 +64,9 @@ const emit = defineEmits<{
                         :to="localizePath('/')"
                         class="flex items-center gap-3 group"
                     >
-                        <NuxtImg
-                            src="/bogdev.svg"
-                            class="w-10 h-10"
-                            alt="BogDev"
-                        />
+                        <BdLogo :size="32" />
                         <span
-                            class="text-xl font-display font-bold hidden sm:block"
+                            class="bd-stretch text-xl font-display font-bold hidden sm:block"
                         >
                             <span class="text-[var(--foreground)]">Bog</span
                             ><span class="text-[var(--primary)]">Dev</span>
@@ -120,17 +116,15 @@ const emit = defineEmits<{
                         type="button"
                         class="p-2.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all touch-manipulation"
                         :aria-label="t('common.ariaToggleTheme')"
-                        @click="toggle"
+                        @click="toggle($event.currentTarget)"
                     >
                         <UIcon
-                            v-show="isDark"
                             name="i-heroicons-sun"
-                            class="w-5 h-5 text-[var(--secondary)]"
+                            class="bd-solo-noche w-5 h-5 text-[var(--secondary)]"
                         />
                         <UIcon
-                            v-show="!isDark"
                             name="i-heroicons-moon"
-                            class="w-5 h-5 text-[var(--primary)]"
+                            class="bd-solo-dia w-5 h-5 text-[var(--primary)]"
                         />
                     </button>
 

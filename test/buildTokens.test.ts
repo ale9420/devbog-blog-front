@@ -21,7 +21,10 @@ const fixture = {
   layout: { tokens: [{ name: 'measure', value: '68ch' }] },
   type: {
     families: { mono: '"JetBrains Mono", monospace' },
-    groups: [{ family: 'mono', styles: [{ name: 'meta', fontSize: '13px', lineHeight: '20px', fontWeight: 400 }] }],
+    groups: [{ family: 'mono', styles: [
+      { name: 'meta', fontSize: '13px', lineHeight: '20px', fontWeight: 400 },
+      { name: 'eyebrow', fontSize: '12px', lineHeight: '16px', fontWeight: 500, letterSpacing: '0.16em' },
+    ] }],
   },
 }
 
@@ -70,6 +73,12 @@ describe('build-tokens', () => {
     expect(css).toContain('--measure: 68ch;')
     expect(css).toContain('--font-mono: "JetBrains Mono", monospace;')
     expect(css).toContain('--text-meta: 400 13px/20px var(--font-mono);')
+  })
+
+  it('writes a class per type style with its letter spacing', () => {
+    expect(block(css, '.bd-meta {')).toContain('font: var(--text-meta);')
+    expect(block(css, '.bd-meta {')).not.toContain('letter-spacing')
+    expect(block(css, '.bd-eyebrow {')).toContain('letter-spacing: 0.16em;')
   })
 
   it('exposes colors and shadows to Tailwind', () => {

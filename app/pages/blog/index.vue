@@ -180,13 +180,14 @@ useSeoMeta({
                 : t("blog.noArticlesYet")
             }}
           </p>
-          <button
+          <BdButton
             v-if="selectedCategory || selectedTag"
-            class="btn-secondary mt-4"
+            variant="secondary"
+            class="mt-4"
             @click="clearFilters"
           >
             {{ t("blog.clearFilters") }}
-          </button>
+          </BdButton>
         </div>
 
         <div

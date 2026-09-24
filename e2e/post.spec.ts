@@ -15,3 +15,16 @@ test('server-renders SEO meta with the article cover as share image', async ({ r
   expect(html).toMatch(/<meta name="twitter:image" content="[^"]*\/uploads\/cover-vue\.png">/)
   expect(html).not.toContain('/og-image.png')
 })
+
+test('renders markdown code as a design system code block that copies without prompts', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.goto('/blog/understanding-vue-composables', { waitUntil: 'networkidle' })
+  const block = page.locator('figure.bd-code')
+  await expect(block.locator('.bd-code-lang')).toHaveText('bash')
+  await expect(block.locator('.bd-prompt')).toHaveCount(2)
+  const copy = block.getByRole('button', { name: 'Copy code' })
+  await expect(copy).toHaveText('Copy')
+  await copy.click()
+  await expect(block.getByRole('button', { name: 'Copied ✓' })).toBeVisible()
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('npm create nuxt@latest\nnpm run dev')
+})

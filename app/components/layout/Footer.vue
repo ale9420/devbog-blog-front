@@ -23,12 +23,8 @@ const currentYear = new Date().getFullYear();
                         :to="localizePath('/')"
                         class="flex items-center gap-3 mb-4"
                     >
-                        <NuxtImg
-                            src="/bogdev.svg"
-                            class="w-30 h-30"
-                            alt="BogDev"
-                        />
-                        <span class="text-2xl font-display font-bold">
+                        <BdLogo :size="92" />
+                        <span class="bd-stretch text-2xl font-display font-bold">
                             <span class="text-[var(--primary)]">Bog</span
                             ><span class="text-[var(--foreground)]">Dev</span>
                         </span>
