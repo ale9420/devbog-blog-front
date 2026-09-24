@@ -107,9 +107,9 @@ export function useStrapi() {
     });
   }
 
-  async function searchPosts(queryStr: string): Promise<SearchPostResult[]> {
+  async function searchPosts(queryStr: string, locale?: Locale): Promise<SearchPostResult[]> {
     return $fetch<SearchPostResult[]>('/api/search', {
-      query: { q: queryStr },
+      query: { q: queryStr, locale },
     });
   }
 

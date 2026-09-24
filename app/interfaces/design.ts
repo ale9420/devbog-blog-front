@@ -72,3 +72,22 @@ export interface PostCardProps {
 }
 
 export type HeaderSection = 'home' | 'blog' | 'about'
+
+export type PaletteKind = 'article' | 'topic' | 'action'
+
+export type PaletteAction = 'theme' | 'fediverse'
+
+export interface PaletteOption {
+  id: string
+  kind: PaletteKind
+  label: string
+  hint?: string
+  color?: string
+  to?: string
+  action?: PaletteAction
+}
+
+export interface PaletteGroup {
+  kind: PaletteKind
+  options: PaletteOption[]
+}

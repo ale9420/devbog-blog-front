@@ -68,6 +68,7 @@ describe('/api/search', () => {
         title: 'Understanding Vue Composables',
         slug: 'understanding-vue-composables',
         description: 'A deep dive into writing reusable Vue composables.',
+        publishedAt: '2026-02-01T10:00:00.000Z',
         cover: { url: '/uploads/cover-vue.png' },
         category: { name: 'Desarrollo de software', slug: Category.Software },
       },
@@ -76,10 +77,18 @@ describe('/api/search', () => {
         title: 'Guía de Vue Composables',
         slug: 'guia-vue-composables',
         description: 'Una guía profunda sobre composables de Vue.',
+        publishedAt: '2026-02-02T10:00:00.000Z',
         cover: { url: '/uploads/cover-vue-es.png' },
         category: { name: 'Desarrollo de software', slug: Category.Software },
       },
     ])
+  })
+
+  it('searches only the requested locale', async () => {
+    const result = await $fetch<Array<{ slug: string }>>('/api/search', { query: { q: 'composables', locale: 'es' } })
+    expect(result.map((post) => post.slug)).toEqual(['guia-vue-composables'])
+    const strapiRequests = mock.requests.filter((request) => request.method === 'GET' && request.path === '/api/articles')
+    expect(strapiRequests[strapiRequests.length - 1].query.locale).toBe('es')
   })
 
   it('forwards the title filter to Strapi', async () => {

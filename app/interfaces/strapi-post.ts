@@ -63,6 +63,7 @@ export interface SearchPostResult {
   title: string
   slug: string
   description?: string | null
+  publishedAt: string | null
   cover: { url: string } | null
   category: { name: string; slug: string | null } | null
 }

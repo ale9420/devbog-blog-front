@@ -42,7 +42,7 @@ onMounted(() => {
             @close="isMobileMenuOpen = false"
         />
 
-        <LayoutSearchModal :is-open="isSearchOpen" @close="isSearchOpen = false" />
+        <BdSearchPalette :open="isSearchOpen" @close="isSearchOpen = false" />
 
         <main id="main-content" class="flex-1" role="main">
             <slot />
