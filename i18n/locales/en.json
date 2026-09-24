@@ -160,7 +160,18 @@
     "removed": "Comment removed."
   },
   "about": {
-    "contentNotAvailable": "About page content not available."
+    "contentNotAvailable": "About page content not available.",
+    "mascotAlt": "Illustration of a rufous-collared sparrow, the blog's mascot bird",
+    "alsoWrite": "I also write about",
+    "palette": "Pinchaflor · Golondrina · Chillón · Mirla · Monjita",
+    "diagram": {
+      "label": "Plugin flow: Strapi publishes articles to the fediverse and receives replies, likes and boosts",
+      "source": "STRAPI 5",
+      "engine": "+ FEDIFY",
+      "mastodon": "MASTODON",
+      "instance": "YOUR INSTANCE",
+      "others": "OTHER AP NETWORKS"
+    }
   },
   "common": {
     "loading": "Loading...",

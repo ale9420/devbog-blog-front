@@ -59,6 +59,7 @@ export default defineNuxtConfig({
   },
   experimental: {
     viewTransition: true,
+    payloadExtraction: "client",
   },
   app: {
     head: {

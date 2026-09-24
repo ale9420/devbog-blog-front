@@ -10,14 +10,17 @@ export default defineEventHandler(async (event) => {
     populate: {
       blocks: {
         on: {
-          'shared.hero': { populate: '*' },
+          'about.profile': { populate: '*' },
+          'about.statement': { populate: '*' },
+          'about.topics': { populate: '*' },
+          'about.projects': { populate: { projects: { populate: '*' } } },
+          'about.principles': { populate: '*' },
+          'about.open-source': { populate: '*' },
+          'about.contact': { populate: '*' },
           'shared.rich-text': { populate: '*' },
           'shared.quote': { populate: '*' },
           'shared.media': { populate: '*' },
           'shared.slider': { populate: '*' },
-          'shared.topic-card': { populate: '*' },
-          'shared.social-links': { populate: '*' },
-          'shared.tech-stack': { populate: '*' },
         },
       },
       seo: { populate: '*' },
