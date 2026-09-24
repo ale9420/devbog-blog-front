@@ -35,9 +35,7 @@ export function useStrapi() {
       }, { skipNulls: true });
     };
 
-    const query = buildQuery();
-    const key = `posts-${query || 'default'}`;
-    return useAsyncData(key, async () => {
+    return useAsyncData(() => `posts-${buildQuery() || 'default'}`, async () => {
       const response = await $fetch<StrapiPaginatedResponse<RawStrapiArticle[]>>(
         `/api/posts?${buildQuery()}`,
       );
@@ -61,12 +59,6 @@ export function useStrapi() {
         pagination: response.meta.pagination,
       };
     }, {
-      watch: [
-        () => toValue(params?.page),
-        () => toValue(params?.locale),
-        () => toValue(params?.category),
-        () => toValue(params?.tag),
-      ],
       transform: (result) => result,
       default: (): { data: PostListItem[]; pagination: PaginationMeta } => ({
         data: [],

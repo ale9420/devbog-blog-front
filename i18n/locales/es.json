@@ -6,15 +6,77 @@
   },
   "home": {
     "hero": {
-      "title": "Bienvenido a BogDev",
-      "subtitle": "Explorando IA, Desarrollo de Software y Linux",
-      "featuredPost": "Artículo Destacado"
+      "eyebrow": "Bitácora técnica · {count} artículo | Bitácora técnica · {count} artículos",
+      "title": "Explorando privacidad, DIY, IA, software y Linux.",
+      "subtitle": "Notas técnicas escritas desde Bogotá, a 2.640 metros sobre el nivel del mar.",
+      "read": "Leer artículos",
+      "figure": "Fig. 01 — Sabana de Bogotá · Rutas de vuelo",
+      "figureShort": "Fig. 01 — Rutas de vuelo",
+      "species": {
+        "software": "Mirla · T. fuscater",
+        "ia": "Chillón · C. coruscans",
+        "linux": "Monjita · C. i. bogotensis",
+        "privacidad": "Pinchaflor · D. cyanea",
+        "diy": "Golondrina · P. cyanoleuca"
+      }
     },
-    "latestPosts": "Últimos Artículos",
-    "freshArticles": "Artículos frescos del blog",
-    "viewAll": "Ver Todos",
-    "noPostsYet": "Aún no hay artículos",
-    "checkBackSoon": "¡Vuelve pronto para nuevo contenido!"
+    "latest": {
+      "eyebrow": "Índice · {count} artículo | Índice · {count} artículos",
+      "title": "Últimos artículos",
+      "filters": "Filtrar por tema",
+      "all": "Todos",
+      "archive": "Archivo",
+      "archiveTitle": "Todos los artículos",
+      "archiveMeta": "/blog · FILTRAR · BUSCAR · RSS",
+      "empty": {
+        "all": "Aún no hay artículos",
+        "privacidad": "Aún no hay artículos en privacidad",
+        "diy": "Aún no hay artículos en DIY",
+        "ia": "Aún no hay artículos en IA",
+        "software": "Aún no hay artículos en desarrollo de software",
+        "linux": "Aún no hay artículos en Linux"
+      },
+      "emptyNote": "El nido está listo · Vuelve pronto",
+      "showAll": "Ver todos"
+    },
+    "guide": {
+      "eyebrow": "Guía de campo",
+      "title": "Cinco temas, cinco aves de la sabana",
+      "description": "Cada categoría del blog toma su color del plumaje de un ave de Bogotá. Privacidad y DIY son los pilares.",
+      "pillar": "Pilar {number}",
+      "figure": "Fig. {number}",
+      "count": "Sin artículos aún | {count} artículo | {count} artículos",
+      "topics": {
+        "privacidad": {
+          "title": "Privacidad",
+          "description": "Soberanía digital, autoalojamiento y herramientas para cuidar tus datos.",
+          "bird": "Pinchaflor enmascarado",
+          "note": "Antifaz negro, plumaje azul: ve sin dejarse ver."
+        },
+        "diy": {
+          "title": "Hazlo tú mismo",
+          "description": "Laboratorios locales, hardware y proyectos construidos en casa.",
+          "bird": "Golondrina azul y blanca",
+          "note": "Arma su nido con lo que encuentra en aleros y muros de la ciudad."
+        },
+        "ia": {
+          "title": "Inteligencia artificial",
+          "bird": "Colibrí chillón"
+        },
+        "software": {
+          "title": "Desarrollo de software",
+          "bird": "Mirla patinaranja"
+        },
+        "linux": {
+          "title": "Linux y código abierto",
+          "bird": "Monjita bogotana"
+        }
+      }
+    },
+    "rss": {
+      "title": "¿Prefieres RSS?",
+      "description": "El feed completo, sin intermediarios ni algoritmos."
+    }
   },
   "blog": {
     "readMore": "Leer más",
