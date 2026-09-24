@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>BogDev — Inicio</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/bogdev/tokens.css">
+<link rel="stylesheet" href="ds/bogdev/components/bundle.css">
+<script src="ds/bogdev/components/bundle.js"></script>
+<link rel="stylesheet" href="/_blob/5fb739953cd44fa7857304c01a34bd49">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#0a0c10}
+.bd-noche{--surface:#0a0c10;--surface-raised:#12151b;--surface-sunken:#06070a;--ink:#f2f1ec;--ink-muted:#9ba1ac;--on-ink:#0a0c10;--on-mirla:#0a0c10;--line:#262a33;--line-strong:#6c7380;--mirla:#ff7a1a;--mirla-soft:#2a1507;--chillon:#2ee6b6;--chillon-soft:#082a22;--monjita:#ffd21f;--monjita-soft:#2a2306;--pinchaflor:#a08cff;--golondrina:#5cb8ff;--tingua:#ff5a4e;--tingua-soft:#2e0d0a;--link:#2ee6b6;--focus:#2ee6b6;--glow-chillon:0 0 0 1px #2ee6b6,0 0 24px rgba(46,230,182,.28);--glow-mirla:0 0 0 1px #ff7a1a,0 0 24px rgba(255,122,26,.3);--scan:rgba(155,161,172,.06);--logo-agua:#ffffff;--logo-ladrillo:#ffffff;color-scheme:dark}
+.bd-dia{--surface:#f3e9df;--surface-raised:#fbf6f0;--surface-sunken:#e8d8c8;--ink:#2b1a13;--ink-muted:#6a4f42;--on-ink:#f3e9df;--on-mirla:#ffffff;--line:#dccab9;--line-strong:#8f6f5d;--mirla:#a3410f;--mirla-soft:#f7dcc9;--chillon:#0a6656;--chillon-soft:#d5ebe2;--monjita:#6f5200;--monjita-soft:#f4e5b8;--pinchaflor:#4f36c2;--golondrina:#0b5a9c;--tingua:#a21d2c;--tingua-soft:#f8dad6;--link:#0a6656;--focus:#0a6656;--glow-chillon:0 0 0 1px #0a6656;--glow-mirla:0 0 0 1px #a3410f;--scan:rgba(43,26,19,.05);--logo-agua:#0D6B6F;--logo-ladrillo:#D4743F;color-scheme:light}
+.bd-root{background:var(--surface);color:var(--ink);font-family:"Archivo","Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:26px;-webkit-font-smoothing:antialiased;transition:background-color 240ms cubic-bezier(.2,0,0,1)}
+.bd-root *{box-sizing:border-box}
+a{color:#2ee6b6}a:hover{color:#f2f1ec}
+.bd-root a{color:var(--link)}.bd-root a:hover{color:var(--ink)}
+.bd-root :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.bd-mono{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+.bd-eyebrow{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:12px;line-height:16px;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.bd-meta{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:13px;line-height:20px;font-weight:400}
+.bd-wide{font-stretch:125%}
+.bd-stretch{transition:font-stretch 600ms cubic-bezier(.2,0,0,1)}
+.bd-stretch:hover{font-stretch:125%}
+.bd-shrink{transition:font-stretch 900ms cubic-bezier(.2,0,0,1),letter-spacing 900ms cubic-bezier(.2,0,0,1)}
+.bd-shrink:hover{font-stretch:75%;letter-spacing:.02em}
+.bd-balance{text-wrap:balance}.bd-pretty{text-wrap:pretty}
+.bd-scan{background-color:var(--surface-sunken);background-image:repeating-linear-gradient(0deg,transparent 0 3px,var(--scan) 3px 4px)}
+.bd-root a.bd-link{color:var(--ink-muted);text-decoration:none;transition:color 240ms cubic-bezier(.2,0,0,1)}
+.bd-root a.bd-link:hover{color:var(--ink)}
+.bd-chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;background:transparent;color:var(--ink-muted);border:1px solid var(--line);border-radius:0;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;line-height:16px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:border-color 240ms cubic-bezier(.2,0,0,1),color 240ms cubic-bezier(.2,0,0,1),background-color 240ms cubic-bezier(.2,0,0,1)}
+.bd-chip:hover{border-color:var(--line-strong);color:var(--ink)}
+.bd-chip[aria-pressed="true"]{border-color:var(--ink);background:var(--surface-raised);color:var(--ink)}
+.bd-kbd{display:inline-flex;align-items:center;height:22px;padding:0 6px;border:1px solid var(--line-strong);font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.04em;color:var(--ink-muted)}
+.bd-root a.bd-card{display:flex;flex-direction:column;text-decoration:none;color:var(--ink);background:var(--surface-raised);border:1px solid var(--line);transition:box-shadow 240ms cubic-bezier(.2,0,0,1),border-color 240ms cubic-bezier(.2,0,0,1)}
+.bd-root a.bd-card:hover{box-shadow:var(--glow-chillon);border-color:transparent;color:var(--ink)}
+.bd-card .bd-arrow{display:inline-block;transition:transform 240ms cubic-bezier(.2,0,0,1),color 240ms cubic-bezier(.2,0,0,1)}
+.bd-card:hover .bd-arrow{transform:translateX(4px);color:var(--chillon)}
+.bd-root a.bd-result{display:flex;align-items:center;gap:16px;min-height:52px;padding:0 20px;text-decoration:none;color:var(--ink);border-left:2px solid transparent}
+.bd-root a.bd-result:hover,.bd-root a.bd-result:focus-visible{background:var(--surface-sunken);border-left-color:var(--chillon);color:var(--ink);outline-offset:-2px}
+.bd-toc a{display:block;padding:8px 0 8px 16px;border-left:1px solid var(--line);text-decoration:none;font-size:14px;line-height:22px}
+.bd-root .bd-toc a{color:var(--ink-muted)}
+.bd-root .bd-toc a:hover{color:var(--ink)}
+.bd-root .bd-toc a[aria-current="true"]{color:var(--ink);border-left:2px solid var(--chillon);padding-left:15px}
+.bd-prose p{margin:0 0 24px;font-size:19px;line-height:32px;text-wrap:pretty}
+.bd-prose h2{margin:64px 0 16px;font-size:32px;line-height:40px;font-weight:500;text-wrap:balance}
+.bd-prose h3{margin:48px 0 12px;font-size:24px;line-height:32px;font-weight:500}
+.bd-prose ul{margin:0 0 32px;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px}
+.bd-prose li{display:flex;gap:16px;font-size:19px;line-height:32px}
+.bd-prose li::before{content:"◆";font-size:10px;color:var(--chillon);flex:none}
+/* bandada: CSS Motion Path + animación del atributo d */
+.bd-bird{position:absolute;left:0;top:0;color:var(--ink);offset-rotate:auto;animation:bd-fly linear infinite;will-change:offset-distance}
+.bd-bird svg{display:block;overflow:visible}
+.bd-bird path,.bd-progress-bird path{animation:bd-flap .9s ease-in-out infinite}
+.bd-r1{offset-path:path("M -40 560 C 140 420, 300 520, 440 360 S 640 180, 820 120")}
+.bd-r2{offset-path:path("M -40 260 C 120 200, 260 320, 400 250 S 620 90, 820 170")}
+.bd-r3{offset-path:path("M 120 780 C 220 600, 380 640, 500 500 S 700 400, 820 420")}
+.bd-m1{offset-path:path("M -30 220 C 60 160, 140 200, 200 140 S 300 60, 400 70")}
+.bd-m2{offset-path:path("M -30 90 C 60 70, 130 130, 200 100 S 320 30, 400 60")}
+.bd-m3{offset-path:path("M 40 320 C 100 250, 180 260, 240 200 S 340 170, 400 180")}
+.bd-t0{animation-duration:26s;animation-delay:-2s}.bd-t1{animation-duration:31s;animation-delay:-11s}.bd-t2{animation-duration:23s;animation-delay:-17s}
+.bd-t3{animation-duration:28s;animation-delay:-6s}.bd-t4{animation-duration:34s;animation-delay:-21s}.bd-t5{animation-duration:25s;animation-delay:-14s}
+.bd-w0 path{animation-delay:-.1s}.bd-w1 path{animation-delay:-.4s;animation-duration:.8s}.bd-w2 path{animation-delay:-.7s;animation-duration:1.05s}
+@keyframes bd-fly{0%{offset-distance:0%;opacity:0}8%{opacity:1}92%{opacity:1}100%{offset-distance:100%;opacity:0}}
+@keyframes bd-flap{0%,100%{d:path("M1 9 Q6 1 11 8 Q16 1 21 9")}50%{d:path("M1 6 Q6 13 11 8 Q16 13 21 6")}}
+.bd-paused .bd-bird,.bd-paused .bd-bird path,.bd-paused .bd-route,.bd-paused .bd-perch{animation-play-state:paused}
+.bd-route{stroke-dasharray:2 7;animation:bd-dash 40s linear infinite}
+@keyframes bd-dash{to{stroke-dashoffset:-540}}
+.bd-perch{animation:bd-hop 7s cubic-bezier(.2,0,0,1) infinite}
+.bd-perch.bd-late{animation-delay:-3.4s;animation-duration:9s}
+@keyframes bd-hop{0%,84%,100%{transform:translateY(0)}88%{transform:translateY(-7px)}92%{transform:translateY(0)}}
+/* scroll-driven animations (progresivo) */
+@supports (animation-timeline: view()){
+.bd-reveal{animation:bd-in linear both;animation-timeline:view();animation-range:entry 0% cover 22%}
+.bd-snapfx{animation:bd-focus linear both;animation-timeline:view(inline)}
+.bd-progress{animation:bd-grow linear both;animation-timeline:scroll(root)}
+.bd-progress-bird{animation:bd-move linear both;animation-timeline:scroll(root)}
+}
+@keyframes bd-in{from{opacity:0;filter:blur(6px)}to{opacity:1;filter:none}}
+@keyframes bd-focus{0%,100%{opacity:.45}35%,65%{opacity:1}}
+@keyframes bd-grow{from{width:0%}to{width:100%}}
+@keyframes bd-move{from{left:0%}to{left:100%}}
+/* View Transitions: cambio de tema con barrido circular desde el botón */
+::view-transition-old(root){animation:none}
+::view-transition-new(root){animation:bd-wipe 720ms cubic-bezier(.2,0,0,1)}
+@keyframes bd-wipe{from{clip-path:circle(0 at var(--vt-x,92%) var(--vt-y,110px))}to{clip-path:circle(170vmax at var(--vt-x,92%) var(--vt-y,110px))}}
+/* copetón del footer: grabado invertido en Noche, color original en Día */
+.bd-copeton{filter:invert(1) hue-rotate(180deg) saturate(.85);mix-blend-mode:screen;opacity:.42;transition:opacity 600ms cubic-bezier(.2,0,0,1)}
+.bd-dia .bd-copeton{filter:none;mix-blend-mode:multiply;opacity:.9}
+footer:hover .bd-copeton{opacity:.62}
+.bd-dia footer:hover .bd-copeton{opacity:1}
+.bd-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.bd-seg{min-height:44px;min-width:72px;padding:0 14px;background:transparent;border:0;color:var(--ink-muted);font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:color 240ms cubic-bezier(.2,0,0,1),background-color 240ms cubic-bezier(.2,0,0,1)}
+.bd-seg:hover{color:var(--ink)}
+.bd-seg[aria-pressed="true"]{background:var(--ink);color:var(--on-ink)}
+
+.bd-noche{--lay1:color-mix(in oklab,#f2f1ec 13%,#0a0c10);--lay2:color-mix(in oklab,#f2f1ec 8%,#0a0c10);--lay3:color-mix(in oklab,#f2f1ec 4%,#0a0c10);--lay4:#06070a}
+.bd-dia{--lay1:color-mix(in oklab,#2b1a13 6%,#f3e9df);--lay2:color-mix(in oklab,#2b1a13 11%,#f3e9df);--lay3:color-mix(in oklab,#2b1a13 17%,#f3e9df);--lay4:color-mix(in oklab,#2b1a13 25%,#f3e9df)}
+.bd-noche{--bld-edge:rgba(242,241,236,.10);--brick:color-mix(in oklab,#ff7a1a 14%,#06070a)}
+.bd-dia{--bld-edge:rgba(43,26,19,.3);--brick:color-mix(in oklab,#a3410f 38%,#f3e9df)}
+.bd-dia .bd-lights,.bd-dia .bd-colpatria,.bd-dia .bd-beacon,.bd-dia .bd-crown{display:none}
+.bd-noche .bd-floors,.bd-noche .bd-bld-line{opacity:.5}
+.bd-colpatria{fill:var(--chillon);opacity:.5;animation:bd-led 12s linear infinite}
+@keyframes bd-led{0%,100%{fill:var(--chillon)}25%{fill:var(--golondrina)}50%{fill:var(--pinchaflor)}75%{fill:var(--mirla)}}
+.bd-beacon{animation:bd-blink 2.4s steps(1) infinite}
+@keyframes bd-blink{0%,60%{opacity:1}61%,100%{opacity:.15}}
+.bd-copeton-soft{opacity:.3}.bd-dia .bd-copeton-soft{opacity:.45}
+footer:hover .bd-copeton-soft{opacity:.42}.bd-dia footer:hover .bd-copeton-soft{opacity:.6}
+@supports (animation-timeline: view()){
+.bd-lay{animation:bd-par linear both;animation-timeline:--land;animation-range:entry 0% entry 100%}
+.bd-land{view-timeline:--land block}
+.bd-lay1{--par:90px}.bd-lay2{--par:60px}.bd-lay3{--par:34px}.bd-lay-wire{--par:24px}.bd-lay4{--par:12px}.bd-lay-bird{--par:40px}
+}
+@keyframes bd-par{from{translate:0 var(--par,0px)}to{translate:0 0}}
+
+
+/* Fediverso */
+.bd-field{height:48px;padding:0 16px;background:var(--surface);color:var(--ink);border:1px solid var(--line-strong);border-radius:0;font-family:inherit;font-size:16px;min-width:0}
+.bd-field::placeholder{color:var(--ink-muted)}
+.bd-field:focus{outline:none;box-shadow:var(--glow-chillon)}
+textarea.bd-field{height:auto;min-height:120px;padding:12px 16px;line-height:26px;resize:vertical}
+.bd-fedi-badge{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;background:var(--chillon-soft);color:var(--chillon);font-family:"JetBrains Mono",monospace;font-size:11px;line-height:18px;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.bd-author-badge{display:inline-flex;align-items:center;padding:2px 8px;background:var(--mirla-soft);color:var(--mirla);font-family:"JetBrains Mono",monospace;font-size:11px;line-height:18px;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.bd-hud{position:absolute;width:16px;height:16px;pointer-events:none}
+.bd-hud-tl{top:-1px;left:-1px;border-top:2px solid var(--chillon);border-left:2px solid var(--chillon)}
+.bd-hud-br{bottom:-1px;right:-1px;border-bottom:2px solid var(--chillon);border-right:2px solid var(--chillon)}
+.bd-root a.bd-btnlink{display:inline-flex;align-items:center;gap:12px;height:48px;padding:0 24px;background:var(--ink);color:var(--on-ink);text-decoration:none;font-weight:500;font-size:15px;white-space:nowrap;transition:background-color 240ms cubic-bezier(.2,0,0,1)}
+.bd-root a.bd-btnlink:hover{background:var(--ink-muted);color:var(--on-ink)}
+.bd-root a.bd-btnlink[aria-disabled="true"]{background:var(--surface-sunken);color:var(--ink-muted);cursor:not-allowed}
+.bd-root a.bd-btnlink .bd-arrow{transition:transform 240ms cubic-bezier(.2,0,0,1)}
+.bd-root a.bd-btnlink:hover .bd-arrow{transform:translateX(4px)}
+.bd-comment-thread{margin-left:56px;padding-left:24px;border-left:1px solid var(--line)}
+.bd-textbtn{background:transparent;border:0;padding:0;min-height:44px;color:var(--ink-muted);font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.bd-textbtn:hover{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.bd-root *,.bd-root{animation:none!important;transition:none!important}::view-transition-new(root){animation:none}}
+</style>
+</helmet>
+<div class="bd-root {{themeClass}} {{flockClass}}" style="width: 1440px; height: 5720px; position: relative; overflow: hidden; display: flex; flex-direction: column">
+<div style="position: relative; z-index: 10; width: 100%">
+<dc-import name="Header" tema="{{footerTema}}" activa="inicio" lang="{{lang}}" on-lang="{{setLang}}" on-search="{{openSearch}}" on-noche="{{toNoche}}" on-dia="{{toDia}}" hint-size="100%,136px"></dc-import>
+</div>
+<section style="position: relative; min-height: 720px; padding: 112px 120px 96px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 32px; align-content: center">
+<div aria-hidden="true" style="position: absolute; right: 0; top: 0; width: 760px; height: 720px; overflow: hidden; z-index: 1">
+<svg width="760" height="720" viewBox="0 0 760 720" style="display: block; position: absolute; inset: 0">
+<sc-for list="{{contours}}" as="c" hint-placeholder-count="14">
+<path d="{{c.d}}" fill="none" stroke="{{c.stroke}}" stroke-opacity="{{c.op}}" stroke-width="1"></path>
+</sc-for>
+<path class="bd-route" d="M -40 560 C 140 420, 300 520, 440 360 S 640 180, 820 120" fill="none" stroke="var(--chillon)" stroke-opacity=".55" stroke-width="1.2"></path>
+<path class="bd-route" d="M -40 260 C 120 200, 260 320, 400 250 S 620 90, 820 170" fill="none" stroke="var(--chillon)" stroke-opacity=".35" stroke-width="1.2"></path>
+<path class="bd-route" d="M 120 780 C 220 600, 380 640, 500 500 S 700 400, 820 420" fill="none" stroke="var(--chillon)" stroke-opacity=".35" stroke-width="1.2"></path>
+<g stroke="var(--ink-muted)" stroke-width="1">
+<path d="M432 360 L448 360 M440 352 L440 368"></path>
+<path d="M392 250 L408 250 M400 242 L400 258"></path>
+<path d="M492 500 L508 500 M500 492 L500 508"></path>
+</g>
+<rect x="452" y="364" width="6" height="6" fill="var(--mirla)"></rect>
+<rect x="412" y="254" width="6" height="6" fill="var(--chillon)"></rect>
+<rect x="512" y="504" width="6" height="6" fill="var(--monjita)"></rect>
+<path d="M607 202 L623 202 M615 194 L615 210 M652 400 L668 400 M660 392 L660 408" stroke="var(--ink-muted)" stroke-width="1"></path>
+<rect x="596" y="206" width="6" height="6" fill="var(--pinchaflor)"></rect>
+<rect x="641" y="404" width="6" height="6" fill="var(--golondrina)"></rect>
+<g font-family="JetBrains Mono, monospace" font-size="11" letter-spacing=".08em" fill="var(--ink-muted)">
+<text x="464" y="371">MIRLA · T. FUSCATER</text>
+<text x="424" y="261">CHILLÓN · C. CORUSCANS</text>
+<text x="524" y="511">MONJITA · C. I. BOGOTENSIS</text>
+<text x="588" y="213" text-anchor="end">PINCHAFLOR · D. CYANEA</text>
+<text x="633" y="411" text-anchor="end">GOLONDRINA · P. CYANOLEUCA</text>
+</g>
+</svg>
+<div class="bd-bird bd-r1 bd-t0 bd-w0" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div class="bd-bird bd-r1 bd-t1 bd-w1" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div class="bd-bird bd-r1 bd-t2 bd-w2" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div class="bd-bird bd-r2 bd-t3 bd-w0" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div class="bd-bird bd-r2 bd-t4 bd-w1" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div class="bd-bird bd-r2 bd-t5 bd-w2" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div class="bd-bird bd-r3 bd-t0 bd-w0" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div class="bd-bird bd-r3 bd-t1 bd-w1" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div class="bd-bird bd-r3 bd-t2 bd-w2" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div class="bd-meta" style="position: absolute; right: 120px; bottom: 32px; color: var(--ink-muted); font-size: 12px">FIG. 01 — SABANA DE BOGOTÁ · RUTAS DE VUELO</div>
+</div>
+<div style="grid-column: span 7; position: relative; z-index: 2; display: flex; flex-direction: column; gap: 32px">
+<div class="bd-eyebrow" style="color: var(--ink-muted)">Bitácora técnica · 02 artículos</div>
+<h1 class="bd-wide bd-balance" style="margin: 0; font-size: 72px; line-height: 76px; font-weight: 300; letter-spacing: -0.01em">Explorando privacidad, DIY, IA, software y Linux.</h1>
+<p class="bd-pretty" style="margin: 0; max-width: 520px; font-size: 19px; line-height: 32px; color: var(--ink-muted)">Notas técnicas escritas desde Bogotá, a 2.640 metros sobre el nivel del mar.</p>
+<div style="display: flex; gap: 16px; align-items: center">
+<x-import component-from-global-scope="BogDev.Button" variant="primary" arrow="{{yes}}" href="#ultimos">Leer artículos</x-import>
+<x-import component-from-global-scope="BogDev.Button" variant="text" href="Acerca.dc.html">Acerca de</x-import>
+</div>
+</div>
+</section>
+<section class="bd-reveal" style="position: relative; z-index: 2; padding: 0 120px 96px">
+<x-import component-from-global-scope="BogDev.PostCard" featured="{{yes}}" eyebrow="ARTÍCULO DESTACADO" title="Soberanía digital y laboratorios locales: El inicio de este espacio." href="#" excerpt="Primer artículo de este blog." category="ia" date="24.09.2026" date-time="2026-09-24" author="Alejandro Ramírez" more-label="Leer artículo"></x-import>
+</section>
+<section id="ultimos" class="bd-reveal" style="padding: 96px 120px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 48px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div class="bd-eyebrow" style="color: var(--ink-muted)">Índice · {{countLabel}}</div>
+<h2 class="bd-stretch" style="margin: 0; font-size: 32px; line-height: 40px; font-weight: 500">Últimos artículos</h2>
+</div>
+<div role="group" aria-label="Filtrar por tema" style="display: flex; gap: 8px">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="4">
+<button type="button" class="bd-chip" aria-pressed="{{f.on}}" onClick="{{f.pick}}"><span style="width: 8px; height: 8px; border-radius: 2px; background: {{f.color}}"></span>{{f.label}}<span style="color: var(--ink-muted)">{{f.n}}</span></button>
+</sc-for>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; min-height: 420px">
+<sc-for list="{{posts}}" as="p" hint-placeholder-count="2">
+<x-import component-from-global-scope="BogDev.PostCard" title="{{p.title}}" href="{{p.href}}" excerpt="{{p.excerpt}}" category="{{p.category}}" date="{{p.date}}" date-time="{{p.dateTime}}" author="Alejandro Ramírez"></x-import>
+</sc-for>
+<sc-if value="{{showArchive}}" hint-placeholder-val="{{true}}">
+<a href="Blog.dc.html" class="bd-card bd-scan" style="padding: 32px; gap: 16px; justify-content: flex-end; min-height: 420px">
+<div class="bd-eyebrow" style="color: var(--ink-muted)">Archivo</div>
+<div class="bd-wide" style="font-size: 32px; line-height: 40px; font-weight: 300">Todos los artículos <span class="bd-arrow">→</span></div>
+<div class="bd-meta" style="color: var(--ink-muted)">/blog · FILTRAR · BUSCAR · RSS</div>
+</a>
+</sc-if>
+<sc-if value="{{isEmpty}}" hint-placeholder-val="{{false}}">
+<div class="bd-scan" style="grid-column: span 3; min-height: 420px; border: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 48px; text-align: center">
+<svg width="120" height="60" viewBox="0 0 120 60" aria-hidden="true" style="display: block"><path d="M0 44 Q60 58 120 44" fill="none" stroke="var(--line-strong)" stroke-width="1"></path><g transform="translate(60 51)"><g class="bd-perch"><path d="M-8 -4 Q-9 -11 -2 -12 Q1 -17 6 -15 L7 -14 Q8 -6 2 -2 L-3 -1 L-11 4 Z" fill="var(--ink-muted)"></path><path d="M6 -15 L12 -13.5 L7 -12.5 Z" fill="{{emptyColor}}"></path></g></g></svg>
+<h3 style="margin: 0; font-size: 24px; line-height: 32px; font-weight: 500">Aún no hay artículos en {{emptyLabel}}</h3>
+<p class="bd-meta" style="margin: 0; color: var(--ink-muted)">EL NIDO ESTÁ LISTO · VUELVE PRONTO</p>
+<button type="button" class="bd-chip" onClick="{{showAll}}">Ver todos <span aria-hidden="true">→</span></button>
+</div>
+</sc-if>
+</div>
+</section>
+<section class="bd-reveal" style="padding: 96px 120px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 48px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div class="bd-eyebrow" style="color: var(--ink-muted)">Guía de campo</div>
+<h2 class="bd-stretch" style="margin: 0; font-size: 32px; line-height: 40px; font-weight: 500">Cinco temas, cinco aves de la sabana</h2>
+</div>
+<p class="bd-pretty" style="margin: 0; max-width: 400px; color: var(--ink-muted)">Cada categoría del blog toma su color del plumaje de un ave de Bogotá. Privacidad y DIY son los pilares.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 32px">
+<a href="#" class="bd-card" style="grid-column: span 3; padding: 32px; gap: 24px; min-height: 420px; flex-direction: row; align-items: stretch">
+<div style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-width: 0">
+<div style="display: flex; gap: 16px; align-items: center"><x-import component-from-global-scope="BogDev.CategoryTag" category="privacidad"></x-import><span class="bd-meta" style="color: var(--ink-muted)">PILAR 01</span></div>
+<h3 class="bd-wide" style="margin: 16px 0 0; font-size: 32px; line-height: 40px; font-weight: 300">Privacidad</h3>
+<p class="bd-pretty" style="margin: 0; color: var(--ink-muted)">Soberanía digital, autoalojamiento y herramientas para cuidar tus datos.</p>
+<div style="display: flex; flex-direction: column; gap: 4px; margin-top: auto">
+<p style="margin: 0; font-size: 14px; line-height: 22px">Pinchaflor enmascarado · <i>Diglossa cyanea</i></p>
+<p style="margin: 0; font-size: 14px; line-height: 22px; color: var(--ink-muted)">Antifaz negro, plumaje azul: ve sin dejarse ver.</p>
+</div>
+<div class="bd-meta" style="display: flex; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--line); color: var(--ink-muted)"><span>SIN ARTÍCULOS AÚN</span><span class="bd-arrow">→</span></div>
+</div>
+<div style="display: flex; align-items: center; flex: none"><svg width="200" height="150" viewBox="0 0 160 120" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true" style="color: var(--pinchaflor); display: block">
+<path d="M8 100 L152 90 M118 92 L136 78"></path>
+<path d="M40 70 L58 50 L86 44 L104 48 L112 60 L106 76 L86 88 L60 88 Z"></path>
+<path d="M86 44 L86 88 M104 48 L86 88"></path>
+<path d="M104 48 L110 34 L124 30 L136 36 L138 48 L126 56 L112 60 Z"></path>
+<path d="M112 41 L138 39 L138 48 L114 50 Z" fill="currentColor"></path>
+<circle cx="126" cy="44" r="2" fill="var(--surface-raised)" stroke="none"></circle>
+<path d="M138 41 L150 43 Q153 47 148 50 L138 48"></path>
+<path d="M60 58 L92 54 L100 70 L70 80 Z M92 54 L70 80"></path>
+<path d="M44 74 L12 88 L16 97 L60 88"></path>
+<path d="M80 88 L80 95 M92 86 L94 93"></path>
+</svg></div>
+</a>
+<a href="#" class="bd-card" style="grid-column: span 3; padding: 32px; gap: 24px; min-height: 420px; flex-direction: row; align-items: stretch">
+<div style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-width: 0">
+<div style="display: flex; gap: 16px; align-items: center"><x-import component-from-global-scope="BogDev.CategoryTag" category="diy"></x-import><span class="bd-meta" style="color: var(--ink-muted)">PILAR 02</span></div>
+<h3 class="bd-wide" style="margin: 16px 0 0; font-size: 32px; line-height: 40px; font-weight: 300">Hazlo tú mismo</h3>
+<p class="bd-pretty" style="margin: 0; color: var(--ink-muted)">Laboratorios locales, hardware y proyectos construidos en casa.</p>
+<div style="display: flex; flex-direction: column; gap: 4px; margin-top: auto">
+<p style="margin: 0; font-size: 14px; line-height: 22px">Golondrina azul y blanca · <i>Pygochelidon cyanoleuca</i></p>
+<p style="margin: 0; font-size: 14px; line-height: 22px; color: var(--ink-muted)">Arma su nido con lo que encuentra en aleros y muros de la ciudad.</p>
+</div>
+<div class="bd-meta" style="display: flex; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--line); color: var(--ink-muted)"><span>SIN ARTÍCULOS AÚN</span><span class="bd-arrow">→</span></div>
+</div>
+<div style="display: flex; align-items: center; flex: none"><svg width="200" height="150" viewBox="0 0 160 120" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true" style="color: var(--golondrina); display: block">
+<path d="M50 62 L78 54 L104 56 L118 62 L104 68 L78 70 Z M78 54 L78 70 M104 56 L104 68"></path>
+<path d="M104 56 L114 51 L126 55 L129 62 L118 66 Z"></path>
+<path d="M129 59 L138 61 L129 63"></path>
+<circle cx="119" cy="57" r="1.6" fill="currentColor" stroke="none"></circle>
+<path d="M82 56 L96 30 L146 6 L106 40 L98 57 Z M96 30 L98 57 M146 6 L96 44"></path>
+<path d="M86 69 L68 92 L34 116 L80 80 Z M68 92 L80 80"></path>
+<path d="M52 60 L12 46 L34 62 L14 80 L52 66"></path>
+</svg></div>
+</a>
+<a href="#" class="bd-card" style="grid-column: span 2; padding: 32px; gap: 24px; min-height: 460px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<x-import component-from-global-scope="BogDev.CategoryTag" category="ia"></x-import>
+<span class="bd-meta" style="color: var(--ink-muted)">FIG. 02</span>
+</div>
+<div style="display: flex; justify-content: center; padding: 16px 0"><svg width="200" height="150" viewBox="0 0 160 120" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true" style="color: var(--chillon); display: block">
+<path d="M6 44 L50 47"></path>
+<path d="M50 47 L54 36 L66 30 L78 34 L80 46 L70 54 L56 54 Z"></path>
+<path d="M56 54 L66 44 L80 46 M66 44 L70 54 M54 36 L66 44"></path>
+<circle cx="66" cy="39" r="2.2" fill="currentColor" stroke="none"></circle>
+<path d="M70 54 L80 46 L100 52 L118 70 L122 84 L108 86 L90 76 Z"></path>
+<path d="M100 52 L90 76 M118 70 L90 76 M80 46 L90 76"></path>
+<path d="M108 86 L122 84 L138 110 L126 114 L116 100 Z M122 84 L126 114"></path>
+<path d="M84 50 L96 6 L114 2 L106 24 L100 52 Z M96 6 L100 52 M114 2 L92 38"></path>
+<path d="M94 58 L136 30 L148 36 L112 66 M136 30 L104 62"></path>
+</svg></div>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: auto">
+<h3 style="margin: 0; font-size: 24px; line-height: 32px; font-weight: 500">Inteligencia artificial</h3>
+<p style="margin: 0; font-size: 14px; line-height: 22px; color: var(--ink-muted)">Colibrí chillón · <i>Colibri coruscans</i></p>
+</div>
+<div class="bd-meta" style="display: flex; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--line); color: var(--ink-muted)">
+<span>02 ARTÍCULOS</span><span class="bd-arrow">→</span>
+</div>
+</a>
+<a href="#" class="bd-card" style="grid-column: span 2; padding: 32px; gap: 24px; min-height: 460px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<x-import component-from-global-scope="BogDev.CategoryTag" category="software"></x-import>
+<span class="bd-meta" style="color: var(--ink-muted)">FIG. 03</span>
+</div>
+<div style="display: flex; justify-content: center; padding: 16px 0"><svg width="200" height="150" viewBox="0 0 160 120" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true" style="color: var(--mirla); display: block">
+<path d="M22 64 L40 48 L70 40 L96 42 L108 32 L122 28 L134 34 L136 44 L124 54 L114 58 L106 80 L86 92 L60 94 L42 86 Z"></path>
+<path d="M108 32 L114 58 M122 28 L124 54 M96 42 L114 58"></path>
+<path d="M50 54 L84 50 L102 62 L92 80 L62 84 Z M84 50 L62 84 M102 62 L62 84"></path>
+<path d="M42 86 L22 64 L4 94 L12 100 Z M22 64 L12 100"></path>
+<path d="M134 34 L152 38 L136 44 Z" fill="currentColor"></path>
+<circle cx="124" cy="36" r="3.4"></circle>
+<circle cx="124" cy="36" r="1.2" fill="currentColor" stroke="none"></circle>
+<path d="M84 92 L80 114 M96 88 L98 114 M72 114 L88 114 M90 114 L106 114"></path>
+</svg></div>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: auto">
+<h3 style="margin: 0; font-size: 24px; line-height: 32px; font-weight: 500">Desarrollo de software</h3>
+<p style="margin: 0; font-size: 14px; line-height: 22px; color: var(--ink-muted)">Mirla patinaranja · <i>Turdus fuscater</i></p>
+</div>
+<div class="bd-meta" style="display: flex; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--line); color: var(--ink-muted)">
+<span>SIN ARTÍCULOS AÚN</span><span class="bd-arrow">→</span>
+</div>
+</a>
+<a href="#" class="bd-card" style="grid-column: span 2; padding: 32px; gap: 24px; min-height: 460px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<x-import component-from-global-scope="BogDev.CategoryTag" category="linux"></x-import>
+<span class="bd-meta" style="color: var(--ink-muted)">FIG. 04</span>
+</div>
+<div style="display: flex; justify-content: center; padding: 16px 0"><svg width="200" height="150" viewBox="0 0 160 120" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true" style="color: var(--monjita); display: block">
+<path d="M40 120 L60 2 M54 40 L32 18 L50 34"></path>
+<path d="M56 66 L68 52 L90 46 L104 54 L110 66 L100 78 L78 86 L62 82 Z"></path>
+<path d="M90 46 L96 30 L110 25 L122 31 L125 43 L111 54 L104 54 Z" fill="currentColor" fill-opacity=".9"></path>
+<path d="M125 36 L140 40 L125 44"></path>
+<circle cx="112" cy="36" r="2" fill="var(--surface-raised)" stroke="none"></circle>
+<path d="M68 58 L92 54 L100 70 L78 80 Z M92 54 L78 80"></path>
+<path d="M62 82 L56 66 L36 100 L46 104 Z M56 66 L46 104"></path>
+<path d="M80 86 L58 72 M92 82 L58 80"></path>
+</svg></div>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: auto">
+<h3 style="margin: 0; font-size: 24px; line-height: 32px; font-weight: 500">Linux y código abierto</h3>
+<p style="margin: 0; font-size: 14px; line-height: 22px; color: var(--ink-muted)">Monjita bogotana · <i>Chrysomus icterocephalus bogotensis</i></p>
+</div>
+<div class="bd-meta" style="display: flex; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--line); color: var(--ink-muted)">
+<span>SIN ARTÍCULOS AÚN</span><span class="bd-arrow">→</span>
+</div>
+</a>
+</div>
+</section>
+<section id="fediverso" class="bd-reveal" style="padding: 96px 120px; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 32px; row-gap: 48px">
+<div style="grid-column: span 12; display: flex; justify-content: space-between; align-items: flex-end; gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div class="bd-eyebrow" style="color: var(--ink-muted)">Fediverso · ActivityPub</div>
+<h2 class="bd-stretch" style="margin: 0; font-size: 32px; line-height: 40px; font-weight: 500">Sigue el blog desde Mastodon</h2>
+</div>
+<p class="bd-pretty" style="margin: 0; max-width: 480px; color: var(--ink-muted)">BogDev tiene su propia cuenta en el fediverso. Los artículos nuevos llegan a tu línea de tiempo, y lo que respondas desde allá aparece aquí como comentario.</p>
+</div>
+<div style="grid-column: span 7">
+<div style="position: relative; background: var(--surface-raised); border: 1px solid var(--line); padding: 32px; display: flex; flex-direction: column; gap: 24px">
+<span class="bd-hud bd-hud-tl" aria-hidden="true"></span><span class="bd-hud bd-hud-br" aria-hidden="true"></span>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 16px">
+<span class="bd-eyebrow" style="color: var(--chillon)">Anillo de identificación</span>
+<svg width="56" height="32" viewBox="0 0 56 32" aria-hidden="true" style="display: block; flex: none"><ellipse cx="14" cy="16" rx="8" ry="13" fill="none" stroke="var(--chillon)" stroke-width="1.25"></ellipse><path d="M14 3 L44 3 M14 29 L44 29" stroke="var(--chillon)" stroke-width="1.25"></path><path d="M44 3 A8 13 0 0 1 44 29" fill="none" stroke="var(--chillon)" stroke-width="1.25"></path><path d="M24 12 L38 12 M24 16 L34 16 M24 20 L38 20" stroke="var(--ink-muted)" stroke-width="1"></path></svg>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div class="bd-mono" style="font-size: 28px; line-height: 36px; word-break: break-all"><span style="color: var(--ink)">@devbog</span><span style="color: var(--ink-muted)">@api.bogdev.com.co</span></div>
+<div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap">
+<button type="button" class="bd-chip" onClick="{{copyHandle}}">{{copyLabel}}</button>
+<span class="bd-meta" style="color: var(--ink-muted)">BÚSCALO EN TU INSTANCIA Y PULSA SEGUIR</span>
+</div>
+</div>
+<div style="height: 1px; background: var(--line)"></div>
+<form onSubmit="{{noSubmit}}" style="display: flex; flex-direction: column; gap: 12px; margin: 0">
+<label for="bd-inst-d" class="bd-eyebrow" style="color: var(--ink-muted)">O sigue desde tu instancia</label>
+<div style="display: flex; gap: 0">
+<input id="bd-inst-d" class="bd-field" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="mastodon.social" value="{{inst}}" onChange="{{onInst}}" style="flex-grow: 1; border-right: 0">
+<a class="bd-btnlink" href="{{followHref}}" target="_blank" rel="noopener noreferrer" aria-disabled="{{followDisabled}}">Seguir <span class="bd-arrow" aria-hidden="true">→</span></a>
+</div>
+<p class="bd-meta" role="status" style="margin: 0; color: var(--ink-muted); font-size: 12px">{{followHint}}</p>
+</form>
+<p class="bd-meta" style="margin: 0; color: var(--ink-muted); font-size: 12px">FUNCIONA DIRECTO CON MASTODON. EN PLEROMA, MISSKEY O GOTOSOCIAL, BUSCA EL USUARIO DESDE TU INSTANCIA.</p>
+</div>
+</div>
+<div style="grid-column: 9 / span 4; display: flex; flex-direction: column; gap: 40px">
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 28px">
+<li style="display: flex; gap: 16px"><span class="bd-mono" style="flex: none; width: 28px; font-size: 13px; line-height: 26px; color: var(--chillon)">01</span><div style="display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 600; font-size: 16px; line-height: 26px">Sigue</span><span style="color: var(--ink-muted); font-size: 15px; line-height: 24px">Busca @devbog@api.bogdev.com.co desde cualquier cuenta de Mastodon u otra red ActivityPub.</span></div></li>
+<li style="display: flex; gap: 16px"><span class="bd-mono" style="flex: none; width: 28px; font-size: 13px; line-height: 26px; color: var(--chillon)">02</span><div style="display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 600; font-size: 16px; line-height: 26px">Lee en tu línea de tiempo</span><span style="color: var(--ink-muted); font-size: 15px; line-height: 24px">Cada artículo publicado llega como una tarjeta con título, imagen de portada y enlace al blog.</span></div></li>
+<li style="display: flex; gap: 16px"><span class="bd-mono" style="flex: none; width: 28px; font-size: 13px; line-height: 26px; color: var(--chillon)">03</span><div style="display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 600; font-size: 16px; line-height: 26px">Responde, marca me gusta o impulsa</span><span style="color: var(--ink-muted); font-size: 15px; line-height: 24px">Tus respuestas llegan al blog como comentarios y se publican después de moderarlas. Los me gusta e impulsos suman al contador del artículo.</span></div></li>
+</ol>
+<svg width="480" height="132" viewBox="0 0 480 132" role="img" aria-label="Flujo: los artículos salen de BogDev hacia tu instancia; las respuestas, me gusta e impulsos vuelven al blog" style="display: block; max-width: 100%">
+<rect x="0.5" y="44.5" width="104" height="44" fill="var(--surface-raised)" stroke="var(--line-strong)"></rect>
+<text x="52" y="71" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" font-weight="500" letter-spacing=".08em" fill="var(--ink)">BOGDEV</text>
+<rect x="355.5" y="44.5" width="124" height="44" fill="var(--surface-raised)" stroke="var(--line-strong)"></rect>
+<text x="417" y="71" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" font-weight="500" letter-spacing=".08em" fill="var(--ink)">TU INSTANCIA</text>
+<path d="M112 56 Q230 20 346 56" fill="none" stroke="var(--chillon)" stroke-width="1.4"></path>
+<path d="M338 50 L347 56 L337 60" fill="none" stroke="var(--chillon)" stroke-width="1.4"></path>
+<path class="bd-route" d="M346 78 Q230 114 112 78" fill="none" stroke="var(--chillon)" stroke-opacity=".7" stroke-width="1.4"></path>
+<path d="M121 73 L112 78 L122 83" fill="none" stroke="var(--chillon)" stroke-width="1.4"></path>
+<text x="230" y="22" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing=".08em" fill="var(--ink-muted)">ARTÍCULOS →</text>
+<text x="230" y="126" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing=".08em" fill="var(--ink-muted)">← RESPUESTAS · ME GUSTA · IMPULSOS</text>
+<g transform="translate(222 34)"><path class="bd-flap-static" d="M0 6 Q4 0 8 5 Q12 0 16 6" fill="none" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round"></path></g>
+</svg>
+</div>
+</section>
+<section id="newsletter" class="bd-reveal" style="padding: 96px 120px; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 32px; align-items: start">
+<div style="grid-column: span 7">
+<x-import component-from-global-scope="BogDev.NewsletterForm" id="nl-home" eyebrow="NEWSLETTER" title="Recibe los últimos artículos en tu bandeja de entrada" description="Un correo cuando haya un artículo nuevo. Confirmas la suscripción desde tu bandeja." placeholder="tu@correo.com" button-label="Suscribirme" status="{{nlStatus}}" message="{{nlMessage}}" on-submit="{{subscribe}}"></x-import>
+</div>
+<div style="grid-column: 9 / span 4; display: flex; flex-direction: column; gap: 16px">
+<div class="bd-eyebrow" style="color: var(--ink-muted)">¿Prefieres RSS?</div>
+<p class="bd-pretty" style="margin: 0; color: var(--ink-muted)">El feed completo, sin intermediarios ni algoritmos.</p>
+<x-import component-from-global-scope="BogDev.CodeBlock" lang="shell" code="$ curl -s https://bogdev.com.co/feed.xml" show-copy="{{yes}}"></x-import>
+</div>
+</section>
+<div style="margin-top: auto; width: 100%">
+<dc-import name="Footer" tema="{{footerTema}}" hint-size="100%,902px"></dc-import>
+</div>
+<sc-if value="{{searchOpen}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; inset: 0; z-index: 30">
+<button type="button" aria-label="Cerrar búsqueda" onClick="{{closeSearch}}" style="position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: rgba(6, 7, 10, 0.62); backdrop-filter: blur(10px) saturate(.8); cursor: default"></button>
+<div role="dialog" aria-modal="true" aria-label="Buscar en BogDev" style="position: absolute; top: 140px; left: 50%; transform: translateX(-50%); width: 640px; background: var(--surface-raised); border: 1px solid var(--line-strong); box-shadow: var(--glow-chillon); display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px 12px 8px 20px; border-bottom: 1px solid var(--line)">
+<label for="bd-q" class="bd-sr">Buscar artículos, temas o acciones</label>
+<span class="bd-mono" aria-hidden="true" style="color: var(--chillon); font-size: 16px">→</span>
+<input id="bd-q" type="search" value="{{q}}" onChange="{{onQ}}" placeholder="Buscar artículos, temas o acciones" autocomplete="off" style="flex-grow: 1; min-width: 0; height: 48px; background: transparent; border: 0; color: var(--ink); font-family: inherit; font-size: 19px">
+<button type="button" onClick="{{closeSearch}}" class="bd-chip" style="min-height: 44px; padding: 0 12px">Esc</button>
+</div>
+<div style="display: flex; flex-direction: column; padding: 8px 0">
+<sc-for list="{{results}}" as="r" hint-placeholder-count="5">
+<a href="{{r.href}}" class="bd-result">
+<span class="bd-eyebrow" style="width: 84px; flex: none; color: var(--ink-muted)">{{r.kind}}</span>
+<span style="width: 8px; height: 8px; flex: none; border-radius: 2px; background: {{r.color}}"></span>
+<span style="flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{r.label}}</span>
+<span class="bd-meta" style="color: var(--ink-muted)">{{r.hint}}</span>
+</a>
+</sc-for>
+<sc-if value="{{noResults}}" hint-placeholder-val="{{false}}">
+<p class="bd-meta" style="margin: 0; padding: 16px 20px; color: var(--ink-muted)">SIN RESULTADOS PARA «{{q}}»</p>
+</sc-if>
+</div>
+<div style="display: flex; flex-direction: column; padding: 8px 0; border-top: 1px solid var(--line)">
+<div class="bd-eyebrow" style="padding: 8px 20px; color: var(--ink-muted)">Acciones</div>
+<button type="button" onClick="{{flipTheme}}" class="bd-seg" style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 20px; text-align: left; text-transform: none; letter-spacing: 0; font-family: inherit; font-size: 16px; color: var(--ink)"><span>{{flipLabel}}</span><span class="bd-meta" aria-hidden="true" style="color: var(--ink-muted)">→</span></button>
+<a href="#fediverso" onClick="{{closeSearch}}" class="bd-result" style="font-size: 16px"><span style="flex-grow: 1">Seguir en el fediverso</span><span class="bd-meta" style="color: var(--ink-muted)">@devbog</span></a>
+</div>
+<div class="bd-meta" style="display: flex; justify-content: space-between; padding: 12px 20px; border-top: 1px solid var(--line); color: var(--ink-muted); font-size: 12px">
+<span>↑↓ NAVEGAR · ↵ ABRIR · ESC CERRAR</span><span>ÍNDICE LOCAL · 02 ARTÍCULOS</span>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["noche","dia"],"default":"noche","section":"Tema"},"bandada":{"editor":"boolean","default":true,"section":"Movimiento"},"$preview":{"width":1440,"height":5720}}'>
+class Component extends DCLogic {
+
+  tema() {
+    const s = this.state || {};
+    return s.tema || this.props.tema || 'noche';
+  }
+  setTheme(next, e) {
+    if (this.tema() === next) return;
+    const root = document.documentElement;
+    if (e && e.currentTarget && e.currentTarget.getBoundingClientRect) {
+      const r = e.currentTarget.getBoundingClientRect();
+      root.style.setProperty('--vt-x', Math.round(r.left + r.width / 2) + 'px');
+      root.style.setProperty('--vt-y', Math.round(r.top + r.height / 2) + 'px');
+    }
+    const apply = () => new Promise((done) => this.setState({ tema: next }, done));
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (document.startViewTransition && !reduce) document.startViewTransition(apply);
+    else apply();
+  }
+  themeVals() {
+    const t = this.tema();
+    const bandada = this.props.bandada ?? true;
+    return {
+      themeClass: t === 'dia' ? 'bd-dia' : 'bd-noche',
+      footerTema: t,
+      flockClass: bandada ? '' : 'bd-paused',
+      isNoche: t !== 'dia',
+      isDia: t === 'dia',
+      toNoche: (e) => this.setTheme('noche', e),
+      toDia: (e) => this.setTheme('dia', e),
+      yes: true,
+      no: false
+    };
+  }
+
+
+  posts() {
+    return [
+      { id: 'inicio', title: 'Soberanía digital y laboratorios locales: El inicio de este espacio.', href: '#', excerpt: 'Primer artículo de este blog.', category: 'ia', date: '24.09.2026', dateTime: '2026-09-24' },
+      { id: 'rag', title: 'RAG: qué es y cómo funciona la generación aumentada por recuperación', href: 'Articulo.dc.html', excerpt: 'Por qué los LLM alucinan, y cómo la arquitectura los conecta con tus datos.', category: 'ia', date: '11.09.2026', dateTime: '2026-09-11' }
+    ];
+  }
+  cats() {
+    return [
+      { id: 'todos', label: 'Todos', color: 'var(--ink-muted)' },
+      { id: 'privacidad', label: 'Privacidad', color: 'var(--pinchaflor)' },
+      { id: 'diy', label: 'DIY', color: 'var(--golondrina)' },
+      { id: 'ia', label: 'IA', color: 'var(--chillon)' },
+      { id: 'software', label: 'Software', color: 'var(--mirla)' },
+      { id: 'linux', label: 'Linux', color: 'var(--monjita)' }
+    ];
+  }
+  contours(cx, cy, from, to, step, seed, sx, sy) {
+    const key = [cx, cy, from, to, step, seed, sx, sy].join(',');
+    this._cc = this._cc || {};
+    if (this._cc[key]) return this._cc[key];
+    const out = [];
+    let i = 0;
+    for (let R = from; R <= to; R += step) {
+      let d = '';
+      for (let a = 0; a <= 96; a++) {
+        const t = (a / 96) * Math.PI * 2;
+        const k = 1 + 0.13 * Math.sin(3 * t + R / 53 + seed) + 0.07 * Math.sin(5 * t - R / 31) + 0.035 * Math.sin(9 * t + R / 17 + seed * 2);
+        const x = cx + Math.cos(t) * R * k * sx;
+        const y = cy + Math.sin(t) * R * k * sy;
+        d += (a === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+      }
+      out.push({ d: d + 'Z', stroke: i % 5 === 4 ? 'var(--line-strong)' : 'var(--line)', op: i % 5 === 4 ? '0.7' : '1' });
+      i++;
+    }
+    this._cc[key] = out;
+    return out;
+  }
+
+
+  searchVals() {
+    const s = this.state || {};
+    const q = (s.q || '').trim().toLowerCase();
+    const norm = (t) => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const nq = norm(q);
+    const all = this.posts().map((p) => ({ kind: 'Artículo', label: p.title, href: p.href, hint: p.date, color: 'var(--chillon)' })).concat([
+      { kind: 'Tema', label: 'Privacidad', href: '#', hint: '00', color: 'var(--pinchaflor)' },
+      { kind: 'Tema', label: 'DIY · hazlo tú mismo', href: '#', hint: '00', color: 'var(--golondrina)' },
+      { kind: 'Tema', label: 'Inteligencia artificial', href: '#', hint: '02', color: 'var(--chillon)' },
+      { kind: 'Tema', label: 'Desarrollo de software', href: '#', hint: '00', color: 'var(--mirla)' },
+      { kind: 'Tema', label: 'Linux y código abierto', href: '#', hint: '00', color: 'var(--monjita)' }
+    ]);
+    const results = nq ? all.filter((r) => norm(r.label).indexOf(nq) !== -1) : all;
+    const t = this.tema();
+    return {
+      searchOpen: !!s.searchOpen,
+      q: s.q || '',
+      results,
+      noResults: results.length === 0,
+      openSearch: () => this.setState({ searchOpen: true }),
+      closeSearch: () => this.setState({ searchOpen: false }),
+      onQ: (e) => this.setState({ q: e.target.value }),
+      flipTheme: (e) => this.setTheme(t === 'dia' ? 'noche' : 'dia', e),
+      flipLabel: t === 'dia' ? 'Cambiar a tema Noche' : 'Cambiar a tema Día'
+    };
+  }
+
+
+  fediVals() {
+    const s = this.state || {};
+    const handle = '@devbog@api.bogdev.com.co';
+    const raw = (s.inst || '').trim().toLowerCase();
+    const inst = raw.replace(/^https?:\/\//, '').replace(/^@?[^@\s]*@/, '').replace(/\/.*$/, '');
+    const ok = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(inst);
+    const target = s.fediTarget || handle;
+    return {
+      fediHandle: handle,
+      inst: s.inst || '',
+      onInst: (e) => this.setState({ inst: e.target.value }),
+      followHref: ok ? 'https://' + inst + '/authorize_interaction?uri=' + encodeURIComponent(target) : '#fediverso',
+      followDisabled: ok ? 'false' : 'true',
+      followHint: ok ? 'SE ABRIRÁ ' + inst.toUpperCase() + ' PARA CONFIRMAR' : 'ESCRIBE EL DOMINIO DE TU INSTANCIA, POR EJEMPLO MASTODON.SOCIAL',
+      copyLabel: s.copied ? 'Copiado ✓' : 'Copiar',
+      copyHandle: () => { try { if (navigator.clipboard) navigator.clipboard.writeText(handle); } catch (e) {} this.setState({ copied: true }); },
+      noSubmit: (e) => { if (e && e.preventDefault) e.preventDefault(); }
+    };
+  }
+
+  renderVals() {
+    const s = this.state || {};
+    const filtro = s.filtro || 'todos';
+    const all = this.posts();
+    const counts = { todos: all.length };
+    this.cats().forEach((c) => { if (c.id !== 'todos') counts[c.id] = all.filter((p) => p.category === c.id).length; });
+    const posts = filtro === 'todos' ? all : all.filter((p) => p.category === filtro);
+    const cat = this.cats().find((c) => c.id === filtro);
+    const emptyNames = { privacidad: 'privacidad', diy: 'DIY', ia: 'IA', software: 'desarrollo de software', linux: 'Linux' };
+    return Object.assign({}, this.themeVals(), this.searchVals(), this.fediVals(), {
+      navLinks: [
+        { label: 'Inicio', href: 'Main.dc.html', active: true },
+        { label: 'Blog', href: 'Blog.dc.html' },
+        { label: 'Acerca de', href: 'Acerca.dc.html' }
+      ],
+      lang: s.lang || 'es',
+      setLang: (l) => this.setState({ lang: l }),
+      contours: this.contours(560, 400, 36, 470, 26, 0.6, 1.18, 0.86),
+      filters: this.cats().map((c) => ({
+        label: c.label, color: c.color, n: pad(counts[c.id] || 0), on: c.id === filtro,
+        pick: () => this.setState({ filtro: c.id })
+      })),
+      posts,
+      countLabel: pad(posts.length) + (posts.length === 1 ? ' artículo' : ' artículos'),
+      isEmpty: posts.length === 0,
+      showArchive: filtro === 'todos',
+      emptyLabel: emptyNames[filtro] || '',
+      emptyColor: cat ? cat.color : 'var(--ink-muted)',
+      showAll: () => this.setState({ filtro: 'todos' }),
+      nlStatus: s.nl || 'idle',
+      nlMessage: s.nl === 'success' ? '✓ Revisa tu correo para confirmar la suscripción.' : '',
+      subscribe: () => this.setState({ nl: 'success' })
+    });
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+  }
+}
+</script>
+</body>
+</html>
