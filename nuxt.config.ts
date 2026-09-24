@@ -64,6 +64,7 @@ export default defineNuxtConfig({
     head: {
       htmlAttrs: { lang: "en" },
       title: "BogDev - Personal Blog",
+      viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
       meta: [
         { name: "author", content: "BogDev" },
         { property: "og:site_name", content: "BogDev" },

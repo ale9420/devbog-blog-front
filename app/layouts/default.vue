@@ -36,8 +36,9 @@ onMounted(() => {
             @menu="isMobileMenuOpen = true"
         />
 
-        <LayoutMobileMenu
-            :is-open="isMobileMenuOpen"
+        <BdMenuSheet
+            :open="isMobileMenuOpen"
+            :active="active"
             @close="isMobileMenuOpen = false"
         />
 
@@ -48,5 +49,12 @@ onMounted(() => {
         </main>
 
         <LayoutFooter />
+
+        <BdTabBar
+            :active="active"
+            :menu-open="isMobileMenuOpen"
+            @search="isSearchOpen = true"
+            @menu="isMobileMenuOpen = true"
+        />
     </div>
 </template>

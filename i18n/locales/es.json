@@ -98,12 +98,8 @@
     "error": "Ocurrió un error",
     "retry": "Intentar de nuevo",
     "back": "Volver",
-    "menu": "Menú",
-    "connect": "Conectar",
-    "close": "Cerrar",
     "backToTop": "Volver arriba",
     "ariaLinkedIn": "LinkedIn",
-    "ariaMenu": "Menú",
     "ariaPrevPage": "Página anterior",
     "ariaNextPage": "Página siguiente",
     "ariaSkipLinks": "Saltar enlaces",
@@ -200,6 +196,22 @@
         "coords": "4.61°N 74.08°W",
         "altitude": "2.640 m s.n.m."
       }
+    },
+    "mobile": {
+      "tabs": "Navegación inferior",
+      "menu": "Menú",
+      "close": "Cerrar menú",
+      "sections": "Secciones",
+      "topics": "Temas",
+      "theme": "Tema",
+      "language": "Idioma"
+    },
+    "categoryShort": {
+      "privacidad": "Privacidad",
+      "diy": "DIY",
+      "ia": "IA",
+      "software": "Software",
+      "linux": "Linux"
     }
   }
 }
