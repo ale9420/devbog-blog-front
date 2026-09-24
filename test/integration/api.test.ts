@@ -140,6 +140,15 @@ describe('/api/posts/[slug]', () => {
   })
 })
 
+describe('/api/about', () => {
+  it('answers 502 with the Strapi message when Strapi rejects the query', async () => {
+    await expect($fetch('/api/about', { query: { locale: 'invalid' } })).rejects.toMatchObject({
+      response: { status: 502 },
+      data: { message: 'Invalid key about.profile at blocks.on.about.profile' },
+    })
+  })
+})
+
 describe('/api/newsletter/subscribe', () => {
   it('returns 400 when email is missing', async () => {
     await expect($fetch('/api/newsletter/subscribe', { method: 'POST', body: {} })).rejects.toMatchObject({

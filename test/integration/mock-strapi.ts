@@ -331,6 +331,13 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
 
     if (method === 'GET' && url.pathname === '/api/about') {
       const locale = (query.locale as string | undefined) ?? 'en'
+      if (locale === 'invalid') {
+        sendJson(res, 400, {
+          data: null,
+          error: { status: 400, name: 'ValidationError', message: 'Invalid key about.profile at blocks.on.about.profile' },
+        })
+        return
+      }
       sendJson(res, 200, {
         data: {
           id: 1,
