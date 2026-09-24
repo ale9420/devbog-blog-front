@@ -66,15 +66,6 @@
   "about": {
     "contentNotAvailable": "El contenido de la página Acerca de no está disponible."
   },
-  "footer": {
-    "rights": "Todos los derechos reservados.",
-    "quickLinks": "Enlaces Rápidos",
-    "topics": "Temas",
-    "subscribe": "Suscribirse",
-    "rssFeed": "RSS Feed",
-    "madeWith": "Hecho con",
-    "bogota": "en Bogotá, Colombia"
-  },
   "sidebar": {
     "categories": "Categorías",
     "popularTags": "Etiquetas Populares",
@@ -224,6 +215,35 @@
         "article": "Artículo",
         "topic": "Tema",
         "action": "Acción"
+      }
+    },
+    "footer": {
+      "tagline": "Explorando privacidad, DIY, IA, software y Linux.",
+      "social": "Redes",
+      "navigate": "Navegar",
+      "topics": "Temas",
+      "subscribe": "Suscribirse",
+      "subscribeSummary": "RSS · Fediverso",
+      "rss": "RSS feed",
+      "fediverse": "Fediverso · {'@'}devbog",
+      "newsletter": "Newsletter",
+      "coffee": "Invitarme un café",
+      "madeIn": "Hecho en Bogotá, Colombia",
+      "illustration": "Ilustración · copetón, Zonotrichia capensis",
+      "panorama": {
+        "title": "Cerros orientales",
+        "swipe": "Desliza",
+        "label": "Panorama de los cerros orientales de Bogotá, desliza para recorrerlo",
+        "monserrate": "Monserrate · 3.152 m",
+        "guadalupe": "Guadalupe · 3.317 m",
+        "view": "Cerros orientales · vista desde el occidente",
+        "cci": "Centro de Comercio Internacional · 192 m",
+        "atrio": "Torres Atrio · 201 m",
+        "parque": "Torres del Parque · Rogelio Salmona",
+        "colpatria": "Torre Colpatria · 196 m",
+        "bacataSouth": "BD Bacatá · torre sur 216 m",
+        "bacataNorth": "BD Bacatá · torre norte 167 m",
+        "avianca": "Edificio Avianca · 161 m"
       }
     }
   }
