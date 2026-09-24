@@ -84,7 +84,6 @@
     "noPosts": "No articles found",
     "categories": "Categories",
     "all": "All",
-    "related": "Related Posts",
     "exploreArticles": "Explore every article on privacy, DIY, AI, software and Linux.",
     "tryAdjustingFilters": "Try adjusting your filters",
     "noArticlesYet": "No articles published yet",
@@ -119,13 +118,19 @@
     "published": "Published",
     "share": "Share",
     "tags": "Tags",
-    "tableOfContents": "Table of Contents",
     "backToBlog": "Back to Blog",
-    "backToAllPosts": "Back to all posts",
     "postNotFound": "Post Not Found",
     "articleDoesNotExist": "The article you're looking for doesn't exist.",
     "minRead": "{minutes} min",
-    "anonymous": "Anonymous"
+    "anonymous": "Anonymous",
+    "toc": "In this article",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied ✓",
+    "shareOn": "Share on {network}",
+    "writtenBy": "Written by",
+    "authorBio": "Exploring privacy, DIY, AI, software and Linux from Bogotá.",
+    "keepReading": "Keep reading",
+    "alsoIn": "Also in {category}"
   },
   "comments": {
     "title": "Comments",
@@ -146,15 +151,16 @@
     "validationInvalidEmail": "Please enter a valid email",
     "validationComment": "Comment is required",
     "posting": "Posting...",
-    "postReply": "Post Reply",
-    "postComment": "Post Comment",
-    "successMessage": "Comment posted successfully!"
+    "postReply": "Post reply",
+    "postComment": "Post comment",
+    "successMessage": "Comment posted successfully!",
+    "count": "Conversation · no comments | Conversation · {count} comment | Conversation · {count} comments",
+    "intro": "Leave a comment or reply to other readers.",
+    "leave": "Leave a comment",
+    "removed": "Comment removed."
   },
   "about": {
     "contentNotAvailable": "About page content not available."
-  },
-  "tableOfContents": {
-    "onThisPage": "On this page"
   },
   "common": {
     "loading": "Loading...",
@@ -166,8 +172,6 @@
     "ariaPrevPage": "Previous page",
     "ariaNextPage": "Next page",
     "ariaSkipLinks": "Skip links",
-    "ariaShareTwitter": "Share on Twitter",
-    "ariaShareLinkedIn": "Share on LinkedIn",
     "ariaGitHub": "GitHub",
     "ariaCodeberg": "Codeberg",
     "ariaMastodon": "Mastodon",
@@ -181,9 +185,10 @@
     "of": "of"
   },
   "buyMeACoffee": {
-    "supportMyWork": "Support My Work",
-    "description": "If this content was helpful, consider buying me a coffee!",
-    "button": "Buy Me a Coffee"
+    "supportMyWork": "Support my work",
+    "description": "If this content helped you, buy me a coffee.",
+    "button": "Buy me a coffee",
+    "eyebrow": "Support the blog"
   },
   "error": {
     "pageNotFound": "Page Not Found",

@@ -3,7 +3,7 @@ import { isTheme, readStoredTheme, systemTheme } from '~/helpers/theme'
 export default defineNuxtPlugin((nuxtApp) => {
   const { sync } = useTheme()
 
-  nuxtApp.hook('app:mounted', () => {
+  nuxtApp.hooks.hookOnce('app:suspense:resolve', () => {
     const current = document.documentElement.getAttribute('data-theme')
     sync(isTheme(current) ? current : systemTheme())
 

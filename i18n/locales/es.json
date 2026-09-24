@@ -84,7 +84,6 @@
     "noPosts": "No se encontraron artículos",
     "categories": "Categorías",
     "all": "Todos",
-    "related": "Artículos Relacionados",
     "exploreArticles": "Explora todos los artículos sobre privacidad, DIY, IA, software y Linux.",
     "tryAdjustingFilters": "Intenta ajustar los filtros",
     "noArticlesYet": "Aún no hay artículos publicados",
@@ -119,13 +118,19 @@
     "published": "Publicado",
     "share": "Compartir",
     "tags": "Etiquetas",
-    "tableOfContents": "Tabla de Contenidos",
     "backToBlog": "Volver al Blog",
-    "backToAllPosts": "Volver a todos los artículos",
     "postNotFound": "Artículo No Encontrado",
     "articleDoesNotExist": "El artículo que buscas no existe.",
     "minRead": "{minutes} min",
-    "anonymous": "Anónimo"
+    "anonymous": "Anónimo",
+    "toc": "En este artículo",
+    "copyLink": "Copiar enlace",
+    "linkCopied": "Enlace copiado ✓",
+    "shareOn": "Compartir en {network}",
+    "writtenBy": "Escrito por",
+    "authorBio": "Explorando privacidad, DIY, IA, software y Linux desde Bogotá.",
+    "keepReading": "Sigue leyendo",
+    "alsoIn": "También en {category}"
   },
   "comments": {
     "title": "Comentarios",
@@ -146,15 +151,16 @@
     "validationInvalidEmail": "Por favor ingresa un correo válido",
     "validationComment": "El comentario es requerido",
     "posting": "Enviando...",
-    "postReply": "Publicar Respuesta",
-    "postComment": "Publicar Comentario",
-    "successMessage": "¡Comentario publicado exitosamente!"
+    "postReply": "Publicar respuesta",
+    "postComment": "Publicar comentario",
+    "successMessage": "¡Comentario publicado exitosamente!",
+    "count": "Conversación · sin comentarios | Conversación · {count} comentario | Conversación · {count} comentarios",
+    "intro": "Deja tu comentario o responde a otros lectores.",
+    "leave": "Deja un comentario",
+    "removed": "Comentario retirado."
   },
   "about": {
     "contentNotAvailable": "El contenido de la página Acerca de no está disponible."
-  },
-  "tableOfContents": {
-    "onThisPage": "En esta página"
   },
   "common": {
     "loading": "Cargando...",
@@ -166,8 +172,6 @@
     "ariaPrevPage": "Página anterior",
     "ariaNextPage": "Página siguiente",
     "ariaSkipLinks": "Saltar enlaces",
-    "ariaShareTwitter": "Compartir en Twitter",
-    "ariaShareLinkedIn": "Compartir en LinkedIn",
     "ariaGitHub": "GitHub",
     "ariaCodeberg": "Codeberg",
     "ariaMastodon": "Mastodon",
@@ -181,9 +185,10 @@
     "of": "de"
   },
   "buyMeACoffee": {
-    "supportMyWork": "Apoya Mi Trabajo",
-    "description": "Si este contenido te fue útil, ¡invítame un café!",
-    "button": "Cómprame un Café"
+    "supportMyWork": "Apoya mi trabajo",
+    "description": "Si este contenido te fue útil, invítame un café.",
+    "button": "Invitar un café",
+    "eyebrow": "Apoya el blog"
   },
   "error": {
     "pageNotFound": "Página No Encontrada",

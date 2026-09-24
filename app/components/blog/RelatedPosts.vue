@@ -1,66 +1,38 @@
 <script setup lang="ts">
-import type { RawStrapiArticle } from '~/interfaces'
-import { formatDate } from '~/helpers/formatDate'
-
-const { t, locale } = useI18n()
-const { getMediaUrl } = useStrapi()
-const { localizePath } = useLocaleUtils()
+import type { Locale, PostListItem, StrapiCategoryRef } from '~/interfaces'
 
 const props = defineProps<{
-  currentPostId?: number
-  categoryId?: number
+  currentPostId: number
+  category?: StrapiCategoryRef | null
 }>()
 
-const { data: relatedPosts } = await useAsyncData(
-  `related-posts-${props.currentPostId}`,
-  async () => {
-    if (!props.categoryId) return []
-    
-    const response = await $fetch<{ data: RawStrapiArticle[] }>(
-      `${useRuntimeConfig().public.strapiUrl}/api/articles?filters[category][id][$eq]=${props.categoryId}&filters[id][$ne]=${props.currentPostId}&pagination[pageSize]=3&populate[cover]=*&populate[category]=*&sort=publishedAt:desc`
-    )
-    return response.data || []
-  }
+const { locale, t } = useI18n()
+const { fetchPosts } = useStrapi()
+const categoryLabel = useCategoryLabel()
+const toPostCard = usePostCard()
+
+const { data: related } = fetchPosts({
+  pageSize: 2,
+  locale: locale.value as Locale,
+  category: props.category?.slug ?? undefined,
+})
+
+const post = computed<PostListItem | undefined>(() =>
+  props.category?.slug ? related.value?.data.find(item => item.id !== props.currentPostId) : undefined,
 )
 </script>
 
 <template>
-  <section v-if="relatedPosts?.length" class="mt-12 pt-8 border-t border-[var(--border)]">
-    <h3 class="font-display text-xl font-semibold mb-6">{{ t('blog.related') }}</h3>
-    <div class="grid md:grid-cols-3 gap-6">
-      <NuxtLink
-        v-for="post in relatedPosts"
-        :key="post.id"
-        :to="`${localizePath('/blog')}/${post.slug}`"
-        class="card group overflow-hidden flex flex-col"
-      >
-        <div class="aspect-[16/10] overflow-hidden">
-          <NuxtImg
-            v-if="post.cover?.url"
-            :src="getMediaUrl(post.cover.url)"
-            :alt="post.title"
-            width="400"
-            height="250"
-            format="webp"
-            loading="lazy"
-            decoding="async"
-            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <div v-else class="w-full h-full gradient-bogota-subtle flex items-center justify-center">
-            <span class="text-4xl font-display font-bold text-[var(--border)]">
-              {{ post.title?.charAt(0) }}
-            </span>
-          </div>
-        </div>
-        <div class="p-4 flex-1 flex flex-col">
-          <h4 class="font-medium text-sm line-clamp-2 group-hover:text-[var(--primary)] transition-colors mb-2">
-            {{ post.title }}
-          </h4>
-          <p class="text-xs text-[var(--muted)] mt-auto">
-            {{ formatDate(post.publishedAt, 'full', locale === 'es' ? 'es-CO' : 'en-US') }}
-          </p>
-        </div>
-      </NuxtLink>
+  <section class="bd-home-section bd-related bd-reveal" :aria-labelledby="post ? 'bd-related-title' : undefined">
+    <div v-if="post" class="bd-home-heading">
+      <p class="bd-eyebrow bd-home-eyebrow">{{ t('post.keepReading') }}</p>
+      <h2 id="bd-related-title" class="bd-home-title bd-stretch">
+        {{ t('post.alsoIn', { category: categoryLabel(category) }) }}
+      </h2>
+    </div>
+    <div :class="['bd-related-grid', { 'bd-related-solo': !post }]">
+      <BdPostCard v-if="post" v-bind="toPostCard(post)" />
+      <BdNewsletterForm id="nl-article" class="bd-related-news" />
     </div>
   </section>
 </template>

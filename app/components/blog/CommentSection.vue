@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import type { Comment, CommentFormData } from '~/interfaces/comment'
-const { t } = useI18n()
 
 const props = defineProps<{
   slug: string
   documentId?: string
 }>()
 
+const { t } = useI18n()
+
 const {
   comments,
   pending,
   error,
   totalComments,
+  repliesOf,
   submitting,
   submitError,
   submitSuccess,
@@ -71,7 +73,7 @@ async function handleSubmit() {
     await postComment({ ...formData })
     resetForm()
   } catch {
-    // Error handled by composable
+    return
   }
 }
 
@@ -82,10 +84,12 @@ function resetForm() {
   replyingToName.value = ''
 }
 
-function startReply(commentId: number, authorName: string) {
-  replyingTo.value = commentId
-  replyingToName.value = authorName
-  formData.threadOf = commentId
+const countLabel = computed<string>(() => t('comments.count', { count: totalComments.value }, totalComments.value))
+
+function startReply(comment: Comment) {
+  replyingTo.value = comment.id
+  replyingToName.value = comment.author?.name || t('post.anonymous')
+  formData.threadOf = comment.id
   nextTick(() => {
     const textarea = document.querySelector<HTMLTextAreaElement>('#comment-content')
     textarea?.focus()
@@ -98,180 +102,100 @@ function cancelReply() {
   formData.threadOf = undefined
 }
 
-function getReplies(commentId: number): Comment[] {
-  return comments.value.filter(c => c.threadOf?.id === commentId)
-}
-
 onMounted(() => {
   fetchComments()
 })
 </script>
 
 <template>
-  <section class="mt-12 pt-8 border-t border-[var(--border)]">
-    <h3 class="font-display text-xl font-semibold mb-6">
-      {{ t('comments.title') }} <span class="text-[var(--muted)] font-normal">({{ totalComments }})</span>
-    </h3>
+  <section id="comments" class="bd-comments bd-reveal" aria-labelledby="bd-comments-title">
+    <div class="bd-comments-main">
+      <div class="bd-home-heading">
+        <p class="bd-eyebrow bd-home-eyebrow">{{ countLabel }}</p>
+        <h2 id="bd-comments-title" class="bd-home-title bd-stretch">{{ t('comments.title') }}</h2>
+        <p class="bd-comments-intro">{{ t('comments.intro') }}</p>
+      </div>
 
-    <div v-if="pending" class="space-y-4">
-      <div v-for="i in 3" :key="i" class="animate-pulse">
-        <div class="flex gap-4">
-          <div class="w-10 h-10 rounded-full bg-[var(--surface-elevated)]"/>
-          <div class="flex-1 space-y-2">
-            <div class="h-4 bg-[var(--surface-elevated)] rounded w-1/4"/>
-            <div class="h-4 bg-[var(--surface-elevated)] rounded w-3/4"/>
-            <div class="h-4 bg-[var(--surface-elevated)] rounded w-1/2"/>
+      <p v-if="pending" class="bd-meta bd-home-eyebrow" role="status">{{ t('common.loading') }}</p>
+
+      <div v-else-if="error" class="bd-comments-error" role="alert">
+        <p>{{ error }}</p>
+        <button type="button" class="bd-blog-textbtn" @click="fetchComments">{{ t('common.retry') }}</button>
+      </div>
+
+      <p v-else-if="comments.length === 0" class="bd-meta bd-comments-empty">{{ t('comments.noComments') }}</p>
+
+      <div v-else class="bd-comment-list">
+        <div v-for="comment in comments" :key="comment.id" class="bd-comment-group">
+          <BlogCommentItem :comment="comment" can-reply @reply="startReply" />
+          <div v-if="repliesOf(comment.id).length" class="bd-comment-thread">
+            <BlogCommentItem v-for="reply in repliesOf(comment.id)" :key="reply.id" :comment="reply" />
           </div>
         </div>
       </div>
-    </div>
 
-    <div v-else-if="error" class="p-4 rounded-lg mb-6" style="background-color: var(--error-bg); color: var(--error)">
-      <p>{{ error }}</p>
-      <button 
-        class="text-sm underline mt-2 hover:no-underline" 
-        @click="fetchComments"
-      >
-        {{ t('common.retry') }}
-      </button>
-    </div>
-
-    <div v-else-if="comments.length === 0" class="text-center py-8 text-[var(--muted)]">
-      <UIcon name="i-heroicons-chat-bubble-left-right" class="w-12 h-12 mx-auto mb-4 opacity-50" />
-      <p>{{ t('comments.noComments') }}</p>
-    </div>
-
-    <div v-else class="space-y-6">
-      <article 
-        v-for="comment in comments" 
-        :key="comment.id"
-        class="comment-thread"
-      >
-        <div class="flex gap-4">
-          <SharedAuthorAvatar
-            :name="comment.author?.name"
-            :avatar="comment.author?.avatar"
-          />
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="font-medium">{{ comment.author?.name || t('post.anonymous') }}</span>
-              <span class="text-xs text-[var(--muted)]">{{ formatRelativeTime(comment.createdAt) }}</span>
-            </div>
-            <p class="text-[var(--foreground)] whitespace-pre-wrap">{{ comment.content }}</p>
-            <div class="mt-2">
-              <button 
-                v-if="!comment.blockedThread"
-                class="text-sm text-[var(--muted)] hover:text-[var(--primary)] transition-colors"
-                @click="startReply(comment.id, comment.author?.name || t('post.anonymous'))"
-              >
-                {{ t('comments.reply') }}
-              </button>
-            </div>
-
-            <div v-if="getReplies(comment.id).length > 0" class="mt-4 pl-4 border-l-2 border-[var(--border)] space-y-4">
-              <article 
-                v-for="reply in getReplies(comment.id)" 
-                :key="reply.id"
-                class="flex gap-3"
-              >
-                <SharedAuthorAvatar
-                  :name="reply.author?.name"
-                  :avatar="reply.author?.avatar"
-                  size="sm"
-                />
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-2 mb-1">
-                    <span class="font-medium text-sm">{{ reply.author?.name || t('post.anonymous') }}</span>
-                    <span class="text-xs text-[var(--muted)]">{{ formatRelativeTime(reply.createdAt) }}</span>
-                  </div>
-                  <p class="text-sm text-[var(--foreground)] whitespace-pre-wrap">{{ reply.content }}</p>
-                </div>
-              </article>
-            </div>
-          </div>
-        </div>
-      </article>
-    </div>
-
-    <div class="mt-8">
-      <h4 class="font-semibold mb-4">
-        {{ replyingTo ? `${t('comments.replyingTo')} ${replyingToName}` : t('comments.placeholder') }}
-      </h4>
-
-      <div v-if="submitSuccess" role="status" class="p-4 rounded-lg mb-4" style="background-color: var(--success-bg); color: var(--success)">
-        {{ t('comments.successMessage') }}
-      </div>
-
-      <div v-if="submitError" role="alert" class="p-4 rounded-lg mb-4" style="background-color: var(--error-bg); color: var(--error)">
-        {{ submitError }}
-      </div>
-
-      <form class="space-y-4" @submit.prevent="handleSubmit">
-        <div v-if="replyingTo" class="flex items-center gap-2 text-sm text-[var(--muted)] mb-4">
-          <span>{{ t('comments.replyingTo') }} {{ replyingToName }}</span>
-          <button 
-            type="button" 
-            class="text-[var(--primary)] hover:underline"
-            @click="cancelReply"
-          >
-            {{ t('comments.cancel') }}
-          </button>
+      <form class="bd-comment-form" novalidate @submit.prevent="handleSubmit">
+        <div class="bd-comment-form-head">
+          <p class="bd-eyebrow bd-home-eyebrow">
+            {{ replyingTo ? `${t('comments.replyingTo')} ${replyingToName}` : t('comments.leave') }}
+          </p>
+          <button v-if="replyingTo" type="button" class="bd-blog-textbtn" @click="cancelReply">{{ t('comments.cancel') }}</button>
         </div>
 
-        <div class="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label for="author-name" class="block text-sm font-medium mb-1">{{ t('comments.name') }} *</label>
-            <input 
+        <p v-if="submitSuccess" class="bd-comment-status bd-comment-status-success" role="status">{{ t('comments.successMessage') }}</p>
+        <p v-if="submitError" class="bd-comment-status bd-comment-status-error" role="alert">{{ submitError }}</p>
+
+        <div class="bd-comment-fields">
+          <div class="bd-comment-field">
+            <label for="author-name">{{ t('comments.name') }}</label>
+            <input
               id="author-name"
               v-model="formData.author.name"
               type="text"
-              class="input-field"
-              :style="formErrors.name ? { borderColor: 'var(--error)' } : {}"
+              class="bd-comment-input"
+              autocomplete="name"
               :placeholder="t('comments.namePlaceholder')"
               :aria-invalid="formErrors.name ? 'true' : undefined"
               :aria-describedby="formErrors.name ? 'author-name-error' : undefined"
             >
-            <p v-if="formErrors.name" id="author-name-error" role="alert" class="text-sm mt-1" style="color: var(--error)">{{ formErrors.name }}</p>
+            <p v-if="formErrors.name" id="author-name-error" class="bd-comment-error" role="alert">{{ formErrors.name }}</p>
           </div>
-          <div>
-            <label for="author-email" class="block text-sm font-medium mb-1">{{ t('comments.email') }} *</label>
-            <input 
+          <div class="bd-comment-field">
+            <label for="author-email">{{ t('comments.email') }}</label>
+            <input
               id="author-email"
               v-model="formData.author.email"
               type="email"
-              class="input-field"
-              :style="formErrors.email ? { borderColor: 'var(--error)' } : {}"
+              class="bd-comment-input"
+              autocomplete="email"
               :placeholder="t('comments.emailPlaceholder')"
               :aria-invalid="formErrors.email ? 'true' : undefined"
               :aria-describedby="formErrors.email ? 'author-email-error author-email-hint' : 'author-email-hint'"
             >
-            <p v-if="formErrors.email" id="author-email-error" role="alert" class="text-sm mt-1" style="color: var(--error)">{{ formErrors.email }}</p>
-            <p id="author-email-hint" class="text-xs text-[var(--muted)] mt-1">{{ t('comments.emailRequired') }}</p>
+            <p v-if="formErrors.email" id="author-email-error" class="bd-comment-error" role="alert">{{ formErrors.email }}</p>
+            <p id="author-email-hint" class="bd-meta bd-comment-hint">{{ t('comments.emailRequired') }}</p>
           </div>
         </div>
 
-        <div>
-          <label for="comment-content" class="block text-sm font-medium mb-1">{{ t('comments.comment') }} *</label>
-          <textarea 
+        <div class="bd-comment-field">
+          <label for="comment-content">{{ t('comments.comment') }}</label>
+          <textarea
             id="comment-content"
             v-model="formData.content"
-            rows="4"
-            class="input-field resize-none"
-            :style="formErrors.content ? { borderColor: 'var(--error)' } : {}"
+            rows="5"
+            class="bd-comment-input bd-comment-textarea"
             :placeholder="t('comments.placeholder')"
             :aria-invalid="formErrors.content ? 'true' : undefined"
             :aria-describedby="formErrors.content ? 'comment-content-error' : undefined"
           />
-          <p v-if="formErrors.content" id="comment-content-error" role="alert" class="text-sm mt-1" style="color: var(--error)">{{ formErrors.content }}</p>
+          <p v-if="formErrors.content" id="comment-content-error" class="bd-comment-error" role="alert">{{ formErrors.content }}</p>
         </div>
 
-        <BdButton
-          type="submit"
-          :disabled="submitting"
-        >
-          <UIcon v-if="submitting" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
-          {{ submitting ? t('comments.posting') : (replyingTo ? t('comments.postReply') : t('comments.postComment')) }}
-        </BdButton>
+        <div class="bd-comment-submit">
+          <BdButton type="submit" arrow :disabled="submitting">
+            {{ submitting ? t('comments.posting') : (replyingTo ? t('comments.postReply') : t('comments.postComment')) }}
+          </BdButton>
+        </div>
       </form>
     </div>
   </section>

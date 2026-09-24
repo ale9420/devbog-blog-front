@@ -1,9 +1,10 @@
-/**
- * Extracts the first character of a name, uppercased.
- * Returns `fallback` (default `"?"`) when name is undefined or empty.
- * Used for avatar placeholders throughout the app.
- */
-export function getInitial(name: string | null | undefined, fallback = '?'): string {
-  if (!name) return fallback
-  return name.charAt(0).toUpperCase()
+export function initials(name: string | null | undefined, fallback = '?'): string {
+  const letters = (name ?? '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(word => word.charAt(0).toUpperCase())
+    .join('')
+  return letters || fallback
 }

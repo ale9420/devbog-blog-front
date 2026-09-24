@@ -71,7 +71,7 @@ const seoLinux = {
 const blockVue = {
   id: 1,
   __component: 'shared.rich-text',
-  body: '## Getting Started\n\nComposables let you share stateful logic across components.\n\n```bash\n$ npm create nuxt@latest\n$ npm run dev\n```',
+  body: '## Getting Started\n\nComposables let you share stateful logic across components.\n\n```bash\n$ npm create nuxt@latest\n$ npm run dev\n```\n\n### Naming\n\nKeep three habits:\n\n- **Prefix** every composable with `use`.\n- **Return** refs, not raw values.\n- **Clean up** side effects.\n\n> [!NOTE] Analogy\n> A composable is a recipe: the component brings the ingredients.',
 }
 
 const blockLinux = {
@@ -85,6 +85,31 @@ const blockVueEs = {
   __component: 'shared.rich-text',
   body: '## Primeros pasos\n\nLos composables permiten compartir lógica.',
 }
+
+const comments = [
+  {
+    id: 101,
+    content: 'Great introduction to composables.',
+    blocked: false,
+    blockedThread: false,
+    removed: false,
+    author: { id: 'guest-1', name: 'Ana Reader' },
+    createdAt: '2026-02-03T10:00:00.000Z',
+    updatedAt: '2026-02-03T10:00:00.000Z',
+    threadOf: null,
+  },
+  {
+    id: 102,
+    content: 'Thanks, glad it helped!',
+    blocked: false,
+    blockedThread: false,
+    removed: false,
+    author: { id: 'guest-2', name: 'Alejandro Ramirez' },
+    createdAt: '2026-02-04T10:00:00.000Z',
+    updatedAt: '2026-02-04T10:00:00.000Z',
+    threadOf: { id: 101 },
+  },
+]
 
 const articles = [
   {
@@ -304,7 +329,8 @@ const server = createServer(async (req, res) => {
   }
 
   if (method === 'GET' && url.pathname.startsWith('/api/comments')) {
-    sendJson(res, 200, { data: [] })
+    const data = url.pathname.includes('doc-vue/') ? comments : []
+    sendJson(res, 200, { data })
     return
   }
 
