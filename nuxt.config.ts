@@ -55,6 +55,7 @@ export default defineNuxtConfig({
   },
   ui: {
     colorMode: false,
+    fonts: false,
   },
   experimental: {
     viewTransition: true,
@@ -78,15 +79,19 @@ export default defineNuxtConfig({
           title: "BogDev RSS Feed",
           href: "/feed.xml",
         },
-        { rel: "preconnect", href: "https://fonts.googleapis.com" },
         {
-          rel: "preconnect",
-          href: "https://fonts.gstatic.com",
+          rel: "preload",
+          href: "/fonts/archivo-latin-var.woff2",
+          as: "font",
+          type: "font/woff2",
           crossorigin: "",
         },
         {
-          rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Cabin:wght@400;600;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap",
+          rel: "preload",
+          href: "/fonts/jetbrains-mono-latin-var.woff2",
+          as: "font",
+          type: "font/woff2",
+          crossorigin: "",
         },
       ],
       script: [

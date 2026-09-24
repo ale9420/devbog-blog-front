@@ -91,6 +91,44 @@
   --text-meta: 400 13px/20px var(--font-mono);
   --text-code: 400 14px/22px var(--font-mono);
 }
+.bd-display-xl {
+  font: var(--text-display-xl);
+  letter-spacing: -0.02em;
+}
+.bd-display-l {
+  font: var(--text-display-l);
+  letter-spacing: -0.015em;
+}
+.bd-heading-1 {
+  font: var(--text-heading-1);
+  letter-spacing: -0.01em;
+}
+.bd-heading-2 {
+  font: var(--text-heading-2);
+}
+.bd-heading-3 {
+  font: var(--text-heading-3);
+}
+.bd-body-l {
+  font: var(--text-body-l);
+}
+.bd-body {
+  font: var(--text-body);
+}
+.bd-body-s {
+  font: var(--text-body-s);
+}
+.bd-eyebrow {
+  font: var(--text-eyebrow);
+  letter-spacing: 0.16em;
+}
+.bd-meta {
+  font: var(--text-meta);
+  letter-spacing: 0.02em;
+}
+.bd-code {
+  font: var(--text-code);
+}
 @theme inline {
   --color-surface: var(--surface);
   --color-surface-raised: var(--surface-raised);

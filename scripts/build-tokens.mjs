@@ -54,6 +54,12 @@ export function buildTokensCss(data, aliases = {}) {
   }))
   lines.push('}')
 
+  ;(data.type?.groups ?? []).forEach((g) => g.styles.forEach((s) => {
+    lines.push(`.bd-${s.name} {`, `  font: var(--text-${s.name});`)
+    if (s.letterSpacing) lines.push(`  letter-spacing: ${s.letterSpacing};`)
+    lines.push('}')
+  }))
+
   lines.push('@theme inline {')
   data.color.tokens.forEach((t) => lines.push(`  --color-${t.name}: var(--${t.name});`))
   ;(data.shadow?.tokens ?? []).forEach((t) => lines.push(`  --shadow-${t.name}: var(--${t.name});`))

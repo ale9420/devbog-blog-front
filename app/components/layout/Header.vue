@@ -70,7 +70,7 @@ const emit = defineEmits<{
                             alt="BogDev"
                         />
                         <span
-                            class="text-xl font-display font-bold hidden sm:block"
+                            class="bd-stretch text-xl font-display font-bold hidden sm:block"
                         >
                             <span class="text-[var(--foreground)]">Bog</span
                             ><span class="text-[var(--primary)]">Dev</span>
