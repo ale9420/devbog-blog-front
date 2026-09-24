@@ -13,7 +13,7 @@ function parseArgs(argv) {
       opts.check = true
     } else if (arg === '--alias') {
       const [theme, selector] = (argv[++i] ?? '').split('=')
-      if (!theme || !selector) throw new Error('--alias espera <tema>=<selector>')
+      if (!theme || !selector) throw new Error('--alias expects <theme>=<selector>')
       ;(opts.aliases[theme] ??= []).push(selector)
     } else {
       opts.files.push(arg)
@@ -33,12 +33,12 @@ function valueFor(token, theme) {
 export function buildTokensCss(data, aliases = {}) {
   const themes = data.color.themes.map((t) => t.id)
   const unknown = Object.keys(aliases).filter((theme) => !themes.includes(theme))
-  if (unknown.length) throw new Error(`Tema desconocido en --alias: ${unknown.join(', ')}`)
+  if (unknown.length) throw new Error(`Unknown theme in --alias: ${unknown.join(', ')}`)
 
   const themed = [...data.color.tokens, ...(data.shadow?.tokens ?? [])]
   const flat = [...(data.spacing?.tokens ?? []), ...(data.radius?.tokens ?? []), ...(data.layout?.tokens ?? [])]
 
-  const lines = ['/* BogDev — generado desde docs/design/tokens.json con scripts/build-tokens.mjs. No editar a mano. */']
+  const lines = ['/* BogDev — generated from docs/design/tokens.json by scripts/build-tokens.mjs. Do not edit by hand. */']
   themes.forEach((theme, i) => {
     const selectors = [...(i === 0 ? [':root'] : []), `[data-theme="${theme}"]`, ...(aliases[theme] ?? [])]
     lines.push(`${selectors.join(',\n')} {`)
@@ -77,15 +77,15 @@ function main() {
   if (check) {
     const current = existsSync(output) ? readFileSync(output, 'utf8') : ''
     if (current !== css) {
-      process.stderr.write(`${output} está desactualizado. Ejecuta: npm run tokens\n`)
+      process.stderr.write(`${output} is out of date. Run: npm run tokens\n`)
       process.exit(1)
     }
-    process.stdout.write(`${output} está al día\n`)
+    process.stdout.write(`${output} is up to date\n`)
     return
   }
 
   writeFileSync(output, css)
-  process.stdout.write(`${output} generado\n`)
+  process.stdout.write(`${output} generated\n`)
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {

@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import type { Tema } from '~/interfaces'
+import type { Theme } from '~/interfaces'
 
 const emit = defineEmits<{
-  change: [theme: Tema]
+  change: [theme: Theme]
 }>()
 
 const { t } = useI18n()
-const { tema, setTema } = useTheme()
+const { theme, setTheme } = useTheme()
 
-const options: Tema[] = ['noche', 'dia']
+const options: Theme[] = ['noche', 'dia']
 
-function select(next: Tema, event: MouseEvent): void {
-  if (next === tema.value) return
-  setTema(next, event.currentTarget)
+function select(next: Theme, event: MouseEvent): void {
+  if (next === theme.value) return
+  setTheme(next, event.currentTarget)
   emit('change', next)
 }
 </script>
@@ -24,7 +24,7 @@ function select(next: Tema, event: MouseEvent): void {
       :key="option"
       type="button"
       :class="['bd-seg', `bd-seg-${option}`]"
-      :aria-pressed="tema === option ? 'true' : 'false'"
+      :aria-pressed="theme === option ? 'true' : 'false'"
       @click="select(option, $event)"
     >
       {{ t(`bd.header.${option}`) }}

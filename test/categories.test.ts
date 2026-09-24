@@ -4,10 +4,10 @@ import { CATEGORIES, CATEGORY_INFO, categoryOrder, isCategory } from '~/helpers/
 
 describe('categories', () => {
   it('lists the five categories with the pillars first', () => {
-    expect(CATEGORIES).toEqual([Category.Privacidad, Category.Diy, Category.Ia, Category.Software, Category.Linux])
-    expect(CATEGORY_INFO[Category.Privacidad].pillar).toBe(1)
+    expect(CATEGORIES).toEqual([Category.Privacy, Category.Diy, Category.Ai, Category.Software, Category.Linux])
+    expect(CATEGORY_INFO[Category.Privacy].pillar).toBe(1)
     expect(CATEGORY_INFO[Category.Diy].pillar).toBe(2)
-    expect(CATEGORY_INFO[Category.Ia].pillar).toBeNull()
+    expect(CATEGORY_INFO[Category.Ai].pillar).toBeNull()
   })
 
   it('keeps the enum values equal to the Strapi slugs', () => {
@@ -16,9 +16,9 @@ describe('categories', () => {
 
   it('maps each category to its bird token', () => {
     expect(Object.fromEntries(CATEGORIES.map((c) => [c, CATEGORY_INFO[c].token]))).toEqual({
-      [Category.Privacidad]: BirdToken.Pinchaflor,
+      [Category.Privacy]: BirdToken.Pinchaflor,
       [Category.Diy]: BirdToken.Golondrina,
-      [Category.Ia]: BirdToken.Chillon,
+      [Category.Ai]: BirdToken.Chillon,
       [Category.Software]: BirdToken.Mirla,
       [Category.Linux]: BirdToken.Monjita,
     })
@@ -32,7 +32,7 @@ describe('categories', () => {
   })
 
   it('orders known categories first and unknown ones last', () => {
-    expect(categoryOrder(Category.Privacidad)).toBe(0)
+    expect(categoryOrder(Category.Privacy)).toBe(0)
     expect(categoryOrder(Category.Linux)).toBe(4)
     expect(categoryOrder('tutorial')).toBe(5)
     expect(categoryOrder(null)).toBe(5)

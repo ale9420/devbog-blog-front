@@ -89,7 +89,7 @@ describe('build-tokens', () => {
   })
 
   it('is deterministic and --check fails on a stale file', () => {
-    expect(run(['--check', '--alias', 'noche=.dark', '--alias', 'dia=.light', input, output])).toContain('al día')
+    expect(run(['--check', '--alias', 'noche=.dark', '--alias', 'dia=.light', input, output])).toContain('is up to date')
     expect(() => run(['--check', input, output])).toThrow()
   })
 

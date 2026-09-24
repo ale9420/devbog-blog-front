@@ -1,29 +1,29 @@
 import type { ComputedRef } from 'vue'
-import type { Tema } from '~/interfaces'
-import { storeTema } from '~/helpers/theme'
+import type { Theme } from '~/interfaces'
+import { storeTheme } from '~/helpers/theme'
 
 export interface UseTheme {
-  tema: ComputedRef<Tema>
+  theme: ComputedRef<Theme>
   isDark: ComputedRef<boolean>
-  setTema: (next: Tema, origin?: EventTarget | null) => void
+  setTheme: (next: Theme, origin?: EventTarget | null) => void
   toggle: (origin?: EventTarget | null) => void
-  sync: (next: Tema) => void
+  sync: (next: Theme) => void
 }
 
 export function useTheme(): UseTheme {
-  const state = useState<Tema>('bd-tema', () => 'noche')
+  const state = useState<Theme>('bd-theme', () => 'noche')
 
-  const tema = computed<Tema>(() => state.value)
+  const theme = computed<Theme>(() => state.value)
   const isDark = computed<boolean>(() => state.value === 'noche')
 
-  function sync(next: Tema): void {
+  function sync(next: Theme): void {
     document.documentElement.setAttribute('data-theme', next)
     state.value = next
   }
 
-  function setTema(next: Tema, origin?: EventTarget | null): void {
+  function setTheme(next: Theme, origin?: EventTarget | null): void {
     if (import.meta.server) return
-    storeTema(next)
+    storeTheme(next)
 
     const root = document.documentElement
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -38,14 +38,14 @@ export function useTheme(): UseTheme {
       root.style.setProperty('--vt-y', `${rect.top + rect.height / 2}px`)
     }
 
-    root.classList.add('bd-vt-tema')
+    root.classList.add('bd-vt-theme')
     const transition = document.startViewTransition(() => sync(next))
-    transition.finished.finally(() => root.classList.remove('bd-vt-tema'))
+    transition.finished.finally(() => root.classList.remove('bd-vt-theme'))
   }
 
   function toggle(origin?: EventTarget | null): void {
-    setTema(isDark.value ? 'dia' : 'noche', origin)
+    setTheme(isDark.value ? 'dia' : 'noche', origin)
   }
 
-  return { tema, isDark, setTema, toggle, sync }
+  return { theme, isDark, setTheme, toggle, sync }
 }

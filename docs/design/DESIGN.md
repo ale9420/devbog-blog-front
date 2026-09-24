@@ -44,7 +44,7 @@ Cada requisito lleva un estado: **EXISTE** (ya está en producción, solo cambia
 Convenciones para agentes:
 
 - Seguir `AGENTS.md` del repo (script setup ordenado, tipos explícitos, sin comentarios, i18n para todo texto visible).
-- Los componentes del sistema de diseño están en React; el frontend es Vue. Se portan a componentes Vue con el mismo nombre (`Bd*`), las mismas props y las mismas clases CSS `bd-*`. No montar React dentro de Nuxt.
+- Los componentes del sistema de diseño están en React; el frontend es Vue. Se portan a componentes Vue con el mismo nombre (`Bd*`), las mismas props y las mismas clases CSS `bd-*`, pero todo identificador va en inglés (ver `AGENTS.md`): si una prop, un evento, un valor o una clase está en español (`activa`, `tema`, `nota`, `blanco`), se traduce. No montar React dentro de Nuxt.
 - Colores, tipo y espacio salen de `tokens.json` vía variables CSS. Nunca un hex en un componente.
 - Textos: español de Colombia, tuteo, títulos en tipo oración, sin emoji ni signos de exclamación. Glifos permitidos: → ↗ ◆ ▲ ✕ ✓ ·. Cada texto nuevo va en `i18n/locales/es.json` y `en.json`.
 - Un issue = un PR pequeño. Si el issue depende de otro abierto, trabajar sobre `main` con lo que exista y dejar la integración detrás de una bandera o un dato opcional; nunca inventar campos de API.

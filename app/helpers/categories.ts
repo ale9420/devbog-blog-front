@@ -2,17 +2,17 @@ import { BirdToken, Category } from '../interfaces/design'
 import type { CategoryInfo } from '../interfaces/design'
 
 export const CATEGORIES: readonly Category[] = [
-  Category.Privacidad,
+  Category.Privacy,
   Category.Diy,
-  Category.Ia,
+  Category.Ai,
   Category.Software,
   Category.Linux,
 ]
 
 export const CATEGORY_INFO: Readonly<Record<Category, CategoryInfo>> = {
-  [Category.Privacidad]: { token: BirdToken.Pinchaflor, scientificName: 'Diglossa cyanea', pillar: 1 },
+  [Category.Privacy]: { token: BirdToken.Pinchaflor, scientificName: 'Diglossa cyanea', pillar: 1 },
   [Category.Diy]: { token: BirdToken.Golondrina, scientificName: 'Pygochelidon cyanoleuca', pillar: 2 },
-  [Category.Ia]: { token: BirdToken.Chillon, scientificName: 'Colibri coruscans', pillar: null },
+  [Category.Ai]: { token: BirdToken.Chillon, scientificName: 'Colibri coruscans', pillar: null },
   [Category.Software]: { token: BirdToken.Mirla, scientificName: 'Turdus fuscater', pillar: null },
   [Category.Linux]: { token: BirdToken.Monjita, scientificName: 'Chrysomus icterocephalus bogotensis', pillar: null },
 }

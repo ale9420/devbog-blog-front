@@ -170,13 +170,13 @@ a.bd-tag:hover {
     fill: #d4743f;
 }
 
-.bd-logo-blanco .bd-logo-a,
-.bd-logo-blanco .bd-logo-b {
+.bd-logo-white .bd-logo-a,
+.bd-logo-white .bd-logo-b {
     fill: #ffffff;
 }
 
-.bd-logo-negro .bd-logo-a,
-.bd-logo-negro .bd-logo-b {
+.bd-logo-black .bd-logo-a,
+.bd-logo-black .bd-logo-b {
     fill: #000000;
 }
 
@@ -991,15 +991,15 @@ html {
     margin: 0;
 }
 
-.bd-callout-nota {
+.bd-callout-note {
     --tone: var(--chillon);
 }
 
-.bd-callout-aviso {
+.bd-callout-warning {
     --tone: var(--monjita);
 }
 
-.bd-callout-peligro {
+.bd-callout-danger {
     --tone: var(--tingua);
 }
 

@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test'
 
 test('follows the system preference on first visit', async ({ browser }) => {
-  for (const [colorScheme, tema] of [['light', 'dia'], ['dark', 'noche']] as const) {
+  for (const [colorScheme, theme] of [['light', 'dia'], ['dark', 'noche']] as const) {
     const page = await browser.newPage({ colorScheme })
     await page.goto('/', { waitUntil: 'networkidle' })
-    await expect(page.locator('html')).toHaveAttribute('data-theme', tema)
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme)
     await page.close()
   }
 })
@@ -41,6 +41,6 @@ test('switches instantly with reduced motion', async ({ browser }) => {
   await page.goto('/', { waitUntil: 'networkidle' })
   await page.getByRole('group', { name: 'Color theme' }).getByRole('button', { name: 'Night' }).click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'noche')
-  expect(await page.evaluate(() => document.documentElement.classList.contains('bd-vt-tema'))).toBe(false)
+  expect(await page.evaluate(() => document.documentElement.classList.contains('bd-vt-theme'))).toBe(false)
   await page.close()
 })

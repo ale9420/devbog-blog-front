@@ -1,7 +1,7 @@
 export enum Category {
-  Privacidad = 'privacidad',
+  Privacy = 'privacidad',
   Diy = 'diy',
-  Ia = 'ia',
+  Ai = 'ia',
   Software = 'software',
   Linux = 'linux',
 }
@@ -18,9 +18,9 @@ export type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'text'
 
 export type ButtonSize = 'md' | 'sm'
 
-export type LogoVariant = 'auto' | 'color' | 'blanco' | 'negro'
+export type LogoVariant = 'auto' | 'color' | 'white' | 'black'
 
-export type CalloutTone = 'nota' | 'aviso' | 'peligro'
+export type CalloutTone = 'note' | 'warning' | 'danger'
 
 export interface CodeLine {
   prompt: boolean
