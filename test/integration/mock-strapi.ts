@@ -63,15 +63,24 @@ const coverVueEs: StrapiMediaRef = {
 
 const categoryVue: StrapiCategoryRef = {
   id: 21,
-  documentId: 'cat-vue',
-  name: 'Vue',
+  documentId: 'cat-software',
+  name: 'Desarrollo de software',
+  slug: 'software',
 }
 
 const categoryLinux: StrapiCategoryRef = {
   id: 22,
   documentId: 'cat-linux',
-  name: 'Linux',
+  name: 'Linux y código abierto',
+  slug: 'linux',
 }
+
+const emptyCategories: StrapiCategoryRef[] = [
+  { id: 23, documentId: 'cat-privacidad', name: 'Privacidad', slug: 'privacidad' },
+  { id: 24, documentId: 'cat-diy', name: 'DIY · Hazlo tú mismo', slug: 'diy' },
+  { id: 25, documentId: 'cat-ia', name: 'Inteligencia artificial', slug: 'ia' },
+  { id: 26, documentId: 'cat-tutorial', name: 'tutorial', slug: null },
+]
 
 const seoVue: StrapiSEO = {
   id: 41,
@@ -259,7 +268,7 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
       const slugFilter = getNestedValue(query, ['filters', 'slug', '$eq']) as string | undefined
       const titleFilter = getNestedValue(query, ['filters', 'title', '$containsi']) as string | undefined
       const localeFilter = query.locale as string | undefined
-      const categoryFilter = getNestedValue(query, ['filters', 'category', 'name', '$eq']) as string | undefined
+      const categoryFilter = getNestedValue(query, ['filters', 'category', 'slug', '$eq']) as string | undefined
       const tagFilter = getNestedValue(query, ['filters', 'tags', '$contains']) as string | undefined
       const page = Number(getNestedValue(query, ['pagination', 'page']) || 1)
       const pageSize = Number(getNestedValue(query, ['pagination', 'pageSize']) || 10)
@@ -286,7 +295,7 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
         data = data.filter((article) => article.locale === localeFilter)
       }
       if (categoryFilter) {
-        data = data.filter((article) => article.category?.name === categoryFilter)
+        data = data.filter((article) => article.category?.slug === categoryFilter)
       }
       if (tagFilter) {
         data = data.filter((article) => article.tags?.includes(tagFilter))
@@ -311,11 +320,12 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
 
     if (method === 'GET' && url.pathname === '/api/categories') {
       const localeFilter = getNestedValue(query, ['populate', 'articles', 'filters', 'locale', '$eq']) as string | undefined ?? 'en'
-      const categories = [categoryVue, categoryLinux].map((category) => ({
+      const categories = [categoryVue, categoryLinux, ...emptyCategories].map((category) => ({
         id: category.id,
         name: category.name,
+        slug: category.slug,
         articles: articles
-          .filter((article) => article.category?.name === category.name && article.locale === localeFilter)
+          .filter((article) => article.category?.slug === category.slug && article.locale === localeFilter)
           .map((article) => ({ id: article.id })),
       }))
       sendJson(res, 200, { data: categories })

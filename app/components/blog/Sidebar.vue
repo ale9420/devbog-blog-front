@@ -1,19 +1,15 @@
 <script setup lang="ts">
-import type { PostListItem } from '~/interfaces'
+import type { CategoryCount, PostListItem } from '~/interfaces'
 import { formatDate } from '~/helpers/formatDate'
-
-interface Category {
-  id: number
-  name: string
-  count: number
-}
+import { CATEGORY_INFO, isCategory } from '~/helpers/categories'
 
 const { t, locale } = useI18n()
+const categoryLabel = useCategoryLabel()
 const { getMediaUrl } = useStrapi()
 const { localizePath } = useLocaleUtils()
 
 defineProps<{
-  categories: Category[]
+  categories: CategoryCount[]
   popularTags: string[]
   recentPosts: PostListItem[]
   selectedCategory?: string
@@ -38,13 +34,19 @@ defineEmits<{
           v-for="category in categories" 
           :key="category.id"
           class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all"
-          :class="selectedCategory === category.name
+          :class="selectedCategory === (category.slug ?? category.name)
             ? 'bg-[var(--primary)] text-[var(--on-primary)]'
             : 'hover:bg-[var(--surface-elevated)] text-[var(--foreground)]'"
-          :aria-pressed="selectedCategory === category.name"
-          @click="$emit('selectCategory', category.name)"
+          :aria-pressed="selectedCategory === (category.slug ?? category.name)"
+          @click="$emit('selectCategory', category.slug ?? category.name)"
         >
-          <span class="flex-1 text-left">{{ category.name }}</span>
+          <span
+            v-if="isCategory(category.slug)"
+            class="bd-tag-dot"
+            :style="{ background: `var(--${CATEGORY_INFO[category.slug].token})` }"
+            aria-hidden="true"
+          />
+          <span class="flex-1 text-left">{{ categoryLabel(category) }}</span>
           <span class="text-xs opacity-60">{{ category.count }}</span>
         </button>
       </div>

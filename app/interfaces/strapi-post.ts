@@ -14,6 +14,7 @@ export interface StrapiCategoryRef {
   id?: number
   documentId?: string
   name?: string
+  slug?: string | null
 }
 
 export interface StrapiAuthorRef {
@@ -63,7 +64,7 @@ export interface SearchPostResult {
   slug: string
   description?: string | null
   cover: { url: string } | null
-  category: { name: string } | null
+  category: { name: string; slug: string | null } | null
 }
 
 export interface StrapiPost {

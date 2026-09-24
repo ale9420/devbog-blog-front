@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   const tag = query.tag as string | undefined
 
   const filters: Record<string, unknown> = {}
-  if (category) filters.category = { name: { $eq: category } }
+  if (category) filters.category = { slug: { $eq: category } }
   if (tag) filters.tags = { $contains: tag }
 
   const params = qs.stringify({

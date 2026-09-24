@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { $fetch, setup } from '@nuxt/test-utils/e2e'
 import type { RawStrapiArticle } from '~/interfaces/strapi-post'
+import { Category } from '~/interfaces/design'
 import { startMockStrapi } from './mock-strapi'
 
 const mock = await startMockStrapi()
@@ -18,6 +19,34 @@ await setup({
 
 beforeEach(() => {
   mock.requests.length = 0
+})
+
+describe('/api/categories', () => {
+  it('returns the five redesign categories in order, including empty ones, and hides unknown empty ones', async () => {
+    const result = await $fetch<Array<{ slug: string | null; name: string; count: number }>>('/api/categories', { query: { locale: 'en' } })
+    expect(result.map((category) => [category.slug, category.count])).toEqual([
+      [Category.Privacidad, 0],
+      [Category.Diy, 0],
+      [Category.Ia, 0],
+      [Category.Software, 1],
+      [Category.Linux, 1],
+    ])
+  })
+
+  it('counts articles of the requested locale only', async () => {
+    const result = await $fetch<Array<{ slug: string | null; count: number }>>('/api/categories', { query: { locale: 'es' } })
+    expect(result.find((category) => category.slug === Category.Software)?.count).toBe(1)
+    expect(result.find((category) => category.slug === Category.Linux)?.count).toBe(0)
+  })
+})
+
+describe('/api/posts category filter', () => {
+  it('filters by category slug', async () => {
+    const result = await $fetch<{ data: Array<{ slug: string }> }>('/api/posts', { query: { locale: 'en', category: Category.Linux } })
+    expect(result.data.map((post) => post.slug)).toEqual(['linux-server-hardening-guide'])
+    const strapiRequests = mock.requests.filter((request) => request.method === 'GET' && request.path === '/api/articles')
+    expect(getNestedValue(strapiRequests[strapiRequests.length - 1].query, ['filters', 'category', 'slug', '$eq'])).toBe(Category.Linux)
+  })
 })
 
 describe('/api/search', () => {
@@ -40,7 +69,7 @@ describe('/api/search', () => {
         slug: 'understanding-vue-composables',
         description: 'A deep dive into writing reusable Vue composables.',
         cover: { url: '/uploads/cover-vue.png' },
-        category: { name: 'Vue' },
+        category: { name: 'Desarrollo de software', slug: Category.Software },
       },
       {
         id: 3,
@@ -48,7 +77,7 @@ describe('/api/search', () => {
         slug: 'guia-vue-composables',
         description: 'Una guía profunda sobre composables de Vue.',
         cover: { url: '/uploads/cover-vue-es.png' },
-        category: { name: 'Vue' },
+        category: { name: 'Desarrollo de software', slug: Category.Software },
       },
     ])
   })
@@ -68,7 +97,7 @@ describe('/api/posts/[slug]', () => {
     expect(result.title).toBe('Understanding Vue Composables')
     expect(result.slug).toBe('understanding-vue-composables')
     expect(result.blocks).toHaveLength(1)
-    expect(result.category?.name).toBe('Vue')
+    expect(result.category?.slug).toBe(Category.Software)
   })
 
   it('sets revalidation cache headers', async () => {

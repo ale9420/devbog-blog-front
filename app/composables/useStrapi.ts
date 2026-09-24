@@ -6,7 +6,7 @@ import type {
   PostListItem,
   StrapiPost,
   SearchPostResult, StrapiPaginatedResponse, PaginationMeta 
-, Locale} from "~/interfaces";
+, Locale, CategoryCount} from "~/interfaces";
 import { defaultLocale } from "~/interfaces";
 
 /**
@@ -119,7 +119,7 @@ export function useStrapi() {
         locale: locale || undefined,
       }, { skipNulls: true })
 
-      return $fetch<Array<{ id: number; name: string; count: number }>>(
+      return $fetch<CategoryCount[]>(
         `/api/categories?${query}`,
       )
     }, {

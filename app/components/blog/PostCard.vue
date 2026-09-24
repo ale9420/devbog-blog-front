@@ -6,6 +6,7 @@ import { getInitial } from '~/helpers/string'
 const { t, locale } = useI18n();
 const { getMediaUrl } = useStrapi();
 const { localizePath } = useLocaleUtils();
+const categoryLabel = useCategoryLabel();
 
 const props = defineProps<{
   post: PostListItem;
@@ -49,7 +50,7 @@ const delay = computed(() => `${(props.index ?? 0) * 100}ms`);
             class="px-3 py-1.5 text-xs font-semibold rounded-full"
             style="background-color: color-mix(in srgb, var(--primary) 15%, transparent); color: var(--primary)"
           >
-            {{ post.category.name }}
+            {{ categoryLabel(post.category) }}
           </span>
         </div>
       </div>

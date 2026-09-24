@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { CATEGORIES, CATEGORY_INFO } from "~/helpers/categories";
+
 const { t } = useI18n();
 const { localizePath } = useLocaleUtils();
 const config = useAppConfig();
@@ -106,28 +108,18 @@ const currentYear = new Date().getFullYear();
                         {{ t("footer.topics") }}
                     </h4>
                     <ul class="space-y-3">
-                        <li>
+                        <li v-for="category in CATEGORIES" :key="category">
                             <NuxtLink
-                                :to="`${localizePath('/blog')}?category=ai`"
-                                class="text-[var(--muted)] hover:text-[var(--primary)] transition-colors"
-                                >{{
-                                    t("footer.artificialIntelligence")
-                                }}</NuxtLink
+                                :to="`${localizePath('/blog')}?category=${category}`"
+                                class="inline-flex items-center gap-2 text-[var(--muted)] hover:text-[var(--primary)] transition-colors"
                             >
-                        </li>
-                        <li>
-                            <NuxtLink
-                                :to="`${localizePath('/blog')}?category=software`"
-                                class="text-[var(--muted)] hover:text-[var(--primary)] transition-colors"
-                                >{{ t("footer.softwareDevelopment") }}</NuxtLink
-                            >
-                        </li>
-                        <li>
-                            <NuxtLink
-                                :to="`${localizePath('/blog')}?category=linux`"
-                                class="text-[var(--muted)] hover:text-[var(--primary)] transition-colors"
-                                >{{ t("footer.linuxOpenSource") }}</NuxtLink
-                            >
+                                <span
+                                    class="bd-tag-dot"
+                                    :style="{ background: `var(--${CATEGORY_INFO[category].token})` }"
+                                    aria-hidden="true"
+                                />
+                                {{ t(`bd.categories.${category}`) }}
+                            </NuxtLink>
                         </li>
                     </ul>
                 </div>
