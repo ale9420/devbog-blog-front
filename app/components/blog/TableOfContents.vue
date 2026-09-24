@@ -53,15 +53,7 @@ const headings = computed<Heading[]>(() => {
 })
 
 function scrollToHeading(id: string) {
-  const element = document.getElementById(id)
-  if (element) {
-    const offset = 100
-    const elementPosition = element.getBoundingClientRect().top + window.scrollY
-    window.scrollTo({
-      top: elementPosition - offset,
-      behavior: 'smooth'
-    })
-  }
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
 onMounted(() => {
@@ -73,7 +65,7 @@ onMounted(() => {
         }
       })
     },
-    { rootMargin: '-100px 0px -80% 0px' }
+    { rootMargin: '-150px 0px -70% 0px' }
   )
   
   headings.value.forEach(heading => {

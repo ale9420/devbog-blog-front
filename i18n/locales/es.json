@@ -102,9 +102,6 @@
     "connect": "Conectar",
     "close": "Cerrar",
     "backToTop": "Volver arriba",
-    "ariaSearch": "Buscar",
-    "ariaSwitchLocale": "Cambiar idioma",
-    "ariaToggleTheme": "Cambiar tema",
     "ariaLinkedIn": "LinkedIn",
     "ariaMenu": "Menú",
     "ariaPrevPage": "Página anterior",
@@ -181,6 +178,28 @@
       "already": "◆ Ese correo ya está suscrito. No tienes que hacer nada más.",
       "invalid": "✕ Ese correo no parece válido.",
       "error": "✕ No pudimos suscribirte. Intenta de nuevo en un momento."
+    },
+    "header": {
+      "home": "BogDev, inicio",
+      "nav": "Principal",
+      "breadcrumbs": "Migas de pan",
+      "search": "Buscar",
+      "menu": "Abrir menú",
+      "theme": "Tema de color",
+      "noche": "Noche",
+      "dia": "Día",
+      "language": "Idioma",
+      "languages": {
+        "es": "Español",
+        "en": "English"
+      },
+      "fediverse": "{'@'}devbog en el fediverso",
+      "read": "Leído {percent} %",
+      "hud": {
+        "city": "Bogotá",
+        "coords": "4.61°N 74.08°W",
+        "altitude": "2.640 m s.n.m."
+      }
     }
   }
 }

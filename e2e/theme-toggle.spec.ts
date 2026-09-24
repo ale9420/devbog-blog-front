@@ -13,7 +13,7 @@ test('toggles between Noche and Día and persists across reload', async ({ page 
   await page.goto('/', { waitUntil: 'networkidle' })
   const html = page.locator('html')
   await expect(html).toHaveAttribute('data-theme', 'dia')
-  await page.getByRole('button', { name: 'Toggle theme' }).click()
+  await page.getByRole('group', { name: 'Color theme' }).getByRole('button', { name: 'Night' }).click()
   await expect(html).toHaveAttribute('data-theme', 'noche')
   expect(await page.evaluate(() => localStorage.getItem('devbog-theme'))).toBe('noche')
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(10, 12, 16)')
@@ -39,7 +39,7 @@ test('migrates the legacy color mode preference', async ({ page }) => {
 test('switches instantly with reduced motion', async ({ browser }) => {
   const page = await browser.newPage({ reducedMotion: 'reduce', colorScheme: 'light' })
   await page.goto('/', { waitUntil: 'networkidle' })
-  await page.getByRole('button', { name: 'Toggle theme' }).click()
+  await page.getByRole('group', { name: 'Color theme' }).getByRole('button', { name: 'Night' }).click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'noche')
   expect(await page.evaluate(() => document.documentElement.classList.contains('bd-vt-tema'))).toBe(false)
   await page.close()
