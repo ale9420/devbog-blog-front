@@ -64,18 +64,6 @@
     "postComment": "Publicar Comentario",
     "successMessage": "¡Comentario publicado exitosamente!"
   },
-  "newsletter": {
-    "title": "Suscribirse al Boletín",
-    "description": "Recibe los últimos artículos en tu bandeja de entrada.",
-    "placeholder": "Tu correo electrónico",
-    "button": "Suscribirse",
-    "success": "¡Gracias por suscribirte!",
-    "error": "Algo salió mal. Por favor intenta de nuevo.",
-    "confirmationSent": "¡Revisa tu correo!",
-    "checkInbox": "Te enviamos un enlace de confirmación. Haz clic para activar tu suscripción.",
-    "alreadySubscribed": "Este correo ya está suscrito.",
-    "invalidEmail": "Por favor ingresa un correo válido."
-  },
   "about": {
     "contentNotAvailable": "El contenido de la página Acerca de no está disponible."
   },
@@ -177,6 +165,22 @@
       "copy": "Copiar",
       "copied": "Copiado ✓",
       "copyAria": "Copiar código"
+    },
+    "card": {
+      "featured": "Artículo destacado",
+      "more": "Leer más"
+    },
+    "newsletter": {
+      "eyebrow": "Newsletter",
+      "title": "Recibe los últimos artículos en tu bandeja de entrada",
+      "description": "Un correo cuando haya un artículo nuevo. Confirmas la suscripción desde tu bandeja.",
+      "label": "Correo electrónico",
+      "placeholder": "tu{'@'}correo.com",
+      "button": "Suscribirme",
+      "success": "✓ Revisa tu correo para confirmar la suscripción.",
+      "already": "◆ Ese correo ya está suscrito. No tienes que hacer nada más.",
+      "invalid": "✕ Ese correo no parece válido.",
+      "error": "✕ No pudimos suscribirte. Intenta de nuevo en un momento."
     }
   }
 }

@@ -6,6 +6,7 @@ const { fetchPosts } = useStrapi()
 const { localizePath } = useLocaleUtils()
 const { siteUrl } = useSiteUrl()
 const { canonicalUrl } = useCanonicalUrl('/')
+const toPostCard = usePostCard()
 
 const { data: postsResult, pending } = fetchPosts({ pageSize: 7, locale: locale.value as Locale })
 
@@ -111,11 +112,10 @@ useHead({
       </div>
       
       <div v-else-if="posts && posts.length > 0" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <BlogPostCard 
-          v-for="(post, index) in posts.slice(0, 6)" 
-          :key="post.id" 
-          :post="post"
-          :index="index"
+        <BdPostCard
+          v-for="post in posts.slice(0, 6)"
+          :key="post.id"
+          v-bind="toPostCard(post)"
         />
       </div>
       
@@ -129,7 +129,7 @@ useHead({
     </section>
     
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-      <HomeNewsletter />
+      <BdNewsletterForm id="nl-home" />
     </section>
   </div>
 </template>

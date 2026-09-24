@@ -7,6 +7,7 @@ const router = useRouter();
 const { fetchPosts, fetchCategories } = useStrapi();
 const { canonicalUrl } = useCanonicalUrl('/blog');
 const { siteUrl } = useSiteUrl();
+const toPostCard = usePostCard();
 
 const selectedCategory = ref<string>(((route.query.category as string) || "").toLowerCase());
 const selectedTag = ref<string>((route.query.tag as string) || "");
@@ -155,11 +156,11 @@ useSeoMeta({
           v-else-if="posts.length > 0"
           class="grid md:grid-cols-2 gap-6"
         >
-          <BlogPostCard
+          <BdPostCard
             v-for="(post, index) in posts"
             :key="post.id"
-            :post="post"
-            :index="index"
+            v-bind="toPostCard(post)"
+            :priority="index === 0"
           />
         </div>
 

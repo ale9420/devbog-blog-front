@@ -26,3 +26,17 @@ export function formatDate(date: string | null | undefined, style: DateFormatSty
 
   return new Date(date).toLocaleDateString(locale, options)
 }
+
+export function formatDotDate(date: string | null | undefined): string {
+  if (!date) return ''
+
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'America/Bogota',
+  }).formatToParts(new Date(date))
+  const part = (type: Intl.DateTimeFormatPartTypes): string => parts.find(p => p.type === type)?.value ?? ''
+
+  return `${part('day')}.${part('month')}.${part('year')}`
+}
