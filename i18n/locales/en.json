@@ -66,15 +66,6 @@
   "about": {
     "contentNotAvailable": "About page content not available."
   },
-  "footer": {
-    "rights": "All rights reserved.",
-    "quickLinks": "Quick Links",
-    "topics": "Topics",
-    "subscribe": "Subscribe",
-    "rssFeed": "RSS Feed",
-    "madeWith": "Made with",
-    "bogota": "in Bogotá, Colombia"
-  },
   "sidebar": {
     "categories": "Categories",
     "popularTags": "Popular Tags",
@@ -224,6 +215,35 @@
         "article": "Article",
         "topic": "Topic",
         "action": "Action"
+      }
+    },
+    "footer": {
+      "tagline": "Exploring privacy, DIY, AI, software and Linux.",
+      "social": "Social",
+      "navigate": "Navigate",
+      "topics": "Topics",
+      "subscribe": "Subscribe",
+      "subscribeSummary": "RSS · Fediverse",
+      "rss": "RSS feed",
+      "fediverse": "Fediverse · {'@'}devbog",
+      "newsletter": "Newsletter",
+      "coffee": "Buy me a coffee",
+      "madeIn": "Made in Bogotá, Colombia",
+      "illustration": "Illustration · rufous-collared sparrow, Zonotrichia capensis",
+      "panorama": {
+        "title": "Eastern hills",
+        "swipe": "Swipe",
+        "label": "Panorama of Bogotá's eastern hills, swipe to explore it",
+        "monserrate": "Monserrate · 3,152 m",
+        "guadalupe": "Guadalupe · 3,317 m",
+        "view": "Eastern hills · view from the west",
+        "cci": "International Trade Center · 192 m",
+        "atrio": "Atrio Towers · 201 m",
+        "parque": "Torres del Parque · Rogelio Salmona",
+        "colpatria": "Colpatria Tower · 196 m",
+        "bacataSouth": "BD Bacatá · south tower 216 m",
+        "bacataNorth": "BD Bacatá · north tower 167 m",
+        "avianca": "Avianca Building · 161 m"
       }
     }
   }

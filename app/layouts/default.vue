@@ -48,7 +48,7 @@ onMounted(() => {
             <slot />
         </main>
 
-        <LayoutFooter />
+        <BdFooter />
 
         <BdTabBar
             :active="active"
