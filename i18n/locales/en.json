@@ -102,9 +102,6 @@
     "connect": "Connect",
     "close": "Close",
     "backToTop": "Back to top",
-    "ariaSearch": "Search",
-    "ariaSwitchLocale": "Switch language",
-    "ariaToggleTheme": "Toggle theme",
     "ariaLinkedIn": "LinkedIn",
     "ariaMenu": "Menu",
     "ariaPrevPage": "Previous page",
@@ -181,6 +178,28 @@
       "already": "◆ That email is already subscribed. Nothing else to do.",
       "invalid": "✕ That email does not look valid.",
       "error": "✕ We could not subscribe you. Try again in a moment."
+    },
+    "header": {
+      "home": "BogDev, home",
+      "nav": "Main",
+      "breadcrumbs": "Breadcrumb",
+      "search": "Search",
+      "menu": "Open menu",
+      "theme": "Color theme",
+      "noche": "Night",
+      "dia": "Day",
+      "language": "Language",
+      "languages": {
+        "es": "Español",
+        "en": "English"
+      },
+      "fediverse": "{'@'}devbog on the fediverse",
+      "read": "Read {percent} %",
+      "hud": {
+        "city": "Bogotá",
+        "coords": "4.61°N 74.08°W",
+        "altitude": "2,640 m a.s.l."
+      }
     }
   }
 }

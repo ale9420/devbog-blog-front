@@ -124,6 +124,11 @@ function isActive(path: string) {
                                 </NuxtLink>
                             </div>
 
+                            <div class="mt-8 flex flex-wrap gap-3">
+                                <BdThemeSwitch />
+                                <BdLangSwitch @change="emit('close')" />
+                            </div>
+
                             <div
                                 class="mt-8 pt-8 border-t border-[var(--border)]"
                             >

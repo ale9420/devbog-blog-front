@@ -10,8 +10,17 @@ const { localizePath } = useLocaleUtils();
 const categoryLabel = useCategoryLabel();
 const { siteUrl } = useSiteUrl();
 const { canonicalUrl } = useCanonicalUrl(`/blog/${slug}`);
+const headerSeccion = useHeaderSeccion();
 
 const { data: post, pending } = await fetchPost(slug, locale.value as Locale);
+
+watch(() => categoryLabel(post.value?.category), (label) => {
+    headerSeccion.value = label;
+}, { immediate: true });
+
+onBeforeUnmount(() => {
+    headerSeccion.value = "";
+});
 
 const coverUrl = computed(() => {
     if (!post.value?.cover) return "";
@@ -201,7 +210,7 @@ useHead({
 
             <div class="lg:grid lg:grid-cols-4 lg:gap-12">
                 <aside class="hidden lg:block">
-                    <div class="sticky top-24">
+                    <div class="sticky top-[calc(var(--bd-header-h)+2rem)]">
                         <div class="card p-6">
                             <BlogTableOfContents :blocks="post.blocks" />
                         </div>

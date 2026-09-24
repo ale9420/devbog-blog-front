@@ -205,7 +205,7 @@ useSeoMeta({
       </div>
 
       <aside class="hidden lg:block">
-        <div class="sticky top-24">
+        <div class="sticky top-[calc(var(--bd-header-h)+2rem)]">
           <BlogSidebar
             :categories="categories"
             :popular-tags="popularTags"
