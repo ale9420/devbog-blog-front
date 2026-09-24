@@ -6,15 +6,77 @@
   },
   "home": {
     "hero": {
-      "title": "Welcome to BogDev",
-      "subtitle": "Exploring AI, Software Development, and Linux",
-      "featuredPost": "Featured Post"
+      "eyebrow": "Field log · {count} article | Field log · {count} articles",
+      "title": "Exploring privacy, DIY, AI, software and Linux.",
+      "subtitle": "Technical notes written from Bogotá, 2,640 meters above sea level.",
+      "read": "Read articles",
+      "figure": "Fig. 01 — Bogotá savanna · Flight paths",
+      "figureShort": "Fig. 01 — Flight paths",
+      "species": {
+        "software": "Thrush · T. fuscater",
+        "ia": "Violetear · C. coruscans",
+        "linux": "Blackbird · C. i. bogotensis",
+        "privacidad": "Flowerpiercer · D. cyanea",
+        "diy": "Swallow · P. cyanoleuca"
+      }
     },
-    "latestPosts": "Latest Posts",
-    "freshArticles": "Fresh articles from the blog",
-    "viewAll": "View All",
-    "noPostsYet": "No posts yet",
-    "checkBackSoon": "Check back soon for new content!"
+    "latest": {
+      "eyebrow": "Index · {count} article | Index · {count} articles",
+      "title": "Latest articles",
+      "filters": "Filter by topic",
+      "all": "All",
+      "archive": "Archive",
+      "archiveTitle": "All articles",
+      "archiveMeta": "/blog · FILTER · SEARCH · RSS",
+      "empty": {
+        "all": "No articles yet",
+        "privacidad": "No articles on privacy yet",
+        "diy": "No articles on DIY yet",
+        "ia": "No articles on AI yet",
+        "software": "No articles on software development yet",
+        "linux": "No articles on Linux yet"
+      },
+      "emptyNote": "The nest is ready · Check back soon",
+      "showAll": "Show all"
+    },
+    "guide": {
+      "eyebrow": "Field guide",
+      "title": "Five topics, five birds of the savanna",
+      "description": "Each blog category takes its color from the plumage of a bird from Bogotá. Privacy and DIY are the pillars.",
+      "pillar": "Pillar {number}",
+      "figure": "Fig. {number}",
+      "count": "No articles yet | {count} article | {count} articles",
+      "topics": {
+        "privacidad": {
+          "title": "Privacy",
+          "description": "Digital sovereignty, self-hosting and tools to look after your data.",
+          "bird": "Masked flowerpiercer",
+          "note": "Black mask, blue plumage: sees without being seen."
+        },
+        "diy": {
+          "title": "Do it yourself",
+          "description": "Home labs, hardware and projects built at home.",
+          "bird": "Blue-and-white swallow",
+          "note": "Builds its nest from whatever it finds on the city's eaves and walls."
+        },
+        "ia": {
+          "title": "Artificial intelligence",
+          "bird": "Sparkling violetear"
+        },
+        "software": {
+          "title": "Software development",
+          "bird": "Great thrush"
+        },
+        "linux": {
+          "title": "Linux and open source",
+          "bird": "Yellow-hooded blackbird"
+        }
+      }
+    },
+    "rss": {
+      "title": "Prefer RSS?",
+      "description": "The full feed, with no middlemen or algorithms."
+    }
   },
   "blog": {
     "readMore": "Read More",

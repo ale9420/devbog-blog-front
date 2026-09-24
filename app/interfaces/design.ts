@@ -91,3 +91,31 @@ export interface PaletteGroup {
   kind: PaletteKind
   options: PaletteOption[]
 }
+
+export interface ContourOptions {
+  cx: number
+  cy: number
+  from: number
+  to: number
+  step: number
+  seed: number
+  scaleX: number
+  scaleY: number
+}
+
+export interface ContourRing {
+  d: string
+  major: boolean
+}
+
+export interface ContourSet {
+  name: string
+  width: number
+  height: number
+  options: ContourOptions
+}
+
+export interface FieldGuideTopic {
+  category: Category
+  count: number
+}
