@@ -2,7 +2,7 @@
 import type { Tema } from '~/interfaces'
 
 const emit = defineEmits<{
-  change: [tema: Tema]
+  change: [theme: Tema]
 }>()
 
 const { t } = useI18n()

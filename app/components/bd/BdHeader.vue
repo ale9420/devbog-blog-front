@@ -2,42 +2,42 @@
 import type { HeaderSection, Locale, Tema } from '~/interfaces'
 
 const props = withDefaults(defineProps<{
-  activa?: HeaderSection
-  lectura?: boolean
-  progreso?: number
-  seccion?: string
+  active?: HeaderSection
+  reading?: boolean
+  progress?: number
+  section?: string
   menuOpen?: boolean
 }>(), {
-  activa: undefined,
-  lectura: false,
-  progreso: undefined,
-  seccion: undefined,
+  active: undefined,
+  reading: false,
+  progress: undefined,
+  section: undefined,
   menuOpen: false,
 })
 
 const emit = defineEmits<{
   search: []
   menu: []
-  tema: [tema: Tema]
+  theme: [theme: Tema]
   lang: [locale: Locale]
 }>()
 
 const { t } = useI18n()
 const { localizePath } = useLocaleUtils()
 
-const tracking = computed<boolean>(() => props.lectura && props.progreso === undefined)
+const tracking = computed<boolean>(() => props.reading && props.progress === undefined)
 const scrolled = useReadingProgress(tracking)
 const shortcut = ref('⌘K')
 
 const links = computed<{ id: HeaderSection, label: string, to: string }[]>(() => [
-  { id: 'inicio', label: t('nav.home'), to: localizePath('/') },
+  { id: 'home', label: t('nav.home'), to: localizePath('/') },
   { id: 'blog', label: t('nav.blog'), to: localizePath('/blog') },
-  { id: 'acerca', label: t('nav.about'), to: localizePath('/about') },
+  { id: 'about', label: t('nav.about'), to: localizePath('/about') },
 ])
 const percent = computed<number>(() =>
-  Math.round(Math.min(100, Math.max(0, props.progreso ?? scrolled.value))),
+  Math.round(Math.min(100, Math.max(0, props.progress ?? scrolled.value))),
 )
-const progressStyle = computed<Record<string, string>>(() => ({ '--bd-leido': String(percent.value / 100) }))
+const progressStyle = computed<Record<string, string>>(() => ({ '--bd-read': String(percent.value / 100) }))
 
 onMounted(() => {
   if (!/Mac|iPhone|iPad/.test(navigator.platform)) shortcut.value = 'Ctrl K'
@@ -45,7 +45,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <header :class="['bd-header', { 'bd-header-lectura': lectura, 'bd-header-auto': tracking }]">
+  <header :class="['bd-header', { 'bd-header-reading': reading, 'bd-header-auto': tracking }]">
     <div class="bd-nav">
       <div class="bd-header-inner">
         <NuxtLink :to="localizePath('/')" class="bd-brand" :aria-label="t('bd.header.home')">
@@ -58,7 +58,7 @@ onMounted(() => {
               <NuxtLink
                 :to="link.to"
                 class="bd-nav-link"
-                :aria-current="activa === link.id ? 'page' : undefined"
+                :aria-current="active === link.id ? 'page' : undefined"
               >
                 {{ link.label }}
               </NuxtLink>
@@ -90,20 +90,20 @@ onMounted(() => {
       </div>
     </div>
 
-    <div v-if="lectura" class="bd-strip">
+    <div v-if="reading" class="bd-strip">
       <div class="bd-header-inner">
         <nav class="bd-crumbs bd-meta" :aria-label="t('bd.header.breadcrumbs')">
           <NuxtLink :to="localizePath('/')" class="bd-strip-link">{{ t('nav.home') }}</NuxtLink>
           <span aria-hidden="true">/</span>
           <NuxtLink :to="localizePath('/blog')" class="bd-strip-link">{{ t('nav.blog') }}</NuxtLink>
-          <template v-if="seccion">
+          <template v-if="section">
             <span aria-hidden="true">/</span>
-            <span class="bd-crumbs-current" aria-current="page">{{ seccion }}</span>
+            <span class="bd-crumbs-current" aria-current="page">{{ section }}</span>
           </template>
         </nav>
         <div class="bd-strip-actions">
           <span class="bd-meta bd-strip-read">{{ t('bd.header.read', { percent }) }}</span>
-          <BdThemeSwitch @change="emit('tema', $event)" />
+          <BdThemeSwitch @change="emit('theme', $event)" />
         </div>
       </div>
     </div>
@@ -128,12 +128,12 @@ onMounted(() => {
           >
             {{ t('bd.header.search') }} <kbd class="bd-kbd" aria-hidden="true">{{ shortcut }}</kbd>
           </button>
-          <BdThemeSwitch @change="emit('tema', $event)" />
+          <BdThemeSwitch @change="emit('theme', $event)" />
         </div>
       </div>
     </div>
 
-    <div v-if="lectura" class="bd-progress" :style="progressStyle" aria-hidden="true">
+    <div v-if="reading" class="bd-progress" :style="progressStyle" aria-hidden="true">
       <div class="bd-progress-bar" />
       <div class="bd-progress-track">
         <svg class="bd-progress-bird" width="22" height="14" viewBox="0 0 22 14" focusable="false">

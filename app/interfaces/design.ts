@@ -71,4 +71,4 @@ export interface PostCardProps {
   imageAlt?: string
 }
 
-export type HeaderSection = 'inicio' | 'blog' | 'acerca'
+export type HeaderSection = 'home' | 'blog' | 'about'

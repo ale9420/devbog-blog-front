@@ -3,13 +3,13 @@ import { headerSection, isReadingPath, readingPercent } from '~/helpers/header'
 
 describe('headerSection', () => {
   it('maps routes to the active section in both locales', () => {
-    expect(headerSection('/')).toBe('inicio')
-    expect(headerSection('/es')).toBe('inicio')
-    expect(headerSection('/es/')).toBe('inicio')
+    expect(headerSection('/')).toBe('home')
+    expect(headerSection('/es')).toBe('home')
+    expect(headerSection('/es/')).toBe('home')
     expect(headerSection('/blog')).toBe('blog')
     expect(headerSection('/es/blog/mi-articulo')).toBe('blog')
-    expect(headerSection('/about')).toBe('acerca')
-    expect(headerSection('/es/about')).toBe('acerca')
+    expect(headerSection('/about')).toBe('about')
+    expect(headerSection('/es/about')).toBe('about')
   })
 
   it('returns undefined for pages outside the main navigation', () => {

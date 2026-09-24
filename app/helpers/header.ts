@@ -9,9 +9,9 @@ function stripLocale(path: string): string {
 
 export function headerSection(path: string): HeaderSection | undefined {
   const bare = stripLocale(path)
-  if (bare === '/') return 'inicio'
+  if (bare === '/') return 'home'
   if (bare === '/blog' || bare.startsWith('/blog/')) return 'blog'
-  if (bare === '/about' || bare.startsWith('/about/')) return 'acerca'
+  if (bare === '/about' || bare.startsWith('/about/')) return 'about'
   return undefined
 }
 

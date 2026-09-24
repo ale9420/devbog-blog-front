@@ -3,13 +3,13 @@ import type { HeaderSection } from '~/interfaces'
 import { headerSection, isReadingPath } from '~/helpers/header'
 
 const route = useRoute()
-const seccion = useHeaderSeccion()
+const section = useHeaderSection()
 
 const isSearchOpen = ref(false)
 const isMobileMenuOpen = ref(false)
 
-const activa = computed<HeaderSection | undefined>(() => headerSection(route.path))
-const lectura = computed<boolean>(() => isReadingPath(route.path))
+const active = computed<HeaderSection | undefined>(() => headerSection(route.path))
+const reading = computed<boolean>(() => isReadingPath(route.path))
 
 useKeyboardShortcut('k', () => {
     isSearchOpen.value = !isSearchOpen.value
@@ -28,9 +28,9 @@ onMounted(() => {
         <LayoutBackToTop />
 
         <BdHeader
-            :activa="activa"
-            :lectura="lectura"
-            :seccion="seccion || undefined"
+            :active="active"
+            :reading="reading"
+            :section="section || undefined"
             :menu-open="isMobileMenuOpen"
             @search="isSearchOpen = true"
             @menu="isMobileMenuOpen = true"

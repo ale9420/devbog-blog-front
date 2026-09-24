@@ -10,16 +10,16 @@ const { localizePath } = useLocaleUtils();
 const categoryLabel = useCategoryLabel();
 const { siteUrl } = useSiteUrl();
 const { canonicalUrl } = useCanonicalUrl(`/blog/${slug}`);
-const headerSeccion = useHeaderSeccion();
+const headerSection = useHeaderSection();
 
 const { data: post, pending } = await fetchPost(slug, locale.value as Locale);
 
 watch(() => categoryLabel(post.value?.category), (label) => {
-    headerSeccion.value = label;
+    headerSection.value = label;
 }, { immediate: true });
 
 onBeforeUnmount(() => {
-    headerSeccion.value = "";
+    headerSection.value = "";
 });
 
 const coverUrl = computed(() => {

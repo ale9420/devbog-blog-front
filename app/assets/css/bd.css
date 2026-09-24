@@ -468,14 +468,14 @@ html {
 .bd-progress-bar {
     height: 100%;
     background: var(--chillon);
-    transform: scaleX(var(--bd-leido, 0));
+    transform: scaleX(var(--bd-read, 0));
     transform-origin: left;
 }
 
 .bd-progress-track {
     position: absolute;
     inset: 0;
-    transform: translateX(calc(var(--bd-leido, 0) * 100%));
+    transform: translateX(calc(var(--bd-read, 0) * 100%));
 }
 
 .bd-progress-bird {
@@ -502,7 +502,7 @@ html {
     }
 }
 
-@keyframes bd-leido-bar {
+@keyframes bd-read-bar {
     from {
         transform: scaleX(0);
     }
@@ -512,7 +512,7 @@ html {
     }
 }
 
-@keyframes bd-leido-track {
+@keyframes bd-read-track {
     from {
         transform: translateX(0);
     }
@@ -524,12 +524,12 @@ html {
 
 @supports (animation-timeline: scroll()) {
     .bd-header-auto .bd-progress-bar {
-        animation: bd-leido-bar linear both;
+        animation: bd-read-bar linear both;
         animation-timeline: scroll(root);
     }
 
     .bd-header-auto .bd-progress-track {
-        animation: bd-leido-track linear both;
+        animation: bd-read-track linear both;
         animation-timeline: scroll(root);
     }
 }
