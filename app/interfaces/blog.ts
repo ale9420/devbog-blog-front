@@ -8,3 +8,9 @@ export interface BlogFilters {
 }
 
 export type PaginationItem = number | 'gap'
+
+export interface TocHeading {
+  id: string
+  text: string
+  level: 2 | 3
+}

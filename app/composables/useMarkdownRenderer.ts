@@ -2,7 +2,9 @@ import { Marked } from 'marked';
 import type { Tokens } from 'marked';
 import sanitizeHtml from 'sanitize-html';
 import { slugify } from '~/helpers/slugify';
+import type { CalloutTone } from '~/interfaces';
 import { escapeHtml, renderCodeBlockHtml } from '~/helpers/code';
+import { parseCalloutMarker, renderCalloutHtml } from '~/helpers/callout';
 
 export { slugify };
 
@@ -22,6 +24,7 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
         code: ['class'],
         pre: ['class'],
         button: ['type', 'class', 'data-bd-copy', 'hidden'],
+        aside: ['role'],
         '*': ['id', 'class'],
     },
     allowedIframeDomains: ['youtube.com', 'www.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com', 'vimeo.com', 'player.vimeo.com'],
@@ -30,7 +33,7 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
     },
 };
 
-function createMarkdownRenderer() {
+function createMarkdownRenderer(calloutLabel: (tone: CalloutTone) => string) {
     const marked = new Marked();
     marked.use({
         renderer: {
@@ -57,6 +60,12 @@ function createMarkdownRenderer() {
             code(token: Tokens.Code): string {
                 return renderCodeBlockHtml(token.text || '', token.lang || '');
             },
+            blockquote(token: Tokens.Blockquote): string {
+                const callout = parseCalloutMarker(token.text || '');
+                if (!callout) return `<blockquote>\n${this.parser.parse(token.tokens)}</blockquote>\n`;
+                const body = marked.parse(callout.body, { async: false });
+                return renderCalloutHtml(callout.tone, callout.title ?? calloutLabel(callout.tone), body);
+            },
         },
         gfm: true,
         breaks: true,
@@ -64,9 +73,10 @@ function createMarkdownRenderer() {
     return marked;
 }
 
-const scopedMarked = createMarkdownRenderer();
-
 export function useMarkdownRenderer() {
+    const { t } = useI18n();
+    const scopedMarked = createMarkdownRenderer(tone => t(`bd.callout.${tone}`));
+
     function renderMarkdown(text: string): string {
         if (!text) return '';
         try {

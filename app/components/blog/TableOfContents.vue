@@ -1,99 +1,45 @@
 <script setup lang="ts">
-import type { StrapiRichText, StrapiBlock } from '~/interfaces'
+import type { TocHeading } from '~/interfaces'
 
-const { t } = useI18n()
-const { slugify } = useMarkdownRenderer()
-
-interface Heading {
-  id: string
-  text: string
-  level: number
-}
+const SCROLL_OFFSET = 160
+const SCROLL_THROTTLE_MS = 100
 
 const props = defineProps<{
-  blocks: StrapiBlock[]
+  headings: TocHeading[]
 }>()
 
-const activeId = ref<string>('')
+const { t } = useI18n()
 
-function isRichText(block: StrapiBlock): block is StrapiRichText {
-  return block.__component === 'shared.rich-text'
-}
+const activeId = ref<string>(props.headings[0]?.id ?? '')
 
-const headings = computed<Heading[]>(() => {
-  const result: Heading[] = []
-  
-  props.blocks?.forEach(block => {
-    if (isRichText(block) && block.body) {
-      const lines = block.body.split('\n')
-      lines.forEach(line => {
-        const h2Match = line.match(/^## (.+)$/)
-        const h3Match = line.match(/^### (.+)$/)
-        
-        if (h2Match?.[1]) {
-          const text = h2Match[1].trim()
-          result.push({
-            id: slugify(text),
-            text,
-            level: 2
-          })
-        } else if (h3Match?.[1]) {
-          const text = h3Match[1].trim()
-          result.push({
-            id: slugify(text),
-            text,
-            level: 3
-          })
-        }
-      })
-    }
-  })
-  
-  return result
-})
+const { y } = useWindowScroll()
 
-function scrollToHeading(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-}
+const updateActive = useThrottleFn(() => {
+  let current = props.headings[0]?.id ?? ''
+  for (const heading of props.headings) {
+    const element = document.getElementById(heading.id)
+    if (element && element.getBoundingClientRect().top <= SCROLL_OFFSET) current = heading.id
+  }
+  activeId.value = current
+}, SCROLL_THROTTLE_MS, true)
+
+watch(y, () => updateActive())
 
 onMounted(() => {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          activeId.value = entry.target.id
-        }
-      })
-    },
-    { rootMargin: '-150px 0px -70% 0px' }
-  )
-  
-  headings.value.forEach(heading => {
-    const element = document.getElementById(heading.id)
-    if (element) observer.observe(element)
-  })
-  
-  onUnmounted(() => observer.disconnect())
+  updateActive()
 })
 </script>
 
 <template>
-  <nav v-if="headings.length > 0" class="space-y-1">
-    <p class="text-xs font-semibold text-[var(--muted)] uppercase tracking-wider mb-3">
-      {{ t('tableOfContents.onThisPage') }}
-    </p>
+  <nav v-if="headings.length" class="bd-toc" :aria-label="t('post.toc')">
+    <p class="bd-eyebrow bd-toc-title">{{ t('post.toc') }}</p>
     <a
       v-for="heading in headings"
       :key="heading.id"
       :href="`#${heading.id}`"
-      class="block text-sm py-1.5 transition-colors"
-      :class="[
-        heading.level === 3 ? 'pl-4' : '',
-        activeId === heading.id
-          ? 'text-[var(--primary)] font-medium'
-          : 'text-[var(--muted)] hover:text-[var(--foreground)]'
-      ]"
-      @click.prevent="scrollToHeading(heading.id)"
+      :class="['bd-toc-link', { 'bd-toc-sub': heading.level === 3 }]"
+      :aria-current="activeId === heading.id ? 'true' : undefined"
+      @click="activeId = heading.id"
     >
       {{ heading.text }}
     </a>

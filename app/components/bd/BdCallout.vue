@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CalloutTone } from '~/interfaces'
+import { CALLOUT_GLYPHS } from '~/helpers/callout'
 
 const props = withDefaults(defineProps<{
   tone?: CalloutTone
@@ -8,8 +9,6 @@ const props = withDefaults(defineProps<{
   tone: 'note',
   title: undefined,
 })
-
-const GLYPHS: Record<CalloutTone, string> = { note: '◆', warning: '▲', danger: '✕' }
 
 const { t } = useI18n()
 
@@ -21,7 +20,7 @@ const heading = computed<string>(() => props.title ?? t(`bd.callout.${props.tone
     :class="['bd-callout', `bd-callout-${tone}`]"
     :role="tone === 'danger' ? 'alert' : 'note'"
   >
-    <span class="bd-callout-label"><span aria-hidden="true">{{ `${GLYPHS[tone]} ` }}</span>{{ heading }}</span>
+    <span class="bd-callout-label"><span aria-hidden="true">{{ `${CALLOUT_GLYPHS[tone]} ` }}</span>{{ heading }}</span>
     <div class="bd-callout-body">
       <slot />
     </div>

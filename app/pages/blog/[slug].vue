@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import type { Locale } from "~/interfaces";
-import { formatDate } from '~/helpers/formatDate'
+import type { Category, Locale, TocHeading } from "~/interfaces";
+import { isCategory } from "~/helpers/categories";
+import { formatDotDate } from "~/helpers/formatDate";
+import { mastodonShareUrl } from "~/helpers/share";
+import { extractHeadings } from "~/helpers/toc";
 
 const { locale, t } = useI18n();
 const route = useRoute();
@@ -12,7 +15,7 @@ const { siteUrl } = useSiteUrl();
 const { canonicalUrl } = useCanonicalUrl(`/blog/${slug}`);
 const headerSection = useHeaderSection();
 
-const { data: post, pending } = await fetchPost(slug, locale.value as Locale);
+const { data: post } = await fetchPost(slug, locale.value as Locale);
 
 watch(() => categoryLabel(post.value?.category), (label) => {
     headerSection.value = label;
@@ -36,12 +39,14 @@ const shareImageUrl = computed(() => seoImageUrl.value || coverUrl.value || `${s
 
 const shareImageAlt = computed(() => post.value?.cover?.alternativeText || post.value?.title || "Blog post cover image");
 
-const currentUrl = computed(() => {
-    if (typeof window !== "undefined") {
-        return window.location.href;
-    }
-    return "";
+const category = computed<Category | undefined>(() => {
+    const slug = post.value?.category?.slug;
+    return isCategory(slug) ? slug : undefined;
 });
+const headings = computed<TocHeading[]>(() => extractHeadings(post.value?.blocks));
+const articleUrl = computed<string>(() => post.value?.seo?.canonicalURL || canonicalUrl.value);
+const mastodonUrl = computed<string>(() => mastodonShareUrl(post.value?.title ?? "", articleUrl.value));
+const publishedDate = computed<string>(() => formatDotDate(post.value?.publishedAt));
 
 useSeoMeta({
     title: () => post.value?.seo?.metaTitle || (post.value?.title ? `${post.value.title} - BogDev` : "Post - BogDev"),
@@ -85,7 +90,7 @@ const structuredData = computed(() => {
         "@context": "https://schema.org",
         "@graph": [
             {
-                "@type": "Article",
+                "@type": "BlogPosting",
                 "@id": `${siteUrl.value}/blog/${slug}`,
                 headline: post.value.title,
                 description: post.value.description,
@@ -175,181 +180,84 @@ useHead({
 </script>
 
 <template>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <div v-if="pending" class="animate-pulse">
-            <div
-                class="h-8 bg-[var(--surface-elevated)] rounded w-1/4 mb-4"
-            />
-            <div
-                class="h-12 bg-[var(--surface-elevated)] rounded w-3/4 mb-6"
-            />
-            <div
-                class="h-96 bg-[var(--surface-elevated)] rounded-2xl mb-8"
-            />
-            <div class="space-y-4">
-                <div
-                    class="h-4 bg-[var(--surface-elevated)] rounded w-full"
-                />
-                <div
-                    class="h-4 bg-[var(--surface-elevated)] rounded w-full"
-                />
-                <div
-                    class="h-4 bg-[var(--surface-elevated)] rounded w-2/3"
-                />
-            </div>
-        </div>
-
-        <template v-else-if="post">
-            <NuxtLink
-                :to="localizePath('/blog')"
-                class="inline-flex items-center gap-2 text-[var(--muted)] hover:text-[var(--primary)] transition-colors mb-6"
-            >
-                <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" />
-                {{ t("post.backToBlog") }}
-            </NuxtLink>
-
-            <div class="lg:grid lg:grid-cols-4 lg:gap-12">
-                <aside class="hidden lg:block">
-                    <div class="sticky top-[calc(var(--bd-header-h)+2rem)]">
-                        <div class="card p-6">
-                            <BlogTableOfContents :blocks="post.blocks" />
+    <div class="bd-article-page">
+        <template v-if="post">
+            <header class="bd-article-head">
+                <div class="bd-article-kicker">
+                    <BdCategoryTag v-if="category" :category="category" />
+                    <time v-if="publishedDate" class="bd-meta" :datetime="post.publishedAt ?? undefined">{{ publishedDate }}</time>
+                    <span v-if="post.readTime" class="bd-meta">{{ t("blog.readTime", { minutes: post.readTime }) }}</span>
+                </div>
+                <h1 class="bd-article-title bd-wide">{{ post.title }}</h1>
+                <p v-if="post.description" class="bd-article-lead">{{ post.description }}</p>
+                <div class="bd-article-byline">
+                    <div class="bd-article-author">
+                        <BlogAuthorBadge :author="post.author" />
+                        <div class="bd-article-author-text">
+                            <span class="bd-article-author-name">{{ post.author?.name || t("post.anonymous") }}</span>
+                            <span class="bd-meta bd-home-eyebrow bd-article-place">{{ t("bd.header.hud.city") }} · {{ t("bd.header.hud.coords") }}</span>
                         </div>
                     </div>
-                </aside>
+                    <div class="bd-article-actions">
+                        <BlogCopyLinkButton :url="articleUrl" />
+                        <BdButton :href="mastodonUrl" variant="text" size="sm" target="_blank" rel="noopener noreferrer" :aria-label="t('post.shareOn', { network: 'Mastodon' })">
+                            Mastodon <span aria-hidden="true">↗</span>
+                        </BdButton>
+                    </div>
+                </div>
+            </header>
 
-                <article class="lg:col-span-3">
-                    <header class="mb-8">
-                        <div v-if="post.category" class="mb-4">
-                            <span
-                                class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-[var(--primary)]/10 text-[var(--primary)]"
-                            >
-                                {{ categoryLabel(post.category) }}
-                            </span>
-                        </div>
+            <figure v-if="coverUrl" class="bd-article-cover">
+                <NuxtImg
+                    :src="coverUrl"
+                    :alt="post.cover?.alternativeText || post.title"
+                    width="1200"
+                    height="675"
+                    format="webp"
+                    loading="eager"
+                    fetchpriority="high"
+                    decoding="async"
+                />
+            </figure>
+            <div v-else class="bd-article-cover bd-article-cover-empty" aria-hidden="true" />
 
-                        <h1
-                            class="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight"
-                        >
-                            {{ post.title }}
-                        </h1>
+            <div class="bd-article-body">
+                <BlogTableOfContents class="bd-article-toc" :headings="headings" />
 
-                        <p class="text-xl text-[var(--muted)] mb-6">
-                            {{ post.description }}
-                        </p>
-
-                        <div
-                            class="flex flex-wrap items-center gap-4 pb-8 border-b border-[var(--border)]"
-                        >
-                            <div class="flex items-center gap-3">
-                                <SharedAuthorAvatar
-                                    :name="post.author?.name"
-                                    :avatar="post.author?.avatar"
-                                    size="lg"
-                                />
-                                <div>
-                                    <p class="font-medium">
-                                        {{
-                                            post.author?.name ||
-                                            t("post.anonymous")
-                                        }}
-                                    </p>
-                                    <p class="text-sm text-[var(--muted)]">
-                                        {{ formatDate(post.publishedAt, 'full', locale === 'es' ? 'es-CO' : 'en-US') }}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <span class="hidden sm:block text-[var(--border)]"
-                                >|</span
-                            >
-
-                            <div
-                                v-if="post.readTime"
-                                class="flex items-center gap-1.5 text-[var(--muted)]"
-                            >
-                                <UIcon
-                                    name="i-heroicons-clock"
-                                    class="w-5 h-5"
-                                />
-                                {{
-                                    t("blog.readTime", {
-                                        minutes: post.readTime,
-                                    })
-                                }}
-                            </div>
-                        </div>
-                    </header>
-
-                    <NuxtImg
-                        v-if="post.cover"
-                        :src="coverUrl"
-                        :alt="post.title"
-                        width="1200"
-                        height="500"
-                        format="webp"
-                        loading="eager"
-                        fetchpriority="high"
-                        decoding="async"
-                        class="w-full h-auto md:h-[500px] object-cover rounded-2xl mb-10 shadow-lg"
-                    />
-
-                    <div
-                        class="prose prose-devbog dark:prose-invert max-w-none"
-                    >
+                <article class="bd-article-content">
+                    <div class="bd-prose">
                         <StrapiBlocksRenderer :blocks="post.blocks" />
                     </div>
 
-                    <BlogRelatedPosts
-                        :current-post-id="post.id"
-                        :category-id="post.category?.id"
-                    />
-
-                    <BlogBuyMeACoffee class="mt-12" />
-
-                    <BlogCommentSection
-                        :slug="slug"
-                        :document-id="post.documentId"
-                    />
-
-                    <footer class="mt-12 pt-8 border-t border-[var(--border)]">
-                        <div
-                            class="flex flex-wrap items-center justify-between gap-4"
-                        >
-                            <BlogShareButtons
-                                :title="post.title"
-                                :url="currentUrl"
-                            />
-
+                    <div class="bd-article-after">
+                        <div v-if="post.tags?.length" class="bd-article-tags">
+                            <span class="bd-eyebrow bd-home-eyebrow">{{ t("post.tags") }}</span>
                             <NuxtLink
-                                :to="localizePath('/blog')"
-                                class="text-[var(--primary)] hover:underline"
+                                v-for="tag in post.tags"
+                                :key="tag"
+                                :to="{ path: localizePath('/blog'), query: { tag } }"
+                                class="bd-chip bd-blog-tag"
                             >
-                                ← {{ t("post.backToAllPosts") }}
+                                #{{ tag }}
                             </NuxtLink>
                         </div>
-                    </footer>
+                        <BlogAuthorCard :author="post.author" />
+                        <BlogBuyMeACoffee />
+                    </div>
                 </article>
+
+                <BlogShareButtons class="bd-article-share" :title="post.title" :url="articleUrl" />
             </div>
+
+            <BlogCommentSection :slug="slug" :document-id="post.documentId" />
+
+            <BlogRelatedPosts :current-post-id="post.id" :category="post.category" />
         </template>
 
-        <div v-else class="text-center py-20">
-            <div
-                class="w-20 h-20 mx-auto mb-6 rounded-full gradient-bogota-subtle flex items-center justify-center"
-            >
-                <UIcon
-                    name="i-heroicons-exclamation-circle"
-                    class="w-10 h-10 text-[var(--muted)]"
-                />
-            </div>
-            <h2 class="text-2xl font-semibold mb-4">
-                {{ t("post.postNotFound") }}
-            </h2>
-            <p class="text-[var(--muted)] mb-6">
-                {{ t("post.articleDoesNotExist") }}
-            </p>
-            <BdButton :href="localizePath('/blog')">
-                {{ t("post.backToBlog") }}
-            </BdButton>
+        <div v-else class="bd-latest-empty bd-article-missing">
+            <h1 class="bd-latest-empty-title">{{ t("post.postNotFound") }}</h1>
+            <p class="bd-article-lead">{{ t("post.articleDoesNotExist") }}</p>
+            <BdButton :href="localizePath('/blog')" arrow>{{ t("post.backToBlog") }}</BdButton>
         </div>
     </div>
 </template>

@@ -17,4 +17,8 @@ describe('slugify', () => {
   it('produces ids matching markdown heading anchors', () => {
     expect(slugify('My personal lab: AI without the cloud')).toBe('my-personal-lab-ai-without-the-cloud')
   })
+
+  it('keeps accented letters without their accents', () => {
+    expect(slugify('Qué es RAG: diseño y señales')).toBe('que-es-rag-diseno-y-senales')
+  })
 })

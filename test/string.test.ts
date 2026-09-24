@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest'
-import { getInitial } from '~/helpers/string'
+import { initials } from '~/helpers/string'
 
-describe('getInitial', () => {
-  it('uppercases the first character', () => {
-    expect(getInitial('alejandro')).toBe('A')
+describe('initials', () => {
+  it('takes the first letter of up to two words', () => {
+    expect(initials('Alejandro Ramírez García')).toBe('AR')
+    expect(initials('  ana  ')).toBe('A')
   })
 
   it('falls back for empty or missing names', () => {
-    expect(getInitial(undefined)).toBe('?')
-    expect(getInitial('')).toBe('?')
-    expect(getInitial(undefined, 'A')).toBe('A')
+    expect(initials(undefined)).toBe('?')
+    expect(initials('   ')).toBe('?')
   })
 })

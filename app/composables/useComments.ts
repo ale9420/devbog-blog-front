@@ -25,7 +25,7 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
     return `api::article.article:${articleSlug}`
   })
 
-  const comments = ref<Comment[]>([])
+  const allComments = ref<Comment[]>([])
   const pending = ref(false)
   const error = ref<string | null>(null)
   const submitting = ref(false)
@@ -41,8 +41,7 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
         `/api/comments/flat?relation=${relation.value}`
       )
       
-      const allComments = response.data || []
-      comments.value = allComments.filter(c => !c.threadOf)
+      allComments.value = response.data || []
     } catch (err: unknown) {
       error.value = getErrorMessage(err, 'Failed to load comments')
       console.error('Error fetching comments:', err)
@@ -96,49 +95,23 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
     }
   }
 
-  function countComments(commentList: Comment[]): number {
-    let count = 0
-    for (const comment of commentList) {
-      count++
-      if (comment.children && comment.children.length > 0) {
-        count += countComments(comment.children)
-      }
-    }
-    return count
-  }
+  const comments = computed<Comment[]>(() => allComments.value.filter(comment => !comment.threadOf))
+  const totalComments = computed<number>(() => allComments.value.length)
 
-  const totalComments = computed(() => countComments(comments.value))
+  function repliesOf(commentId: number): Comment[] {
+    return allComments.value.filter(comment => comment.threadOf?.id === commentId)
+  }
 
   return {
     comments,
     pending,
     error,
     totalComments,
+    repliesOf,
     submitting,
     submitError,
     submitSuccess,
     fetchComments,
     postComment
   }
-}
-
-export function formatRelativeTime(dateString: string): string {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffSecs = Math.floor(diffMs / 1000)
-  const diffMins = Math.floor(diffSecs / 60)
-  const diffHours = Math.floor(diffMins / 60)
-  const diffDays = Math.floor(diffHours / 24)
-  const diffWeeks = Math.floor(diffDays / 7)
-  const diffMonths = Math.floor(diffDays / 30)
-  const diffYears = Math.floor(diffDays / 365)
-
-  if (diffSecs < 60) return 'just now'
-  if (diffMins < 60) return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`
-  if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`
-  if (diffDays < 7) return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`
-  if (diffWeeks < 4) return `${diffWeeks} week${diffWeeks !== 1 ? 's' : ''} ago`
-  if (diffMonths < 12) return `${diffMonths} month${diffMonths !== 1 ? 's' : ''} ago`
-  return `${diffYears} year${diffYears !== 1 ? 's' : ''} ago`
 }

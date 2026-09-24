@@ -1,38 +1,40 @@
 <script setup lang="ts">
 const { t } = useI18n()
-
-const props = defineProps<{
-  username?: string
-}>()
-
 const config = useAppConfig()
-const username = props.username || config.site?.support?.buyMeACoffee || 'your-username'
+
+const username = computed<string>(() => config.site.support.buyMeACoffee)
+const url = computed<string>(() => `https://www.buymeacoffee.com/${username.value}`)
 </script>
 
 <template>
-  <div class="card p-6 text-center">
-    <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-[#ff5f5f]/10 flex items-center justify-center">
-      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3" stroke="#ff5f5f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M16 16l-4-4-4 4" stroke="#ff5f5f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+  <section class="bd-coffee" aria-labelledby="bd-coffee-title">
+    <svg class="bd-coffee-cup" width="120" height="100" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+      <g fill="none" stroke="var(--ink-muted)" stroke-width="1.4" stroke-linecap="round">
+        <path class="bd-steam" d="M50 36 Q46 28 51 21 Q56 14 51 6" />
+        <path class="bd-steam bd-steam-2" d="M60 34 Q56 26 61 19 Q66 12 61 4" />
+        <path class="bd-steam bd-steam-3" d="M70 36 Q66 28 71 21 Q76 14 71 6" />
+      </g>
+      <path d="M12 88 Q60 98 108 88" fill="none" stroke="var(--ink-muted)" stroke-width="1.4" stroke-linecap="round" />
+      <path d="M92 52 Q106 54 102 66 Q98 74 88 72" fill="none" stroke="var(--ink)" stroke-width="1.4" />
+      <path d="M28 46 L34 80 Q60 88 86 80 L92 46 Z" fill="var(--surface-raised)" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round" />
+      <ellipse cx="60" cy="46" rx="32" ry="5" fill="var(--surface-raised)" stroke="var(--ink)" stroke-width="1.4" />
+      <ellipse cx="60" cy="46.5" rx="27" ry="3.2" fill="var(--mirla)" fill-opacity=".85" />
+      <g transform="translate(88 44) scale(-1,1)">
+        <g class="bd-perch">
+          <path d="M-8 -4 Q-9 -11 -2 -12 Q1 -17 6 -15 L7 -14 Q8 -6 2 -2 L-3 -1 L-11 4 Z" fill="var(--ink-muted)" />
+          <path d="M6 -15 L12 -13.5 L7 -12.5 Z" fill="var(--mirla)" />
+          <path d="M0 -1.5 L0 0 M2 -1.5 L2.5 0" stroke="var(--ink-muted)" stroke-width="1" />
+        </g>
+      </g>
+    </svg>
+    <div class="bd-coffee-body">
+      <p class="bd-eyebrow bd-home-eyebrow">{{ t('buyMeACoffee.eyebrow') }}</p>
+      <h2 id="bd-coffee-title" class="bd-coffee-title">{{ t('buyMeACoffee.supportMyWork') }}</h2>
+      <p class="bd-coffee-text">{{ t('buyMeACoffee.description') }}</p>
+      <p class="bd-meta bd-coffee-handle">buymeacoffee.com/{{ username }}</p>
     </div>
-    
-    <h4 class="font-display text-lg font-semibold mb-2">{{ t('buyMeACoffee.supportMyWork') }}</h4>
-    <p class="text-sm text-[var(--muted)] mb-4">
-      {{ t('buyMeACoffee.description') }}
-    </p>
-    
-    <a
-      :href="`https://www.buymeacoffee.com/${username}`"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#ff5f5f] text-white font-medium hover:bg-[#ff3f3f] transition-colors"
-    >
-      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93s3.05-7.44 7-7.93v15.86zm2-15.86c1.03.13 2 .45 2.87.93H13v-.93zM13 7h5.24c.25.31.48.65.68 1H13V7zm0 3h6.74c.08.33.15.66.19 1H13v-1zm0 9.93V19h2.87c-.49.3-1.05.53-1.66.68l-.21-.68H13zm5.13-3.36l-.21-.68C16.98 15.52 15.37 15 13.66 15V12H11v.04c.45-.01.88-.04 1.29-.11l.84-.03z"/>
-      </svg>
-      {{ t('buyMeACoffee.button') }}
-    </a>
-  </div>
+    <BdButton :href="url" class="bd-coffee-button" target="_blank" rel="noopener noreferrer">
+      {{ t('buyMeACoffee.button') }} <span aria-hidden="true">↗</span>
+    </BdButton>
+  </section>
 </template>

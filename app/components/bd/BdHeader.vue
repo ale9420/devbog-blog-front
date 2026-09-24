@@ -27,6 +27,7 @@ const { localizePath } = useLocaleUtils()
 
 const tracking = computed<boolean>(() => props.reading && props.progress === undefined)
 const scrolled = useReadingProgress(tracking)
+const mounted = useMounted()
 const shortcut = ref('⌘K')
 
 const links = computed<{ id: HeaderSection, label: string, to: string }[]>(() => [
@@ -96,7 +97,7 @@ onMounted(() => {
           <NuxtLink :to="localizePath('/')" class="bd-strip-link">{{ t('nav.home') }}</NuxtLink>
           <span aria-hidden="true">/</span>
           <NuxtLink :to="localizePath('/blog')" class="bd-strip-link">{{ t('nav.blog') }}</NuxtLink>
-          <template v-if="section">
+          <template v-if="section && mounted">
             <span aria-hidden="true">/</span>
             <span class="bd-crumbs-current" aria-current="page">{{ section }}</span>
           </template>
