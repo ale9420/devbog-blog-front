@@ -285,7 +285,12 @@ const server = createServer(async (req, res) => {
         documentId: 'about',
         locale,
         blocks: [{ id: 1, __component: 'shared.hero', title: 'About BogDev', subtitle: 'Personal blog' }],
-        seo: null,
+        seo: {
+          id: 43,
+          metaTitle: 'About BogDev',
+          metaDescription: 'About the author',
+          metaImage: { id: 14, documentId: 'about-og', url: '/uploads/about-og.png' },
+        },
       },
     })
     return

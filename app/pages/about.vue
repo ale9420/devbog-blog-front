@@ -2,18 +2,23 @@
 import type { Locale } from "~/interfaces";
 
 const { locale, t } = useI18n();
-const { fetchAbout } = useStrapi();
+const { fetchAbout, getMediaUrl } = useStrapi();
 const { canonicalUrl } = useCanonicalUrl("/about");
 const { siteUrl } = useSiteUrl();
 
-const { data: about, pending } = fetchAbout(locale.value as Locale);
+const { data: about, pending } = await fetchAbout(locale.value as Locale);
+
+const shareImageUrl = computed(() => {
+  const metaImage = about.value?.seo?.metaImage;
+  return getMediaUrl(metaImage?.url || metaImage?.data?.attributes?.url) || `${siteUrl.value}/og-image.png`;
+});
 
 useSeoMeta({
   title: () => about.value?.seo?.metaTitle || "About - BogDev",
   ogTitle: () => about.value?.seo?.metaTitle || "About - BogDev",
   description: () => about.value?.seo?.metaDescription || "",
   ogDescription: () => about.value?.seo?.metaDescription || "",
-  ogImage: () => about.value?.seo?.metaImage?.data?.attributes?.url || `${siteUrl.value}/og-image.png`,
+  ogImage: () => shareImageUrl.value,
   ogImageAlt: 'BogDev — About',
   ogUrl: () => canonicalUrl.value,
   ogType: "profile",

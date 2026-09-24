@@ -1,0 +1,7 @@
+import { test, expect } from '@playwright/test'
+
+test('server-renders the about page SEO image from Strapi', async ({ request }) => {
+  const html = await (await request.get('/about')).text()
+  expect(html).toContain('<title>About BogDev</title>')
+  expect(html).toMatch(/<meta property="og:image" content="http[^"]*\/uploads\/about-og\.png">/)
+})
