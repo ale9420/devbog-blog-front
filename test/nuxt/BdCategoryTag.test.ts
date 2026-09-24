@@ -5,7 +5,7 @@ import { Category } from '~/interfaces/design'
 
 describe('BdCategoryTag', () => {
   it('shows the translated category name with its color class', async () => {
-    const wrapper = await mountSuspended(BdCategoryTag, { props: { category: Category.Privacidad } })
+    const wrapper = await mountSuspended(BdCategoryTag, { props: { category: Category.Privacy } })
     expect(wrapper.element.tagName).toBe('SPAN')
     expect(wrapper.classes()).toContain('bd-tag-privacidad')
     expect(wrapper.text()).toBe('Privacy')

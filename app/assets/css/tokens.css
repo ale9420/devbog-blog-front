@@ -1,4 +1,4 @@
-/* BogDev — generado desde docs/design/tokens.json con scripts/build-tokens.mjs. No editar a mano. */
+/* BogDev — generated from docs/design/tokens.json by scripts/build-tokens.mjs. Do not edit by hand. */
 :root,
 [data-theme="noche"] {
   --surface: #0a0c10;

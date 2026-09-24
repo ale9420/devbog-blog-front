@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { runInNewContext } from 'node:vm'
-import { themeInitScript, isTema } from '~/helpers/theme'
+import { themeInitScript, isTheme } from '~/helpers/theme'
 
 interface Env {
   stored?: Record<string, string>
@@ -47,11 +47,11 @@ describe('themeInitScript', () => {
   })
 })
 
-describe('isTema', () => {
+describe('isTheme', () => {
   it('accepts only noche and dia', () => {
-    expect(isTema('noche')).toBe(true)
-    expect(isTema('dia')).toBe(true)
-    expect(isTema('dark')).toBe(false)
-    expect(isTema(null)).toBe(false)
+    expect(isTheme('noche')).toBe(true)
+    expect(isTheme('dia')).toBe(true)
+    expect(isTheme('dark')).toBe(false)
+    expect(isTheme(null)).toBe(false)
   })
 })

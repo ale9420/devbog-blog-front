@@ -37,6 +37,7 @@ npm run generate     # Generate static output
 
 ### General Conventions
 
+- **Code in English**: All identifiers are in English: props, emits, variables, functions, composables, types and union/enum values, CSS classes and custom properties, test names and developer-facing messages. This applies even when an issue or `docs/design/` names them in Spanish (e.g. `activa` → `active`, `lectura` → `reading`, `tema` → `theme`). User-facing text goes through i18n. External data contracts keep their values: Strapi slugs (`'privacidad'`), `data-theme="noche" | "dia"` and its stored value, and design token names (`--mirla`, `--pinchaflor`)
 - **No comments**: Do not add code comments unless explicitly requested
 - **TypeScript**: Always use explicit types for props, function parameters, and return values
 - **Vue 3 Composition API**: Use `<script setup lang="ts">` syntax for all components
