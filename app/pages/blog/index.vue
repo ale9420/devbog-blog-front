@@ -8,7 +8,7 @@ const { fetchPosts, fetchCategories } = useStrapi();
 const { canonicalUrl } = useCanonicalUrl('/blog');
 const { siteUrl } = useSiteUrl();
 
-const selectedCategory = ref<string>((route.query.category as string) || "");
+const selectedCategory = ref<string>(((route.query.category as string) || "").toLowerCase());
 const selectedTag = ref<string>((route.query.tag as string) || "");
 const currentPage = ref<number>(Number(route.query.page) || 1);
 const pageSize = 6;

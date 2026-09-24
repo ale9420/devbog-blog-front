@@ -9,8 +9,8 @@ test('lists posts', async ({ page }) => {
 test('filters by category from the sidebar', async ({ page }) => {
   await page.goto('/blog', { waitUntil: 'networkidle' })
   const categoriesSection = page.locator('aside').filter({ has: page.getByRole('heading', { name: 'Categories' }) })
-  await categoriesSection.getByRole('button', { name: 'Vue 1' }).click()
-  await expect(page).toHaveURL(/category=Vue/)
+  await categoriesSection.getByRole('button', { name: 'Software development 1' }).click()
+  await expect(page).toHaveURL(/category=software/)
   await expect(page.getByRole('heading', { name: 'Linux Server Hardening Guide', level: 3 })).toHaveCount(0)
   await expect(page.getByRole('heading', { name: 'Understanding Vue Composables', level: 3 })).toBeVisible()
 })

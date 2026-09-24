@@ -7,6 +7,7 @@ const route = useRoute();
 const slug = route.params.slug as string;
 const { fetchPost, getMediaUrl } = useStrapi();
 const { localizePath } = useLocaleUtils();
+const categoryLabel = useCategoryLabel();
 const { siteUrl } = useSiteUrl();
 const { canonicalUrl } = useCanonicalUrl(`/blog/${slug}`);
 
@@ -100,7 +101,7 @@ const structuredData = computed(() => {
                     "@type": "WebPage",
                     "@id": `${siteUrl.value}/blog/${slug}`,
                 },
-                articleSection: post.value.category?.name,
+                articleSection: categoryLabel(post.value.category) || undefined,
                 keywords: (post.value.tags || []).join(", "),
                 wordCount: 0,
             },
@@ -213,7 +214,7 @@ useHead({
                             <span
                                 class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-[var(--primary)]/10 text-[var(--primary)]"
                             >
-                                {{ post.category.name }}
+                                {{ categoryLabel(post.category) }}
                             </span>
                         </div>
 

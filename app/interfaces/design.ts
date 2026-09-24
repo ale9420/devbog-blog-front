@@ -17,3 +17,21 @@ export interface LogoPath {
   part: 'a' | 'b'
   d: string
 }
+
+export interface CategoryInfo {
+  token: 'pinchaflor' | 'golondrina' | 'chillon' | 'mirla' | 'monjita'
+  scientificName: string
+  pillar: 1 | 2 | null
+}
+
+export interface CategoryCount {
+  id: number
+  slug: string | null
+  name: string
+  count: number
+}
+
+export interface CategoryLike {
+  name?: string | null
+  slug?: string | null
+}

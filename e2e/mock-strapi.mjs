@@ -37,15 +37,24 @@ const coverVueEs = {
 
 const categoryVue = {
   id: 21,
-  documentId: 'cat-vue',
-  name: 'Vue',
+  documentId: 'cat-software',
+  name: 'Desarrollo de software',
+  slug: 'software',
 }
 
 const categoryLinux = {
   id: 22,
   documentId: 'cat-linux',
-  name: 'Linux',
+  name: 'Linux y código abierto',
+  slug: 'linux',
 }
+
+const emptyCategories = [
+  { id: 23, documentId: 'cat-privacidad', name: 'Privacidad', slug: 'privacidad' },
+  { id: 24, documentId: 'cat-diy', name: 'DIY · Hazlo tú mismo', slug: 'diy' },
+  { id: 25, documentId: 'cat-ia', name: 'Inteligencia artificial', slug: 'ia' },
+  { id: 26, documentId: 'cat-tutorial', name: 'tutorial', slug: null },
+]
 
 const seoVue = {
   id: 41,
@@ -214,7 +223,7 @@ const server = createServer(async (req, res) => {
     const slugFilter = getNestedValue(query, ['filters', 'slug', '$eq'])
     const titleFilter = getNestedValue(query, ['filters', 'title', '$containsi'])
     const localeFilter = query.locale
-    const categoryFilter = getNestedValue(query, ['filters', 'category', 'name', '$eq'])
+    const categoryFilter = getNestedValue(query, ['filters', 'category', 'slug', '$eq'])
     const tagFilter = getNestedValue(query, ['filters', 'tags', '$contains'])
     const page = Number(getNestedValue(query, ['pagination', 'page']) || 1)
     const pageSize = Number(getNestedValue(query, ['pagination', 'pageSize']) || 10)
@@ -241,7 +250,7 @@ const server = createServer(async (req, res) => {
       data = data.filter((article) => article.locale === localeFilter)
     }
     if (categoryFilter) {
-      data = data.filter((article) => article.category?.name === categoryFilter)
+      data = data.filter((article) => article.category?.slug === categoryFilter)
     }
     if (tagFilter) {
       data = data.filter((article) => article.tags?.includes(tagFilter))
@@ -266,11 +275,12 @@ const server = createServer(async (req, res) => {
 
   if (method === 'GET' && url.pathname === '/api/categories') {
     const localeFilter = getNestedValue(query, ['populate', 'articles', 'filters', 'locale', '$eq']) ?? 'en'
-    const categories = [categoryVue, categoryLinux].map((category) => ({
+    const categories = [categoryVue, categoryLinux, ...emptyCategories].map((category) => ({
       id: category.id,
       name: category.name,
+      slug: category.slug,
       articles: articles
-        .filter((article) => article.category?.name === category.name && article.locale === localeFilter)
+        .filter((article) => article.category?.slug === category.slug && article.locale === localeFilter)
         .map((article) => ({ id: article.id })),
     }))
     sendJson(res, 200, { data: categories })

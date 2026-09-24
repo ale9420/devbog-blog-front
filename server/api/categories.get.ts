@@ -1,12 +1,15 @@
 import qs from 'qs'
+import type { CategoryCount } from '~/interfaces'
+import { categoryOrder, isCategory } from '~/helpers/categories'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<CategoryCount[]> => {
   const query = getQuery(event)
   const config = useRuntimeConfig()
   const locale = (query.locale as string | undefined) || 'en'
 
   const params = qs.stringify({
     pagination: { pageSize: 100 },
+    fields: ['name', 'slug'],
     populate: {
       articles: {
         fields: ['id'],
@@ -26,6 +29,7 @@ export default defineEventHandler(async (event) => {
     data: Array<{
       id: number
       name: string
+      slug?: string | null
       articles?: Array<{ id: number }>
     }>
   }>(`${config.public.strapiUrl}/api/categories?${params}`, { headers })
@@ -33,9 +37,10 @@ export default defineEventHandler(async (event) => {
   return response.data
     .map((category) => ({
       id: category.id,
+      slug: category.slug ?? null,
       name: category.name,
       count: category.articles?.length || 0,
     }))
-    .filter((category) => category.count > 0)
-    .sort((a, b) => b.count - a.count)
+    .filter((category) => isCategory(category.slug) || category.count > 0)
+    .sort((a, b) => categoryOrder(a.slug) - categoryOrder(b.slug) || b.count - a.count)
 })

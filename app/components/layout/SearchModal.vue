@@ -4,6 +4,7 @@ import type { SearchPostResult } from '~/interfaces';
 const { t } = useI18n();
 const { searchPosts, getMediaUrl } = useStrapi();
 const { localizePath } = useLocaleUtils();
+const categoryLabel = useCategoryLabel();
 
 const props = defineProps<{
   isOpen: boolean;
@@ -210,7 +211,7 @@ function handleKeydown(e: KeyboardEvent) {
                       <span
                         class="text-xs px-2 py-0.5 rounded-full bg-[var(--primary)]/10 text-[var(--primary)]"
                       >
-                        {{ result.category.name }}
+                        {{ categoryLabel(result.category) }}
                       </span>
                     </div>
                   </div>

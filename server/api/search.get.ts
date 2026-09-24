@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
       slug: post.slug,
       description: post.description ?? null,
       cover: post.cover ? { url: post.cover.url } : null,
-      category: post.category?.name ? { name: post.category.name } : null,
+      category: post.category?.name ? { name: post.category.name, slug: post.category.slug ?? null } : null,
     }));
   } catch (error) {
     console.error('Search error:', error);
