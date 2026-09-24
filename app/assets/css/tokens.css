@@ -1,7 +1,6 @@
 /* BogDev — generado desde docs/design/tokens.json con scripts/build-tokens.mjs. No editar a mano. */
 :root,
-[data-theme="noche"],
-.dark {
+[data-theme="noche"] {
   --surface: #0a0c10;
   --surface-raised: #12151b;
   --surface-sunken: #06070a;
@@ -31,8 +30,7 @@
   --glow-mirla: 0 0 0 1px #ff7a1a, 0 0 24px rgba(255, 122, 26, 0.3);
   color-scheme: dark;
 }
-[data-theme="dia"],
-.light {
+[data-theme="dia"] {
   --surface: #f3e9df;
   --surface-raised: #fbf6f0;
   --surface-sunken: #e8d8c8;

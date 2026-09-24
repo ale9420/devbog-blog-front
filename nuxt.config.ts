@@ -1,4 +1,5 @@
 import { Locale } from "./app/interfaces/locale";
+import { themeInitScript } from "./app/helpers/theme";
 
 export default defineNuxtConfig({
   devtools: { enabled: false },
@@ -52,11 +53,11 @@ export default defineNuxtConfig({
       redirectOn: "root",
     },
   },
-  colorMode: {
-    preference: "system",
-    fallback: "light",
-    classSuffix: "",
-    storageKey: "devbog-color-mode",
+  ui: {
+    colorMode: false,
+  },
+  experimental: {
+    viewTransition: true,
   },
   app: {
     head: {
@@ -89,6 +90,11 @@ export default defineNuxtConfig({
         },
       ],
       script: [
+        {
+          innerHTML: themeInitScript,
+          tagPosition: "head",
+          tagPriority: "critical",
+        },
         {
           defer: true,
           "data-domain": "bogdev.com.co",
