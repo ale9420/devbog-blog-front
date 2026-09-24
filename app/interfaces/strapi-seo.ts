@@ -18,7 +18,9 @@ export interface StrapiSEO {
   metaTitle: string
   metaDescription: string
   metaImage?: {
-    data: {
+    url?: string
+    alternativeText?: string | null
+    data?: {
       attributes: {
         url: string
         alternativeText?: string

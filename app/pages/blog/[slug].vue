@@ -10,7 +10,7 @@ const { localizePath } = useLocaleUtils();
 const { siteUrl } = useSiteUrl();
 const { canonicalUrl } = useCanonicalUrl(`/blog/${slug}`);
 
-const { data: post, pending } = fetchPost(slug, locale.value as Locale);
+const { data: post, pending } = await fetchPost(slug, locale.value as Locale);
 
 const coverUrl = computed(() => {
     if (!post.value?.cover) return "";
@@ -19,9 +19,12 @@ const coverUrl = computed(() => {
 
 const seoImageUrl = computed(() => {
     const metaImage = post.value?.seo?.metaImage;
-    if (!metaImage?.data?.attributes?.url) return "";
-    return getMediaUrl(metaImage.data.attributes.url);
+    return getMediaUrl(metaImage?.url || metaImage?.data?.attributes?.url);
 });
+
+const shareImageUrl = computed(() => seoImageUrl.value || coverUrl.value || `${siteUrl.value}/og-image.png`);
+
+const shareImageAlt = computed(() => post.value?.cover?.alternativeText || post.value?.title || "Blog post cover image");
 
 const currentUrl = computed(() => {
     if (typeof window !== "undefined") {
@@ -31,17 +34,17 @@ const currentUrl = computed(() => {
 });
 
 useSeoMeta({
-    title: post.value?.seo?.metaTitle || (post.value?.title ? `${post.value.title} - BogDev` : "Post - BogDev"),
-    ogTitle: post.value?.seo?.metaTitle || post.value?.title || "Blog Post",
-    description: post.value?.seo?.metaDescription || post.value?.description || "",
-    ogDescription: post.value?.seo?.metaDescription || post.value?.description || "",
-    ogImage: seoImageUrl.value || coverUrl.value || `${siteUrl.value}/og-image.png`,
-    ogImageAlt: post.value?.title || "Blog post cover image",
+    title: () => post.value?.seo?.metaTitle || (post.value?.title ? `${post.value.title} - BogDev` : "Post - BogDev"),
+    ogTitle: () => post.value?.seo?.metaTitle || post.value?.title || "Blog Post",
+    description: () => post.value?.seo?.metaDescription || post.value?.description || "",
+    ogDescription: () => post.value?.seo?.metaDescription || post.value?.description || "",
+    ogImage: () => shareImageUrl.value,
+    ogImageAlt: () => shareImageAlt.value,
     ogUrl: () => post.value?.seo?.canonicalURL || canonicalUrl.value,
     ogType: "article",
-    articlePublishedTime: post.value?.publishedAt,
-    articleAuthor: post.value?.author?.name ? [post.value.author.name] : undefined,
-    articleTag:
+    articlePublishedTime: () => post.value?.publishedAt,
+    articleAuthor: () => post.value?.author?.name ? [post.value.author.name] : undefined,
+    articleTag: () =>
         post.value?.seo?.keywords
             ?.split(",")
             .map((k: string) => k.trim())
@@ -49,16 +52,17 @@ useSeoMeta({
         post.value?.tags ||
         [],
     twitterCard: "summary_large_image",
-    twitterTitle: post.value?.seo?.metaTitle || post.value?.title || "Blog Post",
-    twitterDescription: post.value?.seo?.metaDescription || post.value?.description || "",
-    twitterImage: seoImageUrl.value || coverUrl.value || `${siteUrl.value}/og-image.png`,
+    twitterTitle: () => post.value?.seo?.metaTitle || post.value?.title || "Blog Post",
+    twitterDescription: () => post.value?.seo?.metaDescription || post.value?.description || "",
+    twitterImage: () => shareImageUrl.value,
+    twitterImageAlt: () => shareImageAlt.value,
 });
 
-if (post.value?.seo?.metaRobots) {
-    useHead({
-        meta: [{ name: "robots", content: post.value.seo.metaRobots }],
-    });
-}
+useHead({
+    meta: () => post.value?.seo?.metaRobots
+        ? [{ name: "robots", content: post.value.seo.metaRobots }]
+        : [],
+});
 
 const structuredData = computed(() => {
     if (!post.value) return null;
@@ -75,7 +79,7 @@ const structuredData = computed(() => {
                 "@id": `${siteUrl.value}/blog/${slug}`,
                 headline: post.value.title,
                 description: post.value.description,
-                image: coverUrl.value,
+                image: shareImageUrl.value,
                 datePublished: post.value.publishedAt,
                 dateModified: post.value.publishedAt,
                 author: {
@@ -149,7 +153,7 @@ const structuredData = computed(() => {
 });
 
 useHead({
-    script: structuredData.value
+    script: () => structuredData.value
         ? [
               {
                   type: "application/ld+json",
