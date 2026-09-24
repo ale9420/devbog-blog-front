@@ -6,7 +6,7 @@ const currentYear = new Date().getFullYear();
 </script>
 
 <template>
-    <footer class="bg-[var(--surface)] text-[var(--foreground)] border-t border-[var(--border)] relative overflow-hidden">
+    <footer class="bg-[var(--surface-raised)] text-[var(--foreground)] border-t border-[var(--border)] relative overflow-hidden">
         <NuxtImg
             src="/copeton.png"
             class="absolute left-0 bottom-0 h-96 w-auto pointer-events-none select-none opacity-[0.08] dark:opacity-[0.12]"

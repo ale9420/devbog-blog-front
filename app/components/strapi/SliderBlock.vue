@@ -134,7 +134,7 @@ onUnmounted(stopAutoplay)
     @keydown="onKeydown"
   >
     <div
-      class="relative overflow-hidden rounded-2xl bg-[var(--surface)] shadow-2xl group"
+      class="relative overflow-hidden rounded-2xl bg-[var(--surface-raised)] shadow-2xl group"
       @mouseenter="isPaused = true"
       @mouseleave="isPaused = false"
       @touchstart.passive="onTouchStart"

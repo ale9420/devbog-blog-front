@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./tokens.css";
 @plugin "@tailwindcss/typography";
 
 @utility prose-devbog {
@@ -37,67 +38,24 @@
     --tw-prose-invert-td-borders: var(--border);
 }
 
-@theme {
-    --color-primary: #0D6B6F;
-    --color-primary-hover: #0A5558;
-    --color-secondary: #D4743F;
-    --color-secondary-hover: #B85E2E;
-    --color-background: #f4f6f8;
-    --color-foreground: #111827;
-    --color-surface: #ffffff;
-    --color-surface-elevated: #eef2f6;
-    --color-muted: #374151;
-    --color-border: #dce1e8;
-    --color-success: #16a34a;
-    --color-error: #dc2626;
-    --color-warning: #ca8a04;
-    --color-brand-linkedin: #0A66C2;
-    --color-brand-github: #24292e;
-    --color-brand-codeberg: #2185d0;
-    --color-brand-mastodon: #6364FF;
-}
-
 :root {
-    --background: #f4f6f8;
-    --foreground: #111827;
-    --surface: #ffffff;
-    --surface-elevated: #eef2f6;
-    --primary: #0D6B6F;
-    --primary-hover: #0A5558;
-    --secondary: #D4743F;
-    --secondary-hover: #B85E2E;
-    --muted: #374151;
-    --border: #dce1e8;
+    --background: var(--surface);
+    --foreground: var(--ink);
+    --surface-elevated: var(--surface-sunken);
+    --primary: var(--chillon);
+    --primary-hover: color-mix(in oklab, var(--chillon) 80%, var(--ink));
+    --on-primary: var(--on-ink);
+    --secondary: var(--mirla);
+    --secondary-hover: color-mix(in oklab, var(--mirla) 80%, var(--ink));
+    --muted: var(--ink-muted);
+    --border: var(--line);
     --radius: 0.5rem;
-    --success: #16a34a;
-    --success-bg: #dcfce7;
-    --error: #dc2626;
-    --error-bg: #fee2e2;
-    --warning: #ca8a04;
-    --warning-bg: #fef9c3;
-    --brand-linkedin: #0A66C2;
-    --brand-github: #24292e;
-    --brand-codeberg: #2185d0;
-    --brand-mastodon: #6364FF;
-}
-
-.dark {
-    --background: #0c0f14;
-    --foreground: #f1f5f9;
-    --surface: #171b22;
-    --surface-elevated: #1f242d;
-    --primary: #14A3A7;
-    --primary-hover: #0D6B6F;
-    --secondary: #E0844F;
-    --secondary-hover: #D4743F;
-    --muted: #9ca3af;
-    --border: #2d333d;
-    --success: #4ade80;
-    --success-bg: #052e16;
-    --error: #f87171;
-    --error-bg: #450a0a;
-    --warning: #facc15;
-    --warning-bg: #422006;
+    --success: var(--chillon);
+    --success-bg: var(--chillon-soft);
+    --error: var(--tingua);
+    --error-bg: var(--tingua-soft);
+    --warning: var(--monjita);
+    --warning-bg: var(--monjita-soft);
     --brand-linkedin: #0A66C2;
     --brand-github: #24292e;
     --brand-codeberg: #2185d0;
@@ -134,7 +92,7 @@ h6 {
 
 ::selection {
     background-color: var(--primary);
-    color: white;
+    color: var(--on-primary);
 }
 
 ::-webkit-scrollbar {
@@ -172,13 +130,9 @@ h6 {
 }
 
 .glass {
-    background: rgba(255, 255, 255, 0.8);
+    background: color-mix(in srgb, var(--surface) 80%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-}
-
-.dark .glass {
-    background: rgba(24, 24, 27, 0.8);
 }
 
 .btn-primary {
@@ -190,7 +144,7 @@ h6 {
     font-weight: 500;
     transition: all 0.2s;
     background-color: var(--primary);
-    color: white;
+    color: var(--on-primary);
 }
 
 .btn-primary:hover {
@@ -218,7 +172,7 @@ h6 {
 .card {
     border-radius: 0.75rem;
     border: 1px solid var(--border);
-    background-color: var(--surface);
+    background-color: var(--surface-raised);
     transition: all 0.3s;
 }
 
@@ -237,7 +191,7 @@ h6 {
     border-radius: 0.5rem;
     border: 1px solid var(--border);
     transition: all 0.2s;
-    background-color: var(--surface);
+    background-color: var(--surface-raised);
     color: var(--foreground);
 }
 

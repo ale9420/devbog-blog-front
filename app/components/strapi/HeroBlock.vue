@@ -22,7 +22,7 @@ const { getMediaUrl } = useStrapi()
     </div>
     <div
       v-else
-      class="w-32 h-32 mx-auto mb-6 rounded-full gradient-bogota flex items-center justify-center text-white text-6xl font-display font-bold shadow-lg"
+      class="w-32 h-32 mx-auto mb-6 rounded-full gradient-bogota flex items-center justify-center text-[var(--on-primary)] text-6xl font-display font-bold shadow-lg"
     >
       {{ block.title.charAt(0) }}
     </div>

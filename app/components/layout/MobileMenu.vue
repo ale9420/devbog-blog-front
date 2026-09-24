@@ -85,7 +85,7 @@ function isActive(path: string) {
                     @keydown.esc="emit('close')"
                 >
                     <div
-                        class="h-full flex flex-col bg-[var(--surface)] shadow-2xl"
+                        class="h-full flex flex-col bg-[var(--surface-raised)] shadow-2xl"
                     >
                         <div
                             class="flex items-center justify-between px-6 py-4 border-b border-[var(--border)]"
@@ -114,7 +114,7 @@ function isActive(path: string) {
                                     class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all"
                                     :class="
                                         isActive(link.to)
-                                            ? 'bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white'
+                                            ? 'bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--on-primary)]'
                                             : 'text-[var(--foreground)] hover:bg-[var(--surface-elevated)]'
                                     "
                                     @click="emit('close')"

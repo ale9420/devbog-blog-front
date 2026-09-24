@@ -43,7 +43,7 @@ const sizeClasses = computed(() => {
     />
     <span
       v-else
-      class="w-full h-full gradient-bogota flex items-center justify-center text-white font-semibold"
+      class="w-full h-full gradient-bogota flex items-center justify-center text-[var(--on-primary)] font-semibold"
     >
       {{ getInitial(name, 'A') }}
     </span>

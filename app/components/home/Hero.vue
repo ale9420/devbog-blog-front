@@ -24,7 +24,7 @@ defineProps({
       <h1 class="sr-only">{{ t('home.hero.title') }}</h1>
       <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
         <div class="order-2 lg:order-1">
-          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface)]/80 backdrop-blur-sm mb-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface-raised)]/80 backdrop-blur-sm mb-6">
             <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"/>
             <span class="text-sm font-medium">{{ t('home.hero.featuredPost') }}</span>
           </div>

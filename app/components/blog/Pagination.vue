@@ -71,7 +71,7 @@ function goToPage(page: number) {
         class="w-10 h-10 rounded-lg text-sm font-medium transition-colors"
         :class="[
           currentPage === page
-            ? 'bg-[var(--primary)] text-white'
+            ? 'bg-[var(--primary)] text-[var(--on-primary)]'
             : 'border border-[var(--border)] text-[var(--muted)] hover:border-[var(--primary)] hover:text-[var(--primary)]'
         ]"
         @click="goToPage(page as number)"

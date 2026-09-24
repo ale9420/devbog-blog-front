@@ -39,7 +39,7 @@ defineEmits<{
           :key="category.id"
           class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all"
           :class="selectedCategory === category.name
-            ? 'bg-[var(--primary)] text-white'
+            ? 'bg-[var(--primary)] text-[var(--on-primary)]'
             : 'hover:bg-[var(--surface-elevated)] text-[var(--foreground)]'"
           :aria-pressed="selectedCategory === category.name"
           @click="$emit('selectCategory', category.name)"

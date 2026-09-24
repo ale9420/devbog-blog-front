@@ -111,7 +111,7 @@ function handleKeydown(e: KeyboardEvent) {
           @keydown.esc="emit('close')"
         >
           <div
-            class="bg-[var(--surface)] rounded-2xl shadow-2xl overflow-hidden"
+            class="bg-[var(--surface-raised)] rounded-2xl shadow-2xl overflow-hidden"
           >
             <div
               class="flex items-center gap-3 px-6 py-4 border-b border-[var(--border)]"
@@ -244,18 +244,18 @@ function handleKeydown(e: KeyboardEvent) {
                 <div class="flex items-center gap-4">
                   <span class="flex items-center gap-1">
                     <kbd
-                      class="px-1.5 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)]"
+                      class="px-1.5 py-0.5 rounded bg-[var(--surface-raised)] border border-[var(--border)]"
                       >↑</kbd
                     >
                     <kbd
-                      class="px-1.5 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)]"
+                      class="px-1.5 py-0.5 rounded bg-[var(--surface-raised)] border border-[var(--border)]"
                       >↓</kbd
                     >
                     {{ t("search.navigate") }}
                   </span>
                   <span class="flex items-center gap-1">
                     <kbd
-                      class="px-1.5 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)]"
+                      class="px-1.5 py-0.5 rounded bg-[var(--surface-raised)] border border-[var(--border)]"
                       >↵</kbd
                     >
                     {{ t("search.select") }}
