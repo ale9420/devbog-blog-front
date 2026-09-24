@@ -64,18 +64,6 @@
     "postComment": "Post Comment",
     "successMessage": "Comment posted successfully!"
   },
-  "newsletter": {
-    "title": "Subscribe to Newsletter",
-    "description": "Get the latest posts delivered to your inbox.",
-    "placeholder": "Your email",
-    "button": "Subscribe",
-    "success": "Thanks for subscribing!",
-    "error": "Something went wrong. Please try again.",
-    "confirmationSent": "Check your email!",
-    "checkInbox": "We sent you a confirmation link. Click it to activate your subscription.",
-    "alreadySubscribed": "This email is already subscribed.",
-    "invalidEmail": "Please enter a valid email address."
-  },
   "about": {
     "contentNotAvailable": "About page content not available."
   },
@@ -177,6 +165,22 @@
       "copy": "Copy",
       "copied": "Copied ✓",
       "copyAria": "Copy code"
+    },
+    "card": {
+      "featured": "Featured article",
+      "more": "Read more"
+    },
+    "newsletter": {
+      "eyebrow": "Newsletter",
+      "title": "Get the latest articles in your inbox",
+      "description": "One email whenever there is a new article. You confirm the subscription from your inbox.",
+      "label": "Email address",
+      "placeholder": "you{'@'}email.com",
+      "button": "Subscribe",
+      "success": "✓ Check your email to confirm the subscription.",
+      "already": "◆ That email is already subscribed. Nothing else to do.",
+      "invalid": "✕ That email does not look valid.",
+      "error": "✕ We could not subscribe you. Try again in a moment."
     }
   }
 }

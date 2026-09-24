@@ -4,7 +4,7 @@ test('renders the visually hidden h1 and the featured post', async ({ page }) =>
   await page.goto('/')
   await expect(page.locator('h1.sr-only')).toBeAttached()
   await expect(page.getByRole('heading', { name: 'Understanding Vue Composables', level: 2 })).toBeVisible()
-  await expect(page.getByRole('link').filter({ has: page.getByRole('heading', { name: 'Linux Server Hardening Guide', level: 3 }) })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Linux Server Hardening Guide', level: 3 }).getByRole('link', { name: 'Linux Server Hardening Guide' })).toBeVisible()
 })
 
 test('emits WebSite JSON-LD structured data', async ({ page }) => {

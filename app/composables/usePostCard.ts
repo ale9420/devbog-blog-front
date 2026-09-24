@@ -1,0 +1,25 @@
+import type { PostCardProps, PostListItem } from '~/interfaces'
+import { isCategory } from '~/helpers/categories'
+import { formatDotDate } from '~/helpers/formatDate'
+
+export function usePostCard(): (post: PostListItem) => PostCardProps {
+  const { t } = useI18n()
+  const { getMediaUrl } = useStrapi()
+  const { localizePath } = useLocaleUtils()
+
+  return function toPostCard(post: PostListItem): PostCardProps {
+    const slug = post.category?.slug
+    return {
+      title: post.title,
+      href: `${localizePath('/blog')}/${post.slug}`,
+      excerpt: post.description ?? undefined,
+      category: isCategory(slug) ? slug : undefined,
+      date: formatDotDate(post.publishedAt) || undefined,
+      dateTime: post.publishedAt ?? undefined,
+      author: post.author?.name ?? undefined,
+      readTime: post.readTime ? t('post.minRead', { minutes: post.readTime }) : undefined,
+      image: post.cover?.url ? getMediaUrl(post.cover.url) : undefined,
+      imageAlt: post.cover?.alternativeText ?? undefined,
+    }
+  }
+}

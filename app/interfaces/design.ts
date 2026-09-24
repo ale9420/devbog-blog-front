@@ -49,3 +49,24 @@ export interface CategoryLike {
   name?: string | null
   slug?: string | null
 }
+
+export type NewsletterStatus = 'idle' | 'success' | 'error'
+
+export interface NewsletterResult {
+  status: NewsletterStatus
+  message: string
+  invalid: boolean
+}
+
+export interface PostCardProps {
+  title: string
+  href: string
+  excerpt?: string
+  category?: Category
+  date?: string
+  dateTime?: string
+  author?: string
+  readTime?: string
+  image?: string
+  imageAlt?: string
+}
