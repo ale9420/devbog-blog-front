@@ -10,6 +10,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
+    "tokens": "node scripts/build-tokens.mjs --alias noche=.dark --alias dia=.light",
+    "tokens:check": "node scripts/build-tokens.mjs --check --alias noche=.dark --alias dia=.light",
     "postinstall": "nuxt prepare",
     "typecheck": "nuxi typecheck",
     "lint": "eslint .",

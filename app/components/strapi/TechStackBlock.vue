@@ -15,7 +15,7 @@ defineProps<{
       <span
         v-for="tech in block.technologies"
         :key="tech.id"
-        class="px-3 py-1.5 rounded-full text-sm bg-[var(--surface)] border border-[var(--border)]"
+        class="px-3 py-1.5 rounded-full text-sm bg-[var(--surface-raised)] border border-[var(--border)]"
       >
         {{ tech.name }}
       </span>

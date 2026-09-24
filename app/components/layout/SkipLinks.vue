@@ -21,7 +21,7 @@ function skipToSearch() {
     :aria-label="t('common.ariaSkipLinks')"
   >
     <div 
-      class="bg-[var(--primary)] text-white px-4 py-2 flex flex-wrap gap-4"
+      class="bg-[var(--primary)] text-[var(--on-primary)] px-4 py-2 flex flex-wrap gap-4"
     >
       <a 
         href="#main-content"
