@@ -154,9 +154,9 @@
       "linux": "Linux and open source"
     },
     "callout": {
-      "nota": "Note",
-      "aviso": "Warning",
-      "peligro": "Danger"
+      "note": "Note",
+      "warning": "Warning",
+      "danger": "Danger"
     },
     "code": {
       "copy": "Copy",

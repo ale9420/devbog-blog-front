@@ -28,7 +28,7 @@ const height = computed<number>(() => Math.round(props.size * 0.75))
     focusable="false"
     :style="{ color }"
   >
-    <template v-if="category === Category.Privacidad">
+    <template v-if="category === Category.Privacy">
       <path d="M8 100 L152 90 M118 92 L136 78"/>
       <path d="M40 70 L58 50 L86 44 L104 48 L112 60 L106 76 L86 88 L60 88 Z"/>
       <path d="M86 44 L86 88 M104 48 L86 88"/>
@@ -49,7 +49,7 @@ const height = computed<number>(() => Math.round(props.size * 0.75))
       <path d="M86 69 L68 92 L34 116 L80 80 Z M68 92 L80 80"/>
       <path d="M52 60 L12 46 L34 62 L14 80 L52 66"/>
     </template>
-    <template v-else-if="category === Category.Ia">
+    <template v-else-if="category === Category.Ai">
       <path d="M6 44 L50 47"/>
       <path d="M50 47 L54 36 L66 30 L78 34 L80 46 L70 54 L56 54 Z"/>
       <path d="M56 54 L66 44 L80 46 M66 44 L70 54 M54 36 L66 44"/>

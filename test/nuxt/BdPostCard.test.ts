@@ -7,7 +7,7 @@ const base = {
   title: 'Soberanía digital y laboratorios locales',
   href: '/blog/soberania-digital',
   excerpt: 'Primer artículo de este blog.',
-  category: Category.Privacidad,
+  category: Category.Privacy,
   date: '24.09.2026',
   dateTime: '2026-09-24T15:00:00.000Z',
   author: 'Alejandro Ramírez',

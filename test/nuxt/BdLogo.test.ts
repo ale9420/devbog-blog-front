@@ -16,11 +16,11 @@ describe('BdLogo', () => {
   })
 
   it('hides the mark from assistive tech when the wordmark is shown', async () => {
-    const wrapper = await mountSuspended(BdLogo, { props: { size: 40, variant: 'blanco', wordmark: true } })
+    const wrapper = await mountSuspended(BdLogo, { props: { size: 40, variant: 'white', wordmark: true } })
     expect(wrapper.get('svg').attributes('aria-hidden')).toBe('true')
     expect(wrapper.get('svg').attributes('role')).toBeUndefined()
     expect(wrapper.get('.bd-logo-word').text()).toBe('BogDev')
     expect(wrapper.attributes('style')).toContain('font-size: 22px')
-    expect(wrapper.classes()).toContain('bd-logo-blanco')
+    expect(wrapper.classes()).toContain('bd-logo-white')
   })
 })

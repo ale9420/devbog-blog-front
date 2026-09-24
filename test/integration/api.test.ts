@@ -25,9 +25,9 @@ describe('/api/categories', () => {
   it('returns the five redesign categories in order, including empty ones, and hides unknown empty ones', async () => {
     const result = await $fetch<Array<{ slug: string | null; name: string; count: number }>>('/api/categories', { query: { locale: 'en' } })
     expect(result.map((category) => [category.slug, category.count])).toEqual([
-      [Category.Privacidad, 0],
+      [Category.Privacy, 0],
       [Category.Diy, 0],
-      [Category.Ia, 0],
+      [Category.Ai, 0],
       [Category.Software, 1],
       [Category.Linux, 1],
     ])

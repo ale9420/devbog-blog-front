@@ -32,7 +32,7 @@ describe('useCategoryLabel', () => {
         return () => h('div')
       },
     }))
-    expect(label({ slug: Category.Ia, name: 'Inteligencia artificial' })).toBe('Artificial intelligence')
+    expect(label({ slug: Category.Ai, name: 'Inteligencia artificial' })).toBe('Artificial intelligence')
     expect(label({ slug: Category.Diy })).toBe('DIY · Do it yourself')
     expect(label({ slug: null, name: 'Tech culture' })).toBe('Tech culture')
     expect(label(null)).toBe('')
