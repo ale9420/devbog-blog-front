@@ -6,8 +6,12 @@ defineProps<{
 }>()
 
 const { renderMarkdown } = useMarkdownRenderer()
+
+const root = ref<HTMLElement | null>(null)
+
+useCodeBlockCopy(root)
 </script>
 
 <template>
-  <div v-html="renderMarkdown(block.body)"/>
+  <div ref="root" v-html="renderMarkdown(block.body)"/>
 </template>

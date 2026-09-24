@@ -93,10 +93,9 @@ useHead({
           <h2 class="font-display text-2xl lg:text-3xl font-bold">{{ t('home.latestPosts') }}</h2>
           <p class="text-[var(--muted)] mt-1">{{ t('home.freshArticles') }}</p>
         </div>
-        <NuxtLink :to="localizePath('/blog')" class="btn-secondary hidden sm:inline-flex items-center gap-2">
+        <BdButton :href="localizePath('/blog')" variant="secondary" arrow class="hidden sm:inline-flex">
           {{ t('home.viewAll') }}
-          <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
-        </NuxtLink>
+        </BdButton>
       </div>
       
       <div v-if="pending" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

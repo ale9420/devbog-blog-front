@@ -64,11 +64,7 @@ const emit = defineEmits<{
                         :to="localizePath('/')"
                         class="flex items-center gap-3 group"
                     >
-                        <NuxtImg
-                            src="/bogdev.svg"
-                            class="w-10 h-10"
-                            alt="BogDev"
-                        />
+                        <BdLogo :size="32" />
                         <span
                             class="bd-stretch text-xl font-display font-bold hidden sm:block"
                         >

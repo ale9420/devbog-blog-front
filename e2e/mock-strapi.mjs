@@ -62,7 +62,7 @@ const seoLinux = {
 const blockVue = {
   id: 1,
   __component: 'shared.rich-text',
-  body: '## Getting Started\n\nComposables let you share stateful logic across components.',
+  body: '## Getting Started\n\nComposables let you share stateful logic across components.\n\n```bash\n$ npm create nuxt@latest\n$ npm run dev\n```',
 }
 
 const blockLinux = {

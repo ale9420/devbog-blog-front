@@ -265,14 +265,13 @@ onMounted(() => {
           <p v-if="formErrors.content" id="comment-content-error" role="alert" class="text-sm mt-1" style="color: var(--error)">{{ formErrors.content }}</p>
         </div>
 
-        <button 
-          type="submit" 
-          class="btn-primary"
+        <BdButton
+          type="submit"
           :disabled="submitting"
         >
-          <UIcon v-if="submitting" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin mr-2" />
+          <UIcon v-if="submitting" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
           {{ submitting ? t('comments.posting') : (replyingTo ? t('comments.postReply') : t('comments.postComment')) }}
-        </button>
+        </BdButton>
       </form>
     </div>
   </section>

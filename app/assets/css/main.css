@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "./fonts.css";
 @import "./tokens.css";
+@import "./bd.css";
 
 @custom-variant dark (&:where(:root:not([data-theme="dia"]), :root:not([data-theme="dia"]) *));
 @plugin "@tailwindcss/typography";
@@ -202,40 +203,6 @@ a:focus-visible > .bd-stretch {
     background: color-mix(in srgb, var(--surface) 80%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-}
-
-.btn-primary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.625rem 1.25rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    background-color: var(--primary);
-    color: var(--on-primary);
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-1px);
-}
-
-.btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.625rem 1.25rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    border: 1px solid var(--border);
-    transition: all 0.2s;
-    color: var(--foreground);
-}
-
-.btn-secondary:hover {
-    border-color: var(--primary);
-    color: var(--primary);
 }
 
 .card {
