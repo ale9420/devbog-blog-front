@@ -76,6 +76,44 @@
     "rss": {
       "title": "¿Prefieres RSS?",
       "description": "El feed completo, sin intermediarios ni algoritmos."
+    },
+    "fediverse": {
+      "eyebrow": "Fediverso · ActivityPub",
+      "title": "Sigue el blog desde Mastodon",
+      "intro": "BogDev tiene su propia cuenta en el fediverso. Los artículos nuevos llegan a tu línea de tiempo, y lo que respondas desde allá aparece aquí como comentario.",
+      "ring": "Anillo de identificación",
+      "copy": "Copiar",
+      "copied": "Copiado ✓",
+      "copyAria": "Copiar la cuenta {handle}",
+      "copiedAnnounce": "Se copió {handle}",
+      "searchIt": "Búscalo en tu instancia y pulsa seguir",
+      "instanceLabel": "O sigue desde tu instancia",
+      "follow": "Seguir",
+      "hint": "Escribe el dominio de tu instancia, por ejemplo mastodon.social",
+      "willOpen": "Se abrirá {instance} para confirmar",
+      "errorEmpty": "Escribe el dominio de tu instancia, por ejemplo mastodon.social",
+      "errorInvalid": "Eso no parece un dominio. Escribe solo el de tu instancia, por ejemplo mastodon.social",
+      "compat": "Funciona directo con Mastodon. En Pleroma, Misskey o GoToSocial, busca el usuario desde tu instancia.",
+      "steps": {
+        "follow": {
+          "title": "Sigue",
+          "text": "Busca {handle} desde cualquier cuenta de Mastodon u otra red ActivityPub."
+        },
+        "read": {
+          "title": "Lee en tu línea de tiempo",
+          "text": "Cada artículo publicado llega como una tarjeta con título, imagen de portada y enlace al blog."
+        },
+        "reply": {
+          "title": "Responde, marca me gusta o impulsa",
+          "text": "Tus respuestas llegan al blog como comentarios y se publican después de moderarlas. Los me gusta e impulsos suman al contador del artículo."
+        }
+      },
+      "flow": {
+        "label": "Flujo: los artículos salen de BogDev hacia tu instancia; las respuestas, me gusta e impulsos vuelven al blog",
+        "instance": "TU INSTANCIA",
+        "articles": "ARTÍCULOS →",
+        "back": "← RESPUESTAS · ME GUSTA · IMPULSOS"
+      }
     }
   },
   "blog": {

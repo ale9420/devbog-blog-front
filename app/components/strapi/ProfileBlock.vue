@@ -7,8 +7,15 @@ const props = defineProps<{
 
 const { t } = useI18n()
 const { getMediaUrl } = useStrapi()
+const { localizePath } = useLocaleUtils()
+const config = useRuntimeConfig()
 
 const photoUrl = computed<string>(() => (props.block.photo?.url ? getMediaUrl(props.block.photo.url) : ''))
+const fediverseLink = computed<string>(() => `${localizePath('/')}#fediverso`)
+
+function isFediverseHandle(value: string): boolean {
+  return value.trim() === config.public.fediverseHandle
+}
 </script>
 
 <template>
@@ -52,7 +59,10 @@ const photoUrl = computed<string>(() => (props.block.photo?.url ? getMediaUrl(pr
     <dl v-if="block.facts?.length" class="bd-facts bd-profile-facts">
       <template v-for="fact in block.facts" :key="fact.id">
         <dt>{{ fact.label }}</dt>
-        <dd :class="{ 'font-mono': fact.mono }">{{ fact.value }}</dd>
+        <dd :class="{ 'font-mono': fact.mono }">
+          <NuxtLink v-if="isFediverseHandle(fact.value)" :to="fediverseLink" class="bd-facts-link">{{ fact.value }}</NuxtLink>
+          <template v-else>{{ fact.value }}</template>
+        </dd>
       </template>
     </dl>
 

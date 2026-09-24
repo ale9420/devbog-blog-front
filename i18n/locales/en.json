@@ -76,6 +76,44 @@
     "rss": {
       "title": "Prefer RSS?",
       "description": "The full feed, with no middlemen or algorithms."
+    },
+    "fediverse": {
+      "eyebrow": "Fediverse · ActivityPub",
+      "title": "Follow the blog from Mastodon",
+      "intro": "BogDev has its own account on the fediverse. New articles reach your timeline, and whatever you reply from there shows up here as a comment.",
+      "ring": "Identification ring",
+      "copy": "Copy",
+      "copied": "Copied ✓",
+      "copyAria": "Copy the account {handle}",
+      "copiedAnnounce": "{handle} copied",
+      "searchIt": "Search for it on your instance and follow",
+      "instanceLabel": "Or follow from your instance",
+      "follow": "Follow",
+      "hint": "Type your instance's domain, for example mastodon.social",
+      "willOpen": "{instance} will open to confirm",
+      "errorEmpty": "Type your instance's domain, for example mastodon.social",
+      "errorInvalid": "That does not look like a domain. Type just your instance's, for example mastodon.social",
+      "compat": "Works directly with Mastodon. On Pleroma, Misskey or GoToSocial, search for the account from your instance.",
+      "steps": {
+        "follow": {
+          "title": "Follow",
+          "text": "Search for {handle} from any Mastodon account or other ActivityPub network."
+        },
+        "read": {
+          "title": "Read it in your timeline",
+          "text": "Every published article arrives as a card with its title, cover image and a link to the blog."
+        },
+        "reply": {
+          "title": "Reply, like or boost",
+          "text": "Your replies reach the blog as comments and are published after moderation. Likes and boosts add up on the article counter."
+        }
+      },
+      "flow": {
+        "label": "Flow: articles go from BogDev to your instance; replies, likes and boosts come back to the blog",
+        "instance": "YOUR INSTANCE",
+        "articles": "ARTICLES →",
+        "back": "← REPLIES · LIKES · BOOSTS"
+      }
     }
   },
   "blog": {

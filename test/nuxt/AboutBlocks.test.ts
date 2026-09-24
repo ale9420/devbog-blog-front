@@ -32,6 +32,7 @@ describe('StrapiProfileBlock', () => {
     expect(wrapper.get('h1').text()).toBe('Hi, I am Alejandro.')
     expect(wrapper.findAll('dt').map(dt => dt.text())).toEqual(['Name', 'Habitat', 'Specialty', 'Call'])
     expect(wrapper.findAll('dd').at(-1)!.classes()).toContain('font-mono')
+    expect(wrapper.findAll('dd').at(-1)!.get('a').attributes('href')).toBe('/#fediverso')
     const links = wrapper.findAll('.bd-profile-actions a')
     expect(links.map(link => link.attributes('href'))).toEqual(['/blog', '#projects'])
     expect(links[0]!.classes()).toContain('bd-btn-primary')

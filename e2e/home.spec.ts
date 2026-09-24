@@ -43,3 +43,26 @@ test.describe('with reduced motion', () => {
     expect(animation).toBe('none')
   })
 })
+
+test('follows the blog from an instance', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await context.route('https://mastodon.social/**', route => route.fulfill({ status: 200, body: 'ok' }))
+  await page.goto('/', { waitUntil: 'networkidle' })
+  const section = page.locator('#fediverso')
+  await section.getByRole('button', { name: 'Copy the account @devbog@api.bogdev.com.co' }).click()
+  await expect(section.locator('[aria-live="polite"]')).toHaveText('@devbog@api.bogdev.com.co copied')
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('@devbog@api.bogdev.com.co')
+
+  await section.getByRole('textbox', { name: 'Or follow from your instance' }).fill('@ana@Mastodon.Social')
+  const popupPromise = page.waitForEvent('popup')
+  await section.getByRole('button', { name: 'Follow' }).click()
+  const popup = await popupPromise
+  expect(popup.url()).toBe('https://mastodon.social/authorize_interaction?uri=https%3A%2F%2Fapi.bogdev.com.co%2Ffediverse%2Fuser%2Fdevbog')
+})
+
+test('reaches the fediverse section from the header chip', async ({ page }) => {
+  await page.goto('/blog', { waitUntil: 'networkidle' })
+  await page.getByRole('banner').getByRole('link', { name: '@devbog on the fediverse', exact: true }).click()
+  await expect(page).toHaveURL(/\/#fediverso$/)
+  await expect(page.getByRole('heading', { name: 'Follow the blog from Mastodon' })).toBeInViewport()
+})
