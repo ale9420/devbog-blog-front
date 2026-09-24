@@ -337,9 +337,9 @@ useHead({
             <p class="text-[var(--muted)] mb-6">
                 {{ t("post.articleDoesNotExist") }}
             </p>
-            <NuxtLink :to="localizePath('/blog')" class="btn-primary">
+            <BdButton :href="localizePath('/blog')">
                 {{ t("post.backToBlog") }}
-            </NuxtLink>
+            </BdButton>
         </div>
     </div>
 </template>

@@ -109,9 +109,9 @@ function handleClick() {
 - Use CSS custom properties for theme colors: `var(--primary)`, `var(--foreground)`, `var(--muted)`
 - Use Tailwind utility classes as base, supplemented with custom CSS
 - Use `.card` class for card components with hover effects
-- Use `.btn-primary` and `.btn-secondary` for buttons
+- Use `<BdButton>` (`app/components/bd/`) for buttons and button-styled links; the `Bd*` components mirror the BogDev design system (see `docs/design/DESIGN.md`)
 - Use `.input-field` for form inputs
-- Use `font-display` class for serif fonts
+- Use `font-display` class for display fonts (Archivo)
 - Use `font-mono` class for monospace fonts
 
 ### i18n Guidelines

@@ -38,17 +38,14 @@ useSeoMeta({
       </p>
       
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <button
-          class="btn-primary"
-          @click="handleError"
-        >
-          <UIcon name="i-heroicons-home" class="w-4 h-4 mr-2" />
+        <BdButton @click="handleError">
+          <UIcon name="i-heroicons-home" class="w-4 h-4" />
           {{ t('error.goHome') }}
-        </button>
-        <NuxtLink :to="localizePath('/blog')" class="btn-secondary">
-          <UIcon name="i-heroicons-document-text" class="w-4 h-4 mr-2" />
+        </BdButton>
+        <BdButton :href="localizePath('/blog')" variant="secondary">
+          <UIcon name="i-heroicons-document-text" class="w-4 h-4" />
           {{ t('error.browseBlog') }}
-        </NuxtLink>
+        </BdButton>
       </div>
       
       <div class="mt-12 p-4 rounded-lg bg-[var(--surface-elevated)]">

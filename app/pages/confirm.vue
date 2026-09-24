@@ -68,9 +68,9 @@ useSeoMeta({
           {{ t("confirm.successTitle") }}
         </h1>
         <p class="text-[var(--muted)] mb-6">{{ t("confirm.successMessage") }}</p>
-        <NuxtLink to="/blog" class="btn-primary inline-block">
+        <BdButton href="/blog">
           {{ t("confirm.browseBlog") }}
-        </NuxtLink>
+        </BdButton>
       </div>
 
       <div
@@ -87,9 +87,9 @@ useSeoMeta({
           {{ t("confirm.errorTitle") }}
         </h1>
         <p class="text-[var(--muted)] mb-6">{{ errorMessage }}</p>
-        <NuxtLink to="/" class="btn-secondary inline-block">
+        <BdButton href="/" variant="secondary">
           {{ t("confirm.goHome") }}
-        </NuxtLink>
+        </BdButton>
       </div>
     </div>
   </div>

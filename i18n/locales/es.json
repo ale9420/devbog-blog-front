@@ -162,5 +162,24 @@
     "invalidToken": "El enlace de confirmación es inválido o ha expirado.",
     "browseBlog": "Explorar Blog",
     "goHome": "Ir al Inicio"
+  },
+  "bd": {
+    "categories": {
+      "privacidad": "Privacidad",
+      "diy": "DIY · Hazlo tú mismo",
+      "ia": "Inteligencia artificial",
+      "software": "Desarrollo de software",
+      "linux": "Linux y código abierto"
+    },
+    "callout": {
+      "nota": "Nota",
+      "aviso": "Aviso",
+      "peligro": "Peligro"
+    },
+    "code": {
+      "copy": "Copiar",
+      "copied": "Copiado ✓",
+      "copyAria": "Copiar código"
+    }
   }
 }

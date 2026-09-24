@@ -2,6 +2,7 @@ import { Marked } from 'marked';
 import type { Tokens } from 'marked';
 import sanitizeHtml from 'sanitize-html';
 import { slugify } from '~/helpers/slugify';
+import { escapeHtml, renderCodeBlockHtml } from '~/helpers/code';
 
 export { slugify };
 
@@ -11,6 +12,7 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
         'iframe',
         'img',
         'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'button',
     ],
     allowedAttributes: {
         ...sanitizeHtml.defaults.allowedAttributes,
@@ -19,6 +21,7 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
         img: ['src', 'alt', 'title', 'width', 'height', 'loading', 'decoding'],
         code: ['class'],
         pre: ['class'],
+        button: ['type', 'class', 'data-bd-copy', 'hidden'],
         '*': ['id', 'class'],
     },
     allowedIframeDomains: ['youtube.com', 'www.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com', 'vimeo.com', 'player.vimeo.com'],
@@ -26,15 +29,6 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
         a: sanitizeHtml.simpleTransform('a', { rel: 'noopener noreferrer' }),
     },
 };
-
-function escapeHtml(text: string): string {
-    return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-}
 
 function createMarkdownRenderer() {
     const marked = new Marked();
@@ -61,10 +55,7 @@ function createMarkdownRenderer() {
                 return `<code>${escapeHtml(text)}</code>`;
             },
             code(token: Tokens.Code): string {
-                const text = token.text || '';
-                const lang = token.lang || '';
-                const languageClass = lang ? ` language-${lang}` : '';
-                return `<pre><code class="font-mono text-sm${languageClass}">${escapeHtml(text)}</code></pre>\n`;
+                return renderCodeBlockHtml(token.text || '', token.lang || '');
             },
         },
         gfm: true,

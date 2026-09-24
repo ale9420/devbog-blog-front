@@ -55,13 +55,9 @@ defineProps({
             </div>
           </div>
           
-          <NuxtLink 
-            :to="`${localizePath('/blog')}/${post.slug}`"
-            class="btn-primary inline-flex items-center gap-2"
-          >
+          <BdButton :href="`${localizePath('/blog')}/${post.slug}`" arrow>
             {{ t('blog.readMore') }}
-            <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
-          </NuxtLink>
+          </BdButton>
         </div>
         
         <div class="order-1 lg:order-2">

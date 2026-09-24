@@ -81,9 +81,9 @@ async function handleSubmit() {
           class="input-field flex-1"
           :disabled="isSubmitting"
         >
-        <button
+        <BdButton
           type="submit"
-          class="btn-primary whitespace-nowrap"
+          class="whitespace-nowrap"
           :disabled="isSubmitting"
         >
           <UIcon
@@ -92,7 +92,7 @@ async function handleSubmit() {
             class="w-4 h-4 animate-spin"
           />
           <span v-else>{{ t("newsletter.button") }}</span>
-        </button>
+        </BdButton>
       </form>
 
       <div

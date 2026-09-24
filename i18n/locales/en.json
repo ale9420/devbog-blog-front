@@ -162,5 +162,24 @@
     "invalidToken": "The confirmation link is invalid or has expired.",
     "browseBlog": "Browse Blog",
     "goHome": "Go Home"
+  },
+  "bd": {
+    "categories": {
+      "privacidad": "Privacy",
+      "diy": "DIY · Do it yourself",
+      "ia": "Artificial intelligence",
+      "software": "Software development",
+      "linux": "Linux and open source"
+    },
+    "callout": {
+      "nota": "Note",
+      "aviso": "Warning",
+      "peligro": "Danger"
+    },
+    "code": {
+      "copy": "Copy",
+      "copied": "Copied ✓",
+      "copyAria": "Copy code"
+    }
   }
 }
