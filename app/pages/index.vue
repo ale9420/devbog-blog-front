@@ -101,7 +101,7 @@ useHead({
 
     <HomeFieldGuide :topics="topics" />
 
-    <div id="fediverso" />
+    <HomeFediverse />
 
     <HomeSubscribe />
   </div>

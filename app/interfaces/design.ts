@@ -119,3 +119,10 @@ export interface FieldGuideTopic {
   category: Category
   count: number
 }
+
+export type InstanceError = 'empty' | 'invalid'
+
+export interface InstanceResult {
+  domain?: string
+  error?: InstanceError
+}
