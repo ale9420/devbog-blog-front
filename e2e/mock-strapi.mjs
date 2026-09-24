@@ -1,5 +1,6 @@
 import { createServer } from 'node:http'
 import qs from 'qs'
+import { aboutBlocks } from './fixtures/about.mjs'
 
 const author = {
   id: 31,
@@ -316,7 +317,7 @@ const server = createServer(async (req, res) => {
         id: 1,
         documentId: 'about',
         locale,
-        blocks: [{ id: 1, __component: 'shared.hero', title: 'About BogDev', subtitle: 'Personal blog' }],
+        blocks: aboutBlocks(locale),
         seo: {
           id: 43,
           metaTitle: 'About BogDev',

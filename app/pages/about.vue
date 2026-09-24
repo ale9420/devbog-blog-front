@@ -6,7 +6,7 @@ const { fetchAbout, getMediaUrl } = useStrapi();
 const { canonicalUrl } = useCanonicalUrl("/about");
 const { siteUrl } = useSiteUrl();
 
-const { data: about, pending } = await fetchAbout(locale.value as Locale);
+const { data: about } = await fetchAbout(locale.value as Locale);
 
 const shareImageUrl = computed(() => {
   const metaImage = about.value?.seo?.metaImage;
@@ -71,20 +71,8 @@ useHead({
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-    <div v-if="pending" class="animate-pulse space-y-4">
-      <div class="h-32 bg-[var(--surface-elevated)] rounded"/>
-      <div class="h-64 bg-[var(--surface-elevated)] rounded"/>
-    </div>
-
-    <template v-else-if="about">
-      <div class="prose prose-devbog dark:prose-invert max-w-none">
-        <StrapiBlocksRenderer :blocks="about.blocks" />
-      </div>
-    </template>
-
-    <div v-else class="text-center text-[var(--muted)]">
-      <p>{{ t("about.contentNotAvailable") }}</p>
-    </div>
+  <div class="bd-about">
+    <StrapiBlocksRenderer v-if="about?.blocks?.length" :blocks="about.blocks" />
+    <p v-else class="bd-meta bd-home-eyebrow bd-about-empty">{{ t("about.contentNotAvailable") }}</p>
   </div>
 </template>

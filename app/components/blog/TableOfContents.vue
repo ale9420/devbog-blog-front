@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TocHeading } from '~/interfaces'
 
-const SCROLL_OFFSET = 160
+const SCROLL_OFFSET = 200
 const SCROLL_THROTTLE_MS = 100
 
 const props = defineProps<{

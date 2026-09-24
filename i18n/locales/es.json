@@ -160,7 +160,18 @@
     "removed": "Comentario retirado."
   },
   "about": {
-    "contentNotAvailable": "El contenido de la página Acerca de no está disponible."
+    "contentNotAvailable": "El contenido de la página Acerca de no está disponible.",
+    "mascotAlt": "Ilustración de un copetón, el ave mascota del blog",
+    "alsoWrite": "También escribo sobre",
+    "palette": "Pinchaflor · Golondrina · Chillón · Mirla · Monjita",
+    "diagram": {
+      "label": "Flujo del plugin: Strapi publica artículos hacia el fediverso y recibe respuestas, me gusta e impulsos",
+      "source": "STRAPI 5",
+      "engine": "+ FEDIFY",
+      "mastodon": "MASTODON",
+      "instance": "TU INSTANCIA",
+      "others": "OTRAS REDES AP"
+    }
   },
   "common": {
     "loading": "Cargando...",

@@ -8,6 +8,11 @@ import { parseCalloutMarker, renderCalloutHtml } from '~/helpers/callout';
 
 export { slugify };
 
+const inlineSanitizeOptions: sanitizeHtml.IOptions = {
+    allowedTags: ['a', 'strong', 'em', 'code'],
+    allowedAttributes: { a: ['href', 'title', 'target', 'rel'] },
+};
+
 const sanitizeOptions: sanitizeHtml.IOptions = {
     allowedTags: [
         ...sanitizeHtml.defaults.allowedTags,
@@ -87,8 +92,19 @@ export function useMarkdownRenderer() {
         }
     }
 
+    function renderInlineMarkdown(text: string): string {
+        if (!text) return '';
+        try {
+            const html = scopedMarked.parseInline(text) as string;
+            return sanitizeHtml(html, inlineSanitizeOptions);
+        } catch {
+            return escapeHtml(text);
+        }
+    }
+
     return {
         renderMarkdown,
+        renderInlineMarkdown,
         slugify,
     };
 }
