@@ -24,6 +24,7 @@ export function useStrapi() {
     locale?: MaybeRef<Locale | undefined>;
     category?: MaybeRef<string | undefined>;
     tag?: MaybeRef<string | undefined>;
+    search?: MaybeRef<string | undefined>;
   }) {
     const buildQuery = () => {
       return qs.stringify({
@@ -32,6 +33,7 @@ export function useStrapi() {
         locale: toValue(params?.locale),
         category: toValue(params?.category) || undefined,
         tag: toValue(params?.tag) || undefined,
+        search: toValue(params?.search) || undefined,
       }, { skipNulls: true });
     };
 

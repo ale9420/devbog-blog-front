@@ -1,93 +1,73 @@
 <script setup lang="ts">
-const { t } = useI18n()
+import type { RouteLocationRaw } from 'vue-router'
+import type { BlogFilters, PaginationItem } from '~/interfaces'
+import { blogQuery, paginationItems } from '~/helpers/blog'
+import { padCount } from '~/helpers/search'
 
 const props = defineProps<{
-  currentPage: number
+  filters: BlogFilters
   totalPages: number
-  totalItems: number
+  pageSize: number
 }>()
 
-const emit = defineEmits<{
-  pageChange: [page: number]
-}>()
+const { t } = useI18n()
 
-const visiblePages = computed(() => {
-  const pages: (number | string)[] = []
-  const { currentPage, totalPages } = props
-  
-  if (totalPages <= 7) {
-    for (let i = 1; i <= totalPages; i++) {
-      pages.push(i)
-    }
-  } else {
-    pages.push(1)
-    
-    if (currentPage > 3) {
-      pages.push('...')
-    }
-    
-    const start = Math.max(2, currentPage - 1)
-    const end = Math.min(totalPages - 1, currentPage + 1)
-    
-    for (let i = start; i <= end; i++) {
-      if (!pages.includes(i)) {
-        pages.push(i)
-      }
-    }
-    
-    if (currentPage < totalPages - 2) {
-      pages.push('...')
-    }
-    
-    if (!pages.includes(totalPages)) {
-      pages.push(totalPages)
-    }
-  }
-  
-  return pages
-})
+const current = computed<number>(() => Math.min(props.filters.page, Math.max(props.totalPages, 1)))
+const pageCount = computed<number>(() => Math.max(props.totalPages, 1))
+const items = computed<PaginationItem[]>(() => paginationItems(current.value, pageCount.value))
+const status = computed<string>(() =>
+  t('blog.pagination.status', { page: padCount(current.value), total: padCount(pageCount.value) }),
+)
 
-function goToPage(page: number) {
-  if (page >= 1 && page <= props.totalPages && page !== props.currentPage) {
-    emit('pageChange', page)
-  }
+function linkTo(page: number): RouteLocationRaw {
+  return { query: blogQuery({ ...props.filters, page }) }
 }
 </script>
 
 <template>
-  <div v-if="totalPages > 1" class="flex items-center justify-center gap-2">
-    <button
-      :disabled="currentPage === 1"
-      class="p-2 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+  <nav class="bd-blog-pagination" :aria-label="t('blog.pagination.label')">
+    <NuxtLink
+      v-if="current > 1"
+      :to="linkTo(current - 1)"
+      class="bd-page bd-page-step"
       :aria-label="t('common.ariaPrevPage')"
-      @click="goToPage(currentPage - 1)"
     >
-      <UIcon name="i-heroicons-chevron-left" class="w-5 h-5" />
-    </button>
-    
-    <template v-for="(page, index) in visiblePages" :key="index">
-      <button
-        v-if="page !== '...'"
-        class="w-10 h-10 rounded-lg text-sm font-medium transition-colors"
-        :class="[
-          currentPage === page
-            ? 'bg-[var(--primary)] text-[var(--on-primary)]'
-            : 'border border-[var(--border)] text-[var(--muted)] hover:border-[var(--primary)] hover:text-[var(--primary)]'
-        ]"
-        @click="goToPage(page as number)"
-      >
-        {{ page }}
-      </button>
-      <span v-else class="px-2 text-[var(--muted)]">...</span>
-    </template>
-    
-    <button
-      :disabled="currentPage === totalPages"
-      class="p-2 rounded-lg border border-[var(--border)] text-[var(--muted)] hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      ← <span class="bd-page-step-label">{{ t('blog.pagination.previous') }}</span>
+    </NuxtLink>
+    <span v-else class="bd-page bd-page-step" aria-disabled="true">
+      ← <span class="bd-page-step-label">{{ t('blog.pagination.previous') }}</span>
+    </span>
+
+    <div class="bd-page-center">
+      <ol class="bd-page-list">
+        <li v-for="(item, index) in items" :key="index">
+          <span v-if="item === 'gap'" class="bd-meta bd-page-gap" aria-hidden="true">…</span>
+          <NuxtLink
+            v-else
+            :to="linkTo(item)"
+            class="bd-page"
+            :aria-current="item === current ? 'page' : undefined"
+            :aria-label="t('blog.pagination.page', { page: item })"
+          >
+            {{ padCount(item) }}
+          </NuxtLink>
+        </li>
+      </ol>
+      <span class="bd-meta bd-page-status">
+        {{ status }}<span class="bd-page-size"> · {{ t('blog.pagination.perPage', { count: pageSize }) }}</span>
+      </span>
+    </div>
+
+    <NuxtLink
+      v-if="current < pageCount"
+      :to="linkTo(current + 1)"
+      class="bd-page bd-page-step"
       :aria-label="t('common.ariaNextPage')"
-      @click="goToPage(currentPage + 1)"
     >
-      <UIcon name="i-heroicons-chevron-right" class="w-5 h-5" />
-    </button>
-  </div>
+      <span class="bd-page-step-label">{{ t('blog.pagination.next') }}</span> →
+    </NuxtLink>
+    <span v-else class="bd-page bd-page-step" aria-disabled="true">
+      <span class="bd-page-step-label">{{ t('blog.pagination.next') }}</span> →
+    </span>
+  </nav>
 </template>

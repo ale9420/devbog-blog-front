@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import type { Locale } from "~/interfaces";
+import type { BlogFilters, Category, Locale, PostListItem } from "~/interfaces";
+import { BLOG_PAGE_SIZE, blogQuery, hasActiveFilters, parseBlogQuery, searchTerm } from "~/helpers/blog";
+import { isCategory } from "~/helpers/categories";
+import { padCount } from "~/helpers/search";
+
+const RECENT_SIZE = 4;
+const SEARCH_DEBOUNCE_MS = 300;
+const FALLBACK_POPULAR_TAGS = ["AI", "Linux", "Vue", "TypeScript", "DevOps", "Python", "Docker"];
 
 const { locale, t } = useI18n();
 const route = useRoute();
@@ -9,56 +16,37 @@ const { canonicalUrl } = useCanonicalUrl('/blog');
 const { siteUrl } = useSiteUrl();
 const toPostCard = usePostCard();
 
-const selectedCategory = ref<string>(((route.query.category as string) || "").toLowerCase());
-const selectedTag = ref<string>((route.query.tag as string) || "");
-const currentPage = ref<number>(Number(route.query.page) || 1);
-const pageSize = 6;
+const filters = computed<BlogFilters>(() => parseBlogQuery(route.query));
+const currentLocale = computed<Locale>(() => locale.value as Locale);
 
-const { data: postsResult, pending } = fetchPosts({
-  page: currentPage,
-  pageSize,
-  locale: computed(() => locale.value as Locale),
-  category: selectedCategory,
-  tag: selectedTag,
+const { data: postsResult, status } = fetchPosts({
+  page: computed(() => filters.value.page),
+  pageSize: BLOG_PAGE_SIZE,
+  locale: currentLocale,
+  category: computed(() => filters.value.category),
+  tag: computed(() => filters.value.tag),
+  search: computed(() => filters.value.search),
 });
-
-const posts = computed(() => postsResult.value?.data || []);
-const pagination = computed(
-  () =>
-    postsResult.value?.pagination || {
-      total: 0,
-      page: 1,
-      pageSize: 6,
-      pageCount: 1,
-    },
-);
-
-watch(currentPage, () => {
-  updateQuery();
-});
-
+const { data: recentResult } = fetchPosts({ pageSize: RECENT_SIZE, locale: currentLocale });
 const { data: categories } = fetchCategories(locale.value as Locale);
 
-const { data: sidebarResult } = fetchPosts({
-  pageSize: 4,
-  locale: computed(() => locale.value as Locale),
-});
+const results = useSettledData(postsResult, status);
+const searchInput = ref<string>(filters.value.search ?? "");
 
-const sidebarPosts = computed(() => sidebarResult.value?.data || []);
-
-const FALLBACK_POPULAR_TAGS = [
-  "AI",
-  "Linux",
-  "Vue",
-  "TypeScript",
-  "DevOps",
-  "Python",
-  "Docker",
-];
-
-const popularTags = computed(() => {
+const posts = computed<PostListItem[]>(() => results.value?.data ?? []);
+const totalPages = computed<number>(() => results.value?.pagination.pageCount ?? 1);
+const recentPosts = computed<PostListItem[]>(() => recentResult.value?.data ?? []);
+const total = computed<number>(() => recentResult.value?.pagination.total ?? 0);
+const counts = computed<Partial<Record<Category, number>>>(() =>
+  Object.fromEntries(
+    (categories.value ?? [])
+      .filter(category => isCategory(category.slug))
+      .map(category => [category.slug, category.count]),
+  ),
+);
+const popularTags = computed<string[]>(() => {
   const tagCounts = new Map<string, number>();
-  for (const post of sidebarPosts.value) {
+  for (const post of recentPosts.value) {
     for (const tag of post.tags || []) {
       tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
     }
@@ -69,44 +57,51 @@ const popularTags = computed(() => {
     .map(([tag]) => tag);
   return tags.length > 0 ? tags : FALLBACK_POPULAR_TAGS;
 });
+const resultCount = computed<number | undefined>(() =>
+  filters.value.search ? (results.value?.pagination.total ?? 0) : undefined,
+);
+const filtered = computed<boolean>(() => hasActiveFilters(filters.value));
+const eyebrow = computed<string>(() => t("blog.eyebrow", { count: padCount(total.value) }, total.value));
 
-const recentPosts = computed(() => {
-  return sidebarPosts.value.slice(0, 4);
+const applySearch = useDebounceFn(() => {
+  const search = searchTerm(searchInput.value);
+  if (search !== filters.value.search) navigate({ search, page: 1 }, true);
+}, SEARCH_DEBOUNCE_MS);
+
+function navigate(patch: Partial<BlogFilters>, replace = false): void {
+  const query = blogQuery({ ...filters.value, ...patch });
+  if (replace) router.replace({ query });
+  else router.push({ query });
+}
+
+function selectCategory(category: Category | undefined): void {
+  navigate({ category, page: 1 });
+}
+
+function selectTag(tag: string | undefined): void {
+  navigate({ tag, page: 1 });
+}
+
+function removeFilter(filter: "category" | "tag" | "search"): void {
+  if (filter === "search") searchInput.value = "";
+  navigate({ [filter]: undefined, page: 1 });
+}
+
+function clearFilters(): void {
+  searchInput.value = "";
+  navigate({ category: undefined, tag: undefined, search: undefined, page: 1 });
+}
+
+watch(searchInput, () => applySearch());
+
+watch(() => filters.value.search, (search) => {
+  if (search !== searchTerm(searchInput.value)) searchInput.value = search ?? "";
 });
 
-function handleCategorySelect(category: string) {
-  selectedCategory.value = selectedCategory.value === category ? "" : category;
-  currentPage.value = 1;
-  updateQuery();
-}
-
-function handleTagSelect(tag: string) {
-  selectedTag.value = selectedTag.value === tag ? "" : tag;
-  currentPage.value = 1;
-  updateQuery();
-}
-
-function handlePageChange(page: number) {
-  currentPage.value = page;
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function clearFilters() {
-  selectedCategory.value = "";
-  selectedTag.value = "";
-  currentPage.value = 1;
-  updateQuery();
-}
-
-function updateQuery() {
-  const query: Record<string, string | number> = {};
-  if (selectedCategory.value) query.category = selectedCategory.value;
-  if (selectedTag.value) query.tag = selectedTag.value;
-  if (currentPage.value > 1) query.page = currentPage.value;
-  router.push({ query });
-}
-
-
+watch(() => filters.value.page, () => {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.getElementById("posts")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+});
 
 useSeoMeta({
   title: "Blog - BogDev",
@@ -127,35 +122,29 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-    <div class="mb-8">
-      <h1 class="font-display text-3xl lg:text-4xl font-bold mb-2">
-        {{ t("nav.blog") }}
-      </h1>
-      <p class="text-[var(--muted)]">{{ t("blog.exploreArticles") }}</p>
-    </div>
+  <div class="bd-blog">
+    <header class="bd-blog-head">
+      <p class="bd-eyebrow bd-home-eyebrow">{{ eyebrow }}</p>
+      <h1 class="bd-blog-title bd-wide">{{ t("nav.blog") }}</h1>
+      <p class="bd-blog-lead">{{ t("blog.exploreArticles") }}</p>
+    </header>
 
-    <div class="lg:grid lg:grid-cols-4 lg:gap-8">
-      <div class="lg:col-span-3">
-        <div v-if="pending" class="grid md:grid-cols-2 gap-6">
-          <div
-            v-for="i in 6"
-            :key="i"
-            class="card overflow-hidden animate-pulse"
-          >
-            <div class="aspect-[16/10] bg-[var(--surface-elevated)]"/>
-            <div class="p-5 space-y-3">
-              <div class="h-4 bg-[var(--surface-elevated)] rounded w-1/4"/>
-              <div class="h-6 bg-[var(--surface-elevated)] rounded w-3/4"/>
-              <div class="h-4 bg-[var(--surface-elevated)] rounded"/>
-            </div>
-          </div>
-        </div>
+    <BlogFilters
+      v-model:search="searchInput"
+      :filters="filters"
+      :total="total"
+      :counts="counts"
+      :tags="popularTags"
+      :result-count="resultCount"
+      @category="selectCategory"
+      @tag="selectTag"
+      @remove="removeFilter"
+      @clear="clearFilters"
+    />
 
-        <div
-          v-else-if="posts.length > 0"
-          class="grid md:grid-cols-2 gap-6"
-        >
+    <div class="bd-blog-body">
+      <div id="posts" class="bd-blog-main" :aria-busy="status === 'pending'">
+        <div v-if="posts.length" class="bd-blog-grid">
           <BdPostCard
             v-for="(post, index) in posts"
             :key="post.id"
@@ -164,59 +153,34 @@ useSeoMeta({
           />
         </div>
 
-        <div v-else class="text-center py-16">
-          <div
-            class="w-20 h-20 mx-auto mb-6 rounded-full gradient-bogota-subtle flex items-center justify-center"
-          >
-            <UIcon
-              name="i-heroicons-document-text"
-              class="w-10 h-10 text-[var(--muted)]"
-            />
-          </div>
-          <h3 class="text-xl font-semibold mb-2">{{ t("blog.noPosts") }}</h3>
-          <p class="text-[var(--muted)]">
-            {{
-              selectedCategory || selectedTag
-                ? t("blog.tryAdjustingFilters")
-                : t("blog.noArticlesYet")
-            }}
+        <div v-else class="bd-latest-empty bd-blog-empty">
+          <svg width="120" height="60" viewBox="0 0 120 60" aria-hidden="true" focusable="false">
+            <path d="M0 44 Q60 58 120 44" fill="none" stroke="var(--line-strong)" stroke-width="1" />
+            <g transform="translate(60 51)">
+              <g class="bd-perch">
+                <path d="M-8 -4 Q-9 -11 -2 -12 Q1 -17 6 -15 L7 -14 Q8 -6 2 -2 L-3 -1 L-11 4 Z" fill="var(--ink-muted)" />
+                <path d="M6 -15 L12 -13.5 L7 -12.5 Z" fill="var(--mirla)" />
+              </g>
+            </g>
+          </svg>
+          <h2 class="bd-latest-empty-title">{{ t("blog.noPosts") }}</h2>
+          <p class="bd-meta bd-home-eyebrow bd-latest-empty-note">
+            {{ filtered ? t("blog.tryAdjustingFilters") : t("blog.noArticlesYet") }}
           </p>
-          <BdButton
-            v-if="selectedCategory || selectedTag"
-            variant="secondary"
-            class="mt-4"
-            @click="clearFilters"
-          >
-            {{ t("blog.clearFilters") }}
-          </BdButton>
+          <button v-if="filtered" type="button" class="bd-chip" @click="clearFilters">
+            {{ t("blog.clearFilters") }} <span aria-hidden="true">→</span>
+          </button>
         </div>
 
-        <div
-          v-if="posts.length > 0"
-          class="mt-8"
-        >
-          <BlogPagination
-            :current-page="currentPage"
-            :total-pages="pagination.pageCount"
-            :total-items="pagination.total"
-            @page-change="handlePageChange"
-          />
-        </div>
+        <BlogPagination
+          v-if="posts.length"
+          :filters="filters"
+          :total-pages="totalPages"
+          :page-size="BLOG_PAGE_SIZE"
+        />
       </div>
 
-      <aside class="hidden lg:block">
-        <div class="sticky top-[calc(var(--bd-header-h)+2rem)]">
-          <BlogSidebar
-            :categories="categories"
-            :popular-tags="popularTags"
-            :recent-posts="recentPosts"
-            :selected-category="selectedCategory"
-            :selected-tag="selectedTag"
-            @select-category="handleCategorySelect"
-            @select-tag="handleTagSelect"
-          />
-        </div>
-      </aside>
+      <BlogSidebar :recent-posts="recentPosts" />
     </div>
   </div>
 </template>

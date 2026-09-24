@@ -238,23 +238,16 @@ const server = createServer(async (req, res) => {
       return
     }
 
-    if (titleFilter) {
-      const term = titleFilter.toLowerCase()
-      const data = articles.filter((article) => {
-        const matchesTitle = article.title.toLowerCase().includes(term)
-        const matchesLocale = localeFilter ? article.locale === localeFilter : true
-        return matchesTitle && matchesLocale
-      })
-      sendJson(res, 200, { data })
-      return
-    }
-
     let data = [...articles]
     if (localeFilter) {
       data = data.filter((article) => article.locale === localeFilter)
     }
     if (categoryFilter) {
       data = data.filter((article) => article.category?.slug === categoryFilter)
+    }
+    if (titleFilter) {
+      const term = titleFilter.toLowerCase()
+      data = data.filter((article) => article.title.toLowerCase().includes(term))
     }
     if (tagFilter) {
       data = data.filter((article) => article.tags?.includes(tagFilter))
