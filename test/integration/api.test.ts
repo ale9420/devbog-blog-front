@@ -49,6 +49,21 @@ describe('/api/posts category filter', () => {
   })
 })
 
+describe('/api/posts search', () => {
+  it('filters titles from three letters on and combines with the category', async () => {
+    const result = await $fetch<{ data: Array<{ slug: string }> }>('/api/posts', { query: { locale: 'en', search: 'vue', category: Category.Software } })
+    expect(result.data.map((post) => post.slug)).toEqual(['understanding-vue-composables'])
+    const strapiRequests = mock.requests.filter((request) => request.method === 'GET' && request.path === '/api/articles')
+    expect(getNestedValue(strapiRequests[strapiRequests.length - 1].query, ['filters', 'title', '$containsi'])).toBe('vue')
+  })
+
+  it('ignores searches shorter than three letters', async () => {
+    await $fetch('/api/posts', { query: { locale: 'en', search: 'vu' } })
+    const strapiRequests = mock.requests.filter((request) => request.method === 'GET' && request.path === '/api/articles')
+    expect(getNestedValue(strapiRequests[strapiRequests.length - 1].query, ['filters', 'title', '$containsi'])).toBeUndefined()
+  })
+})
+
 describe('/api/search', () => {
   it('returns an empty array when q is missing', async () => {
     const result = await $fetch('/api/search')
@@ -60,18 +75,9 @@ describe('/api/search', () => {
     expect(result).toEqual([])
   })
 
-  it('returns projected results for a matching query', async () => {
+  it('returns projected results for a matching query, newest first', async () => {
     const result = await $fetch('/api/search', { query: { q: 'composables' } })
     expect(result).toEqual([
-      {
-        id: 1,
-        title: 'Understanding Vue Composables',
-        slug: 'understanding-vue-composables',
-        description: 'A deep dive into writing reusable Vue composables.',
-        publishedAt: '2026-02-01T10:00:00.000Z',
-        cover: { url: '/uploads/cover-vue.png' },
-        category: { name: 'Desarrollo de software', slug: Category.Software },
-      },
       {
         id: 3,
         title: 'Guía de Vue Composables',
@@ -79,6 +85,15 @@ describe('/api/search', () => {
         description: 'Una guía profunda sobre composables de Vue.',
         publishedAt: '2026-02-02T10:00:00.000Z',
         cover: { url: '/uploads/cover-vue-es.png' },
+        category: { name: 'Desarrollo de software', slug: Category.Software },
+      },
+      {
+        id: 1,
+        title: 'Understanding Vue Composables',
+        slug: 'understanding-vue-composables',
+        description: 'A deep dive into writing reusable Vue composables.',
+        publishedAt: '2026-02-01T10:00:00.000Z',
+        cover: { url: '/uploads/cover-vue.png' },
         category: { name: 'Desarrollo de software', slug: Category.Software },
       },
     ])

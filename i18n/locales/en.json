@@ -81,14 +81,39 @@
   "blog": {
     "readMore": "Read More",
     "readTime": "{minutes} min read",
-    "noPosts": "No posts found",
+    "noPosts": "No articles found",
     "categories": "Categories",
     "all": "All",
     "related": "Related Posts",
-    "exploreArticles": "Explore all articles on AI, software, Linux, and more",
+    "exploreArticles": "Explore every article on privacy, DIY, AI, software and Linux.",
     "tryAdjustingFilters": "Try adjusting your filters",
     "noArticlesYet": "No articles published yet",
-    "clearFilters": "Clear Filters"
+    "clearFilters": "Clear filters",
+    "eyebrow": "Archive · {count} article | Archive · {count} articles",
+    "filters": "Filters",
+    "tags": "Tags",
+    "filterCategory": "Filter by category",
+    "filterTag": "Filter by tag",
+    "filteringBy": "Filtering by",
+    "removeFilter": "Remove filter {label}",
+    "search": {
+      "label": "Search articles",
+      "placeholder": "Search articles...",
+      "hint": "3 letters minimum · searches titles only for now",
+      "results": "No results | {count} result | {count} results"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {page}",
+      "status": "Page {page} of {total}",
+      "perPage": "{count} per page"
+    },
+    "aside": "More from the blog",
+    "recent": "Recent articles",
+    "rss": "RSS · full feed",
+    "fediverse": "Follow {'@'}devbog on the fediverse"
   },
   "post": {
     "published": "Published",
@@ -127,11 +152,6 @@
   },
   "about": {
     "contentNotAvailable": "About page content not available."
-  },
-  "sidebar": {
-    "categories": "Categories",
-    "popularTags": "Popular Tags",
-    "recentPosts": "Recent Posts"
   },
   "tableOfContents": {
     "onThisPage": "On this page"

@@ -24,10 +24,12 @@ const toPostCard = usePostCard()
 
 const selected = ref<Category | undefined>()
 
-const { data: postsResult } = fetchPosts({ pageSize: LATEST_SIZE, locale: locale.value as Locale, category: selected })
+const { data: postsResult, status } = fetchPosts({ pageSize: LATEST_SIZE, locale: locale.value as Locale, category: selected })
 
-const posts = computed(() => postsResult.value?.data ?? [])
-const shownTotal = computed<number>(() => postsResult.value?.pagination.total ?? posts.value.length)
+const results = useSettledData(postsResult, status)
+
+const posts = computed(() => results.value?.data ?? [])
+const shownTotal = computed<number>(() => results.value?.pagination.total ?? posts.value.length)
 const filters = computed<TopicFilter[]>(() => [
   { id: 'all', label: t('home.latest.all'), color: 'var(--ink-muted)', count: padCount(props.total) },
   ...CATEGORIES.map(category => ({
@@ -69,7 +71,7 @@ function select(id: TopicFilter['id']): void {
       </div>
     </div>
 
-    <div class="bd-latest-grid">
+    <div class="bd-latest-grid" :aria-busy="status === 'pending'">
       <BdPostCard v-for="post in posts" :key="post.id" v-bind="toPostCard(post)" />
       <NuxtLink v-if="!selected && posts.length" :to="localizePath('/blog')" class="bd-latest-archive">
         <span class="bd-eyebrow bd-home-eyebrow">{{ t('home.latest.archive') }}</span>

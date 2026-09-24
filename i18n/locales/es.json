@@ -85,10 +85,35 @@
     "categories": "Categorías",
     "all": "Todos",
     "related": "Artículos Relacionados",
-    "exploreArticles": "Explora todos los artículos sobre IA, software, Linux y más",
+    "exploreArticles": "Explora todos los artículos sobre privacidad, DIY, IA, software y Linux.",
     "tryAdjustingFilters": "Intenta ajustar los filtros",
     "noArticlesYet": "Aún no hay artículos publicados",
-    "clearFilters": "Limpiar Filtros"
+    "clearFilters": "Limpiar filtros",
+    "eyebrow": "Archivo · {count} artículo | Archivo · {count} artículos",
+    "filters": "Filtros",
+    "tags": "Etiquetas",
+    "filterCategory": "Filtrar por categoría",
+    "filterTag": "Filtrar por etiqueta",
+    "filteringBy": "Filtrando por",
+    "removeFilter": "Quitar filtro {label}",
+    "search": {
+      "label": "Buscar artículos",
+      "placeholder": "Buscar artículos...",
+      "hint": "Mínimo 3 letras · hoy busca solo en los títulos",
+      "results": "Sin resultados | {count} resultado | {count} resultados"
+    },
+    "pagination": {
+      "label": "Paginación",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Página {page}",
+      "status": "Página {page} de {total}",
+      "perPage": "{count} por página"
+    },
+    "aside": "Más del blog",
+    "recent": "Artículos recientes",
+    "rss": "RSS · feed completo",
+    "fediverse": "Seguir {'@'}devbog en el fediverso"
   },
   "post": {
     "published": "Publicado",
@@ -127,11 +152,6 @@
   },
   "about": {
     "contentNotAvailable": "El contenido de la página Acerca de no está disponible."
-  },
-  "sidebar": {
-    "categories": "Categorías",
-    "popularTags": "Etiquetas Populares",
-    "recentPosts": "Artículos Recientes"
   },
   "tableOfContents": {
     "onThisPage": "En esta página"

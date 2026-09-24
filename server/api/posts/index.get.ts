@@ -1,4 +1,5 @@
 import qs from 'qs';
+import { MIN_SEARCH_LENGTH } from '~/helpers/search'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
@@ -8,10 +9,12 @@ export default defineEventHandler(async (event) => {
   const locale = query.locale as string | undefined
   const category = query.category as string | undefined
   const tag = query.tag as string | undefined
+  const search = typeof query.search === 'string' ? query.search.trim() : ''
 
   const filters: Record<string, unknown> = {}
   if (category) filters.category = { slug: { $eq: category } }
   if (tag) filters.tags = { $contains: tag }
+  if (search.length >= MIN_SEARCH_LENGTH) filters.title = { $containsi: search }
 
   const params = qs.stringify({
     pagination: { page, pageSize },
