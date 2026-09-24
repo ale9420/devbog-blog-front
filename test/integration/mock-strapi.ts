@@ -285,7 +285,11 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
 
       if (titleFilter) {
         const term = titleFilter.toLowerCase()
-        const data = articles.filter((article) => article.title.toLowerCase().includes(term))
+        const data = articles.filter((article) => {
+          const matchesTitle = article.title.toLowerCase().includes(term)
+          const matchesLocale = localeFilter ? article.locale === localeFilter : true
+          return matchesTitle && matchesLocale
+        })
         sendJson(res, 200, { data })
         return
       }

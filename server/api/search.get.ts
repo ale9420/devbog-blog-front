@@ -5,6 +5,7 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const query = getQuery(event);
   const searchQuery = query.q as string;
+  const locale = query.locale as string | undefined;
 
   if (!searchQuery || searchQuery.length < 3) {
     return [];
@@ -20,7 +21,9 @@ export default defineEventHandler(async (event) => {
     pagination: {
       pageSize: 10,
     },
-  });
+    sort: 'publishedAt:desc',
+    locale,
+  }, { skipNulls: true });
 
   const headers: Record<string, string> = {};
   if (config.strapiApiToken) {
@@ -40,6 +43,7 @@ export default defineEventHandler(async (event) => {
       title: post.title,
       slug: post.slug,
       description: post.description ?? null,
+      publishedAt: post.publishedAt ?? null,
       cover: post.cover ? { url: post.cover.url } : null,
       category: post.category?.name ? { name: post.category.name, slug: post.category.slug ?? null } : null,
     }));

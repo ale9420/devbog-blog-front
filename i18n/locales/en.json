@@ -20,7 +20,6 @@
     "readMore": "Read More",
     "readTime": "{minutes} min read",
     "noPosts": "No posts found",
-    "search": "Search posts...",
     "categories": "Categories",
     "all": "All",
     "related": "Related Posts",
@@ -75,15 +74,6 @@
     "rssFeed": "RSS Feed",
     "madeWith": "Made with",
     "bogota": "in Bogotá, Colombia"
-  },
-  "search": {
-    "noResults": "No results found for \"{query}\"",
-    "typeToSearch": "Type to search posts...",
-    "poweredBy": "Powered by BogDev",
-    "navigate": "to navigate",
-    "select": "to select",
-    "placeholder": "Search posts...",
-    "esc": "ESC"
   },
   "sidebar": {
     "categories": "Categories",
@@ -212,6 +202,29 @@
       "ia": "AI",
       "software": "Software",
       "linux": "Linux"
+    },
+    "search": {
+      "dialog": "Search BogDev",
+      "placeholder": "Search articles, topics or actions",
+      "close": "Close search",
+      "minLength": "Type {count} or more letters to search articles",
+      "loading": "Searching…",
+      "empty": "No results for “{query}”",
+      "results": "No results | 1 result | {count} results",
+      "help": "↑↓ navigate · ↵ open · esc close",
+      "toDia": "Switch to the Day theme",
+      "toNoche": "Switch to the Night theme",
+      "fediverse": "Follow on the fediverse",
+      "groups": {
+        "article": "Articles",
+        "topic": "Topics",
+        "action": "Actions"
+      },
+      "kinds": {
+        "article": "Article",
+        "topic": "Topic",
+        "action": "Action"
+      }
     }
   }
 }
