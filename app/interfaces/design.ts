@@ -1,4 +1,18 @@
-export type Category = 'privacidad' | 'diy' | 'ia' | 'software' | 'linux'
+export enum Category {
+  Privacidad = 'privacidad',
+  Diy = 'diy',
+  Ia = 'ia',
+  Software = 'software',
+  Linux = 'linux',
+}
+
+export enum BirdToken {
+  Pinchaflor = 'pinchaflor',
+  Golondrina = 'golondrina',
+  Chillon = 'chillon',
+  Mirla = 'mirla',
+  Monjita = 'monjita',
+}
 
 export type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'text'
 
@@ -19,7 +33,7 @@ export interface LogoPath {
 }
 
 export interface CategoryInfo {
-  token: 'pinchaflor' | 'golondrina' | 'chillon' | 'mirla' | 'monjita'
+  token: BirdToken
   scientificName: string
   pillar: 1 | 2 | null
 }

@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import BdCategoryTag from '~/components/bd/BdCategoryTag.vue'
+import { Category } from '~/interfaces/design'
 
 describe('BdCategoryTag', () => {
   it('shows the translated category name with its color class', async () => {
-    const wrapper = await mountSuspended(BdCategoryTag, { props: { category: 'privacidad' } })
+    const wrapper = await mountSuspended(BdCategoryTag, { props: { category: Category.Privacidad } })
     expect(wrapper.element.tagName).toBe('SPAN')
     expect(wrapper.classes()).toContain('bd-tag-privacidad')
     expect(wrapper.text()).toBe('Privacy')
@@ -13,7 +14,7 @@ describe('BdCategoryTag', () => {
 
   it('renders a link and accepts a custom label', async () => {
     const wrapper = await mountSuspended(BdCategoryTag, {
-      props: { category: 'diy', href: '/blog?category=diy' },
+      props: { category: Category.Diy, href: `/blog?category=${Category.Diy}` },
       slots: { default: () => 'DIY' },
     })
     expect(wrapper.element.tagName).toBe('A')

@@ -4,6 +4,7 @@ import { defineComponent, h } from 'vue'
 import BdBird from '~/components/bd/BdBird.vue'
 import { useCategoryLabel } from '~/composables/useCategoryLabel'
 import { CATEGORIES } from '~/helpers/categories'
+import { Category } from '~/interfaces/design'
 
 describe('BdBird', () => {
   it('draws a distinct bird for each category in its color', async () => {
@@ -31,8 +32,8 @@ describe('useCategoryLabel', () => {
         return () => h('div')
       },
     }))
-    expect(label({ slug: 'ia', name: 'Inteligencia artificial' })).toBe('Artificial intelligence')
-    expect(label({ slug: 'diy' })).toBe('DIY · Do it yourself')
+    expect(label({ slug: Category.Ia, name: 'Inteligencia artificial' })).toBe('Artificial intelligence')
+    expect(label({ slug: Category.Diy })).toBe('DIY · Do it yourself')
     expect(label({ slug: null, name: 'Tech culture' })).toBe('Tech culture')
     expect(label(null)).toBe('')
   })
