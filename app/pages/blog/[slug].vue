@@ -252,7 +252,7 @@ useHead({
                 <BlogShareButtons class="bd-article-share" :title="post.title" :url="articleUrl" />
             </div>
 
-            <BlogCommentSection :slug="slug" :document-id="post.documentId" />
+            <BlogCommentSection :slug="slug" :document-id="post.documentId" :federated="federated && Boolean(post.documentId)" />
 
             <BlogRelatedPosts :current-post-id="post.id" :category="post.category" />
         </template>

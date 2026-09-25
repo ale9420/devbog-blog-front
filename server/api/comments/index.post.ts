@@ -1,3 +1,6 @@
+import type { Comment } from '~/interfaces/comment'
+import { toPublicComment } from '~/helpers/comments'
+
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const config = useRuntimeConfig()
@@ -28,12 +31,12 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const response = await $fetch(url, {
+    const response = await $fetch<Comment>(url, {
       method: 'POST',
       headers,
       body
     })
-    return response
+    return toPublicComment(response)
   } catch (error: unknown) {
     console.error('Strapi comment error:', asUpstreamError(error).data || error)
     throw createError({

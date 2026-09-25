@@ -18,8 +18,7 @@ const { data: stats } = useFetch<FediverseStats>(() => `/api/fediverse/stats/${p
 })
 const articleUrl = computed<string>(() => `${config.public.fediverseArticlesUrl}/${props.documentId}`)
 const { instance, error, preview, open } = useFediverseInstance(() => articleUrl.value)
-
-const replyOpen = ref(false)
+const { replyOpen, toggleReply } = useFediverseReply(props.documentId)
 
 const hint = computed<string>(() => {
   if (error.value === 'empty') return t('post.fediverse.errorEmpty')
@@ -27,10 +26,6 @@ const hint = computed<string>(() => {
   if (preview.value) return t('post.fediverse.willOpen', { instance: preview.value })
   return t('post.fediverse.hint')
 })
-
-function toggleReply(): void {
-  replyOpen.value = !replyOpen.value
-}
 
 function copyArticleUrl(): void {
   copy(articleUrl.value)

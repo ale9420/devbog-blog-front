@@ -1,4 +1,6 @@
 import qs from 'qs';
+import type { Comment, CommentsResponse } from '~/interfaces/comment'
+import { toPublicComments } from '~/helpers/comments'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
@@ -28,8 +30,9 @@ export default defineEventHandler(async (event) => {
   const url = `${config.public.strapiUrl}/api/comments/${relation}${params ? '?' + params : ''}`
 
   try {
-    const response = await $fetch(url, { headers })
-    return response
+    const response = await $fetch<Comment[] | CommentsResponse>(url, { headers })
+    if (Array.isArray(response)) return toPublicComments(response)
+    return { ...response, data: toPublicComments(response?.data ?? []) }
   } catch (error: unknown) {
     console.error('Strapi fetch comments error:', asUpstreamError(error).data || error)
     throw createError({

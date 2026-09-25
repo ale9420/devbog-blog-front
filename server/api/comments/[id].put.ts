@@ -1,3 +1,6 @@
+import type { Comment } from '~/interfaces/comment'
+import { toPublicComment } from '~/helpers/comments'
+
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const config = useRuntimeConfig()
@@ -51,12 +54,12 @@ export default defineEventHandler(async (event) => {
 
     const url = `${config.public.strapiUrl}/api/comments/${relation}/comment/${id}`
 
-    const response = await $fetch(url, {
+    const response = await $fetch<Comment>(url, {
       method: 'PUT',
       headers,
       body
     })
-    return response
+    return toPublicComment(response)
   } catch (error: unknown) {
     if (asUpstreamError(error).statusCode) {
       throw error

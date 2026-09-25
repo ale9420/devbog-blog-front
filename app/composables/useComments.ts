@@ -1,4 +1,5 @@
 import type { Comment, CommentFormData, CommentsResponse } from '~/interfaces/comment'
+import { isFediverseComment } from '~/helpers/comments'
 
 interface GuestCommentPayload {
   author: {
@@ -99,7 +100,7 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
 
   const comments = computed<Comment[]>(() => allComments.value.filter(comment => !comment.threadOf))
   const totalComments = computed<number>(() => allComments.value.length)
-  const fediverseReplies = computed<number>(() => allComments.value.filter(comment => comment.fediverseActorHandle).length)
+  const fediverseReplies = computed<number>(() => allComments.value.filter(isFediverseComment).length)
 
   function repliesOf(commentId: number): Comment[] {
     return allComments.value.filter(comment => comment.threadOf?.id === commentId)

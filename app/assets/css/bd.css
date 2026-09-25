@@ -3928,6 +3928,7 @@ a.bd-page:hover {
 .bd-comments {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-12);
     padding: 64px var(--bd-home-gutter);
     border-top: 1px solid var(--line);
 }
@@ -3944,6 +3945,35 @@ a.bd-page:hover {
     max-width: 560px;
     color: var(--ink-muted);
     text-wrap: pretty;
+}
+
+.bd-comments-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.bd-comments-moderation {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.bd-comments-moderation-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 12px;
+    line-height: 18px;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+}
+
+.bd-comments-moderation-check {
+    color: var(--chillon);
 }
 
 .bd-comments-empty {
@@ -4000,6 +4030,10 @@ a.bd-page:hover {
     background: var(--surface-sunken);
 }
 
+.bd-comment-fediverse .bd-avatar {
+    border-color: var(--chillon);
+}
+
 .bd-comment-body {
     display: flex;
     flex-direction: column;
@@ -4019,6 +4053,27 @@ a.bd-page:hover {
     font-weight: 600;
 }
 
+.bd-comment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px var(--space-2);
+    font: 500 11px/18px var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+.bd-comment-badge-fediverse {
+    color: var(--chillon);
+    background: var(--chillon-soft);
+}
+
+.bd-comment-badge-author {
+    color: var(--mirla);
+    background: var(--mirla-soft);
+}
+
 .bd-comment-date {
     color: var(--ink-muted);
 }
@@ -4036,7 +4091,24 @@ a.bd-page:hover {
 
 .bd-comment-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--space-6);
+}
+
+.bd-comment-instance-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: 44px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.bd-comment-instance-link:hover {
+    color: var(--chillon);
 }
 
 .bd-comment-form {
@@ -4139,6 +4211,17 @@ a.bd-page:hover {
     justify-content: flex-end;
 }
 
+.bd-comment-submit-split {
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+}
+
+.bd-comment-submit-split .bd-blog-textbtn {
+    text-align: left;
+}
+
 .bd-related-news {
     max-width: none;
 }
@@ -4154,7 +4237,7 @@ a.bd-page:hover {
     margin: 64px var(--bd-home-gutter);
 }
 
-.bd-article-page :where(.bd-toc-link, .bd-share-link, .bd-author-card-link):focus-visible {
+.bd-article-page :where(.bd-toc-link, .bd-share-link, .bd-author-card-link, .bd-comment-instance-link, .bd-blog-textbtn):focus-visible {
     outline: 2px solid var(--focus);
     outline-offset: 2px;
 }
@@ -4261,6 +4344,13 @@ a.bd-page:hover {
 
     .bd-comments-main {
         grid-column: 4 / span 7;
+    }
+
+    .bd-comments-moderation {
+        position: sticky;
+        top: calc(var(--bd-header-h) + var(--space-6));
+        grid-row: 1;
+        grid-column: 1 / span 3;
     }
 
     .bd-related-grid {

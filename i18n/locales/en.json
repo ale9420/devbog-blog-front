@@ -214,7 +214,28 @@
     "count": "Conversation · no comments | Conversation · {count} comment | Conversation · {count} comments",
     "intro": "Leave a comment or reply to other readers.",
     "leave": "Leave a comment",
-    "removed": "Comment removed."
+    "removed": "Comment removed.",
+    "introFediverse": "Comment here or reply from your fediverse account: both conversations come together in this thread.",
+    "filterLabel": "Filter comments",
+    "filters": {
+      "all": "All",
+      "blog": "From the blog",
+      "fediverse": "From the fediverse"
+    },
+    "noBlogComments": "No comments from the blog on this article yet.",
+    "noFediverseComments": "No replies from the fediverse on this article yet.",
+    "fediverseBadge": "Fediverse",
+    "authorBadge": "Author",
+    "viewOnInstance": "View on their instance",
+    "viewOnInstanceAria": "View on their instance the reply by {name} (opens in a new tab)",
+    "replyFromFediverse": "Have a Mastodon account? Reply from there",
+    "moderation": {
+      "title": "Moderation",
+      "approval": "Fediverse replies are published after review",
+      "edited": "If its author edits it on Mastodon, it goes back to review",
+      "deleted": "If they delete it, it is removed from here",
+      "plainText": "They are stored as plain text"
+    }
   },
   "about": {
     "contentNotAvailable": "About page content not available.",
