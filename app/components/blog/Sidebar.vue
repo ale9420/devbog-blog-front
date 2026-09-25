@@ -2,13 +2,15 @@
 import type { Category, PostListItem } from '~/interfaces'
 import { formatDotDate } from '~/helpers/formatDate'
 import { padCount } from '~/helpers/search'
+import { CATEGORIES } from '~/helpers/categories'
+import { feedPath } from '~/helpers/feed'
 
 defineProps<{
   recentPosts: PostListItem[]
   category?: Category
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { localizePath } = useLocaleUtils()
 const { count: readCount, clear: clearRead } = useReadArticles()
 
@@ -44,7 +46,23 @@ function clearHistory(): void {
     </section>
     <section class="bd-blog-aside-group" aria-labelledby="bd-blog-subscribe">
       <h2 id="bd-blog-subscribe" class="bd-eyebrow bd-home-eyebrow">{{ t('bd.footer.subscribe') }}</h2>
-      <a href="/feed.xml" class="bd-blog-aside-link" target="_blank" rel="noopener noreferrer">{{ t('blog.rss') }} <span aria-hidden="true">↗</span></a>
+      <a :href="feedPath(locale)" class="bd-blog-aside-link" target="_blank" rel="noopener noreferrer">{{ t('blog.rss') }} <span aria-hidden="true">↗</span></a>
+      <div class="bd-blog-feeds">
+        <p id="bd-blog-feeds-label" class="bd-blog-feeds-label">{{ t('blog.feeds.label') }}</p>
+        <ul class="bd-meta bd-blog-feeds-list" aria-labelledby="bd-blog-feeds-label">
+          <li v-for="slug in CATEGORIES" :key="slug">
+            <a
+              :href="feedPath(locale, slug)"
+              class="bd-blog-feed-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              :aria-label="t('blog.feeds.aria', { category: t(`bd.categoryShort.${slug}`) })"
+            >
+              {{ t(`bd.categoryShort.${slug}`) }} <span aria-hidden="true">↗</span>
+            </a>
+          </li>
+        </ul>
+      </div>
       <NuxtLink :to="`${localizePath('/')}#fediverso`" class="bd-blog-aside-link">
         <span class="bd-hero-diamond" aria-hidden="true">◆</span> {{ t('blog.fediverse') }}
       </NuxtLink>

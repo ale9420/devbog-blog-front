@@ -208,6 +208,77 @@ describe('/api/reading-path', () => {
   })
 })
 
+describe('RSS feeds', () => {
+  async function feed(path: string): Promise<{ status: number; type: string | null; cache: string | null; body: string }> {
+    const response = await fetch(path)
+    return {
+      status: response.status,
+      type: response.headers.get('content-type'),
+      cache: response.headers.get('cache-control'),
+      body: await response.text(),
+    }
+  }
+
+  function items(body: string): string[] {
+    return [...body.matchAll(/<item>[\s\S]*?<title><!\[CDATA\[(.*?)\]\]><\/title>/g)].map((match) => match[1]!)
+  }
+
+  it('keeps the full feed in English and Spanish, now also at /es/feed.xml', async () => {
+    const english = await feed('/feed.xml')
+    expect(english.status).toBe(200)
+    expect(english.type).toBe('application/rss+xml; charset=utf-8')
+    expect(english.cache).toBe('public, s-maxage=1800, stale-while-revalidate=3600')
+    expect(english.body).toContain('<title>BogDev - Personal Blog</title>')
+    expect(english.body).toContain('<atom:link href="http://localhost:1337/feed.xml" rel="self" type="application/rss+xml"/>')
+    expect(items(english.body)).toEqual(['Understanding Vue Composables', 'Linux Server Hardening Guide'])
+
+    const spanish = await feed('/es/feed.xml')
+    const legacy = await feed('/feed.xml?lang=es')
+    expect(spanish.status).toBe(200)
+    expect(spanish.body.replace(/<lastBuildDate>.*<\/lastBuildDate>/, '')).toBe(legacy.body.replace(/<lastBuildDate>.*<\/lastBuildDate>/, ''))
+    expect(spanish.body).toContain('<title>BogDev - Personal Blog (Español)</title>')
+    expect(items(spanish.body)).toEqual(['Guía de Vue Composables'])
+  })
+
+  it('serves one feed per category with only its articles, in each language', async () => {
+    const linux = await feed('/feed/linux.xml')
+    expect(linux.status).toBe(200)
+    expect(linux.type).toBe('application/rss+xml; charset=utf-8')
+    expect(linux.cache).toBe('public, s-maxage=1800, stale-while-revalidate=3600')
+    expect(linux.body).toContain('<title>BogDev - Linux and open source</title>')
+    expect(linux.body).toContain('<description>BogDev articles about Linux and open source, from Bogotá, Colombia.</description>')
+    expect(linux.body).toContain('<link>http://localhost:1337/blog?category=linux</link>')
+    expect(linux.body).toContain('<atom:link href="http://localhost:1337/feed/linux.xml" rel="self" type="application/rss+xml"/>')
+    expect(linux.body).toContain('<atom:link href="http://localhost:1337/es/feed/linux.xml" rel="alternate" type="application/rss+xml" hreflang="es"/>')
+    expect(items(linux.body)).toEqual(['Linux Server Hardening Guide'])
+
+    const software = await feed('/es/feed/software.xml')
+    expect(software.status).toBe(200)
+    expect(software.body).toContain('<title>BogDev - Desarrollo de software</title>')
+    expect(software.body).toContain('<language>es-co</language>')
+    expect(software.body).toContain('<atom:link href="http://localhost:1337/es/feed/software.xml" rel="self" type="application/rss+xml"/>')
+    expect(items(software.body)).toEqual(['Guía de Vue Composables'])
+
+    const request = mock.requests.filter((item) => item.path === '/api/articles').at(-1)
+    expect(request?.query).toMatchObject({ locale: 'es', filters: { category: { slug: { $eq: 'software' } } } })
+  })
+
+  it('returns a valid empty feed for a category without articles', async () => {
+    const privacy = await feed('/feed/privacidad.xml')
+    expect(privacy.status).toBe(200)
+    expect(privacy.body).toContain('<title>BogDev - Privacy</title>')
+    expect(privacy.body).not.toContain('<item>')
+    expect(privacy.body.trim().endsWith('</channel>\n</rss>')).toBe(true)
+  })
+
+  it('answers 404 for unknown categories or files without calling Strapi', async () => {
+    expect((await feed('/feed/cooking.xml')).status).toBe(404)
+    expect((await feed('/es/feed/cooking.xml')).status).toBe(404)
+    expect((await feed('/feed/linux.json')).status).toBe(404)
+    expect(mock.requests.some((item) => item.path === '/api/articles')).toBe(false)
+  })
+})
+
 describe('/api/search', () => {
   it('returns an empty array when q is missing', async () => {
     const result = await $fetch('/api/search')

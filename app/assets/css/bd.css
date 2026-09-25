@@ -3527,6 +3527,49 @@ a.bd-page:hover {
     background: var(--surface);
 }
 
+.bd-blog-feeds {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.bd-blog-feeds-label {
+    margin: 0;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--ink-muted);
+}
+
+.bd-blog-feeds-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 12px;
+}
+
+.bd-blog-feed-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 4px;
+}
+
+.bd-blog-feed-link:hover {
+    text-decoration-color: var(--chillon);
+}
+
+.bd-blog-feed-link:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+
 .bd-blog-read-note {
     margin: 0;
     font-size: 12px;

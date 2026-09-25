@@ -2,6 +2,7 @@
 import type { BlogFilters, BlogSort, BlogView, Category, Locale, PostListItem } from "~/interfaces";
 import { BLOG_SORTS, blogPageSize, blogQuery, hasActiveFilters, parseBlogQuery, parseSort, searchTerm } from "~/helpers/blog";
 import { isCategory } from "~/helpers/categories";
+import { feedPath } from "~/helpers/feed";
 import { padCount } from "~/helpers/search";
 
 const RECENT_SIZE = 4;
@@ -125,6 +126,17 @@ watch(() => filters.value.page, () => {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   document.getElementById("posts")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
 });
+
+useHead(() => ({
+  link: filters.value.category
+    ? [{
+        rel: "alternate",
+        type: "application/rss+xml",
+        title: t("blog.feeds.title", { category: t(`bd.categories.${filters.value.category}`) }),
+        href: `${siteUrl.value}${feedPath(locale.value, filters.value.category)}`,
+      }]
+    : [],
+}));
 
 useSeoMeta({
   title: "Blog - BogDev",
