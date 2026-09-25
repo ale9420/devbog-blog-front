@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { $fetch, setup } from '@nuxt/test-utils/e2e'
+import { $fetch, fetch, setup } from '@nuxt/test-utils/e2e'
 import type { RawStrapiArticle } from '~/interfaces/strapi-post'
 import { Category } from '~/interfaces/design'
 import { startMockStrapi } from './mock-strapi'
@@ -146,6 +146,29 @@ describe('/api/about', () => {
       response: { status: 502 },
       data: { message: 'Invalid key about.profile at blocks.on.about.profile' },
     })
+  })
+})
+
+describe('/api/fediverse/stats/[documentId]', () => {
+  it('returns the likes and boosts of a federated article with a short cache', async () => {
+    const response = await fetch('/api/fediverse/stats/doc-vue-es')
+    expect(response.status).toBe(200)
+    expect(response.headers.get('cache-control')).toBe('public, s-maxage=60, stale-while-revalidate=120')
+    expect(await response.json()).toEqual({ likes: 4, boosts: 2 })
+    expect(mock.requests.map((request) => request.path)).toContain('/api/fediverse/articles/doc-vue-es/stats')
+  })
+
+  it('answers 404 when the article is not federated', async () => {
+    await expect($fetch('/api/fediverse/stats/doc-missing')).rejects.toMatchObject({ response: { status: 404 } })
+  })
+
+  it('answers 502 when the backend fails', async () => {
+    await expect($fetch('/api/fediverse/stats/doc-broken')).rejects.toMatchObject({ response: { status: 502 } })
+  })
+
+  it('rejects malformed document ids without calling the backend', async () => {
+    await expect($fetch('/api/fediverse/stats/doc%2F..%2Fadmin')).rejects.toMatchObject({ response: { status: 400 } })
+    expect(mock.requests.some((request) => request.path.startsWith('/api/fediverse'))).toBe(false)
   })
 })
 

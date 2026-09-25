@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { InstanceError } from '~/interfaces'
-import { followUrl, normalizeInstance } from '~/helpers/fediverse'
 import { padCount } from '~/helpers/search'
 
 const COPIED_MS = 1600
@@ -8,16 +6,13 @@ const COPIED_MS = 1600
 const { t } = useI18n()
 const config = useRuntimeConfig()
 const { copy, copied } = useClipboard({ copiedDuring: COPIED_MS, legacy: true })
-
-const instance = ref('')
-const error = ref<InstanceError | null>(null)
+const { instance, error, preview, open: follow } = useFediverseInstance(() => config.public.fediverseActorUrl)
 
 const handle = computed<string>(() => config.public.fediverseHandle)
 const handleParts = computed<{ user: string, domain: string }>(() => {
   const at = handle.value.lastIndexOf('@')
   return { user: handle.value.slice(0, at), domain: handle.value.slice(at) }
 })
-const preview = computed<string | undefined>(() => normalizeInstance(instance.value).domain)
 const hint = computed<string>(() => {
   if (error.value === 'empty') return t('home.fediverse.errorEmpty')
   if (error.value === 'invalid') return t('home.fediverse.errorInvalid')
@@ -33,18 +28,6 @@ const steps = computed<{ title: string, text: string }[]>(() => [
 function copyHandle(): void {
   copy(handle.value)
 }
-
-function follow(): void {
-  const result = normalizeInstance(instance.value)
-  error.value = result.error ?? null
-  if (!result.domain) return
-  instance.value = result.domain
-  window.open(followUrl(result.domain, config.public.fediverseActorUrl), '_blank', 'noopener,noreferrer')
-}
-
-watch(instance, () => {
-  error.value = null
-})
 </script>
 
 <template>

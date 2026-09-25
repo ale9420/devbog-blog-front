@@ -168,7 +168,26 @@
     "writtenBy": "Written by",
     "authorBio": "Exploring privacy, DIY, AI, software and Linux from Bogotá.",
     "keepReading": "Keep reading",
-    "alsoIn": "Also in {category}"
+    "alsoIn": "Also in {category}",
+    "fediverse": {
+      "label": "On the fediverse",
+      "likes": "like | likes",
+      "boosts": "boost | boosts",
+      "replies": "reply | replies",
+      "reply": "Reply from the fediverse",
+      "instructions": "Paste this address into your instance's search to open the article there, then reply, like or boost it like any other post.",
+      "copy": "Copy",
+      "copied": "Copied ✓",
+      "copyAria": "Copy the article's fediverse address",
+      "copiedAnnounce": "Article address copied",
+      "instanceLabel": "Or open it straight on your instance",
+      "open": "Open",
+      "hint": "Type your instance's domain, for example mastodon.social",
+      "willOpen": "The article will open on {instance}",
+      "errorEmpty": "Type your instance's domain, for example mastodon.social",
+      "errorInvalid": "That does not look like a domain. Type just your instance's, for example mastodon.social",
+      "moderation": "Your reply arrives as a comment and is published after moderation."
+    }
   },
   "comments": {
     "title": "Comments",

@@ -27,6 +27,8 @@ export interface Comment {
   threadOf?: {
     id: number
   } | null
+  fediverseActorHandle?: string | null
+  fediverseUri?: string | null
 }
 
 export interface CommentReport {

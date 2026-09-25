@@ -14,6 +14,7 @@ const categoryLabel = useCategoryLabel();
 const { siteUrl } = useSiteUrl();
 const { canonicalUrl } = useCanonicalUrl(`/blog/${slug}`);
 const headerSection = useHeaderSection();
+const config = useRuntimeConfig();
 
 const { data: post } = await fetchPost(slug, locale.value as Locale);
 
@@ -47,6 +48,7 @@ const headings = computed<TocHeading[]>(() => extractHeadings(post.value?.blocks
 const articleUrl = computed<string>(() => post.value?.seo?.canonicalURL || canonicalUrl.value);
 const mastodonUrl = computed<string>(() => mastodonShareUrl(post.value?.title ?? "", articleUrl.value));
 const publishedDate = computed<string>(() => formatDotDate(post.value?.publishedAt));
+const federated = computed<boolean>(() => locale.value === config.public.fediverseLocale);
 
 useSeoMeta({
     title: () => post.value?.seo?.metaTitle || (post.value?.title ? `${post.value.title} - BogDev` : "Post - BogDev"),
@@ -205,6 +207,7 @@ useHead({
                         </BdButton>
                     </div>
                 </div>
+                <BlogFediverseBar v-if="federated && post.documentId" :slug="slug" :document-id="post.documentId" />
             </header>
 
             <figure v-if="coverUrl" class="bd-article-cover">

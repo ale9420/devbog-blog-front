@@ -64,3 +64,19 @@ test('threads replies under their comment and hydrates cleanly', async ({ page }
   await expect(page.getByText('Conversation · 2 comments')).toBeVisible()
   expect(errors).toEqual([])
 })
+
+test('shows the fediverse activity and reply block on federated articles', async ({ page }) => {
+  await page.goto('/es/blog/guia-vue-composables', { waitUntil: 'networkidle' })
+  const bar = page.getByRole('region', { name: 'En el fediverso' })
+  await expect(bar.locator('.bd-fedi-bar-stats')).toContainText('7 me gusta')
+  await expect(bar.locator('.bd-fedi-bar-stats')).toContainText('3 impulsos')
+  await expect(bar.locator('.bd-fedi-bar-stats')).toContainText('0 respuestas')
+  await bar.getByRole('button', { name: 'Responder desde el fediverso' }).click()
+  await expect(bar.locator('.bd-fedi-reply-address')).toHaveText('https://api.bogdev.com.co/fediverse/articles/doc-vue-es')
+  await expect(bar).toContainText('Tu respuesta llega como comentario y se publica después de moderarla.')
+})
+
+test('leaves the fediverse block out of non-federated articles', async ({ page }) => {
+  await page.goto('/blog/understanding-vue-composables', { waitUntil: 'networkidle' })
+  await expect(page.locator('.bd-fedi-bar')).toHaveCount(0)
+})
