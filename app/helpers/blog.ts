@@ -1,5 +1,5 @@
 import type { LocationQuery } from 'vue-router'
-import type { BlogFilters, BlogView, PaginationItem, PostMonth } from '../interfaces/blog'
+import type { BlogFilters, BlogSort, BlogView, PaginationItem, PostMonth } from '../interfaces/blog'
 import type { PostListItem } from '../interfaces/strapi-post'
 import { isCategory } from './categories'
 import { MIN_SEARCH_LENGTH } from './search'
@@ -8,6 +8,7 @@ export const BLOG_PAGE_SIZE = 6
 export const LOG_PAGE_SIZE = 24
 
 const LOG_VIEW = 'log'
+export const BLOG_SORTS: BlogSort[] = ['recent', 'oldest', 'fediverse']
 const TIME_ZONE = 'America/Bogota'
 
 function firstValue(value: LocationQuery[string] | undefined): string {
@@ -30,7 +31,13 @@ export function parseBlogQuery(query: LocationQuery): BlogFilters {
     search: searchTerm(firstValue(query.search)),
     page: Number.isFinite(page) && page > 1 ? page : 1,
     view: parseView(firstValue(query.view)),
+    sort: parseSort(firstValue(query.sort)),
   }
+}
+
+export function parseSort(value: unknown): BlogSort | undefined {
+  const sort = typeof value === 'string' ? value.trim().toLowerCase() : ''
+  return sort === 'oldest' || sort === 'fediverse' ? sort : undefined
 }
 
 function parseView(value: string): BlogView | undefined {
@@ -48,6 +55,7 @@ export function blogQuery(filters: BlogFilters): Record<string, string> {
   if (filters.search) query.search = filters.search
   if (filters.page > 1) query.page = String(filters.page)
   if (filters.view === 'log') query.view = LOG_VIEW
+  if (filters.sort && filters.sort !== 'recent') query.sort = filters.sort
   return query
 }
 

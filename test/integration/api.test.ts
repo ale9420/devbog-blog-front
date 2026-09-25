@@ -49,6 +49,52 @@ describe('/api/posts category filter', () => {
   })
 })
 
+describe('/api/posts sort', () => {
+  type PostsPage = { data: Array<{ documentId: string }>; meta: { pagination: { page: number; pageSize: number; total: number; pageCount: number } } }
+  const ids = (response: PostsPage) => response.data.map((post) => post.documentId)
+
+  it('sorts by newest first by default and for unknown values', async () => {
+    expect(ids(await $fetch<PostsPage>('/api/posts', { query: { locale: 'en' } }))).toEqual(['doc-vue', 'doc-linux'])
+    expect(ids(await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'recent' } }))).toEqual(['doc-vue', 'doc-linux'])
+    expect(ids(await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'popular' } }))).toEqual(['doc-vue', 'doc-linux'])
+    const upstream = mock.requests.filter((request) => request.path === '/api/articles')
+    expect(upstream.every((request) => request.query.sort === 'publishedAt:desc')).toBe(true)
+  })
+
+  it('sorts by oldest first', async () => {
+    const response = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'oldest' } })
+    expect(ids(response)).toEqual(['doc-linux', 'doc-vue'])
+    expect(mock.requests.find((request) => request.path === '/api/articles')?.query.sort).toBe('publishedAt:asc')
+  })
+
+  it('sorts by fediverse conversation with the backend ranking, page by page', async () => {
+    const first = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'fediverse', page: 1, pageSize: 1 } })
+    const second = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'fediverse', page: 2, pageSize: 1 } })
+    expect(ids(first)).toEqual(['doc-linux'])
+    expect(ids(second)).toEqual(['doc-vue'])
+    expect(second.meta.pagination).toEqual({ page: 2, pageSize: 1, pageCount: 2, total: 2 })
+
+    const ranking = mock.requests.filter((request) => request.path === '/api/fediverse/articles/ranking')
+    expect(ranking.map((request) => request.query)).toEqual([
+      { page: '1', pageSize: '1', locale: 'en' },
+      { page: '2', pageSize: '1', locale: 'en' },
+    ])
+  })
+
+  it('passes the category and search filters to the ranking', async () => {
+    const response = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'fediverse', category: 'software', search: 'vue' } })
+    expect(ids(response)).toEqual(['doc-vue'])
+    const ranking = mock.requests.find((request) => request.path === '/api/fediverse/articles/ranking')
+    expect(ranking?.query).toMatchObject({ category: 'software', search: 'vue' })
+  })
+
+  it('falls back to newest first when the ranking fails', async () => {
+    const response = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'fediverse', search: 'fail' } })
+    expect(response.data).toEqual([])
+    expect(mock.requests.find((request) => request.path === '/api/articles')?.query.sort).toBe('publishedAt:desc')
+  })
+})
+
 describe('/api/posts search', () => {
   it('filters titles from three letters on and combines with the category', async () => {
     const result = await $fetch<{ data: Array<{ slug: string }> }>('/api/posts', { query: { locale: 'en', search: 'vue', category: Category.Software } })

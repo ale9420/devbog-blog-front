@@ -3,12 +3,15 @@ import type { PostListItem } from './strapi-post'
 
 export type BlogView = 'grid' | 'log'
 
+export type BlogSort = 'recent' | 'oldest' | 'fediverse'
+
 export interface BlogFilters {
   category?: Category
   tag?: string
   search?: string
   page: number
   view?: BlogView
+  sort?: BlogSort
 }
 
 export interface PostMonth {

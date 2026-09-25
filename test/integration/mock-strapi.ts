@@ -367,6 +367,8 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
       const localeFilter = query.locale as string | undefined
       const categoryFilter = getNestedValue(query, ['filters', 'category', 'slug', '$eq']) as string | undefined
       const tagFilter = getNestedValue(query, ['filters', 'tags', '$contains']) as string | undefined
+      const documentIdFilter = getNestedValue(query, ['filters', 'documentId', '$in']) as string[] | undefined
+      const ascending = query.sort === 'publishedAt:asc'
       const page = Number(getNestedValue(query, ['pagination', 'page']) || 1)
       const pageSize = Number(getNestedValue(query, ['pagination', 'pageSize']) || 10)
 
@@ -394,10 +396,13 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
       if (tagFilter) {
         data = data.filter((article) => article.tags?.includes(tagFilter))
       }
+      if (documentIdFilter) {
+        data = data.filter((article) => documentIdFilter.includes(article.documentId))
+      }
       data.sort((a, b) => {
         const dateA = new Date(a.publishedAt || 0).getTime()
         const dateB = new Date(b.publishedAt || 0).getTime()
-        return dateB - dateA
+        return ascending ? dateA - dateB : dateB - dateA
       })
 
       const total = data.length
@@ -443,6 +448,33 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
           blocks: [{ id: 1, __component: 'shared.hero', title: 'About BogDev', subtitle: 'Personal blog' }],
           seo: null,
         },
+      })
+      return
+    }
+
+    if (method === 'GET' && url.pathname === '/api/fediverse/articles/ranking') {
+      if (query.search === 'fail') {
+        sendJson(res, 500, { data: null, error: { status: 500, name: 'InternalServerError', message: 'Internal Server Error' } })
+        return
+      }
+      const scores: Record<string, number> = { 'doc-linux': 5, 'doc-vue-es': 3, 'doc-vue': 1 }
+      const locale = (query.locale as string | undefined) ?? 'en'
+      const term = typeof query.search === 'string' ? query.search.toLowerCase() : ''
+      const ranked = articles
+        .filter((article) => article.locale === locale)
+        .filter((article) => !query.category || article.category?.slug === query.category)
+        .filter((article) => !term || article.title.toLowerCase().includes(term))
+        .sort((a, b) => (scores[b.documentId] ?? 0) - (scores[a.documentId] ?? 0))
+      const page = Number(query.page || 1)
+      const pageSize = Number(query.pageSize || 6)
+      sendJson(res, 200, {
+        data: ranked.slice((page - 1) * pageSize, page * pageSize).map((article) => ({
+          documentId: article.documentId,
+          likes: scores[article.documentId] ?? 0,
+          boosts: 0,
+          replies: 0,
+        })),
+        meta: { pagination: { page, pageSize, pageCount: Math.ceil(ranked.length / pageSize), total: ranked.length } },
       })
       return
     }

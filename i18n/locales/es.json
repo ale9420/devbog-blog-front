@@ -158,6 +158,12 @@
     },
     "log": {
       "count": "{count} artículos | {count} artículo | {count} artículos"
+    },
+    "sort": {
+      "label": "Ordenar",
+      "recent": "Más recientes",
+      "oldest": "Más antiguos",
+      "fediverse": "Más comentados en el fediverso"
     }
   },
   "post": {

@@ -265,6 +265,8 @@ const server = createServer(async (req, res) => {
     const localeFilter = query.locale
     const categoryFilter = getNestedValue(query, ['filters', 'category', 'slug', '$eq'])
     const tagFilter = getNestedValue(query, ['filters', 'tags', '$contains'])
+    const documentIdFilter = getNestedValue(query, ['filters', 'documentId', '$in'])
+    const ascending = query.sort === 'publishedAt:asc'
     const page = Number(getNestedValue(query, ['pagination', 'page']) || 1)
     const pageSize = Number(getNestedValue(query, ['pagination', 'pageSize']) || 10)
 
@@ -292,10 +294,13 @@ const server = createServer(async (req, res) => {
     if (tagFilter) {
       data = data.filter((article) => article.tags?.includes(tagFilter))
     }
+    if (documentIdFilter) {
+      data = data.filter((article) => documentIdFilter.includes(article.documentId))
+    }
     data.sort((a, b) => {
       const dateA = new Date(a.publishedAt || 0).getTime()
       const dateB = new Date(b.publishedAt || 0).getTime()
-      return dateB - dateA
+      return ascending ? dateA - dateB : dateB - dateA
     })
 
     const total = data.length
@@ -339,6 +344,22 @@ const server = createServer(async (req, res) => {
           metaImage: { id: 14, documentId: 'about-og', url: '/uploads/about-og.png' },
         },
       },
+    })
+    return
+  }
+
+  if (method === 'GET' && url.pathname === '/api/fediverse/articles/ranking') {
+    const scores = { 'doc-linux': 5, 'doc-vue-es': 7, 'doc-vue': 1 }
+    const locale = query.locale ?? 'en'
+    const ranked = articles
+      .filter((article) => article.locale === locale)
+      .filter((article) => !query.category || article.category?.slug === query.category)
+      .sort((a, b) => (scores[b.documentId] ?? 0) - (scores[a.documentId] ?? 0))
+    const page = Number(query.page || 1)
+    const pageSize = Number(query.pageSize || 6)
+    sendJson(res, 200, {
+      data: ranked.slice((page - 1) * pageSize, page * pageSize).map((article) => ({ documentId: article.documentId })),
+      meta: { pagination: { page, pageSize, pageCount: Math.ceil(ranked.length / pageSize), total: ranked.length } },
     })
     return
   }
