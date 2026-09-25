@@ -214,7 +214,28 @@
     "count": "Conversación · sin comentarios | Conversación · {count} comentario | Conversación · {count} comentarios",
     "intro": "Deja tu comentario o responde a otros lectores.",
     "leave": "Deja un comentario",
-    "removed": "Comentario retirado."
+    "removed": "Comentario retirado.",
+    "introFediverse": "Comenta aquí o responde desde tu cuenta del fediverso: las dos conversaciones se juntan en este hilo.",
+    "filterLabel": "Filtrar comentarios",
+    "filters": {
+      "all": "Todos",
+      "blog": "Del blog",
+      "fediverse": "Del fediverso"
+    },
+    "noBlogComments": "Aún no hay comentarios desde el blog en este artículo.",
+    "noFediverseComments": "Aún no hay respuestas desde el fediverso en este artículo.",
+    "fediverseBadge": "Fediverso",
+    "authorBadge": "Autor",
+    "viewOnInstance": "Ver en su instancia",
+    "viewOnInstanceAria": "Ver en su instancia la respuesta de {name} (se abre en una pestaña nueva)",
+    "replyFromFediverse": "¿Tienes cuenta en Mastodon? Responde desde allá",
+    "moderation": {
+      "title": "Moderación",
+      "approval": "Las respuestas del fediverso se publican después de revisarlas",
+      "edited": "Si su autor la edita en Mastodon, vuelve a revisión",
+      "deleted": "Si la borra, se retira de aquí",
+      "plainText": "Se guardan como texto plano"
+    }
   },
   "about": {
     "contentNotAvailable": "El contenido de la página Acerca de no está disponible.",

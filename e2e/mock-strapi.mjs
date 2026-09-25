@@ -110,6 +110,20 @@ const comments = [
     updatedAt: '2026-02-04T10:00:00.000Z',
     threadOf: { id: 101 },
   },
+  {
+    id: 103,
+    content: 'Replied from Mastodon.',
+    blocked: false,
+    blockedThread: false,
+    removed: false,
+    approvalStatus: 'APPROVED',
+    author: { id: 'https://mastodon.social/users/bea', name: 'Bea' },
+    createdAt: '2026-02-05T10:00:00.000Z',
+    updatedAt: '2026-02-05T10:00:00.000Z',
+    threadOf: null,
+    fediverseActorHandle: '@bea@mastodon.social',
+    fediverseUri: 'https://mastodon.social/users/bea/statuses/1',
+  },
 ]
 
 const articles = [

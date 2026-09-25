@@ -15,6 +15,7 @@ export interface Comment {
   authorUser: string | null
   removed: boolean | null
   approvalStatus: string | null
+  isAdminComment?: boolean | null
   author: CommentAuthor
   createdAt: string
   updatedAt: string
@@ -30,6 +31,8 @@ export interface Comment {
   fediverseActorHandle?: string | null
   fediverseUri?: string | null
 }
+
+export type CommentFilter = 'all' | 'blog' | 'fediverse'
 
 export interface CommentReport {
   id: number

@@ -172,6 +172,65 @@ describe('/api/fediverse/stats/[documentId]', () => {
   })
 })
 
+describe('/api/comments', () => {
+  const relation = 'api::article.article:doc-vue'
+
+  it('returns approved comments with the fediverse fields and hides pending or rejected ones', async () => {
+    const response = await $fetch<{ data: Array<Record<string, unknown>> }>('/api/comments/flat', { query: { relation } })
+    const byId = new Map(response.data.map((comment) => [comment.id, comment]))
+
+    expect([...byId.keys()]).toEqual([201, 202, 203, 205])
+    expect(byId.get(201)).toMatchObject({
+      content: 'Great introduction to composables.',
+      isAdminComment: false,
+      fediverseActorHandle: null,
+      fediverseUri: null,
+    })
+    expect(byId.get(202)).toMatchObject({
+      fediverseActorHandle: '@bea@mastodon.social',
+      fediverseUri: 'https://mastodon.social/users/bea/statuses/1',
+      author: { name: 'Bea' },
+    })
+    expect(byId.get(203)).toMatchObject({ isAdminComment: true, threadOf: { id: 202 } })
+  })
+
+  it('keeps fediverse content as plain text and drops links that are not http(s)', async () => {
+    const response = await $fetch<{ data: Array<Record<string, unknown>> }>('/api/comments/flat', { query: { relation } })
+    const unsafe = response.data.find((comment) => comment.id === 205)
+    expect(unsafe).toMatchObject({ content: '<script>alert(1)</script>', fediverseActorHandle: '@eve@evil.example', fediverseUri: null })
+  })
+
+  it('never exposes the commenter email', async () => {
+    const response = await $fetch<{ data: Array<{ author: Record<string, unknown> }> }>('/api/comments/flat', { query: { relation } })
+    expect(response.data.every((comment) => !('email' in comment.author))).toBe(true)
+  })
+
+  it('prunes hidden comments from the hierarchy, children included', async () => {
+    const response = await $fetch<Array<{ id: number; children?: Array<{ id: number }> }>>('/api/comments', { query: { relation } })
+    expect(response.map((comment) => comment.id)).toEqual([201, 202])
+    expect(response[1]?.children?.map((child) => child.id)).toEqual([203])
+  })
+
+  it('returns the posted blog comment without fediverse fields or email', async () => {
+    const response = await $fetch<Record<string, unknown>>('/api/comments', {
+      method: 'POST',
+      query: { relation },
+      body: { author: { id: 'guest-9', name: 'Dani', email: 'dani@example.com' }, content: 'Nice post.' },
+    })
+    expect(response).toMatchObject({
+      content: 'Nice post.',
+      author: { id: 'guest-9', name: 'Dani' },
+      fediverseActorHandle: null,
+      fediverseUri: null,
+    })
+    expect(response.author).not.toHaveProperty('email')
+  })
+
+  it('requires the relation parameter', async () => {
+    await expect($fetch('/api/comments/flat')).rejects.toMatchObject({ response: { status: 400 } })
+  })
+})
+
 describe('/api/newsletter/subscribe', () => {
   it('returns 400 when email is missing', async () => {
     await expect($fetch('/api/newsletter/subscribe', { method: 'POST', body: {} })).rejects.toMatchObject({

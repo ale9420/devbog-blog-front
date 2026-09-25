@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import type { Comment, CommentFormData } from '~/interfaces/comment'
+import type { Comment, CommentFilter, CommentFormData } from '~/interfaces/comment'
+import { matchesCommentFilter } from '~/helpers/comments'
+
+const FILTERS: CommentFilter[] = ['all', 'blog', 'fediverse']
+const MODERATION_RULES: string[] = ['approval', 'edited', 'deleted', 'plainText']
 
 const props = defineProps<{
   slug: string
   documentId?: string
+  federated?: boolean
 }>()
 
 const { t } = useI18n()
@@ -20,6 +25,7 @@ const {
   fetchComments,
   postComment
 } = useComments(props.slug, props.documentId)
+const { openReply } = useFediverseReply(props.documentId ?? props.slug)
 
 const formData = reactive<CommentFormData>({
   author: {
@@ -31,6 +37,7 @@ const formData = reactive<CommentFormData>({
   threadOf: undefined
 })
 
+const filter = ref<CommentFilter>('all')
 const replyingTo = ref<number | null>(null)
 const replyingToName = ref<string>('')
 const formErrors = reactive({
@@ -85,6 +92,12 @@ function resetForm() {
 }
 
 const countLabel = computed<string>(() => t('comments.count', { count: totalComments.value }, totalComments.value))
+const visibleComments = computed<Comment[]>(() => comments.value.filter(comment => matchesCommentFilter(comment, filter.value)))
+const emptyLabel = computed<string>(() => {
+  if (filter.value === 'fediverse') return t('comments.noFediverseComments')
+  if (filter.value === 'blog') return t('comments.noBlogComments')
+  return t('comments.noComments')
+})
 
 function startReply(comment: Comment) {
   replyingTo.value = comment.id
@@ -94,6 +107,10 @@ function startReply(comment: Comment) {
     const textarea = document.querySelector<HTMLTextAreaElement>('#comment-content')
     textarea?.focus()
   })
+}
+
+function selectFilter(value: CommentFilter) {
+  filter.value = value
 }
 
 function cancelReply() {
@@ -113,7 +130,20 @@ onMounted(() => {
       <div class="bd-home-heading">
         <p class="bd-eyebrow bd-home-eyebrow">{{ countLabel }}</p>
         <h2 id="bd-comments-title" class="bd-home-title bd-stretch">{{ t('comments.title') }}</h2>
-        <p class="bd-comments-intro">{{ t('comments.intro') }}</p>
+        <p class="bd-comments-intro">{{ federated ? t('comments.introFediverse') : t('comments.intro') }}</p>
+      </div>
+
+      <div class="bd-comments-filters" role="group" :aria-label="t('comments.filterLabel')">
+        <button
+          v-for="option in FILTERS"
+          :key="option"
+          type="button"
+          class="bd-chip"
+          :aria-pressed="filter === option ? 'true' : 'false'"
+          @click="selectFilter(option)"
+        >
+          {{ t(`comments.filters.${option}`) }}
+        </button>
       </div>
 
       <p v-if="pending" class="bd-meta bd-home-eyebrow" role="status">{{ t('common.loading') }}</p>
@@ -123,10 +153,10 @@ onMounted(() => {
         <button type="button" class="bd-blog-textbtn" @click="fetchComments">{{ t('common.retry') }}</button>
       </div>
 
-      <p v-else-if="comments.length === 0" class="bd-meta bd-comments-empty">{{ t('comments.noComments') }}</p>
+      <p v-else-if="visibleComments.length === 0" class="bd-meta bd-comments-empty">{{ emptyLabel }}</p>
 
       <div v-else class="bd-comment-list">
-        <div v-for="comment in comments" :key="comment.id" class="bd-comment-group">
+        <div v-for="comment in visibleComments" :key="comment.id" class="bd-comment-group">
           <BlogCommentItem :comment="comment" can-reply @reply="startReply" />
           <div v-if="repliesOf(comment.id).length" class="bd-comment-thread">
             <BlogCommentItem v-for="reply in repliesOf(comment.id)" :key="reply.id" :comment="reply" />
@@ -191,12 +221,25 @@ onMounted(() => {
           <p v-if="formErrors.content" id="comment-content-error" class="bd-comment-error" role="alert">{{ formErrors.content }}</p>
         </div>
 
-        <div class="bd-comment-submit">
+        <div :class="['bd-comment-submit', { 'bd-comment-submit-split': federated }]">
+          <button v-if="federated" type="button" class="bd-blog-textbtn" aria-controls="bd-fedi-reply" @click="openReply">
+            {{ t('comments.replyFromFediverse') }} <span aria-hidden="true">↗</span>
+          </button>
           <BdButton type="submit" arrow :disabled="submitting">
             {{ submitting ? t('comments.posting') : (replyingTo ? t('comments.postReply') : t('comments.postComment')) }}
           </BdButton>
         </div>
       </form>
     </div>
+
+    <aside class="bd-comments-moderation" aria-labelledby="bd-comments-moderation-title">
+      <p id="bd-comments-moderation-title" class="bd-eyebrow bd-home-eyebrow">{{ t('comments.moderation.title') }}</p>
+      <ul class="bd-meta bd-comments-moderation-list">
+        <li v-for="rule in MODERATION_RULES" :key="rule">
+          <span class="bd-comments-moderation-check" aria-hidden="true">✓</span>
+          {{ t(`comments.moderation.${rule}`) }}
+        </li>
+      </ul>
+    </aside>
   </section>
 </template>

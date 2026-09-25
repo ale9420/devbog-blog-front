@@ -172,6 +172,103 @@ const articles: RawStrapiArticle[] = [
   },
 ]
 
+const blogComment = {
+  id: 201,
+  documentId: 'comment-blog',
+  content: 'Great introduction to composables.',
+  blocked: false,
+  blockedThread: false,
+  removed: false,
+  approvalStatus: 'APPROVED',
+  isAdminComment: false,
+  author: { id: 'guest-1', name: 'Ana Reader', email: 'ana@example.com' },
+  createdAt: '2026-02-03T10:00:00.000Z',
+  updatedAt: '2026-02-03T10:00:00.000Z',
+  threadOf: null,
+}
+
+const fediverseComment = {
+  id: 202,
+  documentId: 'comment-fedi',
+  content: 'Replied from Mastodon.',
+  blocked: false,
+  blockedThread: false,
+  removed: false,
+  approvalStatus: 'APPROVED',
+  isAdminComment: false,
+  author: { id: 'https://mastodon.social/users/bea', name: 'Bea', avatar: 'https://mastodon.social/bea.png' },
+  createdAt: '2026-02-04T10:00:00.000Z',
+  updatedAt: '2026-02-04T10:00:00.000Z',
+  threadOf: null,
+  fediverseActorHandle: '@bea@mastodon.social',
+  fediverseUri: 'https://mastodon.social/users/bea/statuses/1',
+}
+
+const authorReply = {
+  id: 203,
+  documentId: 'comment-author',
+  content: 'Thanks, Bea!',
+  blocked: false,
+  blockedThread: false,
+  removed: false,
+  approvalStatus: 'APPROVED',
+  isAdminComment: true,
+  author: { id: 1, name: 'Alejandro Ramirez', email: 'admin@example.com' },
+  createdAt: '2026-02-05T10:00:00.000Z',
+  updatedAt: '2026-02-05T10:00:00.000Z',
+  threadOf: { id: 202 },
+}
+
+const pendingFediverseComment = {
+  id: 204,
+  documentId: 'comment-pending',
+  content: 'Still waiting for review.',
+  blocked: false,
+  blockedThread: false,
+  removed: false,
+  approvalStatus: 'PENDING',
+  isAdminComment: false,
+  author: { id: 'https://fosstodon.org/users/carl', name: 'Carl' },
+  createdAt: '2026-02-06T10:00:00.000Z',
+  updatedAt: '2026-02-06T10:00:00.000Z',
+  threadOf: null,
+  fediverseActorHandle: '@carl@fosstodon.org',
+  fediverseUri: 'https://fosstodon.org/users/carl/statuses/2',
+}
+
+const unsafeFediverseComment = {
+  id: 205,
+  documentId: 'comment-unsafe',
+  content: '<script>alert(1)</script>',
+  blocked: false,
+  blockedThread: false,
+  removed: false,
+  approvalStatus: 'APPROVED',
+  isAdminComment: false,
+  author: { id: 'https://evil.example/users/eve', name: 'Eve' },
+  createdAt: '2026-02-07T10:00:00.000Z',
+  updatedAt: '2026-02-07T10:00:00.000Z',
+  threadOf: null,
+  fediverseActorHandle: '@eve@evil.example',
+  fediverseUri: 'javascript:alert(1)',
+}
+
+const rejectedComment = {
+  ...blogComment,
+  id: 206,
+  documentId: 'comment-rejected',
+  content: 'Spam.',
+  approvalStatus: 'REJECTED',
+}
+
+const flatComments = [blogComment, fediverseComment, authorReply, pendingFediverseComment, unsafeFediverseComment, rejectedComment]
+
+const hierarchyComments = [
+  { ...blogComment, children: [] },
+  { ...fediverseComment, children: [authorReply, { ...pendingFediverseComment, threadOf: { id: 202 }, children: [] }] },
+  { ...pendingFediverseComment, children: [authorReply] },
+]
+
 let nextSubscriberId = 7
 
 const subscribers: MockSubscriber[] = [
@@ -367,6 +464,28 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
 
     if (method === 'GET' && url.pathname === '/api/comments') {
       sendJson(res, 200, { data: [] })
+      return
+    }
+
+    if (method === 'GET' && url.pathname === '/api/comments/api::article.article:doc-vue/flat') {
+      sendJson(res, 200, { data: flatComments, pagination: { page: 1, pageSize: 10, pageCount: 1, total: flatComments.length } })
+      return
+    }
+
+    if (method === 'GET' && url.pathname === '/api/comments/api::article.article:doc-vue') {
+      sendJson(res, 200, hierarchyComments)
+      return
+    }
+
+    if (method === 'POST' && url.pathname === '/api/comments/api::article.article:doc-vue') {
+      const author = (body?.author ?? {}) as Record<string, unknown>
+      sendJson(res, 200, {
+        ...blogComment,
+        id: 207,
+        documentId: 'comment-new',
+        content: String(body?.content ?? ''),
+        author: { id: author.id, name: author.name, email: author.email },
+      })
       return
     }
 
