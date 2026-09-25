@@ -8,6 +8,7 @@ import { padCount } from '~/helpers/search'
 const props = defineProps<{
   posts: PostListItem[]
   federated?: boolean
+  highlight?: string
 }>()
 
 const { t, locale } = useI18n()
@@ -60,7 +61,8 @@ function postCategory(post: PostListItem): Category | undefined {
           </span>
           <span class="bd-log-text">
             <NuxtLink :to="postHref(post)" class="bd-log-link">{{ post.title }}</NuxtLink>
-            <span v-if="post.description" class="bd-log-excerpt">{{ post.description }}</span>
+            <span v-if="post.snippet" class="bd-log-excerpt"><BdHighlight :text="post.snippet" :query="highlight" /></span>
+            <span v-else-if="post.description" class="bd-log-excerpt">{{ post.description }}</span>
           </span>
           <span class="bd-meta bd-log-meta">
             <span v-if="postStats(post)" class="bd-log-stats">

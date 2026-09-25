@@ -26,6 +26,7 @@ export function useStrapi() {
     tag?: MaybeRef<string | undefined>;
     search?: MaybeRef<string | undefined>;
     sort?: MaybeRef<BlogSort | undefined>;
+    content?: MaybeRef<boolean | undefined>;
   }) {
     const buildQuery = () => {
       return qs.stringify({
@@ -36,6 +37,7 @@ export function useStrapi() {
         tag: toValue(params?.tag) || undefined,
         search: toValue(params?.search) || undefined,
         sort: toValue(params?.sort) || undefined,
+        content: toValue(params?.content) ? '1' : undefined,
       }, { skipNulls: true });
     };
 
@@ -57,6 +59,7 @@ export function useStrapi() {
         category: post.category,
         author: post.author,
         seo: post.seo ?? undefined,
+        snippet: post.snippet ?? undefined,
       }));
 
       return {
@@ -104,9 +107,9 @@ export function useStrapi() {
     });
   }
 
-  async function searchPosts(queryStr: string, locale?: Locale): Promise<SearchPostResult[]> {
+  async function searchPosts(queryStr: string, locale?: Locale, content = false): Promise<SearchPostResult[]> {
     return $fetch<SearchPostResult[]>('/api/search', {
-      query: { q: queryStr, locale },
+      query: { q: queryStr, locale, content: content ? '1' : undefined },
     });
   }
 

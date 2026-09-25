@@ -31,13 +31,26 @@ describe('BlogFilters', () => {
       props: { ...baseProps, search: 'vue', resultCount: 1, filters: { tag: 'Vue', search: 'vue', page: 1 } },
     })
     expect(wrapper.get('.bd-blog-search-count').text()).toBe('01 result')
-    expect(wrapper.get('.bd-blog-hint').text()).toBe('3 letters minimum · searches titles only for now')
+    expect(wrapper.get('.bd-blog-hint').text()).toBe('3 letters minimum · searches titles')
     const active = wrapper.findAll('.bd-blog-active-chip')
     expect(active.map(chip => chip.attributes('aria-label'))).toEqual(['Remove filter #Vue', 'Remove filter «vue»'])
     await active[1]!.trigger('click')
     await wrapper.get('.bd-blog-textbtn').trigger('click')
     expect(wrapper.emitted('remove')).toEqual([['search']])
     expect(wrapper.emitted('clear')).toHaveLength(1)
+  })
+
+  it('toggles the content search and explains what it covers', async () => {
+    const wrapper = await mountSuspended(BlogFilters, { props: { ...baseProps, filters: { page: 1 } } })
+    const checkbox = wrapper.get('input[type="checkbox"]')
+    expect(wrapper.get('.bd-blog-content-toggle').text()).toBe('Also search the content')
+    expect((checkbox.element as HTMLInputElement).checked).toBe(false)
+    await checkbox.setValue(true)
+    expect(wrapper.emitted('content')).toEqual([[true]])
+
+    const enabled = await mountSuspended(BlogFilters, { props: { ...baseProps, filters: { page: 1, content: true } } })
+    expect((enabled.get('input[type="checkbox"]').element as HTMLInputElement).checked).toBe(true)
+    expect(enabled.get('.bd-blog-hint').text()).toBe('3 letters minimum · searches titles, summaries and content')
   })
 
   it('updates the search model as the reader types', async () => {

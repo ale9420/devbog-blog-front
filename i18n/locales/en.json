@@ -136,8 +136,10 @@
     "search": {
       "label": "Search articles",
       "placeholder": "Search articles...",
-      "hint": "3 letters minimum · searches titles only for now",
-      "results": "No results | {count} result | {count} results"
+      "hint": "3 letters minimum · searches titles",
+      "results": "No results | {count} result | {count} results",
+      "hintContent": "3 letters minimum · searches titles, summaries and content",
+      "content": "Also search the content"
     },
     "pagination": {
       "label": "Pagination",
@@ -390,6 +392,7 @@
     "search": {
       "dialog": "Search BogDev",
       "placeholder": "Search articles, topics or actions",
+      "content": "Also search the content",
       "close": "Close search",
       "minLength": "Type {count} or more letters to search articles",
       "loading": "Searching…",

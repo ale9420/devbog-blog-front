@@ -128,3 +128,23 @@ test('labels the sort options in Spanish', async ({ page }) => {
   await expect(sort).toHaveValue('fediverse')
   await expect(sort.locator('option')).toHaveText(['Más recientes', 'Más antiguos', 'Más comentados en el fediverso'])
 })
+
+test('searches the article body from the blog and keeps it in the URL', async ({ page }) => {
+  await page.goto('/blog', { waitUntil: 'networkidle' })
+  await page.getByRole('searchbox', { name: 'Search articles' }).fill('ssh')
+  await expect(page).toHaveURL(/search=ssh/)
+  await expect(page.locator('.bd-card')).toHaveCount(0)
+
+  await page.getByRole('checkbox', { name: 'Also search the content' }).check()
+  await expect(page).toHaveURL(/content=1/)
+  await expect(page.locator('.bd-blog-hint')).toHaveText('3 letters minimum · searches titles, summaries and content')
+  const card = page.locator('.bd-card')
+  await expect(card).toHaveCount(1)
+  await expect(card.getByRole('link', { name: 'Linux Server Hardening Guide' })).toBeVisible()
+  await expect(card.locator('.bd-card-snippet')).toHaveText('Start with SSH key authentication before anything else.')
+  await expect(card.locator('.bd-card-snippet mark')).toHaveText('SSH')
+
+  await page.reload({ waitUntil: 'networkidle' })
+  await expect(page.getByRole('checkbox', { name: 'Also search the content' })).toBeChecked()
+  await expect(page.locator('.bd-card')).toHaveCount(1)
+})

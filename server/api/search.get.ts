@@ -1,54 +1,23 @@
-import qs from 'qs';
-import type { RawStrapiArticle } from '~/interfaces';
+import type { SearchPostResult } from '~/interfaces'
+import { MIN_SEARCH_LENGTH, isContentSearch } from '~/helpers/search'
 
-export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig();
-  const query = getQuery(event);
-  const searchQuery = query.q as string;
-  const locale = query.locale as string | undefined;
+const PALETTE_RESULTS = 10
 
-  if (!searchQuery || searchQuery.length < 3) {
-    return [];
+export default defineEventHandler(async (event): Promise<SearchPostResult[]> => {
+  const query = getQuery(event)
+  const term = typeof query.q === 'string' ? query.q.trim() : ''
+  const locale = typeof query.locale === 'string' && query.locale ? query.locale : undefined
+
+  if (term.length < MIN_SEARCH_LENGTH) {
+    return []
   }
 
-  const params = qs.stringify({
-    filters: {
-      title: {
-        $containsi: searchQuery,
-      },
-    },
-    populate: ['cover', 'category'],
-    pagination: {
-      pageSize: 10,
-    },
-    sort: 'publishedAt:desc',
-    locale,
-  }, { skipNulls: true });
-
-  const headers: Record<string, string> = {};
-  if (config.strapiApiToken) {
-    headers['Authorization'] = `Bearer ${config.strapiApiToken}`;
-  }
-
-  setHeader(event, 'Cache-Control', 'public, s-maxage=60, stale-while-revalidate=120');
+  setHeader(event, 'Cache-Control', 'public, s-maxage=60, stale-while-revalidate=120')
 
   try {
-    const response = await $fetch<{ data: RawStrapiArticle[] }>(
-      `${config.public.strapiUrl}/api/articles?${params}`,
-      { headers },
-    );
-
-    return response.data.map((post) => ({
-      id: post.id,
-      title: post.title,
-      slug: post.slug,
-      description: post.description ?? null,
-      publishedAt: post.publishedAt ?? null,
-      cover: post.cover ? { url: post.cover.url } : null,
-      category: post.category?.name ? { name: post.category.name, slug: post.category.slug ?? null } : null,
-    }));
-  } catch (error) {
-    console.error('Search error:', error);
-    return [];
+    return await searchArticles({ query: term, locale, content: isContentSearch(query.content), limit: PALETTE_RESULTS })
+  } catch (error: unknown) {
+    console.error('Search error:', asUpstreamError(error).data || error)
+    return []
   }
-});
+})

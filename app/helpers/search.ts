@@ -1,3 +1,5 @@
+import type { TextSegment } from '../interfaces/design'
+
 export const MIN_SEARCH_LENGTH = 3
 
 export function normalizeText(value: string): string {
@@ -17,4 +19,29 @@ export function cycleIndex(current: number, total: number, delta: number): numbe
 
 export function padCount(count: number): string {
   return String(count).padStart(2, '0')
+}
+
+export function highlightSegments(text: string, query: string): TextSegment[] {
+  const needle = query.trim().toLocaleLowerCase()
+  if (!text || needle.length === 0) return text ? [{ text, match: false }] : []
+
+  const haystack = text.toLocaleLowerCase()
+  const segments: TextSegment[] = []
+  let cursor = 0
+  let index = haystack.indexOf(needle)
+  while (index !== -1) {
+    if (index > cursor) segments.push({ text: text.slice(cursor, index), match: false })
+    segments.push({ text: text.slice(index, index + needle.length), match: true })
+    cursor = index + needle.length
+    index = haystack.indexOf(needle, cursor)
+  }
+  if (cursor < text.length) segments.push({ text: text.slice(cursor), match: false })
+  return segments
+}
+
+const TRUE_VALUES = new Set(['1', 'true'])
+
+export function isContentSearch(value: unknown): boolean {
+  const raw = Array.isArray(value) ? value[0] : value
+  return typeof raw === 'string' && TRUE_VALUES.has(raw.trim().toLowerCase())
 }

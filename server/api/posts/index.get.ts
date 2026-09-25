@@ -1,9 +1,10 @@
 import qs from 'qs';
 import type { BlogSort, RawStrapiArticle, StrapiPaginatedResponse } from '~/interfaces'
 import { parseSort } from '~/helpers/blog'
-import { MIN_SEARCH_LENGTH } from '~/helpers/search'
+import { MIN_SEARCH_LENGTH, isContentSearch } from '~/helpers/search'
 
 const RANKING_TIMEOUT_MS = 3000
+const STATS_TIMEOUT_MS = 3000
 
 const POPULATE = {
   cover: { populate: '*' },
@@ -17,6 +18,22 @@ interface RankingPage {
   meta: StrapiPaginatedResponse<unknown>['meta']
 }
 
+interface UpstreamStats {
+  likes?: unknown
+  boosts?: unknown
+  replies?: unknown
+}
+
+type BatchStats = Record<string, UpstreamStats>
+
+function conversation(stats: UpstreamStats | undefined): number {
+  return (Number(stats?.likes) || 0) + (Number(stats?.boosts) || 0) + (Number(stats?.replies) || 0)
+}
+
+function publishedTime(article: RawStrapiArticle): number {
+  return new Date(article.publishedAt ?? 0).getTime()
+}
+
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const config = useRuntimeConfig()
@@ -28,11 +45,12 @@ export default defineEventHandler(async (event) => {
   const search = typeof query.search === 'string' ? query.search.trim() : ''
   const sort: BlogSort = parseSort(query.sort) ?? 'recent'
   const validSearch = search.length >= MIN_SEARCH_LENGTH ? search : undefined
+  const contentSearch = Boolean(validSearch) && isContentSearch(query.content)
 
   const filters: Record<string, unknown> = {}
   if (category) filters.category = { slug: { $eq: category } }
   if (tag) filters.tags = { $contains: tag }
-  if (validSearch) filters.title = { $containsi: validSearch }
+  if (validSearch && !contentSearch) filters.title = { $containsi: validSearch }
 
   const headers: Record<string, string> = {}
   if (config.strapiApiToken) {
@@ -70,9 +88,58 @@ export default defineEventHandler(async (event) => {
     }
   }
 
+  function emptyPage(): StrapiPaginatedResponse<RawStrapiArticle[]> {
+    return { data: [], meta: { pagination: { page, pageSize, pageCount: 0, total: 0 } } }
+  }
+
+  async function fetchStats(ids: string[]): Promise<BatchStats | null> {
+    try {
+      return await $fetch<BatchStats>(`${config.public.strapiUrl}/api/fediverse/articles/stats`, {
+        query: { documentIds: ids.join(',') },
+        timeout: STATS_TIMEOUT_MS,
+      })
+    } catch (error: unknown) {
+      console.error('Strapi fetch fediverse batch stats error:', asUpstreamError(error).data || error)
+      return null
+    }
+  }
+
+  async function fetchContentMatches(): Promise<StrapiPaginatedResponse<RawStrapiArticle[]>> {
+    const matches = await searchArticles({ query: validSearch!, locale, content: true, limit: SEARCH_MAX_RESULTS })
+    if (matches.length === 0) return emptyPage()
+
+    const ids = matches.map(match => match.documentId)
+    const snippets = new Map(matches.map(match => [match.documentId, match.snippet]))
+    const withSnippet = (article: RawStrapiArticle): RawStrapiArticle => ({ ...article, snippet: snippets.get(article.documentId) ?? null })
+    const scoped = { ...filters, documentId: { $in: ids } }
+
+    const stats = sort === 'fediverse' ? await fetchStats(ids) : null
+    if (!stats) {
+      const response = await fetchArticles({
+        filters: scoped,
+        pagination: { page, pageSize },
+        sort: sort === 'oldest' ? 'publishedAt:asc' : 'publishedAt:desc',
+      })
+      return { ...response, data: response.data.map(withSnippet) }
+    }
+
+    const all = await fetchArticles({ filters: scoped, pagination: { page: 1, pageSize: ids.length } })
+    const ranked = [...all.data].sort((a, b) =>
+      conversation(stats[b.documentId]) - conversation(stats[a.documentId]) || publishedTime(b) - publishedTime(a),
+    )
+    const start = (page - 1) * pageSize
+    return {
+      data: ranked.slice(start, start + pageSize).map(withSnippet),
+      meta: { pagination: { page, pageSize, pageCount: Math.ceil(ranked.length / pageSize), total: ranked.length } },
+    }
+  }
+
   setHeader(event, 'Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
 
   try {
+    if (contentSearch) {
+      return await fetchContentMatches()
+    }
     if (sort === 'fediverse') {
       const ranked = await fetchRanked()
       if (ranked) return ranked

@@ -12,6 +12,7 @@ export interface BlogFilters {
   page: number
   view?: BlogView
   sort?: BlogSort
+  content?: boolean
 }
 
 export interface PostMonth {

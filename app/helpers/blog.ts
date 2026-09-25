@@ -2,7 +2,7 @@ import type { LocationQuery } from 'vue-router'
 import type { BlogFilters, BlogSort, BlogView, PaginationItem, PostMonth } from '../interfaces/blog'
 import type { PostListItem } from '../interfaces/strapi-post'
 import { isCategory } from './categories'
-import { MIN_SEARCH_LENGTH } from './search'
+import { MIN_SEARCH_LENGTH, isContentSearch } from './search'
 
 export const BLOG_PAGE_SIZE = 6
 export const LOG_PAGE_SIZE = 24
@@ -32,6 +32,7 @@ export function parseBlogQuery(query: LocationQuery): BlogFilters {
     page: Number.isFinite(page) && page > 1 ? page : 1,
     view: parseView(firstValue(query.view)),
     sort: parseSort(firstValue(query.sort)),
+    content: isContentSearch(query.content) || undefined,
   }
 }
 
@@ -56,6 +57,7 @@ export function blogQuery(filters: BlogFilters): Record<string, string> {
   if (filters.page > 1) query.page = String(filters.page)
   if (filters.view === 'log') query.view = LOG_VIEW
   if (filters.sort && filters.sort !== 'recent') query.sort = filters.sort
+  if (filters.content) query.content = '1'
   return query
 }
 

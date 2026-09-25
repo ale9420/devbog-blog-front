@@ -9,8 +9,13 @@ registerEndpoint('/api/search', (event) => {
   const query = getQuery(event)
   searches.push(query)
   if (query.q === 'nada que ver') return []
+  if (query.content === '1') {
+    return [
+      { documentId: 'doc-vue', title: 'Understanding Vue Composables', slug: 'understanding-vue-composables', description: null, publishedAt: '2026-02-01T10:00:00.000Z', category: { name: 'Software', slug: 'software' }, matchedIn: 'content', snippet: '…share stateful logic across components…' },
+    ]
+  }
   return [
-    { id: 1, title: 'Understanding Vue Composables', slug: 'understanding-vue-composables', description: null, publishedAt: '2026-02-01T10:00:00.000Z', cover: null, category: { name: 'Software', slug: 'software' } },
+    { documentId: 'doc-vue', title: 'Understanding Vue Composables', slug: 'understanding-vue-composables', description: null, publishedAt: '2026-02-01T10:00:00.000Z', category: { name: 'Software', slug: 'software' }, matchedIn: 'title', snippet: 'Understanding Vue Composables' },
   ]
 })
 
@@ -64,12 +69,33 @@ describe('BdSearchPalette', () => {
     const wrapper = await mountOpen()
     await wrapper.get('input').setValue('composables')
     expect(wrapper.get('.bd-palette-note').text()).toBe('Searching…')
-    await vi.waitFor(() => expect(wrapper.find('#article-1').exists()).toBe(true), { timeout: 2000 })
+    await vi.waitFor(() => expect(wrapper.find('#article-doc-vue').exists()).toBe(true), { timeout: 2000 })
     expect(searches).toEqual([{ q: 'composables', locale: 'en' }])
-    expect(wrapper.get('#article-1 .bd-result-label').text()).toBe('Understanding Vue Composables')
-    expect(wrapper.get('#article-1 .bd-result-hint').text()).toBe('01.02.2026')
+    expect(wrapper.get('#article-doc-vue .bd-result-label').text()).toBe('Understanding Vue Composables')
+    expect(wrapper.get('#article-doc-vue .bd-result-hint').text()).toBe('01.02.2026')
     expect(wrapper.get('[role="status"]').text()).toBe('1 result')
     expect(wrapper.get('[role="status"]').attributes('aria-live')).toBe('polite')
+  })
+
+  it('highlights the title match and leaves out the snippet for title matches', async () => {
+    const wrapper = await mountOpen()
+    await wrapper.get('input').setValue('composables')
+    await vi.waitFor(() => expect(wrapper.find('#article-doc-vue').exists()).toBe(true), { timeout: 2000 })
+    expect(wrapper.get('#article-doc-vue .bd-result-label mark').text()).toBe('Composables')
+    expect(wrapper.find('#article-doc-vue .bd-result-snippet').exists()).toBe(false)
+  })
+
+  it('also searches the content when asked and shows the highlighted snippet', async () => {
+    const wrapper = await mountOpen()
+    const toggle = wrapper.get('.bd-palette-content input')
+    expect(wrapper.get('.bd-palette-content').text()).toBe('Also search the content')
+    await wrapper.get('input').setValue('stateful')
+    await vi.waitFor(() => expect(searches).toHaveLength(1), { timeout: 2000 })
+    await toggle.setValue(true)
+    await vi.waitFor(() => expect(wrapper.find('#article-doc-vue .bd-result-snippet').exists()).toBe(true), { timeout: 2000 })
+    expect(searches.at(-1)).toEqual({ q: 'stateful', locale: 'en', content: '1' })
+    expect(wrapper.get('#article-doc-vue .bd-result-snippet').text()).toBe('…share stateful logic across components…')
+    expect(wrapper.get('#article-doc-vue .bd-result-snippet mark').text()).toBe('stateful')
   })
 
   it('shows the empty state', async () => {

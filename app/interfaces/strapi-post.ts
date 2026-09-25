@@ -41,6 +41,7 @@ export interface RawStrapiArticle {
   category?: StrapiCategoryRef | null
   author?: StrapiAuthorRef | null
   seo?: StrapiSEO | null
+  snippet?: string | null
   blocks?: StrapiBlock[] | null
 }
 
@@ -57,16 +58,20 @@ export interface PostListItem {
   category?: StrapiCategoryRef | null
   author?: StrapiAuthorRef | null
   seo?: StrapiSEO | null
+  snippet?: string | null
 }
 
+export type SearchMatch = 'title' | 'description' | 'content'
+
 export interface SearchPostResult {
-  id: number
+  documentId: string
   title: string
   slug: string
-  description?: string | null
+  description: string | null
   publishedAt: string | null
-  cover: { url: string } | null
-  category: { name: string; slug: string | null } | null
+  category: { name: string | null; slug: string | null } | null
+  matchedIn: SearchMatch
+  snippet: string
 }
 
 export interface StrapiPost {
