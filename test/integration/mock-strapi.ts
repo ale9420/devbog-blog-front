@@ -350,6 +350,21 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
       return
     }
 
+    const fediverseStats = url.pathname.match(/^\/api\/fediverse\/articles\/([^/]+)\/stats$/)
+    if (method === 'GET' && fediverseStats) {
+      const documentId = fediverseStats[1]
+      if (documentId === 'doc-broken') {
+        sendJson(res, 500, { data: null, error: { status: 500, name: 'InternalServerError', message: 'Internal Server Error' } })
+        return
+      }
+      if (documentId !== 'doc-vue-es') {
+        sendJson(res, 404, { data: null, error: { status: 404, name: 'NotFoundError', message: 'Not Found' } })
+        return
+      }
+      sendJson(res, 200, { likes: 4, boosts: 2 })
+      return
+    }
+
     if (method === 'GET' && url.pathname === '/api/comments') {
       sendJson(res, 200, { data: [] })
       return

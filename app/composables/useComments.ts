@@ -25,7 +25,8 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
     return `api::article.article:${articleSlug}`
   })
 
-  const allComments = ref<Comment[]>([])
+  const allComments = useState<Comment[]>(`comments:${relation.value}`, () => [])
+  const loaded = useState<boolean>(`comments-loaded:${relation.value}`, () => false)
   const pending = ref(false)
   const error = ref<string | null>(null)
   const submitting = ref(false)
@@ -42,6 +43,7 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
       )
       
       allComments.value = response.data || []
+      loaded.value = true
     } catch (err: unknown) {
       error.value = getErrorMessage(err, 'Failed to load comments')
       console.error('Error fetching comments:', err)
@@ -97,6 +99,7 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
 
   const comments = computed<Comment[]>(() => allComments.value.filter(comment => !comment.threadOf))
   const totalComments = computed<number>(() => allComments.value.length)
+  const fediverseReplies = computed<number>(() => allComments.value.filter(comment => comment.fediverseActorHandle).length)
 
   function repliesOf(commentId: number): Comment[] {
     return allComments.value.filter(comment => comment.threadOf?.id === commentId)
@@ -107,6 +110,8 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
     pending,
     error,
     totalComments,
+    fediverseReplies,
+    loaded,
     repliesOf,
     submitting,
     submitError,

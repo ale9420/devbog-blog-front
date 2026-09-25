@@ -127,6 +127,8 @@ export default defineNuxtConfig({
       siteUrl: process.env.SITE_URL || "https://bogdev.com.co",
       fediverseHandle: "@devbog@api.bogdev.com.co",
       fediverseActorUrl: "https://api.bogdev.com.co/fediverse/user/devbog",
+      fediverseArticlesUrl: "https://api.bogdev.com.co/fediverse/articles",
+      fediverseLocale: Locale.SpanishColombia as string,
     },
   },
   css: ["~/assets/css/main.css"],

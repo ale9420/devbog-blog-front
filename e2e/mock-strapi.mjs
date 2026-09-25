@@ -329,6 +329,11 @@ const server = createServer(async (req, res) => {
     return
   }
 
+  if (method === 'GET' && url.pathname === '/api/fediverse/articles/doc-vue-es/stats') {
+    sendJson(res, 200, { likes: 7, boosts: 3 })
+    return
+  }
+
   if (method === 'GET' && url.pathname.startsWith('/api/comments')) {
     const data = url.pathname.includes('doc-vue/') ? comments : []
     sendJson(res, 200, { data })
