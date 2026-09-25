@@ -4,10 +4,14 @@ import type { RawStrapiArticle } from '~/interfaces/strapi-post'
 import { Category } from '~/interfaces/design'
 import { startMockStrapi } from './mock-strapi'
 
+const SITE_URL = 'https://bogdev.test'
+
 const mock = await startMockStrapi()
 process.env.STRAPI_URL = mock.url
 process.env.NUXT_PUBLIC_STRAPI_URL = mock.url
 process.env.NUXT_SMTP_PORT = '1'
+process.env.SITE_URL = SITE_URL
+process.env.NUXT_PUBLIC_SITE_URL = SITE_URL
 
 await setup({
   server: true,
@@ -229,7 +233,7 @@ describe('RSS feeds', () => {
     expect(english.type).toBe('application/rss+xml; charset=utf-8')
     expect(english.cache).toBe('public, s-maxage=1800, stale-while-revalidate=3600')
     expect(english.body).toContain('<title>BogDev - Personal Blog</title>')
-    expect(english.body).toContain('<atom:link href="http://localhost:1337/feed.xml" rel="self" type="application/rss+xml"/>')
+    expect(english.body).toContain(`<atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml"/>`)
     expect(items(english.body)).toEqual(['Understanding Vue Composables', 'Linux Server Hardening Guide'])
 
     const spanish = await feed('/es/feed.xml')
@@ -247,16 +251,16 @@ describe('RSS feeds', () => {
     expect(linux.cache).toBe('public, s-maxage=1800, stale-while-revalidate=3600')
     expect(linux.body).toContain('<title>BogDev - Linux and open source</title>')
     expect(linux.body).toContain('<description>BogDev articles about Linux and open source, from Bogotá, Colombia.</description>')
-    expect(linux.body).toContain('<link>http://localhost:1337/blog?category=linux</link>')
-    expect(linux.body).toContain('<atom:link href="http://localhost:1337/feed/linux.xml" rel="self" type="application/rss+xml"/>')
-    expect(linux.body).toContain('<atom:link href="http://localhost:1337/es/feed/linux.xml" rel="alternate" type="application/rss+xml" hreflang="es"/>')
+    expect(linux.body).toContain(`<link>${SITE_URL}/blog?category=linux</link>`)
+    expect(linux.body).toContain(`<atom:link href="${SITE_URL}/feed/linux.xml" rel="self" type="application/rss+xml"/>`)
+    expect(linux.body).toContain(`<atom:link href="${SITE_URL}/es/feed/linux.xml" rel="alternate" type="application/rss+xml" hreflang="es"/>`)
     expect(items(linux.body)).toEqual(['Linux Server Hardening Guide'])
 
     const software = await feed('/es/feed/software.xml')
     expect(software.status).toBe(200)
     expect(software.body).toContain('<title>BogDev - Desarrollo de software</title>')
     expect(software.body).toContain('<language>es-co</language>')
-    expect(software.body).toContain('<atom:link href="http://localhost:1337/es/feed/software.xml" rel="self" type="application/rss+xml"/>')
+    expect(software.body).toContain(`<atom:link href="${SITE_URL}/es/feed/software.xml" rel="self" type="application/rss+xml"/>`)
     expect(items(software.body)).toEqual(['Guía de Vue Composables'])
 
     const request = mock.requests.filter((item) => item.path === '/api/articles').at(-1)
