@@ -6,7 +6,7 @@ import type {
   PostListItem,
   StrapiPost,
   SearchPostResult, StrapiPaginatedResponse, PaginationMeta 
-, Locale, CategoryCount} from "~/interfaces";
+, Locale, CategoryCount, BlogSort} from "~/interfaces";
 import { defaultLocale } from "~/interfaces";
 
 /**
@@ -25,6 +25,7 @@ export function useStrapi() {
     category?: MaybeRef<string | undefined>;
     tag?: MaybeRef<string | undefined>;
     search?: MaybeRef<string | undefined>;
+    sort?: MaybeRef<BlogSort | undefined>;
   }) {
     const buildQuery = () => {
       return qs.stringify({
@@ -34,6 +35,7 @@ export function useStrapi() {
         category: toValue(params?.category) || undefined,
         tag: toValue(params?.tag) || undefined,
         search: toValue(params?.search) || undefined,
+        sort: toValue(params?.sort) || undefined,
       }, { skipNulls: true });
     };
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { BLOG_PAGE_SIZE, LOG_PAGE_SIZE, blogPageSize, blogQuery, groupPostsByMonth, hasActiveFilters, paginationItems, parseBlogQuery, searchTerm } from '../app/helpers/blog'
+import { BLOG_PAGE_SIZE, LOG_PAGE_SIZE, blogPageSize, blogQuery, groupPostsByMonth, hasActiveFilters, paginationItems, parseBlogQuery, parseSort, searchTerm } from '../app/helpers/blog'
 import type { PostListItem } from '../app/interfaces/strapi-post'
 import { Category } from '../app/interfaces/design'
 
@@ -57,6 +57,27 @@ describe('blog views', () => {
     expect(blogPageSize('log')).toBe(LOG_PAGE_SIZE)
     expect(blogPageSize('grid')).toBe(BLOG_PAGE_SIZE)
     expect(blogPageSize(undefined)).toBe(BLOG_PAGE_SIZE)
+  })
+})
+
+describe('blog sort', () => {
+  it('reads the sort from the URL and falls back to recent', () => {
+    expect(parseBlogQuery({ sort: 'oldest' }).sort).toBe('oldest')
+    expect(parseBlogQuery({ sort: 'Fediverse' }).sort).toBe('fediverse')
+    expect(parseBlogQuery({ sort: 'recent' }).sort).toBeUndefined()
+    expect(parseBlogQuery({ sort: 'popular' }).sort).toBeUndefined()
+    expect(parseSort(undefined)).toBeUndefined()
+    expect(parseSort(['oldest'])).toBeUndefined()
+  })
+
+  it('keeps only non-default sorts in the URL', () => {
+    expect(blogQuery({ page: 1, sort: 'oldest' })).toEqual({ sort: 'oldest' })
+    expect(blogQuery({ page: 1, sort: 'fediverse', view: 'log' })).toEqual({ sort: 'fediverse', view: 'log' })
+    expect(blogQuery({ page: 1, sort: 'recent' })).toEqual({})
+  })
+
+  it('does not count the sort as a filter', () => {
+    expect(hasActiveFilters({ page: 1, sort: 'fediverse' })).toBe(false)
   })
 })
 

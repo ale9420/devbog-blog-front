@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { BlogFilters, BlogView, Category, Locale, PostListItem } from "~/interfaces";
-import { blogPageSize, blogQuery, hasActiveFilters, parseBlogQuery, searchTerm } from "~/helpers/blog";
+import type { BlogFilters, BlogSort, BlogView, Category, Locale, PostListItem } from "~/interfaces";
+import { BLOG_SORTS, blogPageSize, blogQuery, hasActiveFilters, parseBlogQuery, parseSort, searchTerm } from "~/helpers/blog";
 import { isCategory } from "~/helpers/categories";
 import { padCount } from "~/helpers/search";
 
@@ -22,6 +22,7 @@ const filters = computed<BlogFilters>(() => parseBlogQuery(route.query));
 const currentLocale = computed<Locale>(() => locale.value as Locale);
 const view = computed<BlogView>(() => filters.value.view ?? "grid");
 const pageSize = computed<number>(() => blogPageSize(filters.value.view));
+const sort = computed<BlogSort>(() => filters.value.sort ?? "recent");
 
 const { data: postsResult, status } = fetchPosts({
   page: computed(() => filters.value.page),
@@ -30,6 +31,7 @@ const { data: postsResult, status } = fetchPosts({
   category: computed(() => filters.value.category),
   tag: computed(() => filters.value.tag),
   search: computed(() => filters.value.search),
+  sort: computed(() => filters.value.sort),
 });
 const { data: recentResult } = fetchPosts({ pageSize: RECENT_SIZE, locale: currentLocale });
 const { data: categories } = fetchCategories(locale.value as Locale);
@@ -82,6 +84,12 @@ function navigate(patch: Partial<BlogFilters>, replace = false): void {
 function selectView(next: BlogView): void {
   if (next === view.value) return;
   navigate({ view: next === "log" ? "log" : undefined, page: 1 });
+}
+
+function selectSort(event: Event): void {
+  const next = parseSort((event.target as HTMLSelectElement).value) ?? "recent";
+  if (next === sort.value) return;
+  navigate({ sort: next === "recent" ? undefined : next, page: 1 });
 }
 
 function selectCategory(category: Category | undefined): void {
@@ -137,17 +145,25 @@ useSeoMeta({
       <p class="bd-eyebrow bd-home-eyebrow">{{ eyebrow }}</p>
       <h1 class="bd-blog-title bd-wide">{{ t("nav.blog") }}</h1>
       <p class="bd-blog-lead">{{ t("blog.exploreArticles") }}</p>
-      <div class="bd-seg-group bd-blog-views" role="group" :aria-label="t('blog.view.label')">
-        <button
-          v-for="option in VIEWS"
-          :key="option"
-          type="button"
-          class="bd-seg"
-          :aria-pressed="view === option ? 'true' : 'false'"
-          @click="selectView(option)"
-        >
-          {{ t(`blog.view.${option}`) }}
-        </button>
+      <div class="bd-blog-controls">
+        <div class="bd-seg-group bd-blog-views" role="group" :aria-label="t('blog.view.label')">
+          <button
+            v-for="option in VIEWS"
+            :key="option"
+            type="button"
+            class="bd-seg"
+            :aria-pressed="view === option ? 'true' : 'false'"
+            @click="selectView(option)"
+          >
+            {{ t(`blog.view.${option}`) }}
+          </button>
+        </div>
+        <div class="bd-blog-sort">
+          <label for="bd-blog-sort" class="bd-eyebrow bd-home-eyebrow">{{ t("blog.sort.label") }}</label>
+          <select id="bd-blog-sort" class="bd-select" :value="sort" @change="selectSort">
+            <option v-for="option in BLOG_SORTS" :key="option" :value="option">{{ t(`blog.sort.${option}`) }}</option>
+          </select>
+        </div>
       </div>
     </header>
 

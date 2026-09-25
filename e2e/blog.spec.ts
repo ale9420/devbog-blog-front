@@ -98,3 +98,33 @@ test('names the months in Spanish and shows the fediverse counts in the log', as
   await expect(month.locator('.bd-log-month-count')).toHaveText('01 artículo')
   await expect(month.locator('.bd-log-stats')).toHaveText(/◆\s+7 me gusta\s+·\s+3 impulsos/)
 })
+
+test('sorts the blog from the select and keeps the order in the URL', async ({ page }) => {
+  await page.goto('/blog', { waitUntil: 'networkidle' })
+  const sort = page.getByLabel('Sort')
+  const titles = page.locator('.bd-blog-grid .bd-card-title')
+  await expect(sort).toHaveValue('recent')
+  await expect(titles).toHaveText(['Understanding Vue Composables', 'Linux Server Hardening Guide'])
+
+  await sort.selectOption('oldest')
+  await expect(page).toHaveURL(/sort=oldest/)
+  await expect(titles).toHaveText(['Linux Server Hardening Guide', 'Understanding Vue Composables'])
+
+  await sort.selectOption('fediverse')
+  await expect(page).toHaveURL(/sort=fediverse/)
+  await expect(titles).toHaveText(['Linux Server Hardening Guide', 'Understanding Vue Composables'])
+
+  await page.reload({ waitUntil: 'networkidle' })
+  await expect(sort).toHaveValue('fediverse')
+
+  await sort.selectOption('recent')
+  await expect(page).toHaveURL(/\/blog$/)
+  await expect(titles).toHaveText(['Understanding Vue Composables', 'Linux Server Hardening Guide'])
+})
+
+test('labels the sort options in Spanish', async ({ page }) => {
+  await page.goto('/es/blog?sort=fediverse', { waitUntil: 'networkidle' })
+  const sort = page.getByLabel('Ordenar')
+  await expect(sort).toHaveValue('fediverse')
+  await expect(sort.locator('option')).toHaveText(['Más recientes', 'Más antiguos', 'Más comentados en el fediverso'])
+})

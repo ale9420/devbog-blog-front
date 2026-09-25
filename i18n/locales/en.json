@@ -158,6 +158,12 @@
     },
     "log": {
       "count": "{count} articles | {count} article | {count} articles"
+    },
+    "sort": {
+      "label": "Sort",
+      "recent": "Newest",
+      "oldest": "Oldest",
+      "fediverse": "Most discussed on the fediverse"
     }
   },
   "post": {
