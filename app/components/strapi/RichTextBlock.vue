@@ -10,6 +10,7 @@ const { renderMarkdown } = useMarkdownRenderer()
 const root = ref<HTMLElement | null>(null)
 
 useCodeBlockCopy(root)
+useMermaid(root)
 </script>
 
 <template>

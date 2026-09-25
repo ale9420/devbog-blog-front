@@ -1395,6 +1395,35 @@ html:has(.bd-palette[open]) {
     user-select: none;
 }
 
+.bd-mermaid-diagram {
+    padding: var(--space-6);
+    overflow-x: auto;
+    background: var(--surface-sunken);
+    border: 1px solid var(--line);
+}
+
+.bd-mermaid-diagram svg {
+    display: block;
+    max-width: none;
+    height: auto;
+    margin: 0 auto;
+}
+
+.bd-mermaid-diagram:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+
+.bd-mermaid-ready .bd-code {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .bd-mermaid-diagram svg {
+        max-width: 100%;
+    }
+}
+
 .bd-callout {
     position: relative;
     display: grid;
@@ -3754,8 +3783,12 @@ a.bd-page:hover {
     color: var(--ink-muted);
 }
 
-.bd-prose :where(.bd-code, .bd-callout) {
+.bd-prose :where(.bd-code, .bd-callout, .bd-mermaid) {
     margin: 32px 0;
+}
+
+.bd-prose .bd-mermaid .bd-code {
+    margin: 0;
 }
 
 .bd-prose .bd-callout-body p:last-child {
