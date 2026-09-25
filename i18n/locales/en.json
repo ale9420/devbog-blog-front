@@ -178,6 +178,11 @@
       "progress": "{read} of {total} read · kept in your browser",
       "next": "Next on the path",
       "done": "Last article on the path"
+    },
+    "feeds": {
+      "label": "One feed per category:",
+      "aria": "RSS feed for {category}",
+      "title": "BogDev RSS · {category}"
     }
   },
   "post": {
@@ -455,5 +460,9 @@
         "avianca": "Avianca Building · 161 m"
       }
     }
+  },
+  "feed": {
+    "categoryTitle": "BogDev - {category}",
+    "categoryDescription": "BogDev articles about {category}, from Bogotá, Colombia."
   }
 }

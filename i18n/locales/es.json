@@ -178,6 +178,11 @@
       "progress": "{read} de {total} leídos · se guarda en tu navegador",
       "next": "Siguiente en la ruta",
       "done": "Último artículo de la ruta"
+    },
+    "feeds": {
+      "label": "Un feed por categoría:",
+      "aria": "Feed RSS de {category}",
+      "title": "BogDev RSS · {category}"
     }
   },
   "post": {
@@ -455,5 +460,9 @@
         "avianca": "Edificio Avianca · 161 m"
       }
     }
+  },
+  "feed": {
+    "categoryTitle": "BogDev - {category}",
+    "categoryDescription": "Los artículos de BogDev sobre {category}, desde Bogotá, Colombia."
   }
 }
