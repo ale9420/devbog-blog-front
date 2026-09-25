@@ -14,7 +14,7 @@ test('opens with the shortcut, searches and opens an article with the keyboard',
   await expect(palette.getByRole('status')).toHaveText('1 result')
 
   await page.keyboard.press('ArrowDown')
-  await expect(input).toHaveAttribute('aria-activedescendant', 'article-1')
+  await expect(input).toHaveAttribute('aria-activedescendant', 'article-doc-vue')
   await expect(listbox.getByRole('option', { name: /Understanding Vue Composables/ })).toHaveAttribute('aria-selected', 'true')
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL(/\/blog\/understanding-vue-composables$/)
@@ -99,4 +99,18 @@ test('opens from the mobile tab bar', async ({ page }) => {
   await expect(palette).toBeVisible()
   await expect(palette.getByRole('combobox')).toBeFocused()
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+})
+
+test('also searches the article body and highlights the match in the snippet', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' })
+  await page.keyboard.press('ControlOrMeta+k')
+  const palette = page.getByRole('dialog', { name: 'Search BogDev' })
+  const articles = palette.getByRole('group', { name: 'Articles' })
+  await palette.getByRole('combobox').fill('stateful')
+  await expect(palette.getByRole('status')).toHaveText('No results for “stateful”')
+
+  await palette.getByRole('checkbox', { name: 'Also search the content' }).check()
+  await expect(articles.getByRole('option')).toHaveText([/Understanding Vue Composables/])
+  await expect(articles.locator('.bd-result-snippet')).toHaveText('Composables let you share stateful logic across components.')
+  await expect(articles.locator('.bd-result-snippet mark')).toHaveText('stateful')
 })

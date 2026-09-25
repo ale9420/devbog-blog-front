@@ -20,6 +20,7 @@ const { theme, toggle } = useTheme()
 const dialogRef = ref<HTMLElement>()
 const inputRef = ref<HTMLInputElement>()
 const query = ref('')
+const inContent = ref(false)
 const articles = ref<SearchPostResult[]>([])
 const counts = ref<Record<string, number>>({})
 const loading = ref(false)
@@ -35,9 +36,10 @@ const searching = computed<boolean>(() => trimmed.value.length >= MIN_SEARCH_LEN
 const groups = computed<PaletteGroup[]>(() => {
   const articleOptions: PaletteOption[] = searching.value
     ? articles.value.map(post => ({
-        id: `article-${post.id}`,
+        id: `article-${post.documentId}`,
         kind: 'article',
         label: post.title,
+        snippet: post.matchedIn === 'title' ? undefined : post.snippet || undefined,
         hint: formatDotDate(post.publishedAt) || undefined,
         color: isCategory(post.category?.slug) ? `var(--${CATEGORY_INFO[post.category.slug].token})` : 'var(--chillon)',
         to: `${localizePath('/blog')}/${post.slug}`,
@@ -117,7 +119,7 @@ function onKeydown(event: KeyboardEvent): void {
 async function search(term: string): Promise<void> {
   const current = ++requestId
   try {
-    const results = await searchPosts(term, locale.value as Locale)
+    const results = await searchPosts(term, locale.value as Locale, inContent.value)
     if (current === requestId) articles.value = results
   } catch {
     if (current === requestId) articles.value = []
@@ -146,7 +148,7 @@ function reset(): void {
   activeIndex.value = -1
 }
 
-watch(trimmed, (term) => {
+function scheduleSearch(term: string): void {
   clearTimeout(debounceTimer)
   activeIndex.value = -1
   if (term.length < MIN_SEARCH_LENGTH) {
@@ -157,7 +159,11 @@ watch(trimmed, (term) => {
   }
   loading.value = true
   debounceTimer = setTimeout(() => search(term), 300)
-})
+}
+
+watch(trimmed, scheduleSearch)
+
+watch(inContent, () => scheduleSearch(trimmed.value))
 
 watch(options, (list) => {
   if (activeIndex.value >= list.length) activeIndex.value = list.length - 1
@@ -212,6 +218,11 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
         <button type="button" class="bd-chip bd-palette-esc" :aria-label="t('bd.search.close')" @click="close">Esc</button>
       </div>
 
+      <label class="bd-meta bd-palette-content">
+        <input v-model="inContent" type="checkbox">
+        {{ t('bd.search.content') }}
+      </label>
+
       <p v-if="!searching" class="bd-meta bd-palette-note">{{ t('bd.search.minLength', { count: MIN_SEARCH_LENGTH }) }}</p>
       <p v-else-if="loading" class="bd-meta bd-palette-note">{{ t('bd.search.loading') }}</p>
       <p v-else-if="empty" class="bd-meta bd-palette-note">{{ t('bd.search.empty', { query: trimmed }) }}</p>
@@ -239,7 +250,10 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
           >
             <span class="bd-eyebrow bd-result-kind" aria-hidden="true">{{ t(`bd.search.kinds.${option.kind}`) }}</span>
             <span v-if="option.color" class="bd-result-dot" :style="{ background: option.color }" aria-hidden="true" />
-            <span class="bd-result-label">{{ option.label }}</span>
+            <span class="bd-result-text">
+              <span class="bd-result-label"><BdHighlight :text="option.label" :query="option.kind === 'article' ? trimmed : undefined" /></span>
+              <span v-if="option.snippet" class="bd-result-snippet"><BdHighlight :text="option.snippet" :query="trimmed" /></span>
+            </span>
             <span v-if="option.hint" class="bd-meta bd-result-hint">{{ option.hint }}</span>
             <span v-else class="bd-meta bd-result-hint" aria-hidden="true">→</span>
           </div>

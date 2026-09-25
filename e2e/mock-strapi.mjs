@@ -259,6 +259,38 @@ const server = createServer(async (req, res) => {
   const query = qs.parse(url.searchParams.toString())
   const body = method === 'POST' || method === 'PUT' ? await readJsonBody(req) : undefined
 
+  if (method === 'GET' && url.pathname === '/api/articles/search') {
+    const term = String(query.q ?? '').toLowerCase()
+    const content = query.content === '1'
+    const plainTexts = {
+      'doc-vue': 'Composables let you share stateful logic across components.',
+      'doc-linux': 'Start with SSH key authentication before anything else.',
+      'doc-vue-es': 'Los composables permiten compartir lógica.',
+    }
+    const data = articles
+      .filter((article) => !query.locale || article.locale === query.locale)
+      .sort((a, b) => new Date(b.publishedAt || 0).getTime() - new Date(a.publishedAt || 0).getTime())
+      .flatMap((article) => {
+        const fields = [['title', article.title], ...(content ? [['description', article.description ?? ''], ['content', plainTexts[article.documentId] ?? '']] : [])]
+        const hit = fields.find(([, value]) => value.toLowerCase().includes(term))
+        if (!hit) return []
+        return [{
+          documentId: article.documentId,
+          slug: article.slug,
+          title: article.title,
+          description: article.description,
+          publishedAt: article.publishedAt,
+          locale: article.locale,
+          category: article.category ? { slug: article.category.slug, name: article.category.name } : null,
+          matchedIn: hit[0],
+          snippet: hit[1],
+        }]
+      })
+      .slice(0, Number(query.limit || 10))
+    sendJson(res, 200, { data, meta: { query: term, count: data.length } })
+    return
+  }
+
   if (method === 'GET' && url.pathname === '/api/articles') {
     const slugFilter = getNestedValue(query, ['filters', 'slug', '$eq'])
     const titleFilter = getNestedValue(query, ['filters', 'title', '$containsi'])

@@ -95,6 +95,69 @@ describe('/api/posts sort', () => {
   })
 })
 
+describe('content search', () => {
+  type PostsPage = { data: Array<{ documentId: string; snippet?: string | null }>; meta: { pagination: { total: number } } }
+
+  it('searches only titles by default', async () => {
+    expect(await $fetch('/api/search', { query: { q: 'ssh', locale: 'en' } })).toEqual([])
+    const upstream = mock.requests.find((request) => request.path === '/api/articles/search')
+    expect(upstream?.query).toEqual({ q: 'ssh', locale: 'en', limit: '10' })
+  })
+
+  it('also searches descriptions and bodies with content=1 and returns the snippet', async () => {
+    const results = await $fetch<Array<Record<string, unknown>>>('/api/search', { query: { q: 'ssh', locale: 'en', content: '1' } })
+    expect(results).toEqual([{
+      documentId: 'doc-linux',
+      slug: 'linux-server-hardening-guide',
+      title: 'Linux Server Hardening Guide',
+      description: expect.any(String),
+      publishedAt: '2026-01-15T10:00:00.000Z',
+      category: { slug: 'linux', name: 'Linux y código abierto' },
+      matchedIn: 'content',
+      snippet: 'Start with SSH key authentication.',
+    }])
+    expect(mock.requests.find((request) => request.path === '/api/articles/search')?.query).toMatchObject({ content: '1' })
+  })
+
+  it('does not call the backend for short queries', async () => {
+    expect(await $fetch('/api/search', { query: { q: 'ss', content: '1' } })).toEqual([])
+    expect(mock.requests.some((request) => request.path === '/api/articles/search')).toBe(false)
+  })
+
+  it('lists the blog posts whose body matches, with the snippet', async () => {
+    const response = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'ssh', content: '1' } })
+    expect(response.data.map((post) => post.documentId)).toEqual(['doc-linux'])
+    expect(response.data[0]?.snippet).toBe('Start with SSH key authentication.')
+    const articles = mock.requests.find((request) => request.path === '/api/articles')
+    expect(articles?.query.filters).toEqual({ documentId: { $in: ['doc-linux'] } })
+
+    const titlesOnly = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'ssh' } })
+    expect(titlesOnly.data).toEqual([])
+  })
+
+  it('keeps the category filter and the sort with content search', async () => {
+    const recent = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'with', content: '1' } })
+    expect(recent.data.map((post) => post.documentId)).toEqual(['doc-vue', 'doc-linux'])
+
+    const oldest = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'with', content: '1', sort: 'oldest' } })
+    expect(oldest.data.map((post) => post.documentId)).toEqual(['doc-linux', 'doc-vue'])
+
+    const fediverse = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'with', content: '1', sort: 'fediverse', pageSize: 1, page: 2 } })
+    expect(fediverse.data.map((post) => post.documentId)).toEqual(['doc-vue'])
+    expect(fediverse.meta.pagination.total).toBe(2)
+
+    const linux = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'with', content: '1', category: 'linux' } })
+    expect(linux.data.map((post) => post.documentId)).toEqual(['doc-linux'])
+  })
+
+  it('returns an empty page when nothing matches', async () => {
+    const response = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'kubernetes', content: '1' } })
+    expect(response.data).toEqual([])
+    expect(response.meta.pagination.total).toBe(0)
+    expect(mock.requests.some((request) => request.path === '/api/articles')).toBe(false)
+  })
+})
+
 describe('/api/posts search', () => {
   it('filters titles from three letters on and combines with the category', async () => {
     const result = await $fetch<{ data: Array<{ slug: string }> }>('/api/posts', { query: { locale: 'en', search: 'vue', category: Category.Software } })
@@ -125,22 +188,24 @@ describe('/api/search', () => {
     const result = await $fetch('/api/search', { query: { q: 'composables' } })
     expect(result).toEqual([
       {
-        id: 3,
+        documentId: 'doc-vue-es',
         title: 'Guía de Vue Composables',
         slug: 'guia-vue-composables',
         description: 'Una guía profunda sobre composables de Vue.',
         publishedAt: '2026-02-02T10:00:00.000Z',
-        cover: { url: '/uploads/cover-vue-es.png' },
         category: { name: 'Desarrollo de software', slug: Category.Software },
+        matchedIn: 'title',
+        snippet: 'Guía de Vue Composables',
       },
       {
-        id: 1,
+        documentId: 'doc-vue',
         title: 'Understanding Vue Composables',
         slug: 'understanding-vue-composables',
         description: 'A deep dive into writing reusable Vue composables.',
         publishedAt: '2026-02-01T10:00:00.000Z',
-        cover: { url: '/uploads/cover-vue.png' },
         category: { name: 'Desarrollo de software', slug: Category.Software },
+        matchedIn: 'title',
+        snippet: 'Understanding Vue Composables',
       },
     ])
   })
@@ -148,16 +213,12 @@ describe('/api/search', () => {
   it('searches only the requested locale', async () => {
     const result = await $fetch<Array<{ slug: string }>>('/api/search', { query: { q: 'composables', locale: 'es' } })
     expect(result.map((post) => post.slug)).toEqual(['guia-vue-composables'])
-    const strapiRequests = mock.requests.filter((request) => request.method === 'GET' && request.path === '/api/articles')
-    expect(strapiRequests[strapiRequests.length - 1].query.locale).toBe('es')
+    const upstream = mock.requests.filter((request) => request.path === '/api/articles/search')
+    expect(upstream.at(-1)?.query.locale).toBe('es')
   })
 
-  it('forwards the title filter to Strapi', async () => {
-    await $fetch('/api/search', { query: { q: 'composables' } })
-    const strapiRequests = mock.requests.filter((request) => request.method === 'GET' && request.path === '/api/articles')
-    const lastRequest = strapiRequests[strapiRequests.length - 1]
-    expect(lastRequest).toBeDefined()
-    expect(getNestedValue(lastRequest.query, ['filters', 'title', '$containsi'])).toBe('composables')
+  it('returns an empty array when the backend search fails', async () => {
+    expect(await $fetch('/api/search', { query: { q: 'fail-search' } })).toEqual([])
   })
 })
 

@@ -81,6 +81,15 @@ describe('blog sort', () => {
   })
 })
 
+describe('content search flag', () => {
+  it('reads and writes content=1', () => {
+    expect(parseBlogQuery({ content: '1' }).content).toBe(true)
+    expect(parseBlogQuery({ content: '0' }).content).toBeUndefined()
+    expect(blogQuery({ page: 1, search: 'rag', content: true })).toEqual({ search: 'rag', content: '1' })
+    expect(hasActiveFilters({ page: 1, content: true })).toBe(false)
+  })
+})
+
 describe('groupPostsByMonth', () => {
   function post(id: number, publishedAt: string | null): PostListItem {
     return { id, title: `Post ${id}`, slug: `post-${id}`, publishedAt }

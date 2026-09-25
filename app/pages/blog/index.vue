@@ -32,6 +32,7 @@ const { data: postsResult, status } = fetchPosts({
   tag: computed(() => filters.value.tag),
   search: computed(() => filters.value.search),
   sort: computed(() => filters.value.sort),
+  content: computed(() => filters.value.content),
 });
 const { data: recentResult } = fetchPosts({ pageSize: RECENT_SIZE, locale: currentLocale });
 const { data: categories } = fetchCategories(locale.value as Locale);
@@ -90,6 +91,10 @@ function selectSort(event: Event): void {
   const next = parseSort((event.target as HTMLSelectElement).value) ?? "recent";
   if (next === sort.value) return;
   navigate({ sort: next === "recent" ? undefined : next, page: 1 });
+}
+
+function toggleContent(enabled: boolean): void {
+  navigate({ content: enabled || undefined, page: 1 });
 }
 
 function selectCategory(category: Category | undefined): void {
@@ -176,19 +181,21 @@ useSeoMeta({
       :result-count="resultCount"
       @category="selectCategory"
       @tag="selectTag"
+      @content="toggleContent"
       @remove="removeFilter"
       @clear="clearFilters"
     />
 
     <div class="bd-blog-body">
       <div id="posts" class="bd-blog-main" :aria-busy="status === 'pending'">
-        <BlogLog v-if="posts.length && view === 'log'" :posts="posts" :federated="federated" />
+        <BlogLog v-if="posts.length && view === 'log'" :posts="posts" :federated="federated" :highlight="filters.search" />
 
         <div v-else-if="posts.length" class="bd-blog-grid">
           <BdPostCard
             v-for="(post, index) in posts"
             :key="post.id"
             v-bind="toPostCard(post)"
+            :highlight="filters.search"
             :priority="index === 0"
           />
         </div>

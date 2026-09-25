@@ -6,6 +6,8 @@ const props = withDefaults(defineProps<{
   title: string
   href: string
   excerpt?: string
+  snippet?: string
+  highlight?: string
   category?: Category
   date?: string
   dateTime?: string
@@ -19,6 +21,8 @@ const props = withDefaults(defineProps<{
   priority?: boolean
 }>(), {
   excerpt: undefined,
+  snippet: undefined,
+  highlight: undefined,
   category: undefined,
   date: undefined,
   dateTime: undefined,
@@ -69,7 +73,8 @@ const imageSize = computed<{ width: number, height: number }>(() =>
       <component :is="featured ? 'h2' : 'h3'" class="bd-card-title">
         <NuxtLink :to="href" class="bd-card-link">{{ title }}</NuxtLink>
       </component>
-      <p v-if="excerpt" class="bd-card-excerpt">{{ excerpt }}</p>
+      <p v-if="snippet" class="bd-card-excerpt bd-card-snippet"><BdHighlight :text="snippet" :query="highlight" /></p>
+      <p v-else-if="excerpt" class="bd-card-excerpt">{{ excerpt }}</p>
       <div class="bd-card-foot">
         <span class="bd-meta">{{ byline }}</span>
         <span class="bd-card-more" aria-hidden="true">{{ moreText }} <span class="bd-card-arrow">→</span></span>

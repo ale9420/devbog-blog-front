@@ -20,6 +20,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   category: [category: Category | undefined]
   tag: [tag: string | undefined]
+  content: [enabled: boolean]
   remove: [filter: ActiveFilter['id']]
   clear: []
 }>()
@@ -64,7 +65,15 @@ const resultLabel = computed<string>(() =>
         enterkeyhint="search"
       >
       <span class="bd-meta bd-blog-search-count" role="status">{{ resultLabel }}</span>
-      <p class="bd-meta bd-blog-hint">{{ t('blog.search.hint') }}</p>
+      <p class="bd-meta bd-blog-hint">{{ filters.content ? t('blog.search.hintContent') : t('blog.search.hint') }}</p>
+      <label class="bd-blog-content-toggle">
+        <input
+          type="checkbox"
+          :checked="filters.content === true"
+          @change="emit('content', ($event.target as HTMLInputElement).checked)"
+        >
+        {{ t('blog.search.content') }}
+      </label>
     </div>
 
     <div class="bd-blog-filter-row">

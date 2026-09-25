@@ -62,6 +62,7 @@ export interface PostCardProps {
   title: string
   href: string
   excerpt?: string
+  snippet?: string
   category?: Category
   date?: string
   dateTime?: string
@@ -77,10 +78,16 @@ export type PaletteKind = 'article' | 'topic' | 'action'
 
 export type PaletteAction = 'theme' | 'fediverse'
 
+export interface TextSegment {
+  text: string
+  match: boolean
+}
+
 export interface PaletteOption {
   id: string
   kind: PaletteKind
   label: string
+  snippet?: string
   hint?: string
   color?: string
   to?: string

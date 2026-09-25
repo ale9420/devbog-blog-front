@@ -136,8 +136,10 @@
     "search": {
       "label": "Buscar artículos",
       "placeholder": "Buscar artículos...",
-      "hint": "Mínimo 3 letras · hoy busca solo en los títulos",
-      "results": "Sin resultados | {count} resultado | {count} resultados"
+      "hint": "Mínimo 3 letras · busca en los títulos",
+      "results": "Sin resultados | {count} resultado | {count} resultados",
+      "hintContent": "Mínimo 3 letras · busca en títulos, resúmenes y contenido",
+      "content": "Buscar también en el contenido"
     },
     "pagination": {
       "label": "Paginación",
@@ -390,6 +392,7 @@
     "search": {
       "dialog": "Buscar en BogDev",
       "placeholder": "Buscar artículos, temas o acciones",
+      "content": "Buscar también en el contenido",
       "close": "Cerrar búsqueda",
       "minLength": "Escribe {count} letras o más para buscar artículos",
       "loading": "Buscando…",
