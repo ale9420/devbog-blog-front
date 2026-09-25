@@ -257,7 +257,7 @@ flowchart LR
 ```
 
 - **Detección.** En `useMarkdownRenderer`, renderer de `code` para `lang === 'mermaid'` que emite `<figure class="bd-mermaid" data-src="<código escapado>"><pre>código</pre></figure>`. El `<pre>` es el respaldo sin JavaScript y el texto para lectores de pantalla. Añadir `figure` y `data-src` a `sanitizeOptions`.
-- **Carga.** `BdMermaid.client.vue` (o plugin cliente) busca `.bd-mermaid` tras montar, importa `mermaid` de forma dinámica solo si hay alguno y dibuja cada uno con `mermaid.render(id, src)`. Dependencia `mermaid` 11.x fijada.
+- **Carga.** `BdMermaid.client.vue` (o plugin cliente) busca `.bd-mermaid` tras montar, importa `mermaid` de forma dinámica solo si hay alguno y dibuja cada uno con `mermaid.render(id, src)`. Dependencia `mermaid` 12.x.
 - **Tema.** `mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'base', themeVariables })`, con `themeVariables` leídas de las variables CSS (`getComputedStyle`), no escritas a mano.
 - **Cambio de tema.** Observar `data-theme` en `<html>`; al cambiar, volver a `initialize` y redibujar desde `data-src`.
 - **Presentación.** Figura sobre `surface-sunken`, borde `line`, padding 24 px, scroll horizontal si es ancho, pie opcional en estilo meta («FIG. 01 — …»).
@@ -267,9 +267,9 @@ flowchart LR
 | --- | --- |
 | background | surface-sunken |
 | primaryColor, mainBkg, nodeBkg, actorBkg | surface-raised |
-| primaryTextColor, textColor, signalColor, signalTextColor | ink |
+| primaryTextColor, textColor, signalTextColor | ink |
 | primaryBorderColor, nodeBorder, actorBorder | line-strong |
-| lineColor | chillon |
+| lineColor, signalColor | chillon |
 | secondaryColor, tertiaryColor | surface |
 | clusterBkg / clusterBorder | surface / line |
 | noteBkgColor / noteTextColor | monjita-soft / ink |

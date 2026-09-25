@@ -5,6 +5,7 @@ import { slugify } from '~/helpers/slugify';
 import type { CalloutTone } from '~/interfaces';
 import { escapeHtml, renderCodeBlockHtml } from '~/helpers/code';
 import { parseCalloutMarker, renderCalloutHtml } from '~/helpers/callout';
+import { renderMermaidBlockHtml } from '~/helpers/mermaid';
 
 export { slugify };
 
@@ -63,6 +64,7 @@ function createMarkdownRenderer(calloutLabel: (tone: CalloutTone) => string) {
                 return `<code>${escapeHtml(text)}</code>`;
             },
             code(token: Tokens.Code): string {
+                if (token.lang === 'mermaid') return renderMermaidBlockHtml(token.text || '');
                 return renderCodeBlockHtml(token.text || '', token.lang || '');
             },
             blockquote(token: Tokens.Blockquote): string {

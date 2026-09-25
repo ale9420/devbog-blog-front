@@ -316,6 +316,9 @@
       "copied": "Copiado ✓",
       "copyAria": "Copiar código"
     },
+    "mermaid": {
+      "label": "Diagrama"
+    },
     "card": {
       "featured": "Artículo destacado",
       "more": "Leer más"
