@@ -36,7 +36,6 @@ describe('BdFooter', () => {
     expect(layers).toHaveLength(4)
     expect(layers.every(svg => svg.attributes('aria-hidden') === 'true')).toBe(true)
     expect(wrapper.get('.bd-land img').attributes('alt')).toBe('')
-    expect(wrapper.find('animateMotion').exists()).toBe(true)
     expect(wrapper.text()).toContain('Monserrate · 3,152 m')
   })
 })

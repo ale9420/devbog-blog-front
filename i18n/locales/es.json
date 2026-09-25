@@ -452,12 +452,19 @@
         "guadalupe": "Guadalupe · 3.317 m",
         "view": "Cerros orientales · vista desde el occidente",
         "cci": "Centro de Comercio Internacional · 192 m",
-        "atrio": "Torres Atrio · 201 m",
+        "atrio": "Torre Atrio Norte · 201 m · Rogers Stirk Harbour + El Equipo Mazzanti",
         "parque": "Torres del Parque · Rogelio Salmona",
-        "colpatria": "Torre Colpatria · 196 m",
+        "colpatria": "Torre Colpatria · 196 m · fachada LED con las banderas de Palestina, Colombia y Bogotá",
         "bacataSouth": "BD Bacatá · torre sur 216 m",
         "bacataNorth": "BD Bacatá · torre norte 167 m",
-        "avianca": "Edificio Avianca · 161 m"
+        "avianca": "Edificio Avianca · 161 m",
+        "monserrateBasilica": "Basílica del Señor de Monserrate",
+        "guadalupeSanctuary": "Santuario y Virgen de Guadalupe",
+        "tequendama": "Hotel Tequendama · Centro Internacional",
+        "santamaria": "Plaza de toros La Santamaría",
+        "flagPalestine": "Palestina",
+        "flagColombia": "Colombia",
+        "flagBogota": "Bogotá"
       }
     }
   },

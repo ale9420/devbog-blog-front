@@ -108,7 +108,7 @@ Categorías y aves:
 
 ### Movimiento y accesibilidad
 
-- Transiciones de 240 ms con `cubic-bezier(.2, 0, 0, 1)`. Con `prefers-reduced-motion: reduce` no hay ninguna animación (bandada, parallax, teleférico, barra de lectura, barrido de tema).
+- Transiciones de 240 ms con `cubic-bezier(.2, 0, 0, 1)`. Con `prefers-reduced-motion: reduce` no hay ninguna animación (bandada, parallax, banderas LED de Colpatria, barra de lectura, barrido de tema).
 - Contraste mínimo 4.5:1 para texto y 3:1 para bordes de controles en ambos temas (verificado en los tokens).
 - Foco visible: contorno de 2 px `var(--focus)` con 2 px de separación. Objetivos táctiles de al menos 44 px.
 
@@ -202,7 +202,7 @@ Ficha de campo: «Hola, soy Alejandro.», datos (nombre, hábitat, especialidad,
 
 - Un solo `BdFooter` en `layouts/default.vue`; variante móvil por breakpoint (< 768 px).
 - Contenido: logo + marca, tagline, redes (LinkedIn, GitHub, Codeberg, Mastodon con `rel="me"`), Navegar, Temas (5 con punto de color), Suscribirse (RSS, Newsletter, Fediverso, Invitarme un café), panorama de los cerros orientales y créditos.
-- Panorama en capas SVG: páramo, cerros con Monserrate (3.152 m, santuario y teleférico animado) y Guadalupe (3.317 m), faldas, copetón (`public/copeton.png`) al 30–45 % de opacidad a la izquierda y skyline (CCI, Atrio, Torres del Parque, Colpatria con LED en Noche, BD Bacatá, Avianca). En Día sin luces.
+- Panorama en capas SVG: páramo, cerros con Monserrate (3.152 m, basílica) y Guadalupe (3.317 m, santuario y Virgen), faldas, copetón (`public/copeton.png`) al 30–45 % de opacidad a la izquierda y skyline de occidente a oriente (Torre Atrio Norte, CCI, Hotel Tequendama, BD Bacatá, Avianca, Colpatria, Torres del Parque, La Santamaría). En Noche, la fachada LED de Colpatria rota las banderas de Palestina, Colombia y Bogotá cada 18 s. En Día sin luces ni LED.
 - Parallax: `animation-range: entry 0% entry 100%` para que la posición final sea igual en todas las páginas.
 - Móvil: redes en rejilla de 4, grupos plegables con `<details>`, panorama deslizable de 1152 × 352 px.
 - Recursos: extraer los SVG del panorama de `Footer.dc.html` a `app/assets/footer/` o a un componente `BdPanorama.vue`.

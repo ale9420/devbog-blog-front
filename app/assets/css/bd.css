@@ -1569,6 +1569,9 @@ html:has(.bd-palette[open]) {
     --lay4: var(--surface-sunken);
     --bld-edge: color-mix(in oklab, var(--ink) 10%, transparent);
     --brick: color-mix(in oklab, var(--mirla) 14%, var(--surface-sunken));
+    --pano-wall: var(--ink);
+    --pano-opening: var(--lay2);
+    --pano-shade: var(--surface);
 }
 
 [data-theme="dia"] {
@@ -1578,6 +1581,9 @@ html:has(.bd-palette[open]) {
     --lay4: color-mix(in oklab, var(--ink) 25%, var(--surface));
     --bld-edge: color-mix(in oklab, var(--ink) 30%, transparent);
     --brick: color-mix(in oklab, var(--mirla) 38%, var(--surface));
+    --pano-wall: var(--surface-raised);
+    --pano-opening: var(--line-strong);
+    --pano-shade: var(--ink);
 }
 
 .bd-foot {
@@ -1913,9 +1919,7 @@ html:has(.bd-palette[open]) {
 }
 
 .bd-colpatria {
-    fill: var(--chillon);
-    opacity: 0.5;
-    animation: bd-led 12s linear infinite;
+    opacity: 0.95;
 }
 
 .bd-beacon {
@@ -1928,25 +1932,6 @@ html:has(.bd-palette[open]) {
 
 .bd-beacon-3 {
     animation-delay: -1.6s;
-}
-
-@keyframes bd-led {
-    0%,
-    100% {
-        fill: var(--chillon);
-    }
-
-    25% {
-        fill: var(--golondrina);
-    }
-
-    50% {
-        fill: var(--pinchaflor);
-    }
-
-    75% {
-        fill: var(--mirla);
-    }
 }
 
 @keyframes bd-blink {
@@ -2157,7 +2142,6 @@ html:has(.bd-palette[open]) {
 
 @media (prefers-reduced-motion: reduce) {
     .bd-lay,
-    .bd-colpatria,
     .bd-beacon {
         animation: none;
     }
