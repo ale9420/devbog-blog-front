@@ -149,6 +149,33 @@ describe('/api/about', () => {
   })
 })
 
+describe('/api/fediverse/stats', () => {
+  it('returns likes and boosts of several federated articles in one request', async () => {
+    const response = await fetch('/api/fediverse/stats?documentIds=doc-vue-es,doc-linux,doc-missing')
+    expect(response.status).toBe(200)
+    expect(response.headers.get('cache-control')).toBe('public, s-maxage=60, stale-while-revalidate=120')
+    expect(await response.json()).toEqual({
+      'doc-vue-es': { likes: 4, boosts: 2 },
+      'doc-linux': { likes: 0, boosts: 1 },
+    })
+    const upstream = mock.requests.filter((request) => request.path === '/api/fediverse/articles/stats')
+    expect(upstream).toHaveLength(1)
+    expect(upstream[0]?.query.documentIds).toBe('doc-vue-es,doc-linux,doc-missing')
+  })
+
+  it('rejects missing, malformed or too many ids without calling the backend', async () => {
+    const tooMany = Array.from({ length: 51 }, (_, index) => `doc-${index}`).join(',')
+    await expect($fetch('/api/fediverse/stats')).rejects.toMatchObject({ response: { status: 400 } })
+    await expect($fetch('/api/fediverse/stats', { query: { documentIds: 'doc-vue-es,../admin' } })).rejects.toMatchObject({ response: { status: 400 } })
+    await expect($fetch('/api/fediverse/stats', { query: { documentIds: tooMany } })).rejects.toMatchObject({ response: { status: 400 } })
+    expect(mock.requests.some((request) => request.path.startsWith('/api/fediverse'))).toBe(false)
+  })
+
+  it('answers 502 when the backend fails', async () => {
+    await expect($fetch('/api/fediverse/stats', { query: { documentIds: 'doc-broken' } })).rejects.toMatchObject({ response: { status: 502 } })
+  })
+})
+
 describe('/api/fediverse/stats/[documentId]', () => {
   it('returns the likes and boosts of a federated article with a short cache', async () => {
     const response = await fetch('/api/fediverse/stats/doc-vue-es')

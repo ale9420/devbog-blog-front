@@ -46,6 +46,7 @@ export interface RawStrapiArticle {
 
 export interface PostListItem {
   id: number
+  documentId?: string
   title: string
   slug: string
   description?: string | null

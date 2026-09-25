@@ -20,7 +20,7 @@ export function useStrapi() {
 
   function fetchPosts(params?: {
     page?: MaybeRef<number | undefined>;
-    pageSize?: number;
+    pageSize?: MaybeRef<number | undefined>;
     locale?: MaybeRef<Locale | undefined>;
     category?: MaybeRef<string | undefined>;
     tag?: MaybeRef<string | undefined>;
@@ -29,7 +29,7 @@ export function useStrapi() {
     const buildQuery = () => {
       return qs.stringify({
         page: toValue(params?.page),
-        pageSize: params?.pageSize,
+        pageSize: toValue(params?.pageSize),
         locale: toValue(params?.locale),
         category: toValue(params?.category) || undefined,
         tag: toValue(params?.tag) || undefined,
@@ -44,6 +44,7 @@ export function useStrapi() {
 
       const data: PostListItem[] = response.data.map((post) => ({
         id: post.id,
+        documentId: post.documentId,
         title: post.title,
         slug: post.slug,
         description: post.description,

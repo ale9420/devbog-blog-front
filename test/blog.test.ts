@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { blogQuery, hasActiveFilters, paginationItems, parseBlogQuery, searchTerm } from '../app/helpers/blog'
+import { BLOG_PAGE_SIZE, LOG_PAGE_SIZE, blogPageSize, blogQuery, groupPostsByMonth, hasActiveFilters, paginationItems, parseBlogQuery, searchTerm } from '../app/helpers/blog'
+import type { PostListItem } from '../app/interfaces/strapi-post'
 import { Category } from '../app/interfaces/design'
 
 describe('parseBlogQuery', () => {
@@ -21,6 +22,13 @@ describe('parseBlogQuery', () => {
   it('takes the first value of repeated params', () => {
     expect(parseBlogQuery({ tag: ['AI', 'Linux'] }).tag).toBe('AI')
   })
+
+  it('reads the log view and ignores unknown views', () => {
+    expect(parseBlogQuery({ view: 'log' }).view).toBe('log')
+    expect(parseBlogQuery({ view: 'LOG' }).view).toBe('log')
+    expect(parseBlogQuery({ view: 'grid' }).view).toBeUndefined()
+    expect(parseBlogQuery({ view: 'timeline' }).view).toBeUndefined()
+  })
 })
 
 describe('blogQuery', () => {
@@ -32,6 +40,48 @@ describe('blogQuery', () => {
       search: 'llm',
       page: '2',
     })
+  })
+})
+
+describe('blog views', () => {
+  it('keeps the log view in the URL and leaves the grid as default', () => {
+    expect(blogQuery({ page: 1, view: 'log' })).toEqual({ view: 'log' })
+    expect(blogQuery({ page: 2, view: 'grid' })).toEqual({ page: '2' })
+  })
+
+  it('does not count the view as a filter', () => {
+    expect(hasActiveFilters({ page: 1, view: 'log' })).toBe(false)
+  })
+
+  it('shows more posts per page in the log', () => {
+    expect(blogPageSize('log')).toBe(LOG_PAGE_SIZE)
+    expect(blogPageSize('grid')).toBe(BLOG_PAGE_SIZE)
+    expect(blogPageSize(undefined)).toBe(BLOG_PAGE_SIZE)
+  })
+})
+
+describe('groupPostsByMonth', () => {
+  function post(id: number, publishedAt: string | null): PostListItem {
+    return { id, title: `Post ${id}`, slug: `post-${id}`, publishedAt }
+  }
+
+  const posts = [
+    post(1, '2026-10-01T03:00:00.000Z'),
+    post(2, '2026-09-12T10:00:00.000Z'),
+    post(3, '2026-08-20T10:00:00.000Z'),
+    post(4, null),
+  ]
+
+  it('groups posts by month in Bogotá time, keeping their order', () => {
+    const months = groupPostsByMonth(posts, 'en')
+    expect(months.map(month => month.key)).toEqual(['2026-09', '2026-08'])
+    expect(months[0]!.posts.map(item => item.id)).toEqual([1, 2])
+    expect(months[1]!.posts.map(item => item.id)).toEqual([3])
+  })
+
+  it('names the months in the active language', () => {
+    expect(groupPostsByMonth(posts, 'en').map(month => month.label)).toEqual(['September 2026', 'August 2026'])
+    expect(groupPostsByMonth(posts, 'es').map(month => month.label)).toEqual(['septiembre 2026', 'agosto 2026'])
   })
 })
 

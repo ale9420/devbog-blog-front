@@ -150,7 +150,15 @@
     "aside": "More from the blog",
     "recent": "Recent articles",
     "rss": "RSS · full feed",
-    "fediverse": "Follow {'@'}devbog on the fediverse"
+    "fediverse": "Follow {'@'}devbog on the fediverse",
+    "view": {
+      "label": "View",
+      "grid": "Grid",
+      "log": "Log"
+    },
+    "log": {
+      "count": "{count} articles | {count} article | {count} articles"
+    }
   },
   "post": {
     "published": "Published",
