@@ -404,7 +404,11 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
       const categoryFilter = getNestedValue(query, ['filters', 'category', 'slug', '$eq']) as string | undefined
       const tagFilter = getNestedValue(query, ['filters', 'tags', '$contains']) as string | undefined
       const documentIdFilter = getNestedValue(query, ['filters', 'documentId', '$in']) as string[] | undefined
-      const ascending = query.sort === 'publishedAt:asc'
+      const pathFilter = getNestedValue(query, ['filters', 'pathOrder', '$notNull'])
+      const sorts = ([] as unknown[]).concat(query.sort ?? [])
+      const ascending = sorts[0] === 'publishedAt:asc'
+      const byPath = sorts[0] === 'pathOrder:asc'
+      const pathOrders: Record<string, number> = { 'doc-linux': 1, 'doc-vue': 2 }
       const page = Number(getNestedValue(query, ['pagination', 'page']) || 1)
       const pageSize = Number(getNestedValue(query, ['pagination', 'pageSize']) || 10)
 
@@ -435,7 +439,15 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
       if (documentIdFilter) {
         data = data.filter((article) => documentIdFilter.includes(article.documentId))
       }
+      if (pathFilter) {
+        if (localeFilter === 'legacy') {
+          sendJson(res, 400, { data: null, error: { status: 400, name: 'ValidationError', message: 'Invalid key pathOrder' } })
+          return
+        }
+        data = data.filter((article) => pathOrders[article.documentId] !== undefined)
+      }
       data.sort((a, b) => {
+        if (byPath) return (pathOrders[a.documentId] ?? 0) - (pathOrders[b.documentId] ?? 0)
         const dateA = new Date(a.publishedAt || 0).getTime()
         const dateB = new Date(b.publishedAt || 0).getTime()
         return ascending ? dateA - dateB : dateB - dateA

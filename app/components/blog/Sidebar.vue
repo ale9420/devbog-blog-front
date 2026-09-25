@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { PostListItem } from '~/interfaces'
+import type { Category, PostListItem } from '~/interfaces'
 import { formatDotDate } from '~/helpers/formatDate'
 import { padCount } from '~/helpers/search'
 
 defineProps<{
   recentPosts: PostListItem[]
+  category?: Category
 }>()
 
 const { t } = useI18n()
@@ -23,6 +24,7 @@ function clearHistory(): void {
 
 <template>
   <aside class="bd-blog-aside" :aria-label="t('blog.aside')">
+    <BlogReadingPath v-if="category" :key="category" :category="category" />
     <section v-if="recentPosts.length" class="bd-blog-aside-group" aria-labelledby="bd-blog-recent">
       <h2 id="bd-blog-recent" class="bd-eyebrow bd-home-eyebrow">{{ t('blog.recent') }}</h2>
       <NuxtLink
