@@ -1,9 +1,14 @@
 import type { LocationQuery } from 'vue-router'
-import type { BlogFilters, PaginationItem } from '../interfaces/blog'
+import type { BlogFilters, BlogView, PaginationItem, PostMonth } from '../interfaces/blog'
+import type { PostListItem } from '../interfaces/strapi-post'
 import { isCategory } from './categories'
 import { MIN_SEARCH_LENGTH } from './search'
 
 export const BLOG_PAGE_SIZE = 6
+export const LOG_PAGE_SIZE = 24
+
+const LOG_VIEW = 'log'
+const TIME_ZONE = 'America/Bogota'
 
 function firstValue(value: LocationQuery[string] | undefined): string {
   const raw = Array.isArray(value) ? value[0] : value
@@ -24,7 +29,16 @@ export function parseBlogQuery(query: LocationQuery): BlogFilters {
     tag: tag || undefined,
     search: searchTerm(firstValue(query.search)),
     page: Number.isFinite(page) && page > 1 ? page : 1,
+    view: parseView(firstValue(query.view)),
   }
+}
+
+function parseView(value: string): BlogView | undefined {
+  return value.toLowerCase() === LOG_VIEW ? 'log' : undefined
+}
+
+export function blogPageSize(view: BlogView | undefined): number {
+  return view === 'log' ? LOG_PAGE_SIZE : BLOG_PAGE_SIZE
 }
 
 export function blogQuery(filters: BlogFilters): Record<string, string> {
@@ -33,7 +47,30 @@ export function blogQuery(filters: BlogFilters): Record<string, string> {
   if (filters.tag) query.tag = filters.tag
   if (filters.search) query.search = filters.search
   if (filters.page > 1) query.page = String(filters.page)
+  if (filters.view === 'log') query.view = LOG_VIEW
   return query
+}
+
+function monthKey(date: string): string {
+  const parts = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', timeZone: TIME_ZONE }).formatToParts(new Date(date))
+  const part = (type: Intl.DateTimeFormatPartTypes): string => parts.find(item => item.type === type)?.value ?? ''
+  return `${part('year')}-${part('month')}`
+}
+
+function monthLabel(key: string, locale: string): string {
+  const [year, month] = key.split('-').map(Number)
+  const name = new Intl.DateTimeFormat(locale, { month: 'long', timeZone: 'UTC' }).format(new Date(Date.UTC(year!, month! - 1, 15)))
+  return `${name} ${year}`
+}
+
+export function groupPostsByMonth(posts: PostListItem[], locale: string): PostMonth[] {
+  const months = new Map<string, PostListItem[]>()
+  for (const post of posts) {
+    if (!post.publishedAt) continue
+    const key = monthKey(post.publishedAt)
+    months.set(key, [...(months.get(key) ?? []), post])
+  }
+  return Array.from(months, ([key, items]) => ({ key, label: monthLabel(key, locale), posts: items }))
 }
 
 export function hasActiveFilters(filters: BlogFilters): boolean {

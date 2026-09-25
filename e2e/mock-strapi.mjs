@@ -343,6 +343,12 @@ const server = createServer(async (req, res) => {
     return
   }
 
+  if (method === 'GET' && url.pathname === '/api/fediverse/articles/stats') {
+    const ids = String(query.documentIds ?? '').split(',')
+    sendJson(res, 200, ids.includes('doc-vue-es') ? { 'doc-vue-es': { likes: 7, boosts: 3, replies: 0 } } : {})
+    return
+  }
+
   if (method === 'GET' && url.pathname === '/api/fediverse/articles/doc-vue-es/stats') {
     sendJson(res, 200, { likes: 7, boosts: 3 })
     return

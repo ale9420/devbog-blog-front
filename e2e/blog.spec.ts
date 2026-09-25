@@ -62,3 +62,39 @@ test.describe('without JavaScript', () => {
     await expect(page.getByRole('searchbox', { name: 'Search articles' })).toHaveValue('linux')
   })
 })
+
+test('switches to the log view, grouped by month, and keeps it in the URL', async ({ page }) => {
+  await page.goto('/blog', { waitUntil: 'networkidle' })
+  const views = page.getByRole('group', { name: 'View' })
+  await expect(views.getByRole('button', { name: 'Grid' })).toHaveAttribute('aria-pressed', 'true')
+  await views.getByRole('button', { name: 'Log' }).click()
+  await expect(page).toHaveURL(/view=log/)
+  await expect(views.getByRole('button', { name: 'Log' })).toHaveAttribute('aria-pressed', 'true')
+
+  const february = page.getByRole('region', { name: 'February 2026' })
+  await expect(february.getByRole('link', { name: 'Understanding Vue Composables' })).toBeVisible()
+  await expect(february.locator('.bd-log-month-count')).toHaveText('01 article')
+  await expect(page.getByRole('region', { name: 'January 2026' }).getByRole('link', { name: 'Linux Server Hardening Guide' })).toBeVisible()
+  await expect(page.locator('.bd-card')).toHaveCount(0)
+
+  await page.reload({ waitUntil: 'networkidle' })
+  await expect(views.getByRole('button', { name: 'Log' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.locator('.bd-log-month')).toHaveCount(2)
+})
+
+test('keeps the log view while filtering', async ({ page }) => {
+  await page.goto('/blog?view=log', { waitUntil: 'networkidle' })
+  await page.getByRole('group', { name: 'Filter by category' }).getByRole('button', { name: /Linux/ }).click()
+  await expect(page).toHaveURL(/category=linux/)
+  await expect(page).toHaveURL(/view=log/)
+  await expect(page.locator('.bd-log-row')).toHaveCount(1)
+  await expect(page.locator('.bd-log-row').getByRole('link', { name: 'Linux Server Hardening Guide' })).toBeVisible()
+})
+
+test('names the months in Spanish and shows the fediverse counts in the log', async ({ page }) => {
+  await page.goto('/es/blog?view=log', { waitUntil: 'networkidle' })
+  await expect(page.getByRole('group', { name: 'Vista' }).getByRole('button', { name: 'Bitácora' })).toHaveAttribute('aria-pressed', 'true')
+  const month = page.getByRole('region', { name: 'febrero 2026' })
+  await expect(month.locator('.bd-log-month-count')).toHaveText('01 artículo')
+  await expect(month.locator('.bd-log-stats')).toHaveText(/◆\s+7 me gusta\s+·\s+3 impulsos/)
+})

@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import type { BlogFilters, Category, Locale, PostListItem } from "~/interfaces";
-import { BLOG_PAGE_SIZE, blogQuery, hasActiveFilters, parseBlogQuery, searchTerm } from "~/helpers/blog";
+import type { BlogFilters, BlogView, Category, Locale, PostListItem } from "~/interfaces";
+import { blogPageSize, blogQuery, hasActiveFilters, parseBlogQuery, searchTerm } from "~/helpers/blog";
 import { isCategory } from "~/helpers/categories";
 import { padCount } from "~/helpers/search";
 
 const RECENT_SIZE = 4;
 const SEARCH_DEBOUNCE_MS = 300;
 const FALLBACK_POPULAR_TAGS = ["AI", "Linux", "Vue", "TypeScript", "DevOps", "Python", "Docker"];
+const VIEWS: BlogView[] = ["grid", "log"];
 
 const { locale, t } = useI18n();
 const route = useRoute();
@@ -14,14 +15,17 @@ const router = useRouter();
 const { fetchPosts, fetchCategories } = useStrapi();
 const { canonicalUrl } = useCanonicalUrl('/blog');
 const { siteUrl } = useSiteUrl();
+const config = useRuntimeConfig();
 const toPostCard = usePostCard();
 
 const filters = computed<BlogFilters>(() => parseBlogQuery(route.query));
 const currentLocale = computed<Locale>(() => locale.value as Locale);
+const view = computed<BlogView>(() => filters.value.view ?? "grid");
+const pageSize = computed<number>(() => blogPageSize(filters.value.view));
 
 const { data: postsResult, status } = fetchPosts({
   page: computed(() => filters.value.page),
-  pageSize: BLOG_PAGE_SIZE,
+  pageSize,
   locale: currentLocale,
   category: computed(() => filters.value.category),
   tag: computed(() => filters.value.tag),
@@ -61,6 +65,7 @@ const resultCount = computed<number | undefined>(() =>
   filters.value.search ? (results.value?.pagination.total ?? 0) : undefined,
 );
 const filtered = computed<boolean>(() => hasActiveFilters(filters.value));
+const federated = computed<boolean>(() => locale.value === config.public.fediverseLocale);
 const eyebrow = computed<string>(() => t("blog.eyebrow", { count: padCount(total.value) }, total.value));
 
 const applySearch = useDebounceFn(() => {
@@ -72,6 +77,11 @@ function navigate(patch: Partial<BlogFilters>, replace = false): void {
   const query = blogQuery({ ...filters.value, ...patch });
   if (replace) router.replace({ query });
   else router.push({ query });
+}
+
+function selectView(next: BlogView): void {
+  if (next === view.value) return;
+  navigate({ view: next === "log" ? "log" : undefined, page: 1 });
 }
 
 function selectCategory(category: Category | undefined): void {
@@ -127,6 +137,18 @@ useSeoMeta({
       <p class="bd-eyebrow bd-home-eyebrow">{{ eyebrow }}</p>
       <h1 class="bd-blog-title bd-wide">{{ t("nav.blog") }}</h1>
       <p class="bd-blog-lead">{{ t("blog.exploreArticles") }}</p>
+      <div class="bd-seg-group bd-blog-views" role="group" :aria-label="t('blog.view.label')">
+        <button
+          v-for="option in VIEWS"
+          :key="option"
+          type="button"
+          class="bd-seg"
+          :aria-pressed="view === option ? 'true' : 'false'"
+          @click="selectView(option)"
+        >
+          {{ t(`blog.view.${option}`) }}
+        </button>
+      </div>
     </header>
 
     <BlogFilters
@@ -144,7 +166,9 @@ useSeoMeta({
 
     <div class="bd-blog-body">
       <div id="posts" class="bd-blog-main" :aria-busy="status === 'pending'">
-        <div v-if="posts.length" class="bd-blog-grid">
+        <BlogLog v-if="posts.length && view === 'log'" :posts="posts" :federated="federated" />
+
+        <div v-else-if="posts.length" class="bd-blog-grid">
           <BdPostCard
             v-for="(post, index) in posts"
             :key="post.id"
@@ -176,7 +200,7 @@ useSeoMeta({
           v-if="posts.length"
           :filters="filters"
           :total-pages="totalPages"
-          :page-size="BLOG_PAGE_SIZE"
+          :page-size="pageSize"
         />
       </div>
 

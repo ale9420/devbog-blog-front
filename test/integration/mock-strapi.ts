@@ -447,6 +447,20 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
       return
     }
 
+    if (method === 'GET' && url.pathname === '/api/fediverse/articles/stats') {
+      const ids = String(query.documentIds ?? '').split(',')
+      if (ids.includes('doc-broken')) {
+        sendJson(res, 500, { data: null, error: { status: 500, name: 'InternalServerError', message: 'Internal Server Error' } })
+        return
+      }
+      const known: Record<string, { likes: number; boosts: number; replies: number }> = {
+        'doc-vue-es': { likes: 4, boosts: 2, replies: 1 },
+        'doc-linux': { likes: 0, boosts: 1, replies: 0 },
+      }
+      sendJson(res, 200, Object.fromEntries(ids.filter((id) => known[id]).map((id) => [id, known[id]])))
+      return
+    }
+
     const fediverseStats = url.pathname.match(/^\/api\/fediverse\/articles\/([^/]+)\/stats$/)
     if (method === 'GET' && fediverseStats) {
       const documentId = fediverseStats[1]

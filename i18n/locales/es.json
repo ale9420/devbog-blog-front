@@ -150,7 +150,15 @@
     "aside": "Más del blog",
     "recent": "Artículos recientes",
     "rss": "RSS · feed completo",
-    "fediverse": "Seguir {'@'}devbog en el fediverso"
+    "fediverse": "Seguir {'@'}devbog en el fediverso",
+    "view": {
+      "label": "Vista",
+      "grid": "Cuadrícula",
+      "log": "Bitácora"
+    },
+    "log": {
+      "count": "{count} artículos | {count} artículo | {count} artículos"
+    }
   },
   "post": {
     "published": "Publicado",
