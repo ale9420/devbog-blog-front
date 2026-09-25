@@ -49,6 +49,9 @@ const articleUrl = computed<string>(() => post.value?.seo?.canonicalURL || canon
 const mastodonUrl = computed<string>(() => mastodonShareUrl(post.value?.title ?? "", articleUrl.value));
 const publishedDate = computed<string>(() => formatDotDate(post.value?.publishedAt));
 const federated = computed<boolean>(() => locale.value === config.public.fediverseLocale);
+const prose = ref<HTMLElement | null>(null);
+
+useMarkAsRead(prose, computed(() => post.value?.documentId));
 
 useSeoMeta({
     title: () => post.value?.seo?.metaTitle || (post.value?.title ? `${post.value.title} - BogDev` : "Post - BogDev"),
@@ -228,7 +231,7 @@ useHead({
                 <BlogTableOfContents class="bd-article-toc" :headings="headings" />
 
                 <article class="bd-article-content">
-                    <div class="bd-prose">
+                    <div ref="prose" class="bd-prose">
                         <StrapiBlocksRenderer :blocks="post.blocks" />
                     </div>
 

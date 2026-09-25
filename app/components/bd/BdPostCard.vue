@@ -15,6 +15,7 @@ const props = withDefaults(defineProps<{
   readTime?: string
   image?: string
   imageAlt?: string
+  read?: boolean
   featured?: boolean
   eyebrow?: string
   moreLabel?: string
@@ -30,6 +31,7 @@ const props = withDefaults(defineProps<{
   readTime: undefined,
   image: undefined,
   imageAlt: '',
+  read: false,
   featured: false,
   eyebrow: undefined,
   moreLabel: undefined,
@@ -66,9 +68,12 @@ const imageSize = computed<{ width: number, height: number }>(() =>
     <div v-else class="bd-card-media bd-card-media-empty" aria-hidden="true" />
     <div class="bd-card-body">
       <span v-if="featured" class="bd-eyebrow bd-card-eyebrow">{{ eyebrowText }}</span>
-      <div v-if="category || date" class="bd-card-meta">
+      <div v-if="category || date || read" class="bd-card-meta">
         <BdCategoryTag v-if="category" :category="category" />
-        <time v-if="date" class="bd-meta" :datetime="dateTime">{{ date }}</time>
+        <span class="bd-card-meta-end">
+          <span v-if="read" class="bd-meta bd-read-mark"><span aria-hidden="true">✓</span> {{ t('bd.card.read') }}</span>
+          <time v-if="date" class="bd-meta" :datetime="dateTime">{{ date }}</time>
+        </span>
       </div>
       <component :is="featured ? 'h2' : 'h3'" class="bd-card-title">
         <NuxtLink :to="href" class="bd-card-link">{{ title }}</NuxtLink>

@@ -166,6 +166,12 @@
       "recent": "Más recientes",
       "oldest": "Más antiguos",
       "fediverse": "Más comentados en el fediverso"
+    },
+    "read": {
+      "title": "Tu lectura",
+      "count": "Ningún artículo leído · se guarda en tu navegador | {count} artículo leído · se guarda en tu navegador | {count} artículos leídos · se guarda en tu navegador",
+      "clear": "Borrar historial de leídos",
+      "cleared": "Historial borrado"
     }
   },
   "post": {
@@ -337,7 +343,8 @@
     },
     "card": {
       "featured": "Artículo destacado",
-      "more": "Leer más"
+      "more": "Leer más",
+      "read": "Leído"
     },
     "newsletter": {
       "eyebrow": "Newsletter",

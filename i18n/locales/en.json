@@ -166,6 +166,12 @@
       "recent": "Newest",
       "oldest": "Oldest",
       "fediverse": "Most discussed on the fediverse"
+    },
+    "read": {
+      "title": "Your reading",
+      "count": "No articles read · kept in your browser | {count} article read · kept in your browser | {count} articles read · kept in your browser",
+      "clear": "Clear reading history",
+      "cleared": "History cleared"
     }
   },
   "post": {
@@ -337,7 +343,8 @@
     },
     "card": {
       "featured": "Featured article",
-      "more": "Read more"
+      "more": "Read more",
+      "read": "Read"
     },
     "newsletter": {
       "eyebrow": "Newsletter",

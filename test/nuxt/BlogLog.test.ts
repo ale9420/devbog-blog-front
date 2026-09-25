@@ -59,4 +59,16 @@ describe('BlogLog', () => {
     expect(requested).toEqual([])
     expect(wrapper.find('.bd-log-stats').exists()).toBe(false)
   })
+
+  it('marks the posts already read in this browser', async () => {
+    localStorage.setItem('bd-read-articles', '["doc-linux"]')
+    useState('bd-read-articles-loaded').value = false
+    const wrapper = await mountSuspended(BlogLog, { props: { posts } })
+    await flushPromises()
+    const marks = wrapper.findAll('.bd-log-row').map(row => row.find('.bd-read-mark').exists())
+    expect(marks).toEqual([false, false, true])
+    expect(wrapper.get('.bd-read-mark').text()).toBe('✓ Read')
+    localStorage.clear()
+  })
 })
+
