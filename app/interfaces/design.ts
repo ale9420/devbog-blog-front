@@ -70,6 +70,7 @@ export interface PostCardProps {
   readTime?: string
   image?: string
   imageAlt?: string
+  read?: boolean
 }
 
 export type HeaderSection = 'home' | 'blog' | 'about'

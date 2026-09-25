@@ -13,6 +13,7 @@ const props = defineProps<{
 
 const { t, locale } = useI18n()
 const { localizePath } = useLocaleUtils()
+const { isRead } = useReadArticles()
 
 const documentIds = computed<string>(() =>
   props.posts.map(post => post.documentId).filter(Boolean).join(','),
@@ -70,6 +71,7 @@ function postCategory(post: PostListItem): Category | undefined {
               {{ postStats(post)!.likes }} {{ t('post.fediverse.likes', postStats(post)!.likes) }}
               · {{ postStats(post)!.boosts }} {{ t('post.fediverse.boosts', postStats(post)!.boosts) }}
             </span>
+            <span v-if="isRead(post.documentId)" class="bd-read-mark"><span aria-hidden="true">✓</span> {{ t('bd.card.read') }}</span>
           </span>
         </li>
       </ul>

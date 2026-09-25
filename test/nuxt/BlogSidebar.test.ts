@@ -1,0 +1,32 @@
+import { describe, it, expect, beforeEach } from 'vitest'
+import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { flushPromises } from '@vue/test-utils'
+import BlogSidebar from '~/components/blog/Sidebar.vue'
+import { READ_STORAGE_KEY } from '~/helpers/readArticles'
+
+describe('BlogSidebar reading history', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    useState('bd-read-articles').value = []
+    useState('bd-read-articles-loaded').value = false
+  })
+
+  it('hides the section while nothing has been read', async () => {
+    const wrapper = await mountSuspended(BlogSidebar, { props: { recentPosts: [] } })
+    await flushPromises()
+    expect(wrapper.find('#bd-blog-read').exists()).toBe(false)
+  })
+
+  it('counts the read articles and clears the history', async () => {
+    localStorage.setItem(READ_STORAGE_KEY, '["doc-rag","doc-vue"]')
+    const wrapper = await mountSuspended(BlogSidebar, { props: { recentPosts: [] } })
+    await flushPromises()
+    expect(wrapper.get('#bd-blog-read').text()).toBe('Your reading')
+    expect(wrapper.get('.bd-blog-read-note').text()).toBe('02 articles read · kept in your browser')
+
+    await wrapper.get('button.bd-blog-textbtn').trigger('click')
+    expect(localStorage.getItem(READ_STORAGE_KEY)).toBeNull()
+    expect(wrapper.get('.bd-blog-read-note').text()).toBe('History cleared')
+    expect(wrapper.find('button.bd-blog-textbtn').exists()).toBe(false)
+  })
+})

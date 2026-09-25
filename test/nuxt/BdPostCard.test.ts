@@ -78,4 +78,19 @@ describe('BdPostCard', () => {
     expect(wrapper.find('.bd-card-eyebrow').exists()).toBe(false)
     expect(wrapper.attributes('style')).toBeUndefined()
   })
+
+  it('marks articles the reader already read', async () => {
+    const unread = await mountSuspended(BdPostCard, { props: base })
+    expect(unread.find('.bd-read-mark').exists()).toBe(false)
+    const read = await mountSuspended(BdPostCard, { props: { ...base, read: true } })
+    expect(read.get('.bd-card-meta .bd-read-mark').text()).toBe('✓ Read')
+    expect(read.get('.bd-read-mark [aria-hidden="true"]').text()).toBe('✓')
+  })
+
+  it('shows the highlighted snippet instead of the excerpt', async () => {
+    const wrapper = await mountSuspended(BdPostCard, { props: { ...base, snippet: '…laboratorios locales y soberanía…', highlight: 'locales' } })
+    expect(wrapper.find('.bd-card-snippet').exists()).toBe(true)
+    expect(wrapper.get('.bd-card-snippet mark').text()).toBe('locales')
+    expect(wrapper.text()).not.toContain('Primer artículo de este blog.')
+  })
 })
