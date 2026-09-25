@@ -227,7 +227,7 @@ useSeoMeta({
         />
       </div>
 
-      <BlogSidebar :recent-posts="recentPosts" />
+      <BlogSidebar :recent-posts="recentPosts" :category="filters.category" />
     </div>
   </div>
 </template>

@@ -172,6 +172,12 @@
       "count": "Ningún artículo leído · se guarda en tu navegador | {count} artículo leído · se guarda en tu navegador | {count} artículos leídos · se guarda en tu navegador",
       "clear": "Borrar historial de leídos",
       "cleared": "Historial borrado"
+    },
+    "path": {
+      "title": "Ruta de lectura · {category}",
+      "progress": "{read} de {total} leídos · se guarda en tu navegador",
+      "next": "Siguiente en la ruta",
+      "done": "Último artículo de la ruta"
     }
   },
   "post": {

@@ -247,6 +247,7 @@ useHead({
                                 #{{ tag }}
                             </NuxtLink>
                         </div>
+                        <BlogReadingPath v-if="category && post.documentId" :category="category" :current-document-id="post.documentId" />
                         <BlogAuthorCard :author="post.author" />
                         <BlogBuyMeACoffee />
                     </div>

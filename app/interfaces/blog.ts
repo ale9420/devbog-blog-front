@@ -28,3 +28,15 @@ export interface TocHeading {
   text: string
   level: 2 | 3
 }
+
+export interface ReadingPathStep {
+  documentId: string
+  slug: string
+  title: string
+}
+
+export interface ReadingPath {
+  category: Category
+  editorial: boolean
+  steps: ReadingPathStep[]
+}

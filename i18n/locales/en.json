@@ -172,6 +172,12 @@
       "count": "No articles read · kept in your browser | {count} article read · kept in your browser | {count} articles read · kept in your browser",
       "clear": "Clear reading history",
       "cleared": "History cleared"
+    },
+    "path": {
+      "title": "Reading path · {category}",
+      "progress": "{read} of {total} read · kept in your browser",
+      "next": "Next on the path",
+      "done": "Last article on the path"
     }
   },
   "post": {

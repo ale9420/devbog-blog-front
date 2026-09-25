@@ -173,6 +173,41 @@ describe('/api/posts search', () => {
   })
 })
 
+describe('/api/reading-path', () => {
+  it('follows the editorial pathOrder of the category', async () => {
+    const path = await $fetch('/api/reading-path', { query: { category: 'linux', locale: 'en' } })
+    expect(path).toEqual({
+      category: 'linux',
+      editorial: true,
+      steps: [{ documentId: 'doc-linux', slug: 'linux-server-hardening-guide', title: 'Linux Server Hardening Guide' }],
+    })
+    const request = mock.requests.find((item) => item.path === '/api/articles')
+    expect(request?.query).toMatchObject({
+      filters: { category: { slug: { $eq: 'linux' } }, pathOrder: { $notNull: 'true' } },
+      sort: ['pathOrder:asc', 'publishedAt:asc'],
+      locale: 'en',
+    })
+  })
+
+  it('falls back to publication date when no article of the category has a pathOrder', async () => {
+    const path = await $fetch<{ editorial: boolean; steps: Array<{ documentId: string }> }>('/api/reading-path', { query: { category: 'software', locale: 'es' } })
+    expect(path.editorial).toBe(false)
+    expect(path.steps.map((step) => step.documentId)).toEqual(['doc-vue-es'])
+    expect(mock.requests.filter((item) => item.path === '/api/articles').at(-1)?.query.sort).toBe('publishedAt:asc')
+  })
+
+  it('falls back to publication date when Strapi does not know pathOrder yet', async () => {
+    const path = await $fetch<{ editorial: boolean }>('/api/reading-path', { query: { category: 'linux', locale: 'legacy' } })
+    expect(path.editorial).toBe(false)
+  })
+
+  it('rejects unknown categories without calling Strapi', async () => {
+    await expect($fetch('/api/reading-path', { query: { category: 'cooking' } })).rejects.toMatchObject({ response: { status: 400 } })
+    await expect($fetch('/api/reading-path')).rejects.toMatchObject({ response: { status: 400 } })
+    expect(mock.requests.some((item) => item.path === '/api/articles')).toBe(false)
+  })
+})
+
 describe('/api/search', () => {
   it('returns an empty array when q is missing', async () => {
     const result = await $fetch('/api/search')
