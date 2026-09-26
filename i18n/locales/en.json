@@ -201,6 +201,15 @@
     "authorBio": "Exploring privacy, DIY, AI, software and Linux from Bogotá.",
     "keepReading": "Keep reading",
     "alsoIn": "Also in {category}",
+    "references": {
+      "title": "References",
+      "count": "{n} source · APA 7 | {n} sources · APA 7",
+      "citeLabel": "Reference {n}",
+      "back": "back to the text",
+      "backLabel": "Back to citation {n} in the text",
+      "note": "Links open the original source in a new tab.",
+      "accessed": "Accessed on {date}."
+    },
     "fediverse": {
       "label": "On the fediverse",
       "likes": "like | likes",

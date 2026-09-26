@@ -341,6 +341,12 @@ describe('/api/posts/[slug]', () => {
     expect(result.category?.slug).toBe(Category.Software)
   })
 
+  it('asks Strapi for the article references', async () => {
+    await $fetch('/api/posts/understanding-vue-composables', { query: { locale: 'en' } })
+    const upstream = mock.requests.filter((request) => request.path === '/api/articles')
+    expect(getNestedValue(upstream[upstream.length - 1].query, ['populate', 'references'])).toBe('true')
+  })
+
   it('sets revalidation cache headers', async () => {
     let cacheControl = ''
     await $fetch('/api/posts/understanding-vue-composables', {

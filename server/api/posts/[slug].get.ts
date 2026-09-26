@@ -27,6 +27,7 @@ export default defineEventHandler(async (event) => {
           'shared.slider': { populate: '*' },
         },
       },
+      references: true,
     },
   }, { skipNulls: true })
 

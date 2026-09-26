@@ -144,9 +144,34 @@ textarea.bd-field{height:auto;min-height:120px;padding:12px 16px;line-height:26p
 @keyframes bd-steam{0%{opacity:0;transform:translateY(6px)}35%{opacity:.9}100%{opacity:0;transform:translateY(-8px)}}
 .bd-root .bd-card:hover .bd-perch{animation-duration:1.4s}
 @media (prefers-reduced-motion:reduce){.bd-root *,.bd-root{animation:none!important;transition:none!important}::view-transition-new(root){animation:none}}
+.bd-root .bd-cite{font-family:"JetBrains Mono",monospace;font-size:12px;line-height:0;margin-left:2px;color:var(--chillon);text-decoration:none;scroll-margin-top:96px}
+.bd-root .bd-cite:hover{text-decoration:underline}
+.bd-ref{display:grid;grid-template-columns:48px minmax(0,1fr);gap:0;padding:20px 0;border-bottom:1px solid var(--line);scroll-margin-top:96px;transition:background-color 240ms cubic-bezier(.2,0,0,1)}
+.bd-ref:first-child{border-top:1px solid var(--line)}
+.bd-prose .bd-ref::before{content:none}
+.bd-prose .bd-ref{font-size:15px;line-height:24px}
+.bd-ref:target{background:var(--chillon-soft);box-shadow:-12px 0 0 var(--chillon-soft),12px 0 0 var(--chillon-soft)}
+.bd-ref-n{font-family:"JetBrains Mono",monospace;font-size:13px;line-height:24px;color:var(--chillon)}
+.bd-ref-body{display:flex;flex-direction:column;gap:6px;min-width:0}
+.bd-refs .bd-ref-body p{margin:0;font-size:15px;line-height:24px;color:var(--ink);overflow-wrap:anywhere}
+.bd-root .bd-ref-body p a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px}
+.bd-root .bd-ref-body p a:hover{text-decoration-color:var(--chillon)}
+.bd-ref-meta{display:flex;justify-content:space-between;gap:16px;font-size:12px;line-height:20px;color:var(--ink-muted)}
+.bd-root .bd-ref-back{color:var(--ink-muted);text-decoration:none;font-family:"JetBrains Mono",monospace}
+.bd-root .bd-ref-back:hover{color:var(--chillon)}
+.bd-fig{margin:40px 0 48px;display:flex;flex-direction:column;gap:12px}
+.bd-fig-media{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--surface-sunken);border:1px solid var(--line)}
+.bd-fig-media img{display:block;width:100%;height:100%;object-fit:cover}
+.bd-fig figcaption{display:flex;flex-direction:column;gap:6px;padding-left:12px;border-left:2px solid var(--line-strong)}
+.bd-fig-cap{font-size:14px;line-height:22px;color:var(--ink-muted);text-wrap:pretty}
+.bd-fig-n{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.08em;color:var(--ink);margin-right:6px}
+.bd-credit{font-family:"JetBrains Mono",monospace;font-size:12px;line-height:20px;letter-spacing:.02em;color:var(--ink-muted)}
+.bd-credit-k{text-transform:uppercase;letter-spacing:.12em;color:var(--ink);margin-right:4px}
+.bd-root .bd-credit a{color:var(--ink-muted);text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px}
+.bd-root .bd-credit a:hover{color:var(--ink);text-decoration-color:var(--chillon)}
 </style>
 </helmet>
-<div class="bd-root {{themeClass}} {{flockClass}}" style="width: 1440px; height: 6420px; position: relative; overflow: hidden; display: flex; flex-direction: column">
+<div class="bd-root {{themeClass}} {{flockClass}}" style="width: 1440px; height: 8360px; position: relative; overflow: hidden; display: flex; flex-direction: column">
 <div style="position: relative; z-index: 10; width: 100%">
 <dc-import name="Header" tema="{{footerTema}}" activa="blog" lectura="{{yes}}" progreso="38" seccion="IA" on-noche="{{toNoche}}" on-dia="{{toDia}}" hint-size="100%,136px"></dc-import>
 </div>
@@ -249,23 +274,38 @@ textarea.bd-field{height:auto;min-height:120px;padding:12px 16px;line-height:26p
 <a href="#" style="padding-left: 32px">3. Generation (generación)</a>
 <a href="#">Por qué importa</a>
 <a href="#">En resumen</a>
+<a href="#referencias">Referencias</a>
 </nav>
 <article class="bd-prose" style="grid-column: 4 / span 7; max-width: 68ch">
 <p>Los grandes modelos de lenguaje (GPT, Claude, Gemini) tienen un conocimiento enciclopédico. Y sin embargo, tres debilidades estructurales los acompañan siempre:</p>
 <ul>
-<li><span><strong style="font-weight: 500">Alucinaciones:</strong> cuando no saben, inventan con total confianza.</span></li>
+<li><span><strong style="font-weight: 500">Alucinaciones:</strong> cuando no saben, inventan con total confianza.<sup><a class="bd-cite" id="cita-1" href="#ref-1" aria-label="Referencia 1">[1]</a></sup></span></li>
 <li><span><strong style="font-weight: 500">Conocimiento congelado</strong> en la fecha de corte del entrenamiento.</span></li>
 <li><span><strong style="font-weight: 500">Opacidad</strong> sobre las fuentes.</span></li>
 </ul>
 <h2 id="que-es">Qué es RAG</h2>
-<p>RAG (Retrieval-Augmented Generation) es un patrón de arquitectura que conecta un LLM con fuentes de conocimiento externas.</p>
+<p>RAG (Retrieval-Augmented Generation) es un patrón de arquitectura que conecta un LLM con fuentes de conocimiento externas.<sup><a class="bd-cite" id="cita-2" href="#ref-2" aria-label="Referencia 2">[2]</a></sup></p>
 <div style="margin: 32px 0 8px">
 <x-import component-from-global-scope="BogDev.Callout" tone="nota" title="Analogía">Un LLM sin RAG es un estudiante que presenta el examen de memoria. Con RAG, puede consultar libros abiertos: no necesita memorizar el manual, solo encontrar la página correcta.</x-import>
 </div>
+<figure class="bd-fig">
+<div class="bd-fig-media"><img src="/_blob/da8ecd5ad79ff9ad3bbe7ee411e9b58f" alt="Laguna del Parque Nacional Natural Sumapaz con frailejonal en la orilla y un cerro de pajonal al fondo, bajo un cielo nublado" width="1372" height="772" loading="lazy"></div>
+<figcaption>
+<span class="bd-fig-cap"><span class="bd-fig-n">FIG. 02</span> Una laguna del Páramo de Sumapaz: el agua está ahí, pero alguien tiene que ir a buscarla. Así trabaja la recuperación.</span>
+<span class="bd-credit"><span class="bd-credit-k">Foto</span> <a href="https://commons.wikimedia.org/wiki/User:Danielfjio" target="_blank" rel="noopener noreferrer">Danielfjio</a> · <a href="https://commons.wikimedia.org/wiki/File:Paisaje_Sumapaz,_Colombia.jpg" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" target="_blank" rel="license noopener noreferrer">CC BY-SA 4.0</a> · recortada</span>
+</figcaption>
+</figure>
 <h2 id="pilares">Los tres pilares</h2>
-<p>RAG no hace al modelo más inteligente: le da acceso oportuno a la información correcta.</p>
+<p>RAG no hace al modelo más inteligente: le da acceso oportuno a la información correcta.<sup><a class="bd-cite" id="cita-3" href="#ref-3" aria-label="Referencia 3">[3]</a></sup></p>
+<figure class="bd-fig">
+<div class="bd-fig-media"><img src="/_blob/37b0de88c117bed9f57893fa9a5366b0" alt="Ilustración nocturna de un páramo: frailejones con flores amarillas junto a una laguna que refleja la luna" width="1372" height="772" loading="lazy"></div>
+<figcaption>
+<span class="bd-fig-cap"><span class="bd-fig-n">FIG. 03</span> Cada frailejón atrapa el agua de la niebla que pasa. El recuperador hace lo mismo con el contexto: toma solo lo que le sirve a la pregunta.</span>
+<span class="bd-credit"><span class="bd-credit-k">Ilustración</span> Alejandro Ramírez · BogDev · obra propia</span>
+</figcaption>
+</figure>
 <h3 id="retrieval">1. Retrieval (recuperación)</h3>
-<p>Dado un corpus (documentación, PDFs, wikis, tickets, código), el sistema trabaja en dos fases.</p>
+<p>Dado un corpus (documentación, PDFs, wikis, tickets, código), el sistema trabaja en dos fases.<sup><a class="bd-cite" id="cita-4" href="#ref-4" aria-label="Referencia 4">[4]</a></sup></p>
 <div style="margin: 8px 0 32px">
 <x-import component-from-global-scope="BogDev.CodeBlock" lang="python" filename="retrieval.py" code="# Fase 1: indexar el corpus&#10;fragmentos = dividir(documentos, tamano=512)&#10;vectores = embeddings.codificar(fragmentos)&#10;base_vectorial.guardar(fragmentos, vectores)&#10;&#10;# Fase 2: recuperar en cada consulta&#10;consulta = embeddings.codificar(pregunta)&#10;contexto = base_vectorial.buscar(consulta, k=5)" show-copy="{{yes}}"></x-import>
 </div>
@@ -273,6 +313,11 @@ textarea.bd-field{height:auto;min-height:120px;padding:12px 16px;line-height:26p
 <h3>2. Augmentation (aumento)</h3>
 <p class="bd-meta" style="color: var(--ink-muted)">[CONTINÚA EL ARTÍCULO: 2. AUGMENTATION, 3. GENERATION, POR QUÉ IMPORTA, EN RESUMEN]</p>
 </div>
+<section id="referencias" aria-labelledby="referencias-titulo" class="bd-refs" style="margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line)">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 24px"><h2 id="referencias-titulo" style="margin: 0; font-size: 24px; line-height: 32px; font-weight: 500">Referencias</h2><span class="bd-meta" style="color: var(--ink-muted)">4 FUENTES · APA 7</span></div>
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column"><li id="ref-1" class="bd-ref"><span class="bd-ref-n" aria-hidden="true">[1]</span><div class="bd-ref-body"><span class="bd-eyebrow" style="color: var(--ink-muted)">ACM COMPUTING SURVEYS · 2023</span><p>Ji, Z., Lee, N., Frieske, R., Yu, T., Su, D., Xu, Y., et al. (2023). <a href="https://doi.org/10.1145/3571730" target="_blank" rel="noopener noreferrer">Survey of Hallucination in Natural Language Generation</a>. <em>ACM Computing Surveys</em>, 55(12).</p><div class="bd-ref-meta"><span class="bd-mono">doi.org/10.1145/3571730</span><a class="bd-ref-back" href="#cita-1" aria-label="Volver a la cita 1 en el texto">↩ volver al texto</a></div></div></li><li id="ref-2" class="bd-ref"><span class="bd-ref-n" aria-hidden="true">[2]</span><div class="bd-ref-body"><span class="bd-eyebrow" style="color: var(--ink-muted)">NEURIPS 2020</span><p>Lewis, P., Perez, E., Piktus, A., Petroni, F., Karpukhin, V., Goyal, N., et al. (2020). <a href="https://arxiv.org/abs/2005.11401" target="_blank" rel="noopener noreferrer">Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</a>. <em>Advances in Neural Information Processing Systems</em> 33.</p><div class="bd-ref-meta"><span class="bd-mono">arXiv:2005.11401</span><a class="bd-ref-back" href="#cita-2" aria-label="Volver a la cita 2 en el texto">↩ volver al texto</a></div></div></li><li id="ref-3" class="bd-ref"><span class="bd-ref-n" aria-hidden="true">[3]</span><div class="bd-ref-body"><span class="bd-eyebrow" style="color: var(--ink-muted)">PREPRINT · 2023</span><p>Gao, Y., Xiong, Y., Gao, X., Jia, K., Pan, J., Bi, Y., et al. (2023). <a href="https://arxiv.org/abs/2312.10997" target="_blank" rel="noopener noreferrer">Retrieval-Augmented Generation for Large Language Models: A Survey</a>. Preprint en arXiv.</p><div class="bd-ref-meta"><span class="bd-mono">arXiv:2312.10997</span><a class="bd-ref-back" href="#cita-3" aria-label="Volver a la cita 3 en el texto">↩ volver al texto</a></div></div></li><li id="ref-4" class="bd-ref"><span class="bd-ref-n" aria-hidden="true">[4]</span><div class="bd-ref-body"><span class="bd-eyebrow" style="color: var(--ink-muted)">EMNLP 2020</span><p>Karpukhin, V., Oğuz, B., Min, S., Lewis, P., Wu, L., Edunov, S., Chen, D. y Yih, W. (2020). <a href="https://arxiv.org/abs/2004.04906" target="_blank" rel="noopener noreferrer">Dense Passage Retrieval for Open-Domain Question Answering</a>. <em>Proceedings of EMNLP 2020</em>.</p><div class="bd-ref-meta"><span class="bd-mono">arXiv:2004.04906</span><a class="bd-ref-back" href="#cita-4" aria-label="Volver a la cita 4 en el texto">↩ volver al texto</a></div></div></li></ol>
+<p class="bd-meta" style="margin: 24px 0 0; color: var(--ink-muted); font-size: 12px">Los enlaces abren la fuente original en una pestaña nueva. Consultadas el 11.09.2026.</p>
+</section>
 <div style="display: flex; flex-direction: column; gap: 32px; margin-top: 48px">
 <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap">
 <span class="bd-eyebrow" style="color: var(--ink-muted)">Etiquetas</span>
@@ -412,7 +457,7 @@ textarea.bd-field{height:auto;min-height:120px;padding:12px 16px;line-height:26p
 </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["noche","dia"],"default":"noche","section":"Tema"},"bandada":{"editor":"boolean","default":true,"section":"Movimiento"},"$preview":{"width":1440,"height":6420}}'>
+<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["noche","dia"],"default":"noche","section":"Tema"},"bandada":{"editor":"boolean","default":true,"section":"Movimiento"},"$preview":{"width":1440,"height":8360}}'>
 class Component extends DCLogic {
 
   tema() {

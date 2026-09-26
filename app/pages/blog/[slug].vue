@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Category, Locale, TocHeading } from "~/interfaces";
+import type { Category, CitationIndex, Locale, NumberedReference, TocHeading } from "~/interfaces";
+import { buildCitationIndex, numberReferences } from "~/helpers/citations";
 import { isCategory } from "~/helpers/categories";
 import { formatDotDate } from "~/helpers/formatDate";
 import { mastodonShareUrl } from "~/helpers/share";
@@ -44,13 +45,20 @@ const category = computed<Category | undefined>(() => {
     const slug = post.value?.category?.slug;
     return isCategory(slug) ? slug : undefined;
 });
-const headings = computed<TocHeading[]>(() => extractHeadings(post.value?.blocks));
+const references = computed<NumberedReference[]>(() => numberReferences(post.value?.blocks, post.value?.references));
+const citationIndex = computed<CitationIndex>(() => buildCitationIndex(post.value?.blocks, post.value?.references));
+const headings = computed<TocHeading[]>(() => {
+    const blockHeadings = extractHeadings(post.value?.blocks);
+    if (!references.value.length) return blockHeadings;
+    return [...blockHeadings, { id: "references", text: t("post.references.title"), level: 2 }];
+});
 const articleUrl = computed<string>(() => post.value?.seo?.canonicalURL || canonicalUrl.value);
 const mastodonUrl = computed<string>(() => mastodonShareUrl(post.value?.title ?? "", articleUrl.value));
 const publishedDate = computed<string>(() => formatDotDate(post.value?.publishedAt));
 const federated = computed<boolean>(() => locale.value === config.public.fediverseLocale);
 const prose = ref<HTMLElement | null>(null);
 
+provideCitations(citationIndex);
 useMarkAsRead(prose, computed(() => post.value?.documentId));
 
 useSeoMeta({
@@ -234,6 +242,8 @@ useHead({
                     <div ref="prose" class="bd-prose">
                         <StrapiBlocksRenderer :blocks="post.blocks" />
                     </div>
+
+                    <BlogReferences :entries="references" />
 
                     <div class="bd-article-after">
                         <div v-if="post.tags?.length" class="bd-article-tags">
