@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { StrapiBlock } from '~/interfaces'
 import type { Component } from 'vue'
+import { figureBlockKey, figureNumbers } from '~/helpers/figures'
 import StrapiRichTextBlock from '~/components/strapi/RichTextBlock.vue'
 import StrapiQuoteBlock from '~/components/strapi/QuoteBlock.vue'
 import StrapiMediaBlock from '~/components/strapi/MediaBlock.vue'
@@ -34,6 +35,13 @@ const componentMap: Readonly<Record<StrapiBlock['__component'], Component>> = {
 const knownBlocks = computed<StrapiBlock[]>(() =>
   (props.blocks ?? []).filter(block => block.__component in componentMap),
 )
+
+const numbers = computed<Record<string, number>>(() => figureNumbers(knownBlocks.value))
+
+function extraProps(block: StrapiBlock): { figureNumber?: number } {
+  const figureNumber = numbers.value[figureBlockKey(block)]
+  return figureNumber ? { figureNumber } : {}
+}
 </script>
 
 <template>
@@ -42,5 +50,6 @@ const knownBlocks = computed<StrapiBlock[]>(() =>
     v-for="block in knownBlocks"
     :key="`${block.__component}-${block.id}`"
     :block="block"
+    v-bind="extraProps(block)"
   />
 </template>

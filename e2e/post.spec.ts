@@ -126,3 +126,23 @@ test('leaves articles without references unchanged', async ({ page }) => {
   await expect(page.locator('#references')).toHaveCount(0)
   await expect(page.locator('.bd-cite')).toHaveCount(0)
 })
+
+test('numbers figures and credits each image, the slides and the cover', async ({ page }) => {
+  await page.goto('/es/blog/guia-vue-composables', { waitUntil: 'networkidle' })
+  await expect(page.locator('.bd-article-cover-credit')).toHaveText('Ilustración Alejandro Ramírez · BogDev · obra propia')
+
+  const photo = page.locator('.bd-prose figure.bd-fig').first()
+  await expect(photo.locator('.bd-fig-n')).toHaveText('Fig. 01')
+  await expect(photo.locator('.bd-credit')).toHaveText('Foto Danielfjio · Wikimedia Commons · CC BY-SA 4.0 · recortada')
+  await expect(photo.getByRole('link', { name: 'CC BY-SA 4.0 (se abre en una pestaña nueva)' })).toHaveAttribute('href', 'https://creativecommons.org/licenses/by-sa/4.0/deed.es')
+
+  const slider = page.locator('.bd-prose figure.bd-fig').nth(1)
+  const caption = slider.locator('figcaption')
+  await expect(caption).toHaveAttribute('aria-live', 'polite')
+  await expect(caption.locator('.bd-fig-cap')).toHaveText('Fig. 02 Cada frailejón atrapa el agua de la niebla.')
+  await expect(caption.locator('.bd-credit-k')).toHaveText('Ilustración')
+  await slider.focus()
+  await page.keyboard.press('ArrowRight')
+  await expect(caption.locator('.bd-fig-cap')).toHaveText('Fig. 02 La misma laguna al amanecer.')
+  await expect(caption.locator('.bd-credit-k')).toHaveText('Foto')
+})

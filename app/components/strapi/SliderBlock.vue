@@ -1,21 +1,27 @@
 <script setup lang="ts">
-import type { StrapiSlider } from '~/interfaces'
+import type { StrapiSlide, StrapiSlider } from '~/interfaces'
+import { formatFigureNumber, slidesOf } from '~/helpers/figures'
 
 const props = defineProps<{
   block: StrapiSlider
+  figureNumber?: number
 }>()
 
 const { getMediaUrl } = useStrapi()
 const { t } = useI18n()
 
-const files = computed(() => props.block.files)
-const totalSlides = computed(() => files.value.length)
+const slides = computed<StrapiSlide[]>(() => slidesOf(props.block))
+const totalSlides = computed(() => slides.value.length)
 const hasMultiple = computed(() => totalSlides.value > 1)
 
 const currentIndex = ref(0)
 const isPaused = ref(false)
 const progress = ref(0)
 const isTransitioning = ref(false)
+
+const activeSlide = computed<StrapiSlide | undefined>(() => slides.value[currentIndex.value])
+const activeCaption = computed<string>(() => activeSlide.value?.caption?.trim() ?? '')
+const hasFigcaption = computed<boolean>(() => slides.value.some(slide => Boolean(slide.caption?.trim() || slide.credit)))
 
 const prefersReducedMotion = ref(false)
 
@@ -126,7 +132,7 @@ onUnmounted(stopAutoplay)
 
 <template>
   <figure
-    class="my-8 select-none"
+    class="bd-fig select-none"
     tabindex="0"
     role="region"
     aria-roledescription="carousel"
@@ -134,7 +140,7 @@ onUnmounted(stopAutoplay)
     @keydown="onKeydown"
   >
     <div
-      class="relative overflow-hidden rounded-2xl bg-[var(--surface-raised)] shadow-2xl group"
+      class="bd-fig-media relative group"
       @mouseenter="isPaused = true"
       @mouseleave="isPaused = false"
       @touchstart.passive="onTouchStart"
@@ -143,7 +149,7 @@ onUnmounted(stopAutoplay)
     >
       <div class="relative aspect-[16/10]">
         <div
-          v-for="(file, index) in files"
+          v-for="(slide, index) in slides"
           :key="index"
           class="absolute inset-0 transition-opacity duration-700 ease-in-out"
           :class="index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'"
@@ -153,8 +159,8 @@ onUnmounted(stopAutoplay)
           :aria-hidden="index !== currentIndex"
         >
           <NuxtImg
-            :src="getMediaUrl(file.url)"
-            :alt="file.alternativeText || t('common.ariaGalleryImage', 'Gallery image')"
+            :src="getMediaUrl(slide.file.url)"
+            :alt="slide.file.alternativeText || t('common.ariaGalleryImage', 'Gallery image')"
             width="1200"
             format="webp"
             loading="lazy"
@@ -199,7 +205,7 @@ onUnmounted(stopAutoplay)
       >
         <div class="flex items-center gap-2">
           <button
-            v-for="(_, index) in files"
+            v-for="(_, index) in slides"
             :key="index"
             :aria-label="`${t('common.goToSlide', 'Go to slide')} ${index + 1}`"
             class="relative h-1 rounded-full overflow-hidden transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
@@ -230,11 +236,12 @@ onUnmounted(stopAutoplay)
       </div>
     </div>
 
-    <figcaption
-      v-if="files[currentIndex]?.caption"
-      class="text-sm text-[var(--muted)] text-center mt-4 leading-relaxed max-w-2xl mx-auto"
-    >
-      {{ files[currentIndex]?.caption }}
+    <figcaption v-if="hasFigcaption" aria-live="polite">
+      <span v-if="activeCaption || figureNumber" class="bd-fig-cap">
+        <span v-if="figureNumber" class="bd-fig-n">{{ t('bd.figure.number', { n: formatFigureNumber(figureNumber) }) }}</span>
+        {{ activeCaption }}
+      </span>
+      <BdFigureCredit v-if="activeSlide?.credit" :key="currentIndex" :credit="activeSlide.credit" />
     </figcaption>
   </figure>
 </template>

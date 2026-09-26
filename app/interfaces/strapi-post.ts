@@ -1,4 +1,4 @@
-import type { StrapiBlock } from './strapi-blocks'
+import type { StrapiBlock, StrapiImageCredit } from './strapi-blocks'
 import type { StrapiSEO } from './strapi-seo'
 import type { StrapiReference } from './strapi-reference'
 
@@ -39,6 +39,7 @@ export interface RawStrapiArticle {
   readTime?: number | null
   tags?: string[] | null
   cover?: StrapiMediaRef | null
+  coverCredit?: StrapiImageCredit | null
   category?: StrapiCategoryRef | null
   author?: StrapiAuthorRef | null
   seo?: StrapiSEO | null
@@ -87,6 +88,7 @@ export interface StrapiPost {
   readTime?: number | null
   tags?: string[] | null
   cover?: StrapiMediaRef | null
+  coverCredit?: StrapiImageCredit | null
   category?: StrapiCategoryRef | null
   author?: StrapiAuthorRef | null
   seo?: StrapiSEO
