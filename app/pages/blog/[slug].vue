@@ -221,17 +221,22 @@ useHead({
                 <BlogFediverseBar v-if="federated && post.documentId" :slug="slug" :document-id="post.documentId" />
             </header>
 
-            <figure v-if="coverUrl" class="bd-article-cover">
-                <NuxtImg
-                    :src="coverUrl"
-                    :alt="post.cover?.alternativeText || post.title"
-                    width="1200"
-                    height="675"
-                    format="webp"
-                    loading="eager"
-                    fetchpriority="high"
-                    decoding="async"
-                />
+            <figure v-if="coverUrl" class="bd-article-figure">
+                <div class="bd-article-cover">
+                    <NuxtImg
+                        :src="coverUrl"
+                        :alt="post.cover?.alternativeText || post.title"
+                        width="1200"
+                        height="675"
+                        format="webp"
+                        loading="eager"
+                        fetchpriority="high"
+                        decoding="async"
+                    />
+                </div>
+                <figcaption v-if="post.coverCredit" class="bd-article-cover-credit">
+                    <BdFigureCredit :credit="post.coverCredit" />
+                </figcaption>
             </figure>
             <div v-else class="bd-article-cover bd-article-cover-empty" aria-hidden="true" />
 

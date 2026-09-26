@@ -87,6 +87,39 @@ const blockVueEs = {
   body: '## Primeros pasos\n\nLos composables permiten compartir lógica.[@vue-docs]\n\nLos modelos inventan con confianza.[@ji-2023] RAG los conecta con fuentes externas.[@lewis-2020; @vue-docs]\n\n## Más allá\n\nRecuperar primero y generar después.[@karpukhin-2020]',
 }
 
+const creditSumapaz = {
+  id: 1,
+  kind: 'photo',
+  author: 'Danielfjio',
+  authorUrl: 'https://commons.wikimedia.org/wiki/User:Danielfjio',
+  source: 'Wikimedia Commons',
+  sourceUrl: 'https://commons.wikimedia.org/wiki/File:Paisaje_Sumapaz,_Colombia.jpg',
+  license: 'cc-by-sa-4.0',
+  licenseUrl: null,
+  modifications: 'recortada',
+}
+
+const creditOwnWork = { id: 2, kind: 'illustration', author: 'Alejandro Ramírez', authorUrl: null, source: 'BogDev', sourceUrl: null, license: 'own-work', licenseUrl: null, modifications: null }
+
+const figuresVueEs = [
+  {
+    id: 4,
+    __component: 'shared.media',
+    file: { id: 21, url: '/uploads/sumapaz.png', alternativeText: 'Laguna del Páramo de Sumapaz', width: 1372, height: 772 },
+    caption: 'Una laguna del Páramo de Sumapaz: el agua está ahí, pero alguien tiene que ir a buscarla.',
+    credit: creditSumapaz,
+  },
+  {
+    id: 5,
+    __component: 'shared.slider',
+    files: [],
+    items: [
+      { id: 1, file: { id: 22, url: '/uploads/frailejon.png', alternativeText: 'Frailejones de noche', width: 1372, height: 772 }, caption: 'Cada frailejón atrapa el agua de la niebla.', credit: creditOwnWork },
+      { id: 2, file: { id: 23, url: '/uploads/laguna.png', alternativeText: 'Laguna al amanecer', width: 1372, height: 772 }, caption: 'La misma laguna al amanecer.', credit: creditSumapaz },
+    ],
+  },
+]
+
 const referencesVueEs = [
   { id: 1, key: 'ji-2023', type: 'journal', authors: 'Ji, Z., Lee, N., Frieske, R., Yu, T., Su, D., Xu, Y., et al.', year: '2023', title: 'Survey of Hallucination in Natural Language Generation', container: 'ACM Computing Surveys', volume: '55', issue: '12', pages: null, venueLabel: null, doi: '10.1145/3571730', url: null, accessedAt: '2026-09-11' },
   { id: 2, key: 'lewis-2020', type: 'conference', authors: 'Lewis, P., Perez, E., Piktus, A., Petroni, F., Karpukhin, V., Goyal, N., et al.', year: '2020', title: 'Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks', container: 'Advances in Neural Information Processing Systems', volume: '33', issue: null, pages: null, venueLabel: 'NeurIPS 2020', doi: null, url: 'https://arxiv.org/abs/2005.11401', accessedAt: '2026-09-11' },
@@ -189,8 +222,9 @@ const articles = [
     category: categoryVue,
     author,
     seo: null,
-    blocks: [blockVueEs],
+    blocks: [blockVueEs, ...figuresVueEs],
     references: referencesVueEs,
+    coverCredit: creditOwnWork,
   },
 ]
 

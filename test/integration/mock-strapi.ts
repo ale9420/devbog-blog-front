@@ -356,7 +356,7 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
   const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
     const method = req.method || 'GET'
     const url = new URL(req.url || '/', 'http://127.0.0.1')
-    const query = qs.parse(url.searchParams.toString())
+    const query = qs.parse(url.searchParams.toString(), { depth: 20 })
     const body = method === 'POST' || method === 'PUT' ? await readJsonBody(req) : undefined
 
     recordRequest(requests, method, url.pathname, query, body)

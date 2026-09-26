@@ -347,6 +347,27 @@
       "software": "Software development",
       "linux": "Linux and open source"
     },
+    "figure": {
+      "number": "Fig. {n}",
+      "kind": {
+        "photo": "Photo",
+        "illustration": "Illustration",
+        "diagram": "Diagram",
+        "screenshot": "Screenshot"
+      },
+      "license": {
+        "ownWork": "own work",
+        "cc0": "CC0 1.0",
+        "publicDomain": "public domain",
+        "ccBy4": "CC BY 4.0",
+        "ccBySa4": "CC BY-SA 4.0",
+        "ccByNc4": "CC BY-NC 4.0",
+        "unsplash": "Unsplash License",
+        "permission": "used with permission",
+        "other": "license"
+      },
+      "newTab": "{label} (opens in a new tab)"
+    },
     "callout": {
       "note": "Note",
       "warning": "Warning",

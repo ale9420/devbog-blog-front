@@ -347,6 +347,15 @@ describe('/api/posts/[slug]', () => {
     expect(getNestedValue(upstream[upstream.length - 1].query, ['populate', 'references'])).toBe('true')
   })
 
+  it('asks Strapi for the cover credit and the credit of every figure', async () => {
+    await $fetch('/api/posts/understanding-vue-composables', { query: { locale: 'en' } })
+    const upstream = mock.requests.filter((request) => request.path === '/api/articles')
+    const query = upstream[upstream.length - 1].query
+    expect(getNestedValue(query, ['populate', 'coverCredit'])).toBe('true')
+    expect(getNestedValue(query, ['populate', 'blocks', 'on', 'shared.media', 'populate'])).toEqual({ file: 'true', credit: 'true' })
+    expect(getNestedValue(query, ['populate', 'blocks', 'on', 'shared.slider', 'populate', 'items', 'populate'])).toEqual({ file: 'true', credit: 'true' })
+  })
+
   it('sets revalidation cache headers', async () => {
     let cacheControl = ''
     await $fetch('/api/posts/understanding-vue-composables', {

@@ -98,6 +98,7 @@ export function useStrapi() {
         readTime: response.readTime,
         tags: response.tags,
         cover: response.cover,
+        coverCredit: response.coverCredit,
         category: response.category,
         author: response.author,
         seo: response.seo ?? undefined,

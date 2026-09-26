@@ -347,6 +347,27 @@
       "software": "Desarrollo de software",
       "linux": "Linux y código abierto"
     },
+    "figure": {
+      "number": "Fig. {n}",
+      "kind": {
+        "photo": "Foto",
+        "illustration": "Ilustración",
+        "diagram": "Diagrama",
+        "screenshot": "Captura"
+      },
+      "license": {
+        "ownWork": "obra propia",
+        "cc0": "CC0 1.0",
+        "publicDomain": "dominio público",
+        "ccBy4": "CC BY 4.0",
+        "ccBySa4": "CC BY-SA 4.0",
+        "ccByNc4": "CC BY-NC 4.0",
+        "unsplash": "Licencia de Unsplash",
+        "permission": "usada con permiso",
+        "other": "licencia"
+      },
+      "newTab": "{label} (se abre en una pestaña nueva)"
+    },
     "callout": {
       "note": "Nota",
       "warning": "Aviso",
