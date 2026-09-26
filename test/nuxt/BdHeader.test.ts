@@ -18,7 +18,7 @@ describe('BdHeader', () => {
     expect(wrapper.get('.bd-hud').text()).toContain('4.61°N 74.08°W')
     const chip = wrapper.get('a.bd-chip')
     expect(chip.attributes('href')).toBe('/#fediverso')
-    expect(chip.text()).toContain('@devbog')
+    expect(chip.text()).toContain('@bogdev')
     const search = wrapper.get('button.bd-chip')
     expect(search.attributes('aria-keyshortcuts')).toBe('Control+K Meta+K')
     expect(search.get('kbd').attributes('aria-hidden')).toBe('true')

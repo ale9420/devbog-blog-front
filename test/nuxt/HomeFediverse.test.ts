@@ -13,12 +13,12 @@ describe('HomeFediverse', () => {
     Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
     const wrapper = await mountSuspended(HomeFediverse)
     expect(wrapper.attributes('id')).toBe('fediverso')
-    expect(wrapper.get('.bd-fedi-handle').text()).toBe('@devbog@api.bogdev.com.co')
+    expect(wrapper.get('.bd-fedi-handle').text()).toBe('@bogdev@api.bogdev.com.co')
     await wrapper.get('.bd-fedi-copy button').trigger('click')
     await flushPromises()
-    expect(writeText).toHaveBeenCalledWith('@devbog@api.bogdev.com.co')
+    expect(writeText).toHaveBeenCalledWith('@bogdev@api.bogdev.com.co')
     expect(wrapper.get('.bd-fedi-copy button').text()).toBe('Copied ✓')
-    expect(wrapper.get('.bd-fedi-copy [aria-live="polite"]').text()).toBe('@devbog@api.bogdev.com.co copied')
+    expect(wrapper.get('.bd-fedi-copy [aria-live="polite"]').text()).toBe('@bogdev@api.bogdev.com.co copied')
   })
 
   it('explains invalid instances and opens the follow flow for valid ones', async () => {
@@ -51,6 +51,6 @@ describe('HomeFediverse', () => {
   it('lists the three steps', async () => {
     const wrapper = await mountSuspended(HomeFediverse)
     expect(wrapper.findAll('.bd-fedi-step-title').map(step => step.text())).toEqual(['Follow', 'Read it in your timeline', 'Reply, like or boost'])
-    expect(wrapper.get('.bd-fedi-step-text').text()).toContain('@devbog@api.bogdev.com.co')
+    expect(wrapper.get('.bd-fedi-step-text').text()).toContain('@bogdev@api.bogdev.com.co')
   })
 })

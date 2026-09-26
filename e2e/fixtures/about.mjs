@@ -177,7 +177,7 @@ export function aboutBlocks(locale) {
       lead: c.profile.lead,
       facts: [
         ...c.profile.facts.map(([label, value], index) => fact(index + 1, label, value)),
-        fact(9, c.profile.song, '@devbog@api.bogdev.com.co', true),
+        fact(9, c.profile.song, '@bogdev@api.bogdev.com.co', true),
       ],
       links: [link(1, c.profile.read, '/blog', 'primary'), link(2, c.profile.projects, '#projects', 'secondary')],
       photo: null,
@@ -218,7 +218,7 @@ export function aboutBlocks(locale) {
           ],
           featured: true,
           visual: 'fediverse',
-          visualCaption: 'ActivityPub · @devbog@api.bogdev.com.co',
+          visualCaption: 'ActivityPub · @bogdev@api.bogdev.com.co',
         },
         {
           id: 2,
@@ -255,7 +255,7 @@ export function aboutBlocks(locale) {
       eyebrow: c.contact.eyebrow,
       title: c.contact.title,
       fediverseLabel: c.contact.fediverseLabel,
-      fediverseHandle: '@devbog@api.bogdev.com.co',
+      fediverseHandle: '@bogdev@api.bogdev.com.co',
       fediverseLink: link(1, c.contact.follow, '/#fediverso'),
       extraLink: link(2, c.contact.coffee, 'https://www.buymeacoffee.com/ale9420'),
       socials: [

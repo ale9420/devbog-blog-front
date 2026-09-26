@@ -151,7 +151,7 @@
     "aside": "Más del blog",
     "recent": "Artículos recientes",
     "rss": "RSS · feed completo",
-    "fediverse": "Seguir {'@'}devbog en el fediverso",
+    "fediverse": "Seguir {'@'}bogdev en el fediverso",
     "view": {
       "label": "Vista",
       "grid": "Cuadrícula",
@@ -412,7 +412,7 @@
         "es": "Español",
         "en": "English"
       },
-      "fediverse": "{'@'}devbog en el fediverso",
+      "fediverse": "{'@'}bogdev en el fediverso",
       "read": "Leído {percent} %",
       "hud": {
         "city": "Bogotá",
@@ -468,7 +468,7 @@
       "subscribe": "Suscribirse",
       "subscribeSummary": "RSS · Fediverso",
       "rss": "RSS feed",
-      "fediverse": "Fediverso · {'@'}devbog",
+      "fediverse": "Fediverso · {'@'}bogdev",
       "newsletter": "Newsletter",
       "coffee": "Invitarme un café",
       "madeIn": "Hecho en Bogotá, Colombia",

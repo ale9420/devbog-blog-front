@@ -165,7 +165,7 @@ Un solo componente `BdHeader` en `layouts/default.vue`, reemplaza `LayoutHeader`
 Eventos: `search` (abre la paleta ⌘K), `menu` (abre la hoja inferior en móvil). Tema e idioma los resuelve el propio header con `useTheme` y `useI18n`.
 
 - **Escritorio** (≥ 768 px): `BdNavBar` de 72 px (logo 30 px + «BogDev», Inicio · Blog · Acerca de, selector ES/EN) y debajo una franja de 64 px:
-  - Variante sitio: `◆ BOGOTÁ 4.61°N 74.08°W 2.640 M S.N.M.` a la izquierda; chip `◆ @devbog` (enlace a la sección fediverso del inicio), botón `Buscar ⌘K` y segmento `Noche | Día` a la derecha.
+  - Variante sitio: `◆ BOGOTÁ 4.61°N 74.08°W 2.640 M S.N.M.` a la izquierda; chip `◆ @bogdev` (enlace a la sección fediverso del inicio), botón `Buscar ⌘K` y segmento `Noche | Día` a la derecha.
   - Variante lectura: barra de progreso de 2 px en chillon con un ave aleteando en la punta (`animation-timeline: scroll(root)`), migas `INICIO / BLOG / <categoría>`, `LEÍDO N %` y segmento `Noche | Día`.
 - **Móvil** (< 768 px): barra de 64 px fija con `position: sticky`: logo 28 px + marca, botón Buscar y botón Menú (iconos de trazo, `aria-label`).
 - **Tab bar inferior** (móvil, parte del layout): fija, 64 px, Inicio · Blog · Buscar · Menú; pestaña activa con borde superior mirla.
@@ -210,14 +210,14 @@ Ficha de campo: «Hola, soy Alejandro.», datos (nombre, hábitat, especialidad,
 
 ## 6. Fediverso
 
-El backend federa el blog como `@devbog@api.bogdev.com.co` (fases 0–4 verificadas; ver `docs/FEDIVERSE.md` del backend). El frontend solo lee.
+El backend federa el blog como `@bogdev@api.bogdev.com.co` (fases 0–4 verificadas; ver `docs/FEDIVERSE.md` del backend). El frontend solo lee.
 
 ```mermaid
 sequenceDiagram
     participant L as Lector en Mastodon
     participant B as Strapi + Fedify
     participant F as Frontend Nuxt
-    L->>B: Follow @devbog
+    L->>B: Follow @bogdev
     B-->>L: Accept
     B->>L: Create(Article) al publicar
     L->>B: Reply / Like / Announce
@@ -229,7 +229,7 @@ sequenceDiagram
 | Elemento de UI | Dato o acción | Estado |
 | --- | --- | --- |
 | Tarjeta «anillo de identificación» (Inicio, Acerca de, móvil) | Handle fijo + botón Copiar | NUEVO |
-| «Seguir desde tu instancia» | Campo de instancia; abre `https://<instancia>/authorize_interaction?uri=@devbog@api.bogdev.com.co` (convención de Mastodon); validar que la instancia sea un dominio | NUEVO |
+| «Seguir desde tu instancia» | Campo de instancia; abre `https://<instancia>/authorize_interaction?uri=@bogdev@api.bogdev.com.co` (convención de Mastodon); validar que la instancia sea un dominio | NUEVO |
 | Barra «En el fediverso» del artículo | `GET /api/fediverse/articles/:documentId/stats` → `{ likes, boosts }`; 404 o error = ocultar la barra | NUEVO |
 | «Responder desde el fediverso» | Muestra y copia `https://api.bogdev.com.co/fediverse/articles/:documentId`; abre `authorize_interaction` con esa URL | NUEVO |
 | Etiqueta ◆ FEDIVERSO en comentarios | Campo `fediverseActorHandle`; enlace a la nota original con `fediverseUri` | NUEVO |
