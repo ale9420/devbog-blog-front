@@ -10,14 +10,13 @@
       "title": "Exploring privacy, DIY, AI, software and Linux.",
       "subtitle": "Technical notes written from Bogotá, 2,640 meters above sea level.",
       "read": "Read articles",
-      "figure": "Fig. 01 — Bogotá savanna · Flight paths",
-      "figureShort": "Fig. 01 — Flight paths",
-      "species": {
-        "software": "Thrush · T. fuscater",
-        "ia": "Violetear · C. coruscans",
-        "linux": "Blackbird · C. i. bogotensis",
-        "privacidad": "Flowerpiercer · D. cyanea",
-        "diy": "Swallow · P. cyanoleuca"
+      "place": "Sumapaz NP · Frailejones",
+      "figure": {
+        "caption": "Fig. 01 — Sumapaz National Park · Photo: {author} · {license} · Cropped and color graded",
+        "author": "Danielfjio · Wikimedia Commons",
+        "authorAria": "Photo by Danielfjio · Wikimedia Commons (opens in a new tab)",
+        "license": "CC BY-SA 4.0",
+        "licenseAria": "License CC BY-SA 4.0 (opens in a new tab)"
       }
     },
     "latest": {

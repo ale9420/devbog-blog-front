@@ -140,6 +140,7 @@ textarea.bd-field{height:auto;min-height:120px;padding:12px 16px;line-height:26p
 .bd-textbtn{background:transparent;border:0;padding:0;min-height:44px;color:var(--ink-muted);font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
 .bd-textbtn:hover{color:var(--ink)}
 @media (prefers-reduced-motion:reduce){.bd-root *,.bd-root{animation:none!important;transition:none!important}::view-transition-new(root){animation:none}}
+.bd-noche .bd-img-dia,.bd-dia .bd-img-noche{display:none}
 </style>
 </helmet>
 <div class="bd-root {{themeClass}} {{flockClass}}" style="width: 1440px; height: 5720px; position: relative; overflow: hidden; display: flex; flex-direction: column">
@@ -147,32 +148,14 @@ textarea.bd-field{height:auto;min-height:120px;padding:12px 16px;line-height:26p
 <dc-import name="Header" tema="{{footerTema}}" activa="inicio" lang="{{lang}}" on-lang="{{setLang}}" on-search="{{openSearch}}" on-noche="{{toNoche}}" on-dia="{{toDia}}" hint-size="100%,136px"></dc-import>
 </div>
 <section style="position: relative; min-height: 720px; padding: 112px 120px 96px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 32px; align-content: center">
-<div aria-hidden="true" style="position: absolute; right: 0; top: 0; width: 760px; height: 720px; overflow: hidden; z-index: 1">
-<svg width="760" height="720" viewBox="0 0 760 720" style="display: block; position: absolute; inset: 0">
-<sc-for list="{{contours}}" as="c" hint-placeholder-count="14">
-<path d="{{c.d}}" fill="none" stroke="{{c.stroke}}" stroke-opacity="{{c.op}}" stroke-width="1"></path>
-</sc-for>
+<div style="position: absolute; right: 0; top: 0; width: 760px; height: 720px; overflow: hidden; z-index: 1">
+<img aria-hidden="true" class="bd-img-noche" src="/_blob/8ad75815b83436365d2285d075c8fa2e" alt="" width="1520" height="1440" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: right top"><img aria-hidden="true" class="bd-img-dia" src="/_blob/2cc9f2f2fdbd9eb176a57dd158acb873" alt="" width="1520" height="1440" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: right top">
+<svg aria-hidden="true" width="760" height="720" viewBox="0 0 760 720" style="display: block; position: absolute; inset: 0">
+<g font-family="JetBrains Mono, monospace" font-size="11" letter-spacing=".08em" fill="var(--ink-muted)"><path d="M458 108 H474 M466 100 V116" stroke="var(--ink-muted)" stroke-width="1"></path><rect x="478" y="105" width="6" height="6" fill="var(--chillon)"></rect><text x="490" y="112">PNN SUMAPAZ · FRAILEJONES</text></g>
+
 <path class="bd-route" d="M -40 560 C 140 420, 300 520, 440 360 S 640 180, 820 120" fill="none" stroke="var(--chillon)" stroke-opacity=".55" stroke-width="1.2"></path>
 <path class="bd-route" d="M -40 260 C 120 200, 260 320, 400 250 S 620 90, 820 170" fill="none" stroke="var(--chillon)" stroke-opacity=".35" stroke-width="1.2"></path>
 <path class="bd-route" d="M 120 780 C 220 600, 380 640, 500 500 S 700 400, 820 420" fill="none" stroke="var(--chillon)" stroke-opacity=".35" stroke-width="1.2"></path>
-<g stroke="var(--ink-muted)" stroke-width="1">
-<path d="M432 360 L448 360 M440 352 L440 368"></path>
-<path d="M392 250 L408 250 M400 242 L400 258"></path>
-<path d="M492 500 L508 500 M500 492 L500 508"></path>
-</g>
-<rect x="452" y="364" width="6" height="6" fill="var(--mirla)"></rect>
-<rect x="412" y="254" width="6" height="6" fill="var(--chillon)"></rect>
-<rect x="512" y="504" width="6" height="6" fill="var(--monjita)"></rect>
-<path d="M607 202 L623 202 M615 194 L615 210 M652 400 L668 400 M660 392 L660 408" stroke="var(--ink-muted)" stroke-width="1"></path>
-<rect x="596" y="206" width="6" height="6" fill="var(--pinchaflor)"></rect>
-<rect x="641" y="404" width="6" height="6" fill="var(--golondrina)"></rect>
-<g font-family="JetBrains Mono, monospace" font-size="11" letter-spacing=".08em" fill="var(--ink-muted)">
-<text x="464" y="371">MIRLA · T. FUSCATER</text>
-<text x="424" y="261">CHILLÓN · C. CORUSCANS</text>
-<text x="524" y="511">MONJITA · C. I. BOGOTENSIS</text>
-<text x="588" y="213" text-anchor="end">PINCHAFLOR · D. CYANEA</text>
-<text x="633" y="411" text-anchor="end">GOLONDRINA · P. CYANOLEUCA</text>
-</g>
 </svg>
 <div class="bd-bird bd-r1 bd-t0 bd-w0" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
 <div class="bd-bird bd-r1 bd-t1 bd-w1" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
@@ -183,7 +166,7 @@ textarea.bd-field{height:auto;min-height:120px;padding:12px 16px;line-height:26p
 <div class="bd-bird bd-r3 bd-t0 bd-w0" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
 <div class="bd-bird bd-r3 bd-t1 bd-w1" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
 <div class="bd-bird bd-r3 bd-t2 bd-w2" aria-hidden="true"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 9 Q6 1 11 8 Q16 1 21 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
-<div class="bd-meta" style="position: absolute; right: 120px; bottom: 32px; color: var(--ink-muted); font-size: 12px">FIG. 01 — SABANA DE BOGOTÁ · RUTAS DE VUELO</div>
+<div class="bd-meta" style="position: absolute; right: 120px; bottom: 32px; max-width: 520px; text-align: right; line-height: 18px; padding: 6px 10px; background: var(--surface); border: 1px solid var(--line); color: var(--ink-muted); font-size: 12px">FIG. 01 — PNN SUMAPAZ · FOTO: <a href="https://commons.wikimedia.org/wiki/File:Paisaje_Sumapaz,_Colombia.jpg" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline; text-underline-offset: 2px">DANIELFJIO · WIKIMEDIA COMMONS</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" target="_blank" rel="license noopener noreferrer" style="color: inherit; text-decoration: underline; text-underline-offset: 2px">CC BY-SA 4.0</a> · RECORTADA Y ETALONADA</div>
 </div>
 <div style="grid-column: span 7; position: relative; z-index: 2; display: flex; flex-direction: column; gap: 32px">
 <div class="bd-eyebrow" style="color: var(--ink-muted)">Bitácora técnica · 02 artículos</div>

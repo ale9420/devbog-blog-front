@@ -12,8 +12,6 @@
     "preview": "nuxt preview",
     "tokens": "node scripts/build-tokens.mjs",
     "tokens:check": "node scripts/build-tokens.mjs --check",
-    "contours": "node scripts/build-contours.mjs",
-    "contours:check": "node scripts/build-contours.mjs --check",
     "postinstall": "nuxt prepare",
     "typecheck": "nuxi typecheck",
     "lint": "eslint .",
