@@ -96,3 +96,33 @@ test('leaves the fediverse block out of non-federated articles', async ({ page }
   await page.goto('/blog/understanding-vue-composables', { waitUntil: 'networkidle' })
   await expect(page.locator('.bd-fedi-bar')).toHaveCount(0)
 })
+
+test('jumps from a citation to its reference and back without hiding under the header', async ({ page }) => {
+  await page.goto('/es/blog/guia-vue-composables', { waitUntil: 'networkidle' })
+  const cites = page.locator('.bd-prose a.bd-cite')
+  await expect(cites).toHaveText(['[1]', '[2]', '[3]', '[1]', '[4]'])
+  const references = page.getByRole('region', { name: 'Referencias' })
+  await expect(references.locator('li.bd-ref')).toHaveCount(4)
+  await expect(references.getByText('4 fuentes · APA 7')).toBeVisible()
+  await expect(references.getByText('Consultadas el 11.09.2026.')).toBeVisible()
+  await expect(page.getByRole('navigation', { name: 'En este artículo' }).getByRole('link', { name: 'Referencias' })).toHaveAttribute('href', '#references')
+
+  await page.getByRole('link', { name: 'Referencia 2', exact: true }).focus()
+  await page.keyboard.press('Enter')
+  await expect(page).toHaveURL(/#ref-2$/)
+  const reference = page.locator('#ref-2')
+  const headerBottom = await page.locator('header').first().evaluate(header => header.getBoundingClientRect().bottom)
+  expect((await reference.boundingBox())!.y).toBeGreaterThanOrEqual(headerBottom)
+
+  await reference.getByRole('link', { name: 'Volver a la cita 2 en el texto' }).focus()
+  await page.keyboard.press('Enter')
+  await expect(page).toHaveURL(/#cite-2$/)
+  expect((await page.locator('#cite-2').boundingBox())!.y).toBeGreaterThanOrEqual(headerBottom)
+})
+
+test('leaves articles without references unchanged', async ({ page }) => {
+  await page.goto('/blog/understanding-vue-composables')
+  await expect(page.locator('h1')).toHaveText('Understanding Vue Composables')
+  await expect(page.locator('#references')).toHaveCount(0)
+  await expect(page.locator('.bd-cite')).toHaveCount(0)
+})

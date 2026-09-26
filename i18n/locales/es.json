@@ -201,6 +201,15 @@
     "authorBio": "Explorando privacidad, DIY, IA, software y Linux desde Bogotá.",
     "keepReading": "Sigue leyendo",
     "alsoIn": "También en {category}",
+    "references": {
+      "title": "Referencias",
+      "count": "{n} fuente · APA 7 | {n} fuentes · APA 7",
+      "citeLabel": "Referencia {n}",
+      "back": "volver al texto",
+      "backLabel": "Volver a la cita {n} en el texto",
+      "note": "Los enlaces abren la fuente original en una pestaña nueva.",
+      "accessed": "Consultadas el {date}."
+    },
     "fediverse": {
       "label": "En el fediverso",
       "likes": "me gusta | me gusta",

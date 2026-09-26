@@ -1,5 +1,6 @@
 import type { StrapiBlock } from './strapi-blocks'
 import type { StrapiSEO } from './strapi-seo'
+import type { StrapiReference } from './strapi-reference'
 
 export interface StrapiMediaRef {
   id?: number
@@ -43,6 +44,7 @@ export interface RawStrapiArticle {
   seo?: StrapiSEO | null
   snippet?: string | null
   blocks?: StrapiBlock[] | null
+  references?: StrapiReference[] | null
 }
 
 export interface PostListItem {
@@ -89,4 +91,5 @@ export interface StrapiPost {
   author?: StrapiAuthorRef | null
   seo?: StrapiSEO
   blocks: StrapiBlock[]
+  references: StrapiReference[]
 }

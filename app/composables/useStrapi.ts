@@ -102,6 +102,7 @@ export function useStrapi() {
         author: response.author,
         seo: response.seo ?? undefined,
         blocks: response.blocks ?? [],
+        references: response.references ?? [],
       };
       return post;
     });
