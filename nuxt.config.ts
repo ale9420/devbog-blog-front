@@ -125,7 +125,7 @@ export default defineNuxtConfig({
     public: {
       strapiUrl: process.env.STRAPI_URL || "https://api.bogdev.com.co",
       siteUrl: process.env.SITE_URL || "https://bogdev.com.co",
-      fediverseHandle: "@devbog@api.bogdev.com.co",
+      fediverseHandle: "@bogdev@api.bogdev.com.co",
       fediverseActorUrl: "https://api.bogdev.com.co/fediverse/user/devbog",
       fediverseArticlesUrl: "https://api.bogdev.com.co/fediverse/articles",
       fediverseLocale: Locale.SpanishColombia as string,

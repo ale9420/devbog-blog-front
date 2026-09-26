@@ -57,7 +57,7 @@ const groups = computed<PaletteGroup[]>(() => {
     .filter(option => matchesQuery(option.label, trimmed.value))
   const actionOptions: PaletteOption[] = [
     { id: 'action-theme', kind: 'action', label: t(theme.value === 'noche' ? 'bd.search.toDia' : 'bd.search.toNoche'), action: 'theme' },
-    { id: 'action-fediverse', kind: 'action', label: t('bd.search.fediverse'), hint: '@devbog', action: 'fediverse' },
+    { id: 'action-fediverse', kind: 'action', label: t('bd.search.fediverse'), hint: '@bogdev', action: 'fediverse' },
   ]
   return [
     { kind: 'article' as const, options: articleOptions },

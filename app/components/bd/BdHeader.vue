@@ -118,7 +118,7 @@ onMounted(() => {
         </p>
         <div class="bd-strip-actions">
           <NuxtLink :to="`${localizePath('/')}#fediverso`" class="bd-chip" :aria-label="t('bd.header.fediverse')">
-            <span class="bd-hud-mark" aria-hidden="true">◆</span> @devbog
+            <span class="bd-hud-mark" aria-hidden="true">◆</span> @bogdev
           </NuxtLink>
           <button
             type="button"
