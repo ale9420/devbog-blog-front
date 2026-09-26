@@ -174,7 +174,8 @@ Eventos: `search` (abre la paleta ⌘K), `menu` (abre la hoja inferior en móvil
 
 ### 5.2 Inicio (`Main.dc.html`, `Movil.dc.html`)
 
-- Hero: «Explorando privacidad, DIY, IA, software y Linux.» en display-xl ancho; a la derecha curvas de nivel de la sabana en SVG, 3 rutas de vuelo y 9 aves con `offset-path` que aletean animando `d`. Etiquetas de las 5 aves con su nombre científico.
+- Hero: «Explorando privacidad, DIY, IA, software y Linux.» en display-xl ancho; a la derecha una foto del PNN Sumapaz (laguna y frailejones) en dos versiones etalonadas, una para Noche con luna y otra para Día con niebla, que se funden con el fondo por la izquierda y por arriba. Encima, 3 rutas de vuelo y 9 aves con `offset-path` que aletean animando `d`, y en escritorio la marca «PNN Sumapaz · Frailejones».
+- Pie del hero: «Fig. 01 — PNN Sumapaz · Foto: Danielfjio · Wikimedia Commons · CC BY-SA 4.0 · Recortada y etalonada», con enlaces a la foto original y a la licencia. Va en una caja `surface` con borde `line` para que el texto mantenga el contraste sobre la foto. Las versiones recortadas son obra derivada y se publican con la misma licencia (CC BY-SA 4.0).
 - Artículo destacado (`BdPostCard featured`).
 - Últimos artículos con filtros por categoría (6 chips con contador) y estado vacío con ave posada.
 - Guía de campo: Privacidad y DIY como pilares grandes; IA, Software y Linux debajo, cada uno con su ave en línea fina. En móvil, carrusel con scroll-snap.
