@@ -21,6 +21,8 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  const locale = commentLocale(body.locale)
+
   const url = `${config.public.strapiUrl}/api/comments/${relation}`
 
   const headers: Record<string, string> = {
@@ -34,7 +36,7 @@ export default defineEventHandler(async (event) => {
     const response = await $fetch<Comment>(url, {
       method: 'POST',
       headers,
-      body
+      body: { ...body, locale }
     })
     return toPublicComment(response)
   } catch (error: unknown) {
