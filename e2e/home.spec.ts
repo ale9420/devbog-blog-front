@@ -53,11 +53,45 @@ test('follows the blog from an instance', async ({ page, context }) => {
   await expect(section.locator('[aria-live="polite"]')).toHaveText('@bogdev@api.bogdev.com.co copied')
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('@bogdev@api.bogdev.com.co')
 
-  await section.getByRole('textbox', { name: 'Or follow from your instance' }).fill('@ana@Mastodon.Social')
+  await section.getByRole('textbox', { name: 'Type the server where you have your account' }).fill('@ana@Mastodon.Social')
   const popupPromise = page.waitForEvent('popup')
   await section.getByRole('button', { name: 'Follow' }).click()
   const popup = await popupPromise
   expect(popup.url()).toBe('https://mastodon.social/authorize_interaction?uri=https%3A%2F%2Fapi.bogdev.com.co%2Ffediverse%2Fuser%2Fdevbog')
+})
+
+test('explains the fediverse on desktop with the cards side by side', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/', { waitUntil: 'networkidle' })
+  const section = page.locator('#fediverso')
+  await expect(section.getByRole('img', { name: 'Mastodon logo' })).toBeVisible()
+  const cards = section.getByRole('region', { name: 'How the fediverse works' }).getByRole('article')
+  await expect(cards).toHaveCount(3)
+  const tops = await cards.evaluateAll(items => items.map(item => Math.round(item.getBoundingClientRect().top)))
+  expect(new Set(tops).size).toBe(1)
+  await expect(section.getByText('How it works', { exact: true })).toBeHidden()
+  await expect(section.getByRole('link', { name: 'Pick a server on joinmastodon.org (opens in a new tab)' })).toHaveAttribute('href', 'https://joinmastodon.org/servers')
+  await expect(section.locator('.bd-fedi-glossary dt')).toHaveText(['Fediverse', 'Server or instance', 'Follow', 'Boost'])
+})
+
+test('slides through the fediverse cards on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/es', { waitUntil: 'networkidle' })
+  const section = page.locator('#fediverso')
+  await expect(section.getByRole('img', { name: 'Logo de Mastodon' })).toBeVisible()
+  await expect(section.getByText('Cómo funciona', { exact: true })).toBeVisible()
+  const track = section.getByRole('region', { name: 'Cómo funciona el fediverso' })
+  await track.scrollIntoViewIfNeeded()
+  const last = track.getByRole('article').last()
+  await expect(last).not.toBeInViewport()
+  await track.focus()
+  await expect(track).toBeFocused()
+  for (let press = 0; press < 12; press++) await page.keyboard.press('ArrowRight')
+  await expect.poll(() => track.evaluate(element => element.scrollLeft)).toBeGreaterThan(0)
+  await last.scrollIntoViewIfNeeded()
+  await expect(last).toBeInViewport({ ratio: 0.9 })
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
+  await expect(section.getByRole('link', { name: /joinmastodon\.org/ })).toHaveAttribute('href', 'https://joinmastodon.org/es/servers')
 })
 
 test('reaches the fediverse section from the header chip', async ({ page }) => {

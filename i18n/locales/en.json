@@ -77,41 +77,92 @@
       "description": "The full feed, with no middlemen or algorithms."
     },
     "fediverse": {
-      "eyebrow": "Fediverse · ActivityPub",
+      "eyebrow": "Fediverse · free social networks",
       "title": "Follow the blog from Mastodon",
-      "intro": "BogDev has its own account on the fediverse. New articles reach your timeline, and whatever you reply from there shows up here as a comment.",
-      "ring": "Identification ring",
-      "copy": "Copy",
-      "copied": "Copied ✓",
-      "copyAria": "Copy the account {handle}",
-      "copiedAnnounce": "{handle} copied",
-      "searchIt": "Search for it on your instance and follow",
-      "instanceLabel": "Or follow from your instance",
+      "intro": "Mastodon is a social network like X or Threads, but nobody owns it: it is made of thousands of independent servers that talk to each other. BogDev has its own account there, and you can follow it to get every new article.",
+      "introShort": "Mastodon is a social network like X or Threads, but nobody owns it: it is made of thousands of servers that talk to each other. BogDev has its account there.",
+      "logo": "Mastodon logo",
+      "how": "How it works",
+      "swipe": "Swipe →",
+      "cardsLabel": "How the fediverse works",
+      "cards": {
+        "mail": {
+          "title": "It works like email",
+          "text": "With an email from one provider you can write to someone who uses another. It is the same here: from an account on any server you follow accounts on other servers.",
+          "yours": "Your server",
+          "other": "Another server"
+        },
+        "address": {
+          "title": "Your address has two parts",
+          "text": "The name comes first, then the server where the account lives. The blog's is {user} on the server {server}.",
+          "caption": "Like an email: name {'@'} domain",
+          "user": "User",
+          "server": "Server it lives on"
+        },
+        "apps": {
+          "title": "Many apps, one network",
+          "text": "Mastodon is the best known, but Pixelfed, PeerTube, Misskey and GoToSocial talk to each other too. That shared network is called the fediverse."
+        }
+      },
+      "join": {
+        "eyebrow": "Never used Mastodon?",
+        "title": "Create a free account in 3 steps",
+        "steps": [
+          "Pick a server on joinmastodon.org. Any will do: from every server you can follow everyone.",
+          "Sign up with your email. It is free and ad-free.",
+          "Come back here, type your server and press “Follow”."
+        ],
+        "link": "Pick a server on joinmastodon.org",
+        "linkAria": "Pick a server on joinmastodon.org (opens in a new tab)"
+      },
+      "account": {
+        "eyebrow": "Already have an account?",
+        "title": "Follow the blog in one click"
+      },
+      "instanceLabel": "Type the server where you have your account",
       "follow": "Follow",
       "hint": "Type your instance's domain, for example mastodon.social",
       "willOpen": "{instance} will open to confirm",
       "errorEmpty": "Type your instance's domain, for example mastodon.social",
       "errorInvalid": "That does not look like a domain. Type just your instance's, for example mastodon.social",
-      "compat": "Works directly with Mastodon. On Pleroma, Misskey or GoToSocial, search for the account from your instance.",
-      "steps": {
+      "copyIntro": "Or copy the address and search for it in your app:",
+      "copy": "Copy",
+      "copied": "Copied ✓",
+      "copyAria": "Copy the account {handle}",
+      "copiedAnnounce": "{handle} copied",
+      "after": {
+        "title": "What happens after you follow",
         "follow": {
           "title": "Follow",
-          "text": "Search for {handle} from any Mastodon account or other ActivityPub network."
+          "text": "Press “Follow” with your server or search for {handle} in your app."
         },
         "read": {
-          "title": "Read it in your timeline",
-          "text": "Every published article arrives as a card with its title, cover image and a link to the blog."
+          "title": "Read it in your home feed",
+          "text": "Every new article arrives as a post with its title, image and a link to the blog."
         },
         "reply": {
-          "title": "Reply, like or boost",
-          "text": "Your replies reach the blog as comments and are published after moderation. Likes and boosts add up on the article counter."
+          "title": "Reply or like it",
+          "text": "Your replies show up here as comments after review. Likes and boosts add up on the counter."
         }
       },
-      "flow": {
-        "label": "Flow: articles go from BogDev to your instance; replies, likes and boosts come back to the blog",
-        "instance": "YOUR INSTANCE",
-        "articles": "ARTICLES →",
-        "back": "← REPLIES · LIKES · BOOSTS"
+      "glossary": {
+        "title": "Quick glossary",
+        "fediverse": {
+          "term": "Fediverse",
+          "text": "All the free social networks that connect with each other."
+        },
+        "instance": {
+          "term": "Server or instance",
+          "text": "The community where you create your account. You can pick any."
+        },
+        "follow": {
+          "term": "Follow",
+          "text": "Get in your home feed what an account publishes."
+        },
+        "boost": {
+          "term": "Boost",
+          "text": "Share a post with your followers, like a retweet."
+        }
       }
     }
   },

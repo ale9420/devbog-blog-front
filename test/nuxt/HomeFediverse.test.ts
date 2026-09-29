@@ -48,9 +48,51 @@ describe('HomeFediverse', () => {
     expect((input.element as HTMLInputElement).value).toBe('fosstodon.org')
   })
 
-  it('lists the three steps', async () => {
+  it('shows the Mastodon logo with an accessible name and its own gradient', async () => {
     const wrapper = await mountSuspended(HomeFediverse)
-    expect(wrapper.findAll('.bd-fedi-step-title').map(step => step.text())).toEqual(['Follow', 'Read it in your timeline', 'Reply, like or boost'])
+    const logo = wrapper.get('.bd-masto-logo')
+    expect(logo.attributes('role')).toBe('img')
+    expect(logo.attributes('aria-label')).toBe('Mastodon logo')
+    const gradient = logo.get('linearGradient').attributes('id')
+    expect(gradient).toBeTruthy()
+    expect(logo.find(`path[fill="url(#${gradient})"]`).exists()).toBe(true)
+    expect(wrapper.get('h2').text()).toBe('Follow the blog from Mastodon')
+  })
+
+  it('explains the fediverse with three cards that use the configured address', async () => {
+    const wrapper = await mountSuspended(HomeFediverse)
+    const cards = wrapper.get('[role="region"][aria-label="How the fediverse works"]')
+    expect(cards.findAll('h3').map(title => title.text())).toEqual(['It works like email', 'Your address has two parts', 'Many apps, one network'])
+    expect(cards.findAll('svg').every(svg => svg.attributes('aria-hidden') === 'true')).toBe(true)
+    expect(cards.text()).toContain('@bogdev')
+    expect(cards.text()).toContain('The blog\'s is @bogdev on the server api.bogdev.com.co.')
+    expect(cards.text()).not.toContain('devbog')
+  })
+
+  it('points to joinmastodon.org in the page language', async () => {
+    const link = (await mountSuspended(HomeFediverse)).get('.bd-fedi-join a')
+    expect(link.attributes()).toMatchObject({
+      href: 'https://joinmastodon.org/servers',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+      'aria-label': 'Pick a server on joinmastodon.org (opens in a new tab)',
+    })
+
+    const spanish = await mountSuspended(HomeFediverse, { route: '/es' })
+    expect(spanish.get('.bd-fedi-join a').attributes('href')).toBe('https://joinmastodon.org/es/servers')
+    expect(spanish.get('.bd-masto-logo').attributes('aria-label')).toBe('Logo de Mastodon')
+    await useNuxtApp().$i18n.setLocale('en')
+  })
+
+  it('lists the steps to join, what happens after following and a glossary', async () => {
+    const wrapper = await mountSuspended(HomeFediverse)
+    expect(wrapper.findAll('.bd-fedi-join li').map(step => step.text())).toEqual([
+      '01Pick a server on joinmastodon.org. Any will do: from every server you can follow everyone.',
+      '02Sign up with your email. It is free and ad-free.',
+      '03Come back here, type your server and press “Follow”.',
+    ])
+    expect(wrapper.findAll('.bd-fedi-step-title').map(step => step.text())).toEqual(['Follow', 'Read it in your home feed', 'Reply or like it'])
     expect(wrapper.get('.bd-fedi-step-text').text()).toContain('@bogdev@api.bogdev.com.co')
+    expect(wrapper.findAll('.bd-fedi-glossary dt').map(term => term.text())).toEqual(['Fediverse', 'Server or instance', 'Follow', 'Boost'])
   })
 })
