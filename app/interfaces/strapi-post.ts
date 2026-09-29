@@ -18,6 +18,19 @@ export interface StrapiCategoryRef {
   slug?: string | null
 }
 
+export interface StrapiTagRef {
+  id?: number
+  documentId?: string
+  name: string
+  slug: string
+}
+
+export interface TagCount {
+  slug: string
+  name: string
+  count: number
+}
+
 export interface StrapiAuthorRef {
   id?: number
   documentId?: string
@@ -37,7 +50,7 @@ export interface RawStrapiArticle {
   createdAt?: string | null
   locale?: string | null
   readTime?: number | null
-  tags?: string[] | null
+  tags?: StrapiTagRef[] | null
   cover?: StrapiMediaRef | null
   coverCredit?: StrapiImageCredit | null
   category?: StrapiCategoryRef | null
@@ -56,7 +69,7 @@ export interface PostListItem {
   description?: string | null
   publishedAt?: string | null
   readTime?: number | null
-  tags?: string[] | null
+  tags?: StrapiTagRef[] | null
   cover?: StrapiMediaRef | null
   category?: StrapiCategoryRef | null
   author?: StrapiAuthorRef | null
@@ -86,7 +99,7 @@ export interface StrapiPost {
   content?: string | null
   publishedAt?: string | null
   readTime?: number | null
-  tags?: string[] | null
+  tags?: StrapiTagRef[] | null
   cover?: StrapiMediaRef | null
   coverCredit?: StrapiImageCredit | null
   category?: StrapiCategoryRef | null

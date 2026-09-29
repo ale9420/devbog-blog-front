@@ -6,7 +6,7 @@ import type {
   PostListItem,
   StrapiPost,
   SearchPostResult, StrapiPaginatedResponse, PaginationMeta 
-, Locale, CategoryCount, BlogSort} from "~/interfaces";
+, Locale, CategoryCount, BlogSort, TagCount} from "~/interfaces";
 import { defaultLocale } from "~/interfaces";
 
 /**
@@ -129,6 +129,20 @@ export function useStrapi() {
     })
   }
 
+  function fetchTags(locale?: Locale) {
+    return useAsyncData(`tags-${locale || defaultLocale}`, async () => {
+      const query = qs.stringify({
+        locale: locale || undefined,
+      }, { skipNulls: true })
+
+      return $fetch<TagCount[]>(
+        `/api/tags?${query}`,
+      )
+    }, {
+      default: () => [],
+    })
+  }
+
   function fetchAbout(locale?: Locale) {
     return useAsyncData<StrapiAbout>(
       `about-${locale || defaultLocale}`,
@@ -155,6 +169,7 @@ export function useStrapi() {
     fetchPosts,
     fetchPost,
     fetchCategories,
+    fetchTags,
     fetchAbout,
     searchPosts,
     getMediaUrl,

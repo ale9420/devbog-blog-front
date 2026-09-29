@@ -11,6 +11,7 @@ const POPULATE = {
   category: { populate: '*' },
   author: { populate: '*' },
   seo: { populate: '*' },
+  tags: { fields: ['name', 'slug'] },
 }
 
 interface RankingPage {
@@ -49,7 +50,7 @@ export default defineEventHandler(async (event) => {
 
   const filters: Record<string, unknown> = {}
   if (category) filters.category = { slug: { $eq: category } }
-  if (tag) filters.tags = { $contains: tag }
+  if (tag) filters.tags = { slug: { $eq: tag } }
   if (validSearch && !contentSearch) filters.title = { $containsi: validSearch }
 
   const headers: Record<string, string> = {}
@@ -66,7 +67,7 @@ export default defineEventHandler(async (event) => {
     let ranking: RankingPage
     try {
       ranking = await $fetch<RankingPage>(`${config.public.strapiUrl}/api/fediverse/articles/ranking`, {
-        query: { page, pageSize, locale, category, search: validSearch },
+        query: { page, pageSize, locale, category, tag, search: validSearch },
         timeout: RANKING_TIMEOUT_MS,
       })
     } catch (error: unknown) {

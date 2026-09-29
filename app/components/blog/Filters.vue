@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { BlogFilters, Category } from '~/interfaces'
+import type { BlogFilters, Category, StrapiTagRef } from '~/interfaces'
 import { CATEGORIES, CATEGORY_INFO } from '~/helpers/categories'
 import { hasActiveFilters } from '~/helpers/blog'
+import { tagLabel } from '~/helpers/tags'
 import { padCount } from '~/helpers/search'
 
 interface ActiveFilter {
@@ -13,7 +14,7 @@ const props = defineProps<{
   filters: BlogFilters
   total: number
   counts: Partial<Record<Category, number>>
-  tags: string[]
+  tags: StrapiTagRef[]
   resultCount?: number
 }>()
 
@@ -41,7 +42,7 @@ const categoryChips = computed<{ id: Category | undefined, label: string, color:
 const activeFilters = computed<ActiveFilter[]>(() => {
   const active: ActiveFilter[] = []
   if (props.filters.category) active.push({ id: 'category', label: t(`bd.categoryShort.${props.filters.category}`) })
-  if (props.filters.tag) active.push({ id: 'tag', label: `#${props.filters.tag}` })
+  if (props.filters.tag) active.push({ id: 'tag', label: `#${tagLabel(props.tags, props.filters.tag)}` })
   if (props.filters.search) active.push({ id: 'search', label: `«${props.filters.search}»` })
   return active
 })
@@ -97,13 +98,13 @@ const resultLabel = computed<string>(() =>
       <div class="bd-blog-chips" role="group" :aria-label="t('blog.filterTag')">
         <button
           v-for="tag in tags"
-          :key="tag"
+          :key="tag.slug"
           type="button"
           class="bd-chip bd-blog-tag"
-          :aria-pressed="filters.tag === tag ? 'true' : 'false'"
-          @click="emit('tag', filters.tag === tag ? undefined : tag)"
+          :aria-pressed="filters.tag === tag.slug ? 'true' : 'false'"
+          @click="emit('tag', filters.tag === tag.slug ? undefined : tag.slug)"
         >
-          #{{ tag }}
+          #{{ tag.name }}
         </button>
       </div>
     </div>

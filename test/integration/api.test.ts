@@ -53,6 +53,44 @@ describe('/api/posts category filter', () => {
   })
 })
 
+describe('/api/tags', () => {
+  it('returns the tags used in the locale, most used first, and hides unused ones', async () => {
+    const result = await $fetch<Array<{ slug: string; name: string; count: number }>>('/api/tags', { query: { locale: 'en' } })
+    expect(result).toEqual([
+      { slug: 'devops', name: 'DevOps', count: 2 },
+      { slug: 'linux', name: 'Linux', count: 1 },
+      { slug: 'typescript', name: 'TypeScript', count: 1 },
+      { slug: 'vue', name: 'Vue', count: 1 },
+    ])
+    const upstream = mock.requests.find((request) => request.path === '/api/tags')
+    expect(upstream?.query).toMatchObject({ locale: 'en', fields: ['name', 'slug'] })
+  })
+
+  it('counts articles of the requested locale only', async () => {
+    const result = await $fetch<Array<{ slug: string; count: number }>>('/api/tags', { query: { locale: 'es' } })
+    expect(result).toEqual([{ slug: 'vue', name: 'Vue', count: 1 }])
+  })
+})
+
+describe('/api/posts tag filter', () => {
+  it('filters by the tag relation and returns each article with its tags', async () => {
+    const result = await $fetch<{ data: RawStrapiArticle[] }>('/api/posts', { query: { locale: 'en', tag: 'devops' } })
+    expect(result.data.map((post) => post.slug)).toEqual(['understanding-vue-composables', 'linux-server-hardening-guide'])
+    expect(result.data[1]?.tags).toEqual([
+      { id: 53, documentId: 'tag-linux', name: 'Linux', slug: 'linux' },
+      { id: 54, documentId: 'tag-devops', name: 'DevOps', slug: 'devops' },
+    ])
+    const upstream = mock.requests.filter((request) => request.path === '/api/articles').at(-1)!
+    expect(getNestedValue(upstream.query, ['filters', 'tags', 'slug', '$eq'])).toBe('devops')
+    expect(getNestedValue(upstream.query, ['populate', 'tags', 'fields'])).toEqual(['name', 'slug'])
+  })
+
+  it('returns an empty page for a tag no article has', async () => {
+    const result = await $fetch<{ data: RawStrapiArticle[] }>('/api/posts', { query: { locale: 'en', tag: 'docker' } })
+    expect(result.data).toEqual([])
+  })
+})
+
 describe('/api/posts sort', () => {
   type PostsPage = { data: Array<{ documentId: string }>; meta: { pagination: { page: number; pageSize: number; total: number; pageCount: number } } }
   const ids = (response: PostsPage) => response.data.map((post) => post.documentId)
@@ -90,6 +128,13 @@ describe('/api/posts sort', () => {
     expect(ids(response)).toEqual(['doc-vue'])
     const ranking = mock.requests.find((request) => request.path === '/api/fediverse/articles/ranking')
     expect(ranking?.query).toMatchObject({ category: 'software', search: 'vue' })
+  })
+
+  it('passes the tag to the ranking', async () => {
+    const response = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'fediverse', tag: 'vue' } })
+    expect(ids(response)).toEqual(['doc-vue'])
+    const ranking = mock.requests.find((request) => request.path === '/api/fediverse/articles/ranking')
+    expect(ranking?.query).toMatchObject({ tag: 'vue' })
   })
 
   it('falls back to newest first when the ranking fails', async () => {
@@ -339,6 +384,7 @@ describe('/api/posts/[slug]', () => {
     expect(result.slug).toBe('understanding-vue-composables')
     expect(result.blocks).toHaveLength(1)
     expect(result.category?.slug).toBe(Category.Software)
+    expect(result.tags?.map((tag) => tag.name)).toEqual(['Vue', 'TypeScript', 'DevOps'])
   })
 
   it('asks Strapi for the article references', async () => {

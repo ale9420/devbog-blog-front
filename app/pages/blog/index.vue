@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import type { BlogFilters, BlogSort, BlogView, Category, Locale, PostListItem } from "~/interfaces";
+import type { BlogFilters, BlogSort, BlogView, Category, Locale, PostListItem, TagCount } from "~/interfaces";
 import { BLOG_SORTS, blogPageSize, blogQuery, hasActiveFilters, parseBlogQuery, parseSort, searchTerm } from "~/helpers/blog";
 import { isCategory } from "~/helpers/categories";
 import { feedPath } from "~/helpers/feed";
 import { padCount } from "~/helpers/search";
+import { popularTags as pickPopularTags } from "~/helpers/tags";
 
 const RECENT_SIZE = 4;
 const SEARCH_DEBOUNCE_MS = 300;
-const FALLBACK_POPULAR_TAGS = ["AI", "Linux", "Vue", "TypeScript", "DevOps", "Python", "Docker"];
+const POPULAR_TAGS = 8;
 const VIEWS: BlogView[] = ["grid", "log"];
 
 const { locale, t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const { fetchPosts, fetchCategories } = useStrapi();
+const { fetchPosts, fetchCategories, fetchTags } = useStrapi();
 const { canonicalUrl } = useCanonicalUrl('/blog');
 const { siteUrl } = useSiteUrl();
 const config = useRuntimeConfig();
@@ -37,6 +38,7 @@ const { data: postsResult, status } = fetchPosts({
 });
 const { data: recentResult } = fetchPosts({ pageSize: RECENT_SIZE, locale: currentLocale });
 const { data: categories } = fetchCategories(locale.value as Locale);
+const { data: tags } = fetchTags(locale.value as Locale);
 
 const results = useSettledData(postsResult, status);
 const searchInput = ref<string>(filters.value.search ?? "");
@@ -52,19 +54,7 @@ const counts = computed<Partial<Record<Category, number>>>(() =>
       .map(category => [category.slug, category.count]),
   ),
 );
-const popularTags = computed<string[]>(() => {
-  const tagCounts = new Map<string, number>();
-  for (const post of recentPosts.value) {
-    for (const tag of post.tags || []) {
-      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
-    }
-  }
-  const tags = Array.from(tagCounts.entries())
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 8)
-    .map(([tag]) => tag);
-  return tags.length > 0 ? tags : FALLBACK_POPULAR_TAGS;
-});
+const popularTags = computed<TagCount[]>(() => pickPopularTags(tags.value ?? [], POPULAR_TAGS, filters.value.tag));
 const resultCount = computed<number | undefined>(() =>
   filters.value.search ? (results.value?.pagination.total ?? 0) : undefined,
 );
