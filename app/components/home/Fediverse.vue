@@ -1,9 +1,17 @@
 <script setup lang="ts">
+import { Locale } from '~/interfaces'
 import { padCount } from '~/helpers/search'
 
-const COPIED_MS = 1600
+interface AfterStep {
+  id: 'follow' | 'read' | 'reply'
+  text: string
+}
 
-const { t } = useI18n()
+const COPIED_MS = 1600
+const JOIN_STEPS = 3
+const GLOSSARY: string[] = ['fediverse', 'instance', 'follow', 'boost']
+
+const { t, locale } = useI18n()
 const config = useRuntimeConfig()
 const { copy, copied } = useClipboard({ copiedDuring: COPIED_MS, legacy: true })
 const { instance, error, preview, open: follow } = useFediverseInstance(() => config.public.fediverseActorUrl)
@@ -19,10 +27,16 @@ const hint = computed<string>(() => {
   if (preview.value) return t('home.fediverse.willOpen', { instance: preview.value })
   return t('home.fediverse.hint')
 })
-const steps = computed<{ title: string, text: string }[]>(() => [
-  { title: t('home.fediverse.steps.follow.title'), text: t('home.fediverse.steps.follow.text', { handle: handle.value }) },
-  { title: t('home.fediverse.steps.read.title'), text: t('home.fediverse.steps.read.text') },
-  { title: t('home.fediverse.steps.reply.title'), text: t('home.fediverse.steps.reply.text') },
+const joinUrl = computed<string>(() =>
+  locale.value === Locale.SpanishColombia ? 'https://joinmastodon.org/es/servers' : 'https://joinmastodon.org/servers',
+)
+const joinSteps = computed<string[]>(() =>
+  Array.from({ length: JOIN_STEPS }, (_, index) => t(`home.fediverse.join.steps.${index}`)),
+)
+const afterSteps = computed<AfterStep[]>(() => [
+  { id: 'follow', text: t('home.fediverse.after.follow.text', { handle: handle.value }) },
+  { id: 'read', text: t('home.fediverse.after.read.text') },
+  { id: 'reply', text: t('home.fediverse.after.reply.text') },
 ])
 
 function copyHandle(): void {
@@ -32,42 +46,56 @@ function copyHandle(): void {
 
 <template>
   <section id="fediverso" class="bd-home-section bd-fedi bd-reveal" aria-labelledby="fediverse-title">
-    <div class="bd-home-head bd-fedi-head">
+    <div class="bd-fedi-head">
       <div class="bd-home-heading">
+        <BdMastodonLogo class="bd-fedi-logo" :label="t('home.fediverse.logo')" />
         <p class="bd-eyebrow bd-home-eyebrow">{{ t('home.fediverse.eyebrow') }}</p>
         <h2 id="fediverse-title" class="bd-home-title bd-stretch">{{ t('home.fediverse.title') }}</h2>
       </div>
-      <p class="bd-home-intro bd-fedi-intro">{{ t('home.fediverse.intro') }}</p>
+      <p class="bd-fedi-intro">
+        <span class="bd-fedi-intro-short">{{ t('home.fediverse.introShort') }}</span>
+        <span class="bd-fedi-intro-long">{{ t('home.fediverse.intro') }}</span>
+      </p>
+    </div>
+
+    <div class="bd-fedi-how">
+      <span class="bd-eyebrow bd-home-eyebrow">{{ t('home.fediverse.how') }}</span>
+      <span class="bd-meta bd-fedi-swipe" aria-hidden="true">{{ t('home.fediverse.swipe') }}</span>
+    </div>
+    <HomeFediverseCards :user="handleParts.user" :domain="handleParts.domain" />
+
+    <div class="bd-fedi-join">
+      <div class="bd-fedi-card-heading">
+        <p class="bd-eyebrow bd-fedi-join-eyebrow">{{ t('home.fediverse.join.eyebrow') }}</p>
+        <h3 class="bd-fedi-action-title">{{ t('home.fediverse.join.title') }}</h3>
+      </div>
+      <ol class="bd-fedi-join-steps">
+        <li v-for="(step, index) in joinSteps" :key="index">
+          <span class="bd-fedi-join-number" aria-hidden="true">{{ padCount(index + 1) }}</span>
+          <span>{{ step }}</span>
+        </li>
+      </ol>
+      <a
+        class="bd-chip bd-fedi-join-link"
+        :href="joinUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        :aria-label="t('home.fediverse.join.linkAria')"
+      >
+        {{ t('home.fediverse.join.link') }} <span aria-hidden="true">↗</span>
+      </a>
     </div>
 
     <div class="bd-fedi-card">
       <span class="bd-corner bd-corner-tl" aria-hidden="true" />
       <span class="bd-corner bd-corner-br" aria-hidden="true" />
-      <div class="bd-fedi-card-head">
-        <span class="bd-eyebrow bd-fedi-accent">{{ t('home.fediverse.ring') }}</span>
-        <svg width="56" height="32" viewBox="0 0 56 32" aria-hidden="true" focusable="false">
-          <ellipse cx="14" cy="16" rx="8" ry="13" fill="none" stroke="var(--chillon)" stroke-width="1.25" />
-          <path d="M14 3 L44 3 M14 29 L44 29" stroke="var(--chillon)" stroke-width="1.25" />
-          <path d="M44 3 A8 13 0 0 1 44 29" fill="none" stroke="var(--chillon)" stroke-width="1.25" />
-          <path d="M24 12 L38 12 M24 16 L34 16 M24 20 L38 20" stroke="var(--ink-muted)" stroke-width="1" />
-        </svg>
-      </div>
-
-      <div class="bd-fedi-handle-row">
-        <p class="font-mono bd-fedi-handle">
-          <span class="bd-fedi-user">{{ handleParts.user }}</span><span class="bd-fedi-domain">{{ handleParts.domain }}</span>
-        </p>
-        <div class="bd-fedi-copy">
-          <button type="button" class="bd-chip" :aria-label="t('home.fediverse.copyAria', { handle })" @click="copyHandle">
-            {{ copied ? t('home.fediverse.copied') : t('home.fediverse.copy') }}
-          </button>
-          <span class="bd-meta bd-fedi-note">{{ t('home.fediverse.searchIt') }}</span>
-          <span class="bd-sr" aria-live="polite">{{ copied ? t('home.fediverse.copiedAnnounce', { handle }) : '' }}</span>
-        </div>
+      <div class="bd-fedi-card-heading">
+        <p class="bd-eyebrow bd-fedi-accent">{{ t('home.fediverse.account.eyebrow') }}</p>
+        <h3 class="bd-fedi-action-title">{{ t('home.fediverse.account.title') }}</h3>
       </div>
 
       <form class="bd-fedi-form" novalidate @submit.prevent="follow">
-        <label for="bd-fedi-instance" class="bd-eyebrow bd-home-eyebrow">{{ t('home.fediverse.instanceLabel') }}</label>
+        <label for="bd-fedi-instance" class="bd-fedi-label">{{ t('home.fediverse.instanceLabel') }}</label>
         <div class="bd-fedi-row">
           <input
             id="bd-fedi-instance"
@@ -87,36 +115,55 @@ function copyHandle(): void {
         <p id="bd-fedi-hint" :class="['bd-meta bd-fedi-hint', { 'bd-fedi-hint-error': error }]" role="status">{{ hint }}</p>
       </form>
 
-      <p class="bd-meta bd-fedi-note">{{ t('home.fediverse.compat') }}</p>
+      <div class="bd-fedi-copy">
+        <p class="bd-fedi-label">{{ t('home.fediverse.copyIntro') }}</p>
+        <p class="font-mono bd-fedi-handle">
+          <span class="bd-fedi-user">{{ handleParts.user }}</span><span class="bd-fedi-domain">{{ handleParts.domain }}</span>
+        </p>
+        <div>
+          <button type="button" class="bd-chip" :aria-label="t('home.fediverse.copyAria', { handle })" @click="copyHandle">
+            {{ copied ? t('home.fediverse.copied') : t('home.fediverse.copy') }}
+          </button>
+          <span class="bd-sr" aria-live="polite">{{ copied ? t('home.fediverse.copiedAnnounce', { handle }) : '' }}</span>
+        </div>
+      </div>
     </div>
 
-    <div class="bd-fedi-side">
-      <ol class="bd-fedi-steps">
-        <li v-for="(step, index) in steps" :key="step.title">
-          <span class="bd-fedi-step-number" aria-hidden="true">{{ padCount(index + 1) }}</span>
+    <div class="bd-fedi-after">
+      <h3 class="bd-eyebrow bd-home-eyebrow">{{ t('home.fediverse.after.title') }}</h3>
+      <ol class="bd-fedi-after-steps">
+        <li v-for="step in afterSteps" :key="step.id">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--chillon)" stroke-width="1.5" stroke-linecap="square" aria-hidden="true" focusable="false">
+            <template v-if="step.id === 'follow'">
+              <circle cx="9" cy="8" r="3.5" />
+              <path d="M3 19 C3 14.5 6 12.5 9 12.5 C12 12.5 15 14.5 15 19" />
+              <path d="M18 7 V13 M15 10 H21" />
+            </template>
+            <template v-else-if="step.id === 'read'">
+              <rect x="4" y="4" width="16" height="16" />
+              <path d="M7 9 H17 M7 12.5 H17 M7 16 H13" />
+            </template>
+            <template v-else>
+              <path d="M10 7 L4 12 L10 17" />
+              <path d="M4 12 H14 C17.5 12 20 14.5 20 18" />
+            </template>
+          </svg>
           <div>
-            <p class="bd-fedi-step-title">{{ step.title }}</p>
+            <p class="bd-fedi-step-title">{{ t(`home.fediverse.after.${step.id}.title`) }}</p>
             <p class="bd-fedi-step-text">{{ step.text }}</p>
           </div>
         </li>
       </ol>
-      <svg class="bd-fedi-flow" width="480" height="132" viewBox="0 0 480 132" role="img" :aria-label="t('home.fediverse.flow.label')">
-        <g font-family="JetBrains Mono, monospace" letter-spacing=".08em" text-anchor="middle">
-          <rect x="0.5" y="44.5" width="104" height="44" fill="var(--surface-raised)" stroke="var(--line-strong)" />
-          <text x="52" y="71" font-size="12" font-weight="500" fill="var(--ink)">BOGDEV</text>
-          <rect x="355.5" y="44.5" width="124" height="44" fill="var(--surface-raised)" stroke="var(--line-strong)" />
-          <text x="417" y="71" font-size="12" font-weight="500" fill="var(--ink)">{{ t('home.fediverse.flow.instance') }}</text>
-          <text x="230" y="22" font-size="11" fill="var(--ink-muted)">{{ t('home.fediverse.flow.articles') }}</text>
-          <text x="230" y="126" font-size="11" fill="var(--ink-muted)">{{ t('home.fediverse.flow.back') }}</text>
-        </g>
-        <g fill="none" stroke="var(--chillon)" stroke-width="1.4">
-          <path d="M112 56 Q230 20 346 56" />
-          <path d="M338 50 L347 56 L337 60" />
-          <path class="bd-flight-route" d="M346 78 Q230 114 112 78" stroke-opacity=".7" />
-          <path d="M121 73 L112 78 L122 83" />
-        </g>
-        <path d="M222 40 Q226 34 230 39 Q234 34 238 40" fill="none" stroke="var(--ink)" stroke-width="1.4" stroke-linecap="round" />
-      </svg>
+    </div>
+
+    <div class="bd-fedi-glossary">
+      <h3 class="bd-eyebrow bd-home-eyebrow">{{ t('home.fediverse.glossary.title') }}</h3>
+      <dl>
+        <div v-for="term in GLOSSARY" :key="term">
+          <dt class="bd-eyebrow">{{ t(`home.fediverse.glossary.${term}.term`) }}</dt>
+          <dd>{{ t(`home.fediverse.glossary.${term}.text`) }}</dd>
+        </div>
+      </dl>
     </div>
   </section>
 </template>

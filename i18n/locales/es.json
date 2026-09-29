@@ -77,41 +77,92 @@
       "description": "El feed completo, sin intermediarios ni algoritmos."
     },
     "fediverse": {
-      "eyebrow": "Fediverso · ActivityPub",
+      "eyebrow": "Fediverso · redes sociales libres",
       "title": "Sigue el blog desde Mastodon",
-      "intro": "BogDev tiene su propia cuenta en el fediverso. Los artículos nuevos llegan a tu línea de tiempo, y lo que respondas desde allá aparece aquí como comentario.",
-      "ring": "Anillo de identificación",
-      "copy": "Copiar",
-      "copied": "Copiado ✓",
-      "copyAria": "Copiar la cuenta {handle}",
-      "copiedAnnounce": "Se copió {handle}",
-      "searchIt": "Búscalo en tu instancia y pulsa seguir",
-      "instanceLabel": "O sigue desde tu instancia",
+      "intro": "Mastodon es una red social parecida a X o Threads, pero no tiene dueño: la forman miles de servidores independientes que se hablan entre sí. BogDev tiene su propia cuenta ahí, y puedes seguirla para recibir cada artículo nuevo.",
+      "introShort": "Mastodon es una red social parecida a X o Threads, pero no tiene dueño: la forman miles de servidores que se hablan entre sí. BogDev tiene su cuenta ahí.",
+      "logo": "Logo de Mastodon",
+      "how": "Cómo funciona",
+      "swipe": "Desliza →",
+      "cardsLabel": "Cómo funciona el fediverso",
+      "cards": {
+        "mail": {
+          "title": "Funciona como el correo",
+          "text": "Con un correo de un proveedor le escribes a alguien que usa otro. Aquí pasa igual: desde una cuenta en cualquier servidor sigues a cuentas de otros servidores.",
+          "yours": "Tu servidor",
+          "other": "Otro servidor"
+        },
+        "address": {
+          "title": "Tu dirección tiene dos partes",
+          "text": "Primero va el nombre y luego el servidor donde vive la cuenta. La del blog es {user} en el servidor {server}.",
+          "caption": "Como un correo: nombre {'@'} dominio",
+          "user": "Usuario",
+          "server": "Servidor donde vive"
+        },
+        "apps": {
+          "title": "Muchas apps, una sola red",
+          "text": "Mastodon es la más conocida, pero Pixelfed, PeerTube, Misskey o GoToSocial también se hablan entre sí. A esa red compartida se le llama fediverso."
+        }
+      },
+      "join": {
+        "eyebrow": "¿Nunca has usado Mastodon?",
+        "title": "Crea tu cuenta gratis en 3 pasos",
+        "steps": [
+          "Elige un servidor en joinmastodon.org. Da igual cuál: desde todos puedes seguir a todos.",
+          "Regístrate con tu correo. Es gratis y sin publicidad.",
+          "Vuelve aquí, escribe tu servidor y pulsa «Seguir»."
+        ],
+        "link": "Elegir servidor en joinmastodon.org",
+        "linkAria": "Elegir servidor en joinmastodon.org (se abre en una pestaña nueva)"
+      },
+      "account": {
+        "eyebrow": "¿Ya tienes cuenta?",
+        "title": "Sigue al blog en un clic"
+      },
+      "instanceLabel": "Escribe el servidor donde tienes tu cuenta",
       "follow": "Seguir",
       "hint": "Escribe el dominio de tu instancia, por ejemplo mastodon.social",
       "willOpen": "Se abrirá {instance} para confirmar",
       "errorEmpty": "Escribe el dominio de tu instancia, por ejemplo mastodon.social",
       "errorInvalid": "Eso no parece un dominio. Escribe solo el de tu instancia, por ejemplo mastodon.social",
-      "compat": "Funciona directo con Mastodon. En Pleroma, Misskey o GoToSocial, busca el usuario desde tu instancia.",
-      "steps": {
+      "copyIntro": "O copia la dirección y búscala en tu app:",
+      "copy": "Copiar",
+      "copied": "Copiado ✓",
+      "copyAria": "Copiar la cuenta {handle}",
+      "copiedAnnounce": "Se copió {handle}",
+      "after": {
+        "title": "Qué pasa después de seguir",
         "follow": {
           "title": "Sigue",
-          "text": "Busca {handle} desde cualquier cuenta de Mastodon u otra red ActivityPub."
+          "text": "Pulsa «Seguir» con tu servidor o busca {handle} en tu app."
         },
         "read": {
-          "title": "Lee en tu línea de tiempo",
-          "text": "Cada artículo publicado llega como una tarjeta con título, imagen de portada y enlace al blog."
+          "title": "Lee en tu inicio",
+          "text": "Cada artículo nuevo llega como una publicación con título, imagen y enlace al blog."
         },
         "reply": {
-          "title": "Responde, marca me gusta o impulsa",
-          "text": "Tus respuestas llegan al blog como comentarios y se publican después de moderarlas. Los me gusta e impulsos suman al contador del artículo."
+          "title": "Responde o dale me gusta",
+          "text": "Tus respuestas aparecen aquí como comentarios después de revisarlas. Los me gusta e impulsos suman al contador."
         }
       },
-      "flow": {
-        "label": "Flujo: los artículos salen de BogDev hacia tu instancia; las respuestas, me gusta e impulsos vuelven al blog",
-        "instance": "TU INSTANCIA",
-        "articles": "ARTÍCULOS →",
-        "back": "← RESPUESTAS · ME GUSTA · IMPULSOS"
+      "glossary": {
+        "title": "Glosario rápido",
+        "fediverse": {
+          "term": "Fediverso",
+          "text": "Todas las redes sociales libres que se conectan entre sí."
+        },
+        "instance": {
+          "term": "Servidor o instancia",
+          "text": "La comunidad donde creas tu cuenta. Puedes elegir cualquiera."
+        },
+        "follow": {
+          "term": "Seguir",
+          "text": "Recibir en tu inicio lo que publica una cuenta."
+        },
+        "boost": {
+          "term": "Impulsar",
+          "text": "Compartir una publicación con tus seguidores, como un retuit."
+        }
       }
     }
   },
