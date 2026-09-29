@@ -13,9 +13,9 @@ const options: Locale[] = [Locale.SpanishColombia, Locale.English]
 
 async function select(next: Locale): Promise<void> {
   if (next === locale.value) return
-  const path = switchLocale(next)
+  const target = switchLocale(next)
   await setLocale(next)
-  await router.push(path)
+  await router.push(target)
   emit('change', next)
 }
 </script>

@@ -113,6 +113,13 @@ test('changes theme and language from the sheet', async ({ page }) => {
   await expect(page.getByRole('dialog', { name: 'Menú' })).toBeHidden()
 })
 
+test('keeps the blog filters when switching language from the sheet', async ({ page }) => {
+  await page.goto('/blog?tag=vue&sort=fediverse', { waitUntil: 'networkidle' })
+  await page.getByRole('navigation', { name: 'Bottom navigation' }).getByRole('button', { name: 'Menu' }).click()
+  await page.getByRole('dialog', { name: 'Menu' }).getByRole('group', { name: 'Language' }).getByRole('button', { name: 'Español' }).click()
+  await expect(page).toHaveURL(/\/es\/blog\?tag=vue&sort=fediverse$/)
+})
+
 test('hides the tab bar on desktop', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 })
   await page.goto('/', { waitUntil: 'networkidle' })

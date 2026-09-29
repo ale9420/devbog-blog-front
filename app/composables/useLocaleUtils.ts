@@ -1,4 +1,5 @@
-import { defaultLocale, type Locale } from "~/interfaces";
+import { defaultLocale, type Locale, type LocaleSwitchTarget } from "~/interfaces";
+import { localeSwitchQuery } from "~/helpers/locale";
 
 export function useLocaleUtils() {
   const { locale, locales } = useI18n();
@@ -31,7 +32,7 @@ export function useLocaleUtils() {
     return paths;
   }
 
-  function switchLocale(newLocale: string | Locale): string {
+  function switchLocale(newLocale: string | Locale): LocaleSwitchTarget {
     const currentPath = route.path;
     const currentLocale = locale.value as string;
 
@@ -39,10 +40,11 @@ export function useLocaleUtils() {
       ? currentPath.replace(/^\/(en|es)/, "") || "/"
       : currentPath.replace(/^\/[a-z]{2}(-[A-Z]{2})?/, "") || "/";
 
-    if (newLocale === defaultLocale) {
-      return pathWithoutLocale === "/" ? "/" : pathWithoutLocale;
-    }
-    return `/${newLocale}${pathWithoutLocale === "/" ? "" : pathWithoutLocale}`;
+    const path = newLocale === defaultLocale
+      ? pathWithoutLocale
+      : `/${newLocale}${pathWithoutLocale === "/" ? "" : pathWithoutLocale}`;
+
+    return { path, query: localeSwitchQuery(route.query), hash: route.hash };
   }
 
   const isDefaultLocale = computed(() => locale.value === defaultLocale);
