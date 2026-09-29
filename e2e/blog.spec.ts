@@ -21,6 +21,30 @@ test('filters by category from the chips', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Linux Server Hardening Guide', level: 3 })).toBeVisible()
 })
 
+test('filters by tag from the chips built from the real tags', async ({ page }) => {
+  await page.goto('/blog', { waitUntil: 'networkidle' })
+  const tags = page.getByRole('group', { name: 'Filter by tag' })
+  await expect(tags.getByRole('button')).toHaveText(['#DevOps', '#Linux', '#TypeScript', '#Vue'])
+  await tags.getByRole('button', { name: '#Linux' }).click()
+  await expect(page).toHaveURL(/tag=linux/)
+  await expect(tags.getByRole('button', { name: '#Linux' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('heading', { name: 'Understanding Vue Composables', level: 3 })).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: 'Linux Server Hardening Guide', level: 3 })).toBeVisible()
+  await page.getByRole('button', { name: 'Remove filter #Linux' }).click()
+  await expect(page).toHaveURL(/\/blog$/)
+  await expect(page.getByRole('heading', { name: 'Understanding Vue Composables', level: 3 })).toBeVisible()
+})
+
+test('opens the blog filtered by a tag from an article', async ({ page }) => {
+  await page.goto('/blog/understanding-vue-composables', { waitUntil: 'networkidle' })
+  const tags = page.locator('.bd-article-tags')
+  await expect(tags.getByRole('link')).toHaveText(['#Vue', '#TypeScript'])
+  await tags.getByRole('link', { name: '#TypeScript' }).click()
+  await expect(page).toHaveURL(/\/blog\?tag=typescript$/)
+  await expect(page.getByRole('heading', { name: 'Understanding Vue Composables', level: 3 })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Linux Server Hardening Guide', level: 3 })).toHaveCount(0)
+})
+
 test('searches titles from three letters and keeps the term in the URL', async ({ page }) => {
   await page.goto('/blog', { waitUntil: 'networkidle' })
   const search = page.getByRole('searchbox', { name: 'Search articles' })

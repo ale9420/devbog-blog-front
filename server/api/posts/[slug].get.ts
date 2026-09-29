@@ -20,6 +20,7 @@ export default defineEventHandler(async (event) => {
       category: { populate: '*' },
       author: { populate: '*' },
       seo: { populate: '*' },
+      tags: { fields: ['name', 'slug'] },
       blocks: {
         on: {
           'shared.rich-text': { populate: '*' },

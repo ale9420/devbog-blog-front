@@ -199,7 +199,7 @@ const articles = [
     createdAt: '2026-01-20T10:00:00.000Z',
     locale: 'en',
     readTime: 8,
-    tags: ['Vue', 'TypeScript'],
+    tags: [{ id: 51, documentId: 'tag-vue', name: 'Vue', slug: 'vue' }, { id: 52, documentId: 'tag-typescript', name: 'TypeScript', slug: 'typescript' }],
     cover: coverVue,
     category: categoryVue,
     author,
@@ -218,7 +218,7 @@ const articles = [
     createdAt: '2026-01-10T10:00:00.000Z',
     locale: 'en',
     readTime: 12,
-    tags: ['Linux', 'DevOps'],
+    tags: [{ id: 53, documentId: 'tag-linux', name: 'Linux', slug: 'linux' }, { id: 54, documentId: 'tag-devops', name: 'DevOps', slug: 'devops' }],
     cover: coverLinux,
     category: categoryLinux,
     author,
@@ -237,7 +237,7 @@ const articles = [
     createdAt: '2026-01-25T10:00:00.000Z',
     locale: 'es',
     readTime: 8,
-    tags: ['Vue'],
+    tags: [{ id: 55, documentId: 'tag-vue', name: 'Vue', slug: 'vue' }],
     cover: coverVueEs,
     category: categoryVue,
     author,
@@ -358,7 +358,7 @@ const server = createServer(async (req, res) => {
     const titleFilter = getNestedValue(query, ['filters', 'title', '$containsi'])
     const localeFilter = query.locale
     const categoryFilter = getNestedValue(query, ['filters', 'category', 'slug', '$eq'])
-    const tagFilter = getNestedValue(query, ['filters', 'tags', '$contains'])
+    const tagFilter = getNestedValue(query, ['filters', 'tags', 'slug', '$eq'])
     const documentIdFilter = getNestedValue(query, ['filters', 'documentId', '$in'])
     const ascending = query.sort === 'publishedAt:asc'
     const page = Number(getNestedValue(query, ['pagination', 'page']) || 1)
@@ -386,7 +386,7 @@ const server = createServer(async (req, res) => {
       data = data.filter((article) => article.title.toLowerCase().includes(term))
     }
     if (tagFilter) {
-      data = data.filter((article) => article.tags?.includes(tagFilter))
+      data = data.filter((article) => article.tags?.some((tag) => tag.slug === tagFilter))
     }
     if (documentIdFilter) {
       data = data.filter((article) => documentIdFilter.includes(article.documentId))
@@ -406,6 +406,20 @@ const server = createServer(async (req, res) => {
       data: pageItems,
       meta: { pagination: { total, page, pageSize, pageCount } },
     })
+    return
+  }
+
+  if (method === 'GET' && url.pathname === '/api/tags') {
+    const locale = query.locale ?? 'en'
+    const localized = articles.filter((article) => article.locale === locale)
+    const tags = new Map(localized.flatMap((article) => article.tags ?? []).map((tag) => [tag.slug, tag]))
+    const data = [...tags.values()].map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+      slug: tag.slug,
+      articles: localized.filter((article) => article.tags?.some((own) => own.slug === tag.slug)).map((article) => ({ id: article.id })),
+    }))
+    sendJson(res, 200, { data })
     return
   }
 
@@ -448,6 +462,7 @@ const server = createServer(async (req, res) => {
     const ranked = articles
       .filter((article) => article.locale === locale)
       .filter((article) => !query.category || article.category?.slug === query.category)
+      .filter((article) => !query.tag || article.tags?.some((tag) => tag.slug === query.tag))
       .sort((a, b) => (scores[b.documentId] ?? 0) - (scores[a.documentId] ?? 0))
     const page = Number(query.page || 1)
     const pageSize = Number(query.pageSize || 6)

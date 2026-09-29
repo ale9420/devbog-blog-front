@@ -1,6 +1,6 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http'
 import qs from 'qs'
-import type { RawStrapiArticle, StrapiAuthorRef, StrapiCategoryRef, StrapiMediaRef, StrapiSEO } from '~/interfaces/strapi-post'
+import type { RawStrapiArticle, StrapiAuthorRef, StrapiCategoryRef, StrapiMediaRef, StrapiSEO, StrapiTagRef } from '~/interfaces/strapi-post'
 import type { StrapiRichText } from '~/interfaces/strapi-blocks'
 
 export interface RecordedRequest {
@@ -82,6 +82,13 @@ const emptyCategories: StrapiCategoryRef[] = [
   { id: 26, documentId: 'cat-tutorial', name: 'tutorial', slug: null },
 ]
 
+const tagVue: StrapiTagRef = { id: 51, documentId: 'tag-vue', name: 'Vue', slug: 'vue' }
+const tagTypeScript: StrapiTagRef = { id: 52, documentId: 'tag-typescript', name: 'TypeScript', slug: 'typescript' }
+const tagLinux: StrapiTagRef = { id: 53, documentId: 'tag-linux', name: 'Linux', slug: 'linux' }
+const tagDevOps: StrapiTagRef = { id: 54, documentId: 'tag-devops', name: 'DevOps', slug: 'devops' }
+const tagVueEs: StrapiTagRef = { id: 55, documentId: 'tag-vue', name: 'Vue', slug: 'vue' }
+const unusedTags: StrapiTagRef[] = [{ id: 56, documentId: 'tag-docker', name: 'Docker', slug: 'docker' }]
+
 const seoVue: StrapiSEO = {
   id: 41,
   metaTitle: 'Vue Composables',
@@ -125,7 +132,7 @@ const articles: RawStrapiArticle[] = [
     createdAt: '2026-01-20T10:00:00.000Z',
     locale: 'en',
     readTime: 8,
-    tags: ['Vue', 'TypeScript'],
+    tags: [tagVue, tagTypeScript, tagDevOps],
     cover: coverVue,
     category: categoryVue,
     author,
@@ -144,7 +151,7 @@ const articles: RawStrapiArticle[] = [
     createdAt: '2026-01-10T10:00:00.000Z',
     locale: 'en',
     readTime: 12,
-    tags: ['Linux', 'DevOps'],
+    tags: [tagLinux, tagDevOps],
     cover: coverLinux,
     category: categoryLinux,
     author,
@@ -163,7 +170,7 @@ const articles: RawStrapiArticle[] = [
     createdAt: '2026-01-25T10:00:00.000Z',
     locale: 'es',
     readTime: 8,
-    tags: ['Vue'],
+    tags: [tagVueEs],
     cover: coverVueEs,
     category: categoryVue,
     author,
@@ -413,7 +420,7 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
       const titleFilter = getNestedValue(query, ['filters', 'title', '$containsi']) as string | undefined
       const localeFilter = query.locale as string | undefined
       const categoryFilter = getNestedValue(query, ['filters', 'category', 'slug', '$eq']) as string | undefined
-      const tagFilter = getNestedValue(query, ['filters', 'tags', '$contains']) as string | undefined
+      const tagFilter = getNestedValue(query, ['filters', 'tags', 'slug', '$eq']) as string | undefined
       const documentIdFilter = getNestedValue(query, ['filters', 'documentId', '$in']) as string[] | undefined
       const pathFilter = getNestedValue(query, ['filters', 'pathOrder', '$notNull'])
       const sorts = ([] as unknown[]).concat(query.sort ?? [])
@@ -422,9 +429,18 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
       const pathOrders: Record<string, number> = { 'doc-linux': 1, 'doc-vue': 2 }
       const page = Number(getNestedValue(query, ['pagination', 'page']) || 1)
       const pageSize = Number(getNestedValue(query, ['pagination', 'pageSize']) || 10)
+      const populated = (article: RawStrapiArticle): RawStrapiArticle => {
+        const { tags, ...rest } = article
+        return getNestedValue(query, ['populate', 'tags']) === undefined ? rest : { ...rest, tags }
+      }
+
+      if (getNestedValue(query, ['filters', 'tags']) !== undefined && !tagFilter) {
+        sendJson(res, 400, { data: null, error: { status: 400, name: 'ValidationError', message: 'Invalid key tags' } })
+        return
+      }
 
       if (slugFilter) {
-        const data = articles.filter((article) => {
+        const data = articles.map(populated).filter((article) => {
           const matchesSlug = article.slug === slugFilter
           const matchesLocale = localeFilter ? article.locale === localeFilter : true
           return matchesSlug && matchesLocale
@@ -433,7 +449,7 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
         return
       }
 
-      let data = [...articles]
+      let data = articles.map(populated)
       if (localeFilter) {
         data = data.filter((article) => article.locale === localeFilter)
       }
@@ -445,7 +461,7 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
         data = data.filter((article) => article.title.toLowerCase().includes(term))
       }
       if (tagFilter) {
-        data = data.filter((article) => article.tags?.includes(tagFilter))
+        data = data.filter((article) => article.tags?.some((tag) => tag.slug === tagFilter))
       }
       if (documentIdFilter) {
         data = data.filter((article) => documentIdFilter.includes(article.documentId))
@@ -473,6 +489,21 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
         data: pageItems,
         meta: { pagination: { total, page, pageSize, pageCount } },
       })
+      return
+    }
+
+    if (method === 'GET' && url.pathname === '/api/tags') {
+      const locale = (query.locale as string | undefined) ?? 'en'
+      const localized = articles.filter((article) => article.locale === locale)
+      const tags = new Map<string, StrapiTagRef>()
+      for (const tag of localized.flatMap((article) => article.tags ?? [])) tags.set(tag.slug, tag)
+      const data = [...tags.values(), ...unusedTags].map((tag) => ({
+        id: tag.id,
+        name: tag.name,
+        slug: tag.slug,
+        articles: localized.filter((article) => article.tags?.some((own) => own.slug === tag.slug)).map((article) => ({ id: article.id })),
+      }))
+      sendJson(res, 200, { data })
       return
     }
 
@@ -522,6 +553,7 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
       const ranked = articles
         .filter((article) => article.locale === locale)
         .filter((article) => !query.category || article.category?.slug === query.category)
+        .filter((article) => !query.tag || article.tags?.some((tag) => tag.slug === query.tag))
         .filter((article) => !term || article.title.toLowerCase().includes(term))
         .sort((a, b) => (scores[b.documentId] ?? 0) - (scores[a.documentId] ?? 0))
       const page = Number(query.page || 1)

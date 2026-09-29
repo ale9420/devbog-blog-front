@@ -77,7 +77,7 @@ useSeoMeta({
             ?.split(",")
             .map((k: string) => k.trim())
             .filter(Boolean) ||
-        post.value?.tags ||
+        post.value?.tags?.map(tag => tag.name) ||
         [],
     twitterCard: "summary_large_image",
     twitterTitle: () => post.value?.seo?.metaTitle || post.value?.title || "Blog Post",
@@ -129,7 +129,7 @@ const structuredData = computed(() => {
                     "@id": `${siteUrl.value}/blog/${slug}`,
                 },
                 articleSection: categoryLabel(post.value.category) || undefined,
-                keywords: (post.value.tags || []).join(", "),
+                keywords: (post.value.tags || []).map(tag => tag.name).join(", "),
                 wordCount: 0,
             },
             {
@@ -255,11 +255,11 @@ useHead({
                             <span class="bd-eyebrow bd-home-eyebrow">{{ t("post.tags") }}</span>
                             <NuxtLink
                                 v-for="tag in post.tags"
-                                :key="tag"
-                                :to="{ path: localizePath('/blog'), query: { tag } }"
+                                :key="tag.slug"
+                                :to="{ path: localizePath('/blog'), query: { tag: tag.slug } }"
                                 class="bd-chip bd-blog-tag"
                             >
-                                #{{ tag }}
+                                #{{ tag.name }}
                             </NuxtLink>
                         </div>
                         <BlogReadingPath v-if="category && post.documentId" :category="category" :current-document-id="post.documentId" />

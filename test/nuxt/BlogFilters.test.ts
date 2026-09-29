@@ -6,7 +6,7 @@ import BlogFilters from '~/components/blog/Filters.vue'
 const baseProps = {
   total: 3,
   counts: { [Category.Software]: 2, [Category.Linux]: 1 },
-  tags: ['Vue', 'Linux'],
+  tags: [{ slug: 'vue', name: 'Vue' }, { slug: 'linux', name: 'Linux' }],
   search: '',
 }
 
@@ -23,12 +23,12 @@ describe('BlogFilters', () => {
     await categories[0]!.trigger('click')
     await tags[0]!.trigger('click')
     expect(wrapper.emitted('category')).toEqual([[undefined]])
-    expect(wrapper.emitted('tag')).toEqual([['Vue']])
+    expect(wrapper.emitted('tag')).toEqual([['vue']])
   })
 
   it('shows removable active filters and the search count', async () => {
     const wrapper = await mountSuspended(BlogFilters, {
-      props: { ...baseProps, search: 'vue', resultCount: 1, filters: { tag: 'Vue', search: 'vue', page: 1 } },
+      props: { ...baseProps, search: 'vue', resultCount: 1, filters: { tag: 'vue', search: 'vue', page: 1 } },
     })
     expect(wrapper.get('.bd-blog-search-count').text()).toBe('01 result')
     expect(wrapper.get('.bd-blog-hint').text()).toBe('3 letters minimum · searches titles')
