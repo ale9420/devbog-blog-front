@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import BdLangSwitch from '~/components/bd/BdLangSwitch.vue'
 
@@ -18,5 +18,16 @@ describe('BdLangSwitch', () => {
     const wrapper = await mountSuspended(BdLangSwitch)
     await wrapper.findAll('button')[1]!.trigger('click')
     expect(wrapper.emitted('change')).toBeUndefined()
+  })
+
+  it('keeps the blog filters and the hash, but not the page, in the other language', async () => {
+    const wrapper = await mountSuspended(BdLangSwitch, { route: '/blog?tag=llm&sort=fediverse&page=2#posts' })
+    await wrapper.findAll('button')[0]!.trigger('click')
+    await vi.waitFor(() => expect(wrapper.emitted('change')).toEqual([['es']]))
+    const route = useRouter().currentRoute.value
+    expect(route.path).toBe('/es/blog')
+    expect(route.query).toEqual({ tag: 'llm', sort: 'fediverse' })
+    expect(route.hash).toBe('#posts')
+    await useNuxtApp().$i18n.setLocale('en')
   })
 })

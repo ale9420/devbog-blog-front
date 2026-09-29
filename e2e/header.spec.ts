@@ -17,6 +17,19 @@ test('switches language from the header', async ({ page }) => {
   await expect(page.getByRole('group', { name: 'Idioma' }).getByRole('button', { name: 'Español' })).toHaveAttribute('aria-pressed', 'true')
 })
 
+test('keeps the blog filters but not the page when switching language', async ({ page }) => {
+  await page.goto('/es/blog?category=software&tag=vue&view=log&sort=oldest&content=1&page=2#posts', { waitUntil: 'networkidle' })
+  await page.getByRole('group', { name: 'Idioma' }).getByRole('button', { name: 'English' }).click()
+  await expect(page).toHaveURL(/^https?:\/\/[^/]+\/blog\?/)
+  const url = new URL(page.url())
+  expect(Object.fromEntries(url.searchParams)).toEqual({ category: 'software', tag: 'vue', view: 'log', sort: 'oldest', content: '1' })
+  expect(url.hash).toBe('#posts')
+  await expect(page.getByRole('group', { name: 'Filter by tag' }).getByRole('button', { name: '#Vue' })).toHaveAttribute('aria-pressed', 'true')
+  const log = page.locator('.bd-log-month')
+  await expect(log.getByRole('link', { name: 'Understanding Vue Composables' })).toBeVisible()
+  await expect(log.getByRole('link', { name: 'Linux Server Hardening Guide' })).toHaveCount(0)
+})
+
 test('shows the reading strip with breadcrumbs and progress on an article', async ({ page }) => {
   await page.goto('/blog/understanding-vue-composables', { waitUntil: 'networkidle' })
   const crumbs = page.getByRole('navigation', { name: 'Breadcrumb' })
