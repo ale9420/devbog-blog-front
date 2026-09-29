@@ -1,0 +1,13 @@
+@supports (animation-timeline: view()) {
+    .bd-reveal {
+        animation: bd-in linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 22%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bd-reveal {
+        animation: none;
+    }
+}

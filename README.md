@@ -128,7 +128,7 @@ Ensure all environment variables from `.env` are set in your production environm
 ├── app/
 │   ├── app.config.ts          # Site configuration (name, social links, etc.)
 │   ├── app.vue                # Root component
-│   ├── assets/css/main.css    # Global styles (Tailwind CSS v4 + custom properties)
+│   ├── assets/css/            # Global styles: main.css imports settings/, base/, components/, layout/, pages/, utilities/
 │   ├── components/            # Vue components (auto-imported, grouped by feature)
 │   │   ├── layout/            # Shell: Header, Footer, MobileMenu, SearchModal, etc.
 │   │   ├── home/              # Home page: Hero, Newsletter
@@ -185,7 +185,7 @@ Translations are in `i18n/locales/`. The project uses `prefix_except_default` st
 
 ### Theming
 
-Colors are defined as CSS custom properties in `app/assets/css/main.css`. The `.dark` class variant overrides them for dark mode.
+Colors are CSS custom properties generated from `docs/design/tokens.json` into `app/assets/css/settings/tokens.css` (`npm run tokens`). The `data-theme="noche" | "dia"` attribute on `<html>` switches between the night and day values.
 
 ## License
 

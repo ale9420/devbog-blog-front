@@ -1,0 +1,18 @@
+.bd-home,
+.bd-blog,
+.bd-article-page,
+.bd-about {
+    --e: cubic-bezier(0.2, 0, 0, 1);
+    --bd-home-gutter: 20px;
+    --bd-scan: color-mix(in oklab, var(--ink-muted) 7%, transparent);
+    overflow-x: clip;
+}
+
+@media (min-width: 768px) {
+    .bd-home,
+    .bd-blog,
+    .bd-article-page,
+    .bd-about {
+        --bd-home-gutter: max(clamp(24px, 8vw, 120px), calc((100% - 1200px) / 2));
+    }
+}

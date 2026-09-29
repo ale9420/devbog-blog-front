@@ -1,273 +1,71 @@
+@layer theme, base, components, bd, utilities;
+@layer bd.settings, bd.base, bd.components, bd.layout, bd.pages, bd.animations, bd.utilities;
+
 @import "tailwindcss";
-@import "./fonts.css";
-@import "./tokens.css";
-@import "./bd.css";
+
+@import "./settings/fonts.css" layer(bd.settings);
+@import "./settings/tokens.css" layer(bd.settings);
+@import "./settings/aliases.css" layer(bd.settings);
+
+@import "./base/base.css" layer(base);
+@import "./base/view-transition.css" layer(bd.base);
+@import "./base/focus.css" layer(bd.base);
+
+@import "./components/button.css" layer(bd.components);
+@import "./components/tag.css" layer(bd.components);
+@import "./components/logo.css" layer(bd.components);
+@import "./components/icon-button.css" layer(bd.components);
+@import "./components/segmented.css" layer(bd.components);
+@import "./components/chip.css" layer(bd.components);
+@import "./components/kbd.css" layer(bd.components);
+@import "./components/input.css" layer(bd.components);
+@import "./components/highlight.css" layer(bd.components);
+@import "./components/search-palette.css" layer(bd.components);
+@import "./components/post-card.css" layer(bd.components);
+@import "./components/newsletter.css" layer(bd.components);
+@import "./components/code-block.css" layer(bd.components);
+@import "./components/callout.css" layer(bd.components);
+@import "./components/panorama.css" layer(bd.components);
+@import "./components/pagination.css" layer(bd.components);
+@import "./components/select.css" layer(bd.components);
+@import "./components/learning-path.css" layer(bd.components);
+@import "./components/avatar.css" layer(bd.components);
+@import "./components/toc.css" layer(bd.components);
+@import "./components/prose.css" layer(bd.components);
+@import "./components/figure.css" layer(bd.components);
+@import "./components/references.css" layer(bd.components);
+@import "./components/facts.css" layer(bd.components);
+@import "./components/corner.css" layer(bd.components);
+@import "./components/card.css" layer(bd.components);
+@import "./components/input-field.css" layer(bd.components);
+
+@import "./layout/page.css" layer(bd.layout);
+@import "./layout/header.css" layer(bd.layout);
+@import "./layout/mobile-nav.css" layer(bd.layout);
+@import "./layout/footer.css" layer(bd.layout);
+
+@import "./pages/home/hero.css" layer(bd.pages);
+@import "./pages/home/sections.css" layer(bd.pages);
+@import "./pages/home/guide.css" layer(bd.pages);
+@import "./pages/home/fediverse.css" layer(bd.pages);
+@import "./pages/blog/index.css" layer(bd.pages);
+@import "./pages/blog/log.css" layer(bd.pages);
+@import "./pages/article/layout.css" layer(bd.pages);
+@import "./pages/article/after.css" layer(bd.pages);
+@import "./pages/article/comments.css" layer(bd.pages);
+@import "./pages/article/fediverse-bar.css" layer(bd.pages);
+@import "./pages/about/profile.css" layer(bd.pages);
+@import "./pages/about/sections.css" layer(bd.pages);
+@import "./pages/about/topics.css" layer(bd.pages);
+@import "./pages/about/projects.css" layer(bd.pages);
+
+@import "./animations/keyframes.css" layer(bd.animations);
+
+@import "./utilities/typography.css" layer(bd.utilities);
+@import "./utilities/helpers.css" layer(bd.utilities);
+@import "./utilities/a11y.css" layer(bd.utilities);
+@import "./utilities/reveal.css" layer(bd.utilities);
+@import "./utilities/prose-devbog.css";
 
 @custom-variant dark (&:where(:root:not([data-theme="dia"]), :root:not([data-theme="dia"]) *));
 @plugin "@tailwindcss/typography";
-
-@utility prose-devbog {
-    --tw-prose-body: var(--foreground);
-    --tw-prose-headings: var(--foreground);
-    --tw-prose-lead: var(--foreground);
-    --tw-prose-links: var(--primary);
-    --tw-prose-bold: var(--foreground);
-    --tw-prose-counters: var(--muted);
-    --tw-prose-bullets: var(--muted);
-    --tw-prose-hr: var(--border);
-    --tw-prose-quotes: var(--foreground);
-    --tw-prose-quote-borders: var(--primary);
-    --tw-prose-captions: var(--muted);
-    --tw-prose-code: var(--foreground);
-    --tw-prose-code-bg: var(--surface-elevated);
-    --tw-prose-pre-code: var(--foreground);
-    --tw-prose-pre-bg: var(--surface-elevated);
-    --tw-prose-th-borders: var(--border);
-    --tw-prose-td-borders: var(--border);
-    --tw-prose-invert-body: var(--foreground);
-    --tw-prose-invert-headings: var(--foreground);
-    --tw-prose-invert-lead: var(--muted);
-    --tw-prose-invert-links: var(--primary);
-    --tw-prose-invert-bold: var(--foreground);
-    --tw-prose-invert-counters: var(--muted);
-    --tw-prose-invert-bullets: var(--muted);
-    --tw-prose-invert-hr: var(--border);
-    --tw-prose-invert-quotes: var(--foreground);
-    --tw-prose-invert-quote-borders: var(--primary);
-    --tw-prose-invert-captions: var(--muted);
-    --tw-prose-invert-code: var(--foreground);
-    --tw-prose-invert-pre-code: var(--foreground);
-    --tw-prose-invert-pre-bg: var(--surface-elevated);
-    --tw-prose-invert-th-borders: var(--border);
-    --tw-prose-invert-td-borders: var(--border);
-}
-
-:root {
-    --background: var(--surface);
-    --foreground: var(--ink);
-    --surface-elevated: var(--surface-sunken);
-    --primary: var(--chillon);
-    --primary-hover: color-mix(in oklab, var(--chillon) 80%, var(--ink));
-    --on-primary: var(--on-ink);
-    --secondary: var(--mirla);
-    --secondary-hover: color-mix(in oklab, var(--mirla) 80%, var(--ink));
-    --muted: var(--ink-muted);
-    --border: var(--line);
-    --radius: 0.5rem;
-    --success: var(--chillon);
-    --success-bg: var(--chillon-soft);
-    --error: var(--tingua);
-    --error-bg: var(--tingua-soft);
-    --warning: var(--monjita);
-    --warning-bg: var(--monjita-soft);
-    --brand-linkedin: #0A66C2;
-    --brand-github: #24292e;
-    --brand-codeberg: #2185d0;
-    --brand-mastodon: #6364FF;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-:root:not([data-theme="dia"]) .bd-solo-dia,
-[data-theme="dia"] .bd-solo-noche {
-    display: none;
-}
-
-html.bd-vt-theme::view-transition-old(root) {
-    animation: none;
-}
-
-html.bd-vt-theme::view-transition-new(root) {
-    animation: bd-wipe 720ms cubic-bezier(0.2, 0, 0, 1);
-}
-
-@keyframes bd-wipe {
-    from {
-        clip-path: circle(0 at var(--vt-x, 92%) var(--vt-y, 110px));
-    }
-    to {
-        clip-path: circle(170vmax at var(--vt-x, 92%) var(--vt-y, 110px));
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    ::view-transition-group(*),
-    ::view-transition-old(*),
-    ::view-transition-new(*) {
-        animation: none !important;
-    }
-}
-
-body {
-    font-family: var(--font-sans);
-    background-color: var(--background);
-    color: var(--foreground);
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-family: var(--font-display);
-    font-weight: 600;
-    text-wrap: balance;
-}
-
-p {
-    text-wrap: pretty;
-}
-
-.font-display {
-    font-family: var(--font-display);
-}
-
-.font-mono {
-    font-family: var(--font-mono);
-}
-
-.bd-wide {
-    font-family: var(--font-display);
-    font-stretch: 125%;
-}
-
-.bd-eyebrow {
-    text-transform: uppercase;
-}
-
-.bd-stretch {
-    transition: font-stretch 600ms cubic-bezier(0.2, 0, 0, 1);
-}
-
-.bd-stretch:hover,
-a:hover > .bd-stretch,
-a:focus-visible > .bd-stretch {
-    font-stretch: 125%;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .bd-stretch {
-        transition: none;
-    }
-
-    .bd-stretch:hover,
-    a:hover > .bd-stretch,
-    a:focus-visible > .bd-stretch {
-        font-stretch: inherit;
-    }
-}
-
-::selection {
-    background-color: var(--primary);
-    color: var(--on-primary);
-}
-
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--muted);
-}
-
-.gradient-bogota {
-    background: linear-gradient(
-        135deg,
-        var(--primary) 0%,
-        var(--primary-hover) 100%
-    );
-}
-
-.gradient-bogota-subtle {
-    background: linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--primary) 5%, transparent) 0%,
-        color-mix(in srgb, var(--primary) 12%, transparent) 100%
-    );
-}
-
-.glass {
-    background: color-mix(in srgb, var(--surface) 80%, transparent);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-.card {
-    border-radius: 0.75rem;
-    border: 1px solid var(--border);
-    background-color: var(--surface-raised);
-    transition: all 0.3s;
-}
-
-.card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.15);
-}
-
-:root:not([data-theme="dia"]) .card:hover {
-    box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.4);
-}
-
-.input-field {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid var(--border);
-    transition: all 0.2s;
-    background-color: var(--surface-raised);
-    color: var(--foreground);
-}
-
-.input-field:focus {
-    border-color: var(--primary);
-    outline: none;
-}
-
-.input-field::placeholder {
-    color: var(--muted);
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(100%);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.animate-slide-up {
-    animation: slideUp 0.4s ease-out forwards;
-}
-
-.animate-slide-in-right {
-    animation: slideInRight 0.3s ease-out forwards;
-}
-
-
