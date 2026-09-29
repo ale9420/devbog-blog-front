@@ -488,6 +488,44 @@ describe('/api/comments', () => {
   it('requires the relation parameter', async () => {
     await expect($fetch('/api/comments/flat')).rejects.toMatchObject({ response: { status: 400 } })
   })
+
+  it('forwards the locale so each language gets its own thread', async () => {
+    const english = await $fetch<{ data: Array<{ id: number }> }>('/api/comments/flat', { query: { relation, locale: 'en' } })
+    const spanish = await $fetch<{ data: Array<{ id: number }> }>('/api/comments/flat', { query: { relation, locale: 'es' } })
+    expect(english.data.map((comment) => comment.id)).toEqual([201, 202, 203, 205])
+    expect(spanish.data.map((comment) => comment.id)).toEqual([208])
+
+    const flatRequests = mock.requests.filter((request) => request.path === `/api/comments/${relation}/flat`)
+    expect(flatRequests.slice(-2).map((request) => request.query.locale)).toEqual(['en', 'es'])
+  })
+
+  it('forwards the locale to the hierarchical thread', async () => {
+    await $fetch('/api/comments', { query: { relation, locale: 'es' } })
+    const request = mock.requests.filter((recorded) => recorded.method === 'GET' && recorded.path === `/api/comments/${relation}`).at(-1)
+    expect(request?.query.locale).toBe('es')
+  })
+
+  it('posts the comment in the language it was written in', async () => {
+    await $fetch('/api/comments', {
+      method: 'POST',
+      query: { relation },
+      body: { author: { id: 'guest-10', name: 'Luis', email: 'luis@example.com' }, content: 'Buen artículo.', locale: 'es' },
+    })
+    const request = mock.requests.filter((recorded) => recorded.method === 'POST' && recorded.path === `/api/comments/${relation}`).at(-1)
+    expect(request?.body?.locale).toBe('es')
+  })
+
+  it('rejects an unknown locale without calling Strapi', async () => {
+    const before = mock.requests.length
+    await expect($fetch('/api/comments/flat', { query: { relation, locale: 'fr' } })).rejects.toMatchObject({ response: { status: 400 } })
+    await expect($fetch('/api/comments', { query: { relation, locale: 'fr' } })).rejects.toMatchObject({ response: { status: 400 } })
+    await expect($fetch('/api/comments', {
+      method: 'POST',
+      query: { relation },
+      body: { author: { id: 'guest-11', name: 'Jean', email: 'jean@example.com' }, content: 'Bonjour.', locale: 'fr' },
+    })).rejects.toMatchObject({ response: { status: 400 } })
+    expect(mock.requests.length).toBe(before)
+  })
 })
 
 describe('/api/newsletter/subscribe', () => {

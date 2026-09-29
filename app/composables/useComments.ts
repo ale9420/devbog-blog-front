@@ -10,6 +10,7 @@ interface GuestCommentPayload {
   }
   content: string
   threadOf?: number
+  locale: string
 }
 
 function getErrorMessage(err: unknown, fallback: string): string {
@@ -18,7 +19,8 @@ function getErrorMessage(err: unknown, fallback: string): string {
 }
 
 export function useComments(articleSlug: string, articleDocumentId?: string) {
-  
+  const { locale } = useI18n()
+
   const relation = computed(() => {
     if (articleDocumentId) {
       return `api::article.article:${articleDocumentId}`
@@ -26,8 +28,8 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
     return `api::article.article:${articleSlug}`
   })
 
-  const allComments = useState<Comment[]>(`comments:${relation.value}`, () => [])
-  const loaded = useState<boolean>(`comments-loaded:${relation.value}`, () => false)
+  const allComments = useState<Comment[]>(`comments:${locale.value}:${relation.value}`, () => [])
+  const loaded = useState<boolean>(`comments-loaded:${locale.value}:${relation.value}`, () => false)
   const pending = ref(false)
   const error = ref<string | null>(null)
   const submitting = ref(false)
@@ -39,9 +41,9 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
     error.value = null
     
     try {
-      const response = await $fetch<CommentsResponse>(
-        `/api/comments/flat?relation=${relation.value}`
-      )
+      const response = await $fetch<CommentsResponse>('/api/comments/flat', {
+        query: { relation: relation.value, locale: locale.value }
+      })
       
       allComments.value = response.data || []
       loaded.value = true
@@ -64,7 +66,8 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
         name: data.author.name.trim(),
         email: data.author.email.trim()
       },
-      content: data.content.trim()
+      content: data.content.trim(),
+      locale: locale.value
     }
     
     if (data.author.avatar && data.author.avatar.trim()) {
@@ -76,8 +79,9 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
     }
     
     try {
-      const response = await $fetch(`/api/comments?relation=${relation.value}`, {
+      const response = await $fetch('/api/comments', {
         method: 'POST',
+        query: { relation: relation.value },
         body: cleanData
       })
       

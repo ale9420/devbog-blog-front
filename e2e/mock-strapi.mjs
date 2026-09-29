@@ -127,7 +127,7 @@ const referencesVueEs = [
   { id: 4, key: 'karpukhin-2020', type: 'conference', authors: 'Karpukhin, V., Oğuz, B., Min, S., Lewis, P., Wu, L., Edunov, S., Chen, D. y Yih, W.', year: '2020', title: 'Dense Passage Retrieval for Open-Domain Question Answering', container: 'Proceedings of EMNLP 2020', volume: null, issue: null, pages: '6769–6781', venueLabel: 'EMNLP 2020', doi: null, url: 'https://arxiv.org/abs/2004.04906', accessedAt: '2026-09-10' },
 ]
 
-const comments = [
+const englishComments = [
   {
     id: 101,
     content: 'Great introduction to composables.',
@@ -150,6 +150,20 @@ const comments = [
     updatedAt: '2026-02-04T10:00:00.000Z',
     threadOf: { id: 101 },
   },
+]
+
+const spanishComments = [
+  {
+    id: 104,
+    content: 'Muy buena guía.',
+    blocked: false,
+    blockedThread: false,
+    removed: false,
+    author: { id: 'guest-3', name: 'Luis' },
+    createdAt: '2026-02-05T10:00:00.000Z',
+    updatedAt: '2026-02-05T10:00:00.000Z',
+    threadOf: null,
+  },
   {
     id: 103,
     content: 'Replied from Mastodon.',
@@ -165,6 +179,12 @@ const comments = [
     fediverseUri: 'https://mastodon.social/users/bea/statuses/1',
   },
 ]
+
+const commentThreads = {
+  'doc-vue:en': englishComments,
+  'doc-vue:es': [{ ...spanishComments[0], id: 105, content: 'Comentario en la versión en español.' }],
+  'doc-vue-es:es': spanishComments,
+}
 
 const articles = [
   {
@@ -450,7 +470,8 @@ const server = createServer(async (req, res) => {
   }
 
   if (method === 'GET' && url.pathname.startsWith('/api/comments')) {
-    const data = url.pathname.includes('doc-vue/') ? comments : []
+    const documentId = url.pathname.match(/api::article\.article:([^/]+)/)?.[1]
+    const data = commentThreads[`${documentId}:${query.locale}`] ?? []
     sendJson(res, 200, { data })
     return
   }

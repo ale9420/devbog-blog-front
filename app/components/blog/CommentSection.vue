@@ -133,7 +133,7 @@ onMounted(() => {
         <p class="bd-comments-intro">{{ federated ? t('comments.introFediverse') : t('comments.intro') }}</p>
       </div>
 
-      <div class="bd-comments-filters" role="group" :aria-label="t('comments.filterLabel')">
+      <div v-if="federated" class="bd-comments-filters" role="group" :aria-label="t('comments.filterLabel')">
         <button
           v-for="option in FILTERS"
           :key="option"
@@ -232,7 +232,7 @@ onMounted(() => {
       </form>
     </div>
 
-    <aside class="bd-comments-moderation" aria-labelledby="bd-comments-moderation-title">
+    <aside v-if="federated" class="bd-comments-moderation" aria-labelledby="bd-comments-moderation-title">
       <p id="bd-comments-moderation-title" class="bd-eyebrow bd-home-eyebrow">{{ t('comments.moderation.title') }}</p>
       <ul class="bd-meta bd-comments-moderation-list">
         <li v-for="rule in MODERATION_RULES" :key="rule">

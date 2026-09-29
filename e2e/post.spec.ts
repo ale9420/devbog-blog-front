@@ -61,23 +61,32 @@ test('threads replies under their comment and hydrates cleanly', async ({ page }
   await page.goto('/blog/understanding-vue-composables', { waitUntil: 'networkidle' })
   const thread = page.locator('.bd-comment-thread')
   await expect(thread.getByText('Thanks, glad it helped!')).toBeVisible()
-  await expect(page.getByText('Conversation · 3 comments')).toBeVisible()
+  await expect(page.getByText('Conversation · 2 comments')).toBeVisible()
   expect(errors).toEqual([])
 })
 
-test('labels fediverse replies and filters the thread by origin', async ({ page }) => {
+test('shows only the comments written in the language being read', async ({ page }) => {
   await page.goto('/blog/understanding-vue-composables', { waitUntil: 'networkidle' })
   const comments = page.locator('#comments')
-  const reply = comments.locator('.bd-comment-fediverse')
-  await expect(reply.locator('.bd-comment-badge-fediverse')).toHaveText('◆ Fediverse · @bea@mastodon.social')
-  await expect(reply.getByRole('link', { name: /View on their instance/ })).toHaveAttribute('href', 'https://mastodon.social/users/bea/statuses/1')
-  await expect(comments.getByRole('complementary', { name: 'Moderation' })).toContainText('Fediverse replies are published after review')
-
-  const filters = comments.getByRole('group', { name: 'Filter comments' })
-  await filters.getByRole('button', { name: 'From the fediverse' }).click()
-  await expect(comments.locator('.bd-comment')).toHaveCount(1)
-  await filters.getByRole('button', { name: 'From the blog' }).click()
   await expect(comments.locator('.bd-comment')).toHaveCount(2)
+  await expect(comments).not.toContainText('Comentario en la versión en español.')
+  await expect(comments.getByRole('group', { name: 'Filter comments' })).toHaveCount(0)
+  await expect(comments.getByRole('complementary', { name: 'Moderation' })).toHaveCount(0)
+})
+
+test('labels fediverse replies and filters the thread by origin on federated articles', async ({ page }) => {
+  await page.goto('/es/blog/guia-vue-composables', { waitUntil: 'networkidle' })
+  const comments = page.locator('#comments')
+  const reply = comments.locator('.bd-comment-fediverse')
+  await expect(reply.locator('.bd-comment-badge-fediverse')).toContainText('@bea@mastodon.social')
+  await expect(reply.locator('.bd-comment-instance-link')).toHaveAttribute('href', 'https://mastodon.social/users/bea/statuses/1')
+  await expect(comments.getByRole('complementary', { name: 'Moderación' })).toContainText('Las respuestas del fediverso se publican después de revisarlas')
+
+  const filters = comments.getByRole('group', { name: 'Filtrar comentarios' })
+  await filters.getByRole('button', { name: 'Del fediverso' }).click()
+  await expect(comments.locator('.bd-comment')).toHaveCount(1)
+  await filters.getByRole('button', { name: 'Del blog' }).click()
+  await expect(comments.locator('.bd-comment')).toHaveCount(1)
   await expect(comments.locator('.bd-comment-fediverse')).toHaveCount(0)
 })
 
@@ -86,7 +95,7 @@ test('shows the fediverse activity and reply block on federated articles', async
   const bar = page.getByRole('region', { name: 'En el fediverso' })
   await expect(bar.locator('.bd-fedi-bar-stats')).toContainText('7 me gusta')
   await expect(bar.locator('.bd-fedi-bar-stats')).toContainText('3 impulsos')
-  await expect(bar.locator('.bd-fedi-bar-stats')).toContainText('0 respuestas')
+  await expect(bar.locator('.bd-fedi-bar-stats')).toContainText('1 respuesta')
   await bar.getByRole('button', { name: 'Responder desde el fediverso' }).click()
   await expect(bar.locator('.bd-fedi-reply-address')).toHaveText('https://api.bogdev.com.co/fediverse/articles/doc-vue-es')
   await expect(bar).toContainText('Tu respuesta llega como comentario y se publica después de moderarla.')

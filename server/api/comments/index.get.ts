@@ -14,12 +14,15 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  const locale = commentLocale(query.locale)
+
   const params = qs.stringify({
     pagination: {
       page: query.page,
       pageSize: query.pageSize,
     },
     sort: query.sort,
+    locale,
   }, { skipNulls: true })
 
   const headers: Record<string, string> = {}

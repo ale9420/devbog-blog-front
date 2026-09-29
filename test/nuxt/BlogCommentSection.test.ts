@@ -16,7 +16,13 @@ const threads: Record<string, unknown[]> = {
   ],
 }
 
-registerEndpoint('/api/comments/flat', (event) => ({ data: threads[String(getQuery(event).relation)] ?? [] }))
+const threadRequests: Array<Record<string, unknown>> = []
+
+registerEndpoint('/api/comments/flat', (event) => {
+  const query = getQuery(event)
+  threadRequests.push(query)
+  return { data: threads[String(query.relation)] ?? [] }
+})
 registerEndpoint('/api/fediverse/stats/doc-thread', () => ({ likes: 0, boosts: 0 }))
 
 async function mountSection(documentId: string, federated = false) {
@@ -56,8 +62,13 @@ describe('BlogCommentSection', () => {
     expect(text.find('b').exists()).toBe(false)
   })
 
+  it('asks for the thread in the current language', async () => {
+    await mountSection('doc-thread')
+    expect(threadRequests.at(-1)).toEqual({ relation: 'api::article.article:doc-thread', locale: 'en' })
+  })
+
   it('filters the thread between the blog and the fediverse', async () => {
-    const wrapper = await mountSection('doc-thread')
+    const wrapper = await mountSection('doc-thread', true)
     const buttons = wrapper.get('[role="group"]').findAll('button')
     expect(buttons.map(button => button.text())).toEqual(['All', 'From the blog', 'From the fediverse'])
     expect(buttons[0]!.attributes('aria-pressed')).toBe('true')
@@ -76,14 +87,14 @@ describe('BlogCommentSection', () => {
   })
 
   it('says so when no fediverse reply has arrived yet', async () => {
-    const wrapper = await mountSection('doc-blog-only')
+    const wrapper = await mountSection('doc-blog-only', true)
     await wrapper.get('[role="group"]').findAll('button')[2]!.trigger('click')
     expect(wrapper.findAll('.bd-comment')).toHaveLength(0)
     expect(wrapper.get('.bd-comments-empty').text()).toBe('No replies from the fediverse on this article yet.')
   })
 
   it('explains how fediverse replies are moderated', async () => {
-    const wrapper = await mountSection('doc-blog-only')
+    const wrapper = await mountSection('doc-blog-only', true)
     const note = wrapper.get('.bd-comments-moderation')
     expect(note.get('#bd-comments-moderation-title').text()).toBe('Moderation')
     expect(note.findAll('li').map(item => item.text().replace(/\s+/g, ' '))).toEqual([
@@ -92,6 +103,13 @@ describe('BlogCommentSection', () => {
       '✓ If they delete it, it is removed from here',
       '✓ They are stored as plain text',
     ])
+  })
+
+  it('leaves the origin filter and the moderation note out of non-federated articles', async () => {
+    const wrapper = await mountSection('doc-thread')
+    expect(wrapper.find('[role="group"]').exists()).toBe(false)
+    expect(wrapper.find('.bd-comments-moderation').exists()).toBe(false)
+    expect(wrapper.findAll('.bd-comment')).toHaveLength(3)
   })
 
   it('offers replying from Mastodon only on federated articles and opens the fediverse reply block', async () => {

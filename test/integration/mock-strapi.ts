@@ -7,7 +7,7 @@ export interface RecordedRequest {
   method: string
   path: string
   query: Record<string, unknown>
-  body?: { data?: Record<string, unknown> }
+  body?: { data?: Record<string, unknown>; locale?: unknown }
 }
 
 interface MockSubscriber {
@@ -261,6 +261,14 @@ const rejectedComment = {
   approvalStatus: 'REJECTED',
 }
 
+const spanishComment = {
+  ...blogComment,
+  id: 208,
+  documentId: 'comment-es',
+  content: 'Muy buena introducción.',
+  author: { id: 'guest-2', name: 'Luis', email: 'luis@example.com' },
+}
+
 const flatComments = [blogComment, fediverseComment, authorReply, pendingFediverseComment, unsafeFediverseComment, rejectedComment]
 
 const hierarchyComments = [
@@ -346,6 +354,9 @@ function recordRequest(
   const recorded: RecordedRequest = { method, path, query }
   if (body && typeof body === 'object' && 'data' in body) {
     recorded.body = { data: body.data as Record<string, unknown> }
+  }
+  if (body && typeof body === 'object' && 'locale' in body) {
+    recorded.body = { ...recorded.body, locale: body.locale }
   }
   requests.push(recorded)
 }
@@ -562,7 +573,8 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
     }
 
     if (method === 'GET' && url.pathname === '/api/comments/api::article.article:doc-vue/flat') {
-      sendJson(res, 200, { data: flatComments, pagination: { page: 1, pageSize: 10, pageCount: 1, total: flatComments.length } })
+      const data = query.locale === 'es' ? [spanishComment] : flatComments
+      sendJson(res, 200, { data, pagination: { page: 1, pageSize: 10, pageCount: 1, total: data.length } })
       return
     }
 
