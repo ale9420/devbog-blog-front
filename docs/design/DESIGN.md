@@ -8,10 +8,11 @@
 | --- | --- | --- |
 | `DESIGN.md` | Esta especificación | Leer completa la sección que cita tu issue, más las secciones 1 y 3 |
 | `tokens.json` | Tokens del sistema de diseño (colores por tema, tipo, espacio, radios, sombras) | Única fuente de valores. Nunca escribir un hex a mano |
-| `tokens.css` | Variables CSS generadas desde `tokens.json` | Referencia; el issue de tokens lo genera en `app/assets/css/settings/tokens.css` |
+| `tokens.css` | Variables CSS generadas desde `tokens.json` | Referencia; el issue de tokens lo genera en `app/assets/css/tokens.css` |
 | `build-tokens.mjs` | Generador de `tokens.css` | Se mueve a `scripts/build-tokens.mjs` |
 | `reference/canvas/*.dc.html` | Fuente HTML de cada pantalla del lienzo de diseño | Leer como especificación: estilos en línea = medidas, textos literales = copy final. **No copiar el markup**: es un prototipo con plantillas `{{…}}`, `<sc-if>`, `<sc-for>` y `<dc-import>` |
-| `reference/canvas/bogdev-site.css` | Hoja compartida del lienzo (bandada, parallax, teleférico, hoja inferior, acordeones, etc.) | Referencia de animaciones y keyframes |
+| `reference/canvas/bogdev-site.css` | Hoja compartida del lienzo (bandada, parallax, hoja inferior, acordeones, etc.) | Referencia de animaciones y keyframes |
+| `assets/` | Fotos del hero (PNN Sumapaz, versiones Día y Noche) y el script que las prepara | Copiar a `public/images/` o `app/assets/` |
 | `reference/ds/bundle.js`, `bundle.css`, `index.d.ts.txt` | Componentes React del sistema de diseño | Referencia de props, clases `bd-*` y comportamiento para portarlos a Vue |
 
 Pantallas del lienzo:
@@ -36,7 +37,7 @@ Cada requisito lleva un estado: **EXISTE** (ya está en producción, solo cambia
 
 | Fuente | Qué contiene |
 | --- | --- |
-| Lienzo de diseño | 9 pantallas: Inicio, Artículo, Blog y Acerca de (escritorio), Inicio, Blog y Acerca de (móvil), Header y Footer compartidos |
+| Lienzo de diseño | 17 pantallas (incluye Privacidad escritorio y móvil y el Aviso): Inicio, Artículo, Blog, Acerca de, Cuenta, Borradores y Borrador de artículo (escritorio), Inicio, Blog, Acerca de, Cuenta y Borradores (móvil), Header y Footer compartidos |
 | Sistema de diseño BogDev | Tokens y 8 componentes React (Logo, Button, CategoryTag, NavBar, PostCard, NewsletterForm, CodeBlock, Callout); logos oficiales |
 | Frontend `ale9420/devbog-blog-front` | Nuxt 4, Vue 3, Nuxt UI, Tailwind 4, i18n es/en, Vitest, Playwright |
 | Backend `ale9420/devbog-blog-backend` | Strapi 5, plugin de comentarios, plugin de fediverso (Fedify), `docs/FEDIVERSE.md` |
@@ -44,7 +45,7 @@ Cada requisito lleva un estado: **EXISTE** (ya está en producción, solo cambia
 Convenciones para agentes:
 
 - Seguir `AGENTS.md` del repo (script setup ordenado, tipos explícitos, sin comentarios, i18n para todo texto visible).
-- Los componentes del sistema de diseño están en React; el frontend es Vue. Se portan a componentes Vue con el mismo nombre (`Bd*`), las mismas props y las mismas clases CSS `bd-*`, pero todo identificador va en inglés (ver `AGENTS.md`): si una prop, un evento, un valor o una clase está en español (`activa`, `tema`, `nota`, `blanco`), se traduce. No montar React dentro de Nuxt.
+- Los componentes del sistema de diseño están en React; el frontend es Vue. Se portan a componentes Vue con el mismo nombre (`Bd*`), las mismas props y las mismas clases CSS `bd-*`. No montar React dentro de Nuxt.
 - Colores, tipo y espacio salen de `tokens.json` vía variables CSS. Nunca un hex en un componente.
 - Textos: español de Colombia, tuteo, títulos en tipo oración, sin emoji ni signos de exclamación. Glifos permitidos: → ↗ ◆ ▲ ✕ ✓ ·. Cada texto nuevo va en `i18n/locales/es.json` y `en.json`.
 - Un issue = un PR pequeño. Si el issue depende de otro abierto, trabajar sobre `main` con lo que exista y dejar la integración detrás de una bandera o un dato opcional; nunca inventar campos de API.
@@ -108,7 +109,7 @@ Categorías y aves:
 
 ### Movimiento y accesibilidad
 
-- Transiciones de 240 ms con `cubic-bezier(.2, 0, 0, 1)`. Con `prefers-reduced-motion: reduce` no hay ninguna animación (bandada, parallax, banderas LED de Colpatria, barra de lectura, barrido de tema).
+- Transiciones de 240 ms con `cubic-bezier(.2, 0, 0, 1)`. Con `prefers-reduced-motion: reduce` no hay ninguna animación (bandada, parallax, barra de lectura, barrido de tema).
 - Contraste mínimo 4.5:1 para texto y 3:1 para bordes de controles en ambos temas (verificado en los tokens).
 - Foco visible: contorno de 2 px `var(--focus)` con 2 px de separación. Objetivos táctiles de al menos 44 px.
 
@@ -118,7 +119,7 @@ El rediseño vive en una capa de tokens y componentes `Bd*` sobre la app actual;
 
 ```mermaid
 flowchart LR
-    T[tokens.json] --> C[app/assets/css/settings/tokens.css]
+    T[tokens.json] --> C[app/assets/css/tokens.css]
     C --> K[Componentes Bd*<br/>app/components/bd/]
     C --> M[Tema Mermaid<br/>useMermaidTheme]
     K --> P[Páginas<br/>index, blog, blog/slug, about]
@@ -129,7 +130,7 @@ flowchart LR
 
 ### Base
 
-- **Tokens.** `scripts/build-tokens.mjs` genera `app/assets/css/settings/tokens.css` desde `tokens.json` (se copian desde esta carpeta). Mapear las variables actuales de `app/assets/css/settings/aliases.css` (`--foreground`, `--primary`, `--muted`, `--border`, `--surface-elevated`…) y la paleta de Nuxt UI a estas variables para no duplicar colores.
+- **Tokens.** `scripts/build-tokens.mjs` genera `app/assets/css/tokens.css` desde `tokens.json` (se copian desde esta carpeta). Mapear las variables actuales de `main.css` (`--foreground`, `--primary`, `--muted`, `--border`, `--surface-elevated`…) y la paleta de Nuxt UI a estas variables para no duplicar colores.
 - **Tema.** Hoy `useTheme` envuelve `useColorMode` con valores light/dark. Configurar color mode con `dataValue: 'theme'` y mapear `dark → noche`, `light → dia`, o ampliar `useTheme` para exponer `tema: 'noche' | 'dia'`, `setTema()`, `toggle()`. La preferencia persiste y se aplica antes del primer pintado (sin parpadeo).
 - **Cambio de tema con View Transitions.** `document.startViewTransition` con barrido circular desde el botón (`--vt-x`, `--vt-y`; keyframe `bd-wipe` en `bogdev-site.css`). Sin soporte o con movimiento reducido, cambio directo.
 - **Fuentes.** Archivo (ejes wdth, wght) y JetBrains Mono autoalojadas en `public/fonts/` (preferible por privacidad) con `font-display: swap`.
@@ -165,7 +166,7 @@ Un solo componente `BdHeader` en `layouts/default.vue`, reemplaza `LayoutHeader`
 Eventos: `search` (abre la paleta ⌘K), `menu` (abre la hoja inferior en móvil). Tema e idioma los resuelve el propio header con `useTheme` y `useI18n`.
 
 - **Escritorio** (≥ 768 px): `BdNavBar` de 72 px (logo 30 px + «BogDev», Inicio · Blog · Acerca de, selector ES/EN) y debajo una franja de 64 px:
-  - Variante sitio: `◆ BOGOTÁ 4.61°N 74.08°W 2.640 M S.N.M.` a la izquierda; chip `◆ @bogdev` (enlace a la sección fediverso del inicio), botón `Buscar ⌘K` y segmento `Noche | Día` a la derecha.
+  - Variante sitio: `◆ BOGOTÁ 4.61°N 74.08°W 2.640 M S.N.M.` a la izquierda; chip `◆ @devbog` (enlace a la sección fediverso del inicio), botón `Buscar ⌘K` y segmento `Noche | Día` a la derecha.
   - Variante lectura: barra de progreso de 2 px en chillon con un ave aleteando en la punta (`animation-timeline: scroll(root)`), migas `INICIO / BLOG / <categoría>`, `LEÍDO N %` y segmento `Noche | Día`.
 - **Móvil** (< 768 px): barra de 64 px fija con `position: sticky`: logo 28 px + marca, botón Buscar y botón Menú (iconos de trazo, `aria-label`).
 - **Tab bar inferior** (móvil, parte del layout): fija, 64 px, Inicio · Blog · Buscar · Menú; pestaña activa con borde superior mirla.
@@ -174,8 +175,7 @@ Eventos: `search` (abre la paleta ⌘K), `menu` (abre la hoja inferior en móvil
 
 ### 5.2 Inicio (`Main.dc.html`, `Movil.dc.html`)
 
-- Hero: «Explorando privacidad, DIY, IA, software y Linux.» en display-xl ancho; a la derecha una foto del PNN Sumapaz (laguna y frailejones) en dos versiones etalonadas, una para Noche con luna y otra para Día con niebla, que se funden con el fondo por la izquierda y por arriba. Encima, 3 rutas de vuelo y 9 aves con `offset-path` que aletean animando `d`, y en escritorio la marca «PNN Sumapaz · Frailejones».
-- Pie del hero: «Fig. 01 — PNN Sumapaz · Foto: Danielfjio · Wikimedia Commons · CC BY-SA 4.0 · Recortada y etalonada», con enlaces a la foto original y a la licencia. Va en una caja `surface` con borde `line` para que el texto mantenga el contraste sobre la foto. Las versiones recortadas son obra derivada y se publican con la misma licencia (CC BY-SA 4.0).
+- Hero: «Explorando privacidad, DIY, IA, software y Linux.» en display-xl ancho; a la derecha, una foto real del Parque Nacional Natural Sumapaz (laguna, frailejonal y cerro) en dos versiones (`assets/sumapaz-foto-dia.jpg`, natural y cálida; `assets/sumapaz-foto-noche.jpg`, etalonada a luz de luna con cielo estrellado), 1520 × 1440, generadas con `assets/sumapaz_foto.py` desde la foto original. La imagen se funde hacia `surface` por la izquierda, arriba y abajo para no competir con el titular. Encima, 3 rutas de vuelo con 9 aves en `offset-path` que aletean animando `d` y la etiqueta «PNN SUMAPAZ · FRAILEJONES». Se cambia de imagen con el tema (`.bd-noche .bd-img-dia, .bd-dia .bd-img-noche { display: none }`); en producción usar `<picture>`/`NuxtImg` con AVIF/WebP, `alt=""` (decorativa) y `fetchpriority="high"`. **Crédito obligatorio (CC BY-SA 4.0):** foto «Paisaje Sumapaz, Colombia» de Danielfjio en Wikimedia Commons. El pie de figura muestra «FOTO: DANIELFJIO · WIKIMEDIA COMMONS · CC BY-SA 4.0 · RECORTADA Y ETALONADA» con enlace a la página del archivo y a la licencia; el pie queda fuera de `aria-hidden` para que los enlaces sean accesibles. El pie va sobre una placa `surface` con borde `line` (nunca directo sobre la foto): `ink-muted` sobre `surface` da 6,2:1 en Día y 7,5:1 en Noche. Las dos versiones modificadas se publican bajo CC BY-SA 4.0 (ver `assets/CREDITOS.md`). Para mejor nitidez, regenerar desde el original de 4160 × 2336 px con `assets/sumapaz_foto.py`.
 - Artículo destacado (`BdPostCard featured`).
 - Últimos artículos con filtros por categoría (6 chips con contador) y estado vacío con ave posada.
 - Guía de campo: Privacidad y DIY como pilares grandes; IA, Software y Linux debajo, cada uno con su ave en línea fina. En móvil, carrusel con scroll-snap.
@@ -193,6 +193,8 @@ Eventos: `search` (abre la paleta ⌘K), `menu` (abre la hoja inferior en móvil
 - Cabecera: categoría, fecha, título display-l, extracto, autor, compartir (Copiar enlace, Mastodon ↗).
 - Portada: imagen 16:9; sin imagen, campo `surface-sunken` con scanlines. Los diagramas de portada usan Mermaid (sección 7).
 - Cuerpo: TOC fijo a la izquierda con sección activa, texto de 68ch, `BdCallout`, `BdCodeBlock`.
+- **Imágenes con crédito** (FIG. 02 y FIG. 03 en `Articulo.dc.html`): figura 16:9 a todo el ancho del texto, borde `line` y fondo `surface-sunken` mientras carga; `alt` descriptivo obligatorio. Debajo, `figcaption` con filete izquierdo `line-strong`: «FIG. NN» en mono `ink` + pie en body-s `ink-muted`, y una línea de crédito en mono 12/20: tipo en mayúsculas (FOTO, ILUSTRACIÓN, DIAGRAMA, CAPTURA), autor, fuente y licencia, cada uno enlazado (la licencia con `rel="license"`), y al final los cambios hechos («recortada», «etalonada»). Obra propia: «ILUSTRACIÓN Alejandro Ramírez · BogDev · obra propia», sin enlaces. El crédito nunca va sobre la imagen (contraste garantizado: `ink-muted` sobre `surface`). Numeración automática en orden de aparición; la portada es FIG. 01. Datos: campos de crédito de `shared.media` (issue de backend) o, dentro del Markdown, el título de la imagen con la convención `"Pie || Tipo | Autor | URL autor | Fuente | URL fuente | Licencia | URL licencia | cambios"`.
+- **Referencias** (cierre del cuerpo, antes de las etiquetas): sección `#referencias` con título «Referencias», contador «N FUENTES · APA 7» y lista numerada. Cada entrada: número `[n]` en chillon, eyebrow con la revista o congreso y el año, cita en formato APA 7 (15/24) con el título enlazado a la fuente (`target="_blank" rel="noopener noreferrer"`), identificador corto en mono (DOI o arXiv) y enlace «↩ volver al texto». En el cuerpo, las citas son superíndices `[n]` en mono chillon que llevan a `#ref-n`; la referencia destino se resalta con `:target` sobre `chillon-soft`. Nota final: «Consultadas el DD.MM.AAAA». La TOC termina con «Referencias». Fuente de datos: notas al pie de Markdown en Strapi (`texto[^1]` y `[^1]: Autor (año). Título. Fuente. URL`), renderizadas con la extensión `marked-footnote` en `useMarkdownRenderer` y reescritas a esta estructura; permitir en `sanitize-html` `section`, `ol`, `sup` y los `id`/`href` internos. Sin notas al pie, la sección no se muestra.
 - Tras el cuerpo, en este orden (como hoy en `[slug].vue`): etiquetas, tarjeta de autor, Buy Me a Coffee (pocillo de tinto animado, botón primario a `https://www.buymeacoffee.com/ale9420`), conversación (comentarios + fediverso), relacionados + newsletter.
 
 ### 5.5 Acerca de (`Acerca.dc.html`, `AcercaMovil.dc.html`)
@@ -203,21 +205,21 @@ Ficha de campo: «Hola, soy Alejandro.», datos (nombre, hábitat, especialidad,
 
 - Un solo `BdFooter` en `layouts/default.vue`; variante móvil por breakpoint (< 768 px).
 - Contenido: logo + marca, tagline, redes (LinkedIn, GitHub, Codeberg, Mastodon con `rel="me"`), Navegar, Temas (5 con punto de color), Suscribirse (RSS, Newsletter, Fediverso, Invitarme un café), panorama de los cerros orientales y créditos.
-- Panorama en capas SVG: páramo, cerros con Monserrate (3.152 m, basílica) y Guadalupe (3.317 m, santuario y Virgen), faldas, copetón (`public/copeton.png`) al 30–45 % de opacidad a la izquierda y skyline de occidente a oriente (Torre Atrio Norte, CCI, Hotel Tequendama, BD Bacatá, Avianca, Colpatria, Torres del Parque, La Santamaría). En Noche, la fachada LED de Colpatria rota las banderas de Palestina, Colombia y Bogotá cada 18 s. En Día sin luces ni LED.
+- Panorama en capas SVG: páramo, cerros con Monserrate (3.152 m, basílica blanca con torre central de cúpula y cruz, alas del convento con tejas de barro sobre una terraza) y Guadalupe (3.317 m, santuario blanco con espadaña, techo de teja y la estatua de la Virgen de brazos abiertos sobre su pedestal), faldas, copetón (`public/copeton.png`) al 30–45 % de opacidad a la izquierda y skyline del Centro Internacional a escala (0,8 px por metro): Torre Atrio Norte vista de frente (espina central de paneles plateados, dos ranuras oscuras con riostras naranjas en chevrón cada ~30 m apuntando a la espina, alas de vidrio con remate en chaflán, marco naranja de coronación con grúa y pabellones de vidrio en la base), Centro de Comercio Internacional, Hotel Tequendama, BD Bacatá (dos torres de coronación inclinada), Edificio Avianca, Torre Colpatria (planta cuadrada con esquinas achaflanadas, cara lateral en sombra, pilastras verticales y corona oscura con el aviso y dos luces en las esquinas) cuya fachada LED, en tiras verticales entre pilastras sobre el 80 % superior (recorte con `clipPath`) y algunas ventanas encendidas en la parte baja, muestra en Noche, una tras otra, las banderas de Palestina (en vertical: franjas negra, blanca y verde de izquierda a derecha y el triángulo rojo de 26 px bajando desde arriba), Colombia y Bogotá (6 s cada una, cambio seco como un LED, ciclo de 18 s; en Día apagada; colores oficiales de cada bandera, única excepción a la regla de tokens), Torres del Parque de Salmona y la Plaza de toros La Santamaría. En Día sin luces.
 - Parallax: `animation-range: entry 0% entry 100%` para que la posición final sea igual en todas las páginas.
 - Móvil: redes en rejilla de 4, grupos plegables con `<details>`, panorama deslizable de 1152 × 352 px.
 - Recursos: extraer los SVG del panorama de `Footer.dc.html` a `app/assets/footer/` o a un componente `BdPanorama.vue`.
 
 ## 6. Fediverso
 
-El backend federa el blog como `@bogdev@api.bogdev.com.co` (fases 0–4 verificadas; ver `docs/FEDIVERSE.md` del backend). El frontend solo lee.
+El backend federa el blog como `@devbog@api.bogdev.com.co` (fases 0–4 verificadas; ver `docs/FEDIVERSE.md` del backend). El frontend solo lee.
 
 ```mermaid
 sequenceDiagram
     participant L as Lector en Mastodon
     participant B as Strapi + Fedify
     participant F as Frontend Nuxt
-    L->>B: Follow @bogdev
+    L->>B: Follow @devbog
     B-->>L: Accept
     B->>L: Create(Article) al publicar
     L->>B: Reply / Like / Announce
@@ -226,10 +228,12 @@ sequenceDiagram
     F->>B: GET /api/comments (solo aprobados)
 ```
 
+**Sección «Sigue el blog desde Mastodon» (inicio) pensada para quien no conoce el fediverso.** Orden: titular + bajada en lenguaje llano («red social parecida a X o Threads, pero sin dueño»); tres tarjetas ilustradas (en móvil, carrusel con scroll-snap): «Funciona como el correo» (dos servidores y un ave mensajera con un sobre), «Tu dirección tiene dos partes» (anatomía de @usuario@servidor) y «Muchas apps, una sola red» (símbolo del fediverso redibujado con los colores de las aves + nombres en texto de Mastodon, Pixelfed, PeerTube, Misskey y GoToSocial); dos caminos lado a lado: «¿Nunca has usado Mastodon?» (3 pasos y enlace a https://joinmastodon.org/es/servers) y «¿Ya tienes cuenta?» (campo de servidor + Seguir, y la dirección con botón Copiar); «Qué pasa después de seguir» con iconos de trazo propios; y un glosario rápido (Fediverso, Servidor o instancia, Seguir, Impulsar). Sobre el eyebrow va el logo oficial de Mastodon (`logo-purple.svg`, descargado de https://joinmastodon.org/es/branding), sin cambiar colores, forma ni opacidad, a 64 px en escritorio y 52 px en móvil, con su espacio libre alrededor (la política de marca no permite modificarlo, así que no se usa como fondo). Ilustraciones: SVG en línea propios; el símbolo del fediverso es de dominio público (CC0). Las demás apps se nombran en texto, sin sus logos.
+
 | Elemento de UI | Dato o acción | Estado |
 | --- | --- | --- |
 | Tarjeta «anillo de identificación» (Inicio, Acerca de, móvil) | Handle fijo + botón Copiar | NUEVO |
-| «Seguir desde tu instancia» | Campo de instancia; abre `https://<instancia>/authorize_interaction?uri=@bogdev@api.bogdev.com.co` (convención de Mastodon); validar que la instancia sea un dominio | NUEVO |
+| «Seguir desde tu instancia» | Campo de instancia; abre `https://<instancia>/authorize_interaction?uri=@devbog@api.bogdev.com.co` (convención de Mastodon); validar que la instancia sea un dominio | NUEVO |
 | Barra «En el fediverso» del artículo | `GET /api/fediverse/articles/:documentId/stats` → `{ likes, boosts }`; 404 o error = ocultar la barra | NUEVO |
 | «Responder desde el fediverso» | Muestra y copia `https://api.bogdev.com.co/fediverse/articles/:documentId`; abre `authorize_interaction` con esa URL | NUEVO |
 | Etiqueta ◆ FEDIVERSO en comentarios | Campo `fediverseActorHandle`; enlace a la nota original con `fediverseUri` | NUEVO |
@@ -258,7 +262,7 @@ flowchart LR
 ```
 
 - **Detección.** En `useMarkdownRenderer`, renderer de `code` para `lang === 'mermaid'` que emite `<figure class="bd-mermaid" data-src="<código escapado>"><pre>código</pre></figure>`. El `<pre>` es el respaldo sin JavaScript y el texto para lectores de pantalla. Añadir `figure` y `data-src` a `sanitizeOptions`.
-- **Carga.** `BdMermaid.client.vue` (o plugin cliente) busca `.bd-mermaid` tras montar, importa `mermaid` de forma dinámica solo si hay alguno y dibuja cada uno con `mermaid.render(id, src)`. Dependencia `mermaid` 12.x.
+- **Carga.** `BdMermaid.client.vue` (o plugin cliente) busca `.bd-mermaid` tras montar, importa `mermaid` de forma dinámica solo si hay alguno y dibuja cada uno con `mermaid.render(id, src)`. Dependencia `mermaid` 11.x fijada.
 - **Tema.** `mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'base', themeVariables })`, con `themeVariables` leídas de las variables CSS (`getComputedStyle`), no escritas a mano.
 - **Cambio de tema.** Observar `data-theme` en `<html>`; al cambiar, volver a `initialize` y redibujar desde `data-src`.
 - **Presentación.** Figura sobre `surface-sunken`, borde `line`, padding 24 px, scroll horizontal si es ancho, pie opcional en estilo meta («FIG. 01 — …»).
@@ -268,9 +272,9 @@ flowchart LR
 | --- | --- |
 | background | surface-sunken |
 | primaryColor, mainBkg, nodeBkg, actorBkg | surface-raised |
-| primaryTextColor, textColor, signalTextColor | ink |
+| primaryTextColor, textColor, signalColor, signalTextColor | ink |
 | primaryBorderColor, nodeBorder, actorBorder | line-strong |
-| lineColor, signalColor | chillon |
+| lineColor | chillon |
 | secondaryColor, tertiaryColor | surface |
 | clusterBkg / clusterBorder | surface / line |
 | noteBkgColor / noteTextColor | monjita-soft / ink |
@@ -297,8 +301,10 @@ flowchart LR
     F1[1 Base] --> F2[2 Estructura] --> F3[3 Páginas] --> F4[4 Fediverso]
     F1 --> F5[5 Mermaid]
     F3 --> F6[6 Propuestas]
+    F3 --> F7[7 Cuentas y borradores]
     BE[Backend] -.-> F3
     BE -.-> F6
+    BE -.-> F7
 ```
 
 1. Base: tokens y temas, `useTheme` con View Transitions, fuentes, `BdLogo`, `BdButton`, `BdCategoryTag`, `BdCallout`, `BdCodeBlock`, categorías Privacidad y DIY.
@@ -307,6 +313,7 @@ flowchart LR
 4. Fediverso: anillo y seguir remoto, barra de contadores, hilo unificado.
 5. Mermaid.
 6. Propuestas aprobadas, una por PR.
+7. Cuentas y borradores: registro, inicio de sesión, rol Editor y vista de borradores (§11).
 
 ## 10. Criterios de aceptación y pruebas
 
@@ -332,3 +339,44 @@ Checklist de cada PR:
 - [ ] Textos en `i18n/locales/es.json` y `en.json`
 - [ ] Capturas de 390 px y 1440 px en ambos temas en la descripción del PR
 - [ ] `Closes #<issue>` en la descripción
+
+## 11. Cuentas y borradores (fase 7)
+
+Cualquier persona puede crear una cuenta; los **editores** además ven en el sitio los artículos que siguen en borrador, con el diseño real, antes de publicarlos.
+
+| Tema | Decisión |
+| --- | --- |
+| Registro | Abierto, con correo y contraseña (mínimo 10 caracteres) y confirmación obligatoria por correo. Sin proveedores sociales. |
+| Roles | `Authenticated` (lector, sin permisos extra) y `Editor` (lee borradores). El rol Editor se asigna a mano en el admin de Strapi. |
+| Datos | Solo correo, nombre de usuario y contraseña. Cada persona elimina su cuenta desde `/cuenta`, confirmando con su usuario y su contraseña; sus comentarios quedan como «Anónimo». |
+| Backend | El frontend consume los endpoints de `users-permissions` (`/api/auth/local`, `/api/auth/local/register`, `/api/auth/forgot-password`, `/api/auth/reset-password`, `/api/auth/email-confirmation`, `/api/users/me`). Hay que configurar el correo, los ajustes avanzados y el rol Editor. Código nuevo: `DELETE /api/users/me` (B9) y la restricción de borradores (B10). |
+| Sesión | El JWT de Strapi vive en la cookie `bd_session` (`httpOnly`, `Secure`, `SameSite=Lax`, 7 días). El navegador nunca lo lee; las rutas de `server/api/auth/*` de Nuxt hacen de intermediario. |
+| Borradores | Strapi rechaza `status=draft` salvo para editores, incluso con el API token del servidor. Nuxt los pide con el JWT del editor. |
+| Rutas | `/cuenta/entrar`, `/cuenta/registro`, `/cuenta/confirmada`, `/cuenta/recuperar`, `/cuenta/restablecer`, `/cuenta`, `/borradores`, `/borradores/[documentId]`. Todas con `noindex`, fuera del sitemap y con `Cache-Control: private, no-store`. |
+
+```mermaid
+sequenceDiagram
+    participant N as Navegador
+    participant F as Nuxt (server/api)
+    participant S as Strapi
+    N->>F: POST /api/auth/login
+    F->>S: POST /api/auth/local
+    S-->>F: jwt + user
+    F-->>N: Set-Cookie bd_session (httpOnly) + user público
+    N->>F: GET /api/drafts/:documentId
+    F->>S: GET /api/articles/:documentId?status=draft (Bearer jwt)
+    S-->>F: borrador (solo si role = editor)
+    F-->>N: artículo + franja BORRADOR
+```
+
+**Diseño:** página «Cuentas y borradores» del lienzo: `Cuenta.dc.html` y `CuentaMovil.dc.html` (7 vistas con el ajuste `vista`), `Borradores.dc.html` y `BorradoresMovil.dc.html` (solo editores; ajuste `vacio`), y `BorradorArticulo.dc.html`, que es `Articulo.dc.html` con el ajuste `borrador`: franja «BORRADOR · Solo lo ven los editores» en `monjita-soft` con borde `monjita`, sin compartir, sin barra del fediverso, sin conversación ni «Sigue leyendo». El header tiene el ajuste `sesion` (anon / lector / editor): «Entrar» sin sesión; avatar + usuario con sesión; «Borradores» con el número pendiente para editores; en móvil, icono de cuenta junto a Buscar. Lo marcado ▲ en Cuenta son atajos del prototipo.
+
+## 12. Privacidad y cookies
+
+La analítica es **Umami**: no usa cookies ni guarda datos personales, así que no hay banner de consentimiento. Se informa de forma discreta:
+
+| Pieza | Qué es |
+| --- | --- |
+| Aviso (`Aviso.dc.html`) | Tarjeta pequeña de una sola vez, abajo a la izquierda (escritorio) o sobre la tab bar (móvil): «Sin cookies de seguimiento. Contamos visitas de forma anónima con Umami. Más información» + «Entendido». Se recuerda en `localStorage` (`bd-aviso`). No bloquea nada. |
+| Footer | Enlace «Privacidad y cookies» junto al copyright. |
+| `/privacidad` (`Privacidad.dc.html`, `PrivacidadMovil.dc.html`) | Resumen en tres cifras y secciones: Analítica, Cookies (solo `bd_session`, necesaria y con sesión), Tu navegador (claves de `localStorage`), Tus datos y Tus derechos (Ley 1581 de 2012). El texto es un borrador: revisarlo antes de publicar. Correo de contacto: gx_alejandro@hotmail.com. |
