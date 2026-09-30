@@ -205,6 +205,7 @@ const articles = [
     author,
     seo: seoVue,
     blocks: [blockVue],
+    localizations: [{ id: 3, documentId: 'doc-vue', slug: 'guia-vue-composables', locale: 'es', publishedAt: '2026-02-02T10:00:00.000Z' }],
   },
   {
     id: 2,
@@ -245,6 +246,7 @@ const articles = [
     blocks: [blockVueEs, ...figuresVueEs],
     references: referencesVueEs,
     coverCredit: creditOwnWork,
+    localizations: [{ id: 1, documentId: 'doc-vue', slug: 'understanding-vue-composables', locale: 'en', publishedAt: '2026-02-01T10:00:00.000Z' }],
   },
 ]
 

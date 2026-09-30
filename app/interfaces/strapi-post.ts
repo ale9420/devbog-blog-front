@@ -1,6 +1,7 @@
 import type { StrapiBlock, StrapiImageCredit } from './strapi-blocks'
 import type { StrapiSEO } from './strapi-seo'
 import type { StrapiReference } from './strapi-reference'
+import type { Locale } from './locale'
 
 export interface StrapiMediaRef {
   id?: number
@@ -31,6 +32,19 @@ export interface TagCount {
   count: number
 }
 
+export interface StrapiLocalization {
+  id?: number
+  documentId?: string
+  slug: string
+  locale: string
+  publishedAt?: string | null
+}
+
+export interface PostTranslation {
+  locale: Locale
+  slug: string
+}
+
 export interface StrapiAuthorRef {
   id?: number
   documentId?: string
@@ -59,6 +73,7 @@ export interface RawStrapiArticle {
   snippet?: string | null
   blocks?: StrapiBlock[] | null
   references?: StrapiReference[] | null
+  localizations?: StrapiLocalization[] | null
 }
 
 export interface PostListItem {
@@ -107,4 +122,5 @@ export interface StrapiPost {
   seo?: StrapiSEO
   blocks: StrapiBlock[]
   references: StrapiReference[]
+  translations: PostTranslation[]
 }

@@ -4,6 +4,7 @@ import { buildCitationIndex, numberReferences } from "~/helpers/citations";
 import { isCategory } from "~/helpers/categories";
 import { formatDotDate } from "~/helpers/formatDate";
 import { mastodonShareUrl } from "~/helpers/share";
+import { articlePaths } from "~/helpers/translations";
 import { extractHeadings } from "~/helpers/toc";
 
 const { locale, t } = useI18n();
@@ -16,8 +17,13 @@ const { siteUrl } = useSiteUrl();
 const { canonicalUrl } = useCanonicalUrl(`/blog/${slug}`);
 const headerSection = useHeaderSection();
 const config = useRuntimeConfig();
+const { setAlternates } = useLocaleAlternates();
 
 const { data: post } = await fetchPost(slug, locale.value as Locale);
+
+watch(post, (value) => {
+    setAlternates(value ? articlePaths(slug, locale.value as Locale, value.translations) : {});
+}, { immediate: true });
 
 watch(() => categoryLabel(post.value?.category), (label) => {
     headerSection.value = label;

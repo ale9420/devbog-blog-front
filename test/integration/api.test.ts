@@ -416,6 +416,70 @@ describe('/api/posts/[slug]', () => {
   it('returns 404 for an unknown slug', async () => {
     await expect($fetch('/api/posts/unknown-slug')).rejects.toMatchObject({ response: { status: 404 } })
   })
+
+  it('returns the slug and language of each translation', async () => {
+    const result = await $fetch<RawStrapiArticle>('/api/posts/guia-vue-composables', { query: { locale: 'es' } })
+    expect(result.localizations).toEqual([
+      { id: 1, documentId: 'doc-vue', slug: 'understanding-vue-composables', locale: 'en', publishedAt: '2026-02-01T10:00:00.000Z' },
+    ])
+    const upstream = mock.requests.filter((request) => request.path === '/api/articles')
+    expect(getNestedValue(upstream[upstream.length - 1].query, ['populate', 'localizations', 'fields'])).toEqual(['slug', 'locale', 'publishedAt'])
+  })
+})
+
+describe('/sitemap.xml', () => {
+  async function sitemap(): Promise<string> {
+    const response = await fetch('/sitemap.xml')
+    expect(response.status).toBe(200)
+    return response.text()
+  }
+
+  function entry(xml: string, loc: string): string {
+    const match = xml.match(new RegExp(`<url>\\s*<loc>${SITE_URL}${loc}</loc>[\\s\\S]*?</url>`))
+    expect(match, `missing <url> for ${loc}`).not.toBeNull()
+    return match![0]
+  }
+
+  it('asks Strapi for the articles of each language with their translations', async () => {
+    await sitemap()
+    const upstream = mock.requests.filter((request) => request.path === '/api/articles')
+    expect(upstream.map((request) => request.query.locale).sort()).toEqual(['en', 'es'])
+    for (const request of upstream) {
+      expect(getNestedValue(request.query, ['populate', 'localizations', 'fields'])).toEqual(['slug', 'locale', 'publishedAt'])
+    }
+  })
+
+  it('lists each version of a translated article with the real slug of the other one', async () => {
+    const xml = await sitemap()
+    const links = [
+      `<xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}/blog/understanding-vue-composables"/>`,
+      `<xhtml:link rel="alternate" hreflang="es" href="${SITE_URL}/es/blog/guia-vue-composables"/>`,
+      `<xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}/blog/understanding-vue-composables"/>`,
+    ]
+    for (const loc of ['/blog/understanding-vue-composables', '/es/blog/guia-vue-composables']) {
+      const url = entry(xml, loc)
+      for (const link of links) expect(url).toContain(link)
+    }
+    expect(xml).not.toContain(`${SITE_URL}/es/blog/understanding-vue-composables`)
+    expect(xml).not.toContain(`${SITE_URL}/blog/guia-vue-composables`)
+  })
+
+  it('leaves out the language of an article without a published translation', async () => {
+    const xml = await sitemap()
+    const url = entry(xml, '/blog/linux-server-hardening-guide')
+    expect(url).toContain(`hreflang="en" href="${SITE_URL}/blog/linux-server-hardening-guide"`)
+    expect(url).toContain(`hreflang="x-default" href="${SITE_URL}/blog/linux-server-hardening-guide"`)
+    expect(url).not.toContain('hreflang="es"')
+    expect(xml).not.toContain('guia-endurecer-servidor-linux')
+  })
+
+  it('lists every static page in both languages', async () => {
+    const xml = await sitemap()
+    for (const loc of ['/', '/es', '/blog', '/es/blog', '/about', '/es/about']) {
+      const url = entry(xml, loc)
+      expect(url).toContain(`hreflang="es" href="${SITE_URL}${loc.startsWith('/es') ? loc : loc === '/' ? '/es' : `/es${loc}`}"`)
+    }
+  })
 })
 
 describe('/api/about', () => {

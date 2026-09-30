@@ -20,6 +20,7 @@ vi.stubGlobal('useI18n', () => ({
   locales: ref([{ code: 'en' }, { code: 'es' }]),
 }))
 vi.stubGlobal('useRoute', () => ({ path: '/' }))
+vi.stubGlobal('useLocaleAlternates', () => ({ alternates: ref(null), setAlternates: () => {} }))
 
 describe('useCanonicalUrl', () => {
   beforeEach(() => {

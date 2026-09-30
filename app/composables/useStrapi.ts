@@ -8,6 +8,7 @@ import type {
   SearchPostResult, StrapiPaginatedResponse, PaginationMeta 
 , Locale, CategoryCount, BlogSort, TagCount} from "~/interfaces";
 import { defaultLocale } from "~/interfaces";
+import { publishedTranslations } from "~/helpers/translations";
 
 /**
  * Strapi data access for client pages. Every helper below goes through
@@ -104,6 +105,7 @@ export function useStrapi() {
         seo: response.seo ?? undefined,
         blocks: response.blocks ?? [],
         references: response.references ?? [],
+        translations: publishedTranslations(response.localizations),
       };
       return post;
     });
