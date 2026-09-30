@@ -417,6 +417,10 @@ describe('/api/posts/[slug]', () => {
     await expect($fetch('/api/posts/unknown-slug')).rejects.toMatchObject({ response: { status: 404 } })
   })
 
+  it('answers 502 when Strapi fails', async () => {
+    await expect($fetch('/api/posts/broken-article')).rejects.toMatchObject({ response: { status: 502 } })
+  })
+
   it('returns the slug and language of each translation', async () => {
     const result = await $fetch<RawStrapiArticle>('/api/posts/guia-vue-composables', { query: { locale: 'es' } })
     expect(result.localizations).toEqual([

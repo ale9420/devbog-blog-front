@@ -366,6 +366,11 @@ const server = createServer(async (req, res) => {
     const page = Number(getNestedValue(query, ['pagination', 'page']) || 1)
     const pageSize = Number(getNestedValue(query, ['pagination', 'pageSize']) || 10)
 
+    if (slugFilter === 'broken-article') {
+      sendJson(res, 500, { data: null, error: { status: 500, name: 'InternalServerError', message: 'Internal Server Error' } })
+      return
+    }
+
     if (slugFilter) {
       const data = articles.filter((article) => {
         const matchesSlug = article.slug === slugFilter

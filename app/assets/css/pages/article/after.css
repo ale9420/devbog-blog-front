@@ -156,10 +156,6 @@
     align-items: start;
 }
 
-.bd-article-missing {
-    margin: 64px var(--bd-home-gutter);
-}
-
 .bd-article-page :where(.bd-toc-link, .bd-share-link, .bd-author-card-link, .bd-comment-instance-link, .bd-blog-textbtn):focus-visible {
     outline: 2px solid var(--focus);
     outline-offset: 2px;

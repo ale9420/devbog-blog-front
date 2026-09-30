@@ -19,7 +19,16 @@ const headerSection = useHeaderSection();
 const config = useRuntimeConfig();
 const { setAlternates } = useLocaleAlternates();
 
-const { data: post } = await fetchPost(slug, locale.value as Locale);
+const { data: post, error } = await fetchPost(slug, locale.value as Locale);
+
+if (error.value || !post.value) {
+    const statusCode = error.value?.statusCode ?? 404;
+    throw createError({
+        statusCode,
+        statusMessage: statusCode === 404 ? "Post not found" : "Failed to load post",
+        fatal: true,
+    });
+}
 
 watch(post, (value) => {
     setAlternates(value ? articlePaths(slug, locale.value as Locale, value.translations) : {});
@@ -281,11 +290,5 @@ useHead({
 
             <BlogRelatedPosts :current-post-id="post.id" :category="post.category" />
         </template>
-
-        <div v-else class="bd-latest-empty bd-article-missing">
-            <h1 class="bd-latest-empty-title">{{ t("post.postNotFound") }}</h1>
-            <p class="bd-article-lead">{{ t("post.articleDoesNotExist") }}</p>
-            <BdButton :href="localizePath('/blog')" arrow>{{ t("post.backToBlog") }}</BdButton>
-        </div>
     </div>
 </template>
