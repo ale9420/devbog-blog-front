@@ -447,6 +447,11 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
         return
       }
 
+      if (slugFilter === 'broken-article') {
+        sendJson(res, 500, { data: null, error: { status: 500, name: 'InternalServerError', message: 'Internal Server Error' } })
+        return
+      }
+
       if (slugFilter) {
         const data = articles.map(populated).filter((article) => {
           const matchesSlug = article.slug === slugFilter

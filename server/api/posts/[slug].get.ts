@@ -41,10 +41,19 @@ export default defineEventHandler(async (event) => {
 
   setHeader(event, 'Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
 
-  const response = await $fetch<{ data: RawStrapiArticle[] }>(
-    `${config.public.strapiUrl}/api/articles?${params}`,
-    { headers },
-  )
+  let response: { data?: RawStrapiArticle[] }
+  try {
+    response = await $fetch<{ data?: RawStrapiArticle[] }>(
+      `${config.public.strapiUrl}/api/articles?${params}`,
+      { headers },
+    )
+  } catch (error: unknown) {
+    console.error('Strapi fetch post error:', asUpstreamError(error).data || error)
+    throw createError({
+      statusCode: 502,
+      message: upstreamErrorMessage(error, 'Failed to fetch post'),
+    })
+  }
 
   const data = response.data
   if (!data || data.length === 0) {

@@ -199,3 +199,34 @@ test('server-renders hreflang links to the real URL of each version', async ({ r
   })
   expect(await hreflangs('/es/blog')).toEqual({ 'en': '/blog', 'es': '/es/blog', 'x-default': '/blog' })
 })
+
+test('answers 404 with the translated error page for an unknown article', async ({ page }) => {
+  const english = await page.goto('/blog/no-existe')
+  expect(english?.status()).toBe(404)
+  await expect(page.locator('h1')).toHaveText('Page Not Found')
+  await expect(page.getByRole('link', { name: 'Browse Blog' })).toHaveAttribute('href', '/blog')
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex')
+  await expect(page.locator('link[rel="canonical"], link[hreflang]')).toHaveCount(0)
+
+  const spanish = await page.goto('/es/blog/no-existe')
+  expect(spanish?.status()).toBe(404)
+  await expect(page.locator('html')).toHaveAttribute('lang', 'es')
+  await expect(page.locator('h1')).toHaveText('Página No Encontrada')
+  await expect(page.getByRole('link', { name: 'Explorar Blog' })).toHaveAttribute('href', '/es/blog')
+})
+
+test('answers with a server error, not 404, when Strapi fails', async ({ page }) => {
+  const response = await page.goto('/blog/broken-article')
+  expect(response?.status()).toBe(502)
+  await expect(page.locator('h1')).toHaveText('Something Went Wrong')
+})
+
+test('shows the error page when navigating in the client to an unknown article', async ({ page }) => {
+  await page.goto('/blog', { waitUntil: 'networkidle' })
+  await page.evaluate(async () => {
+    const root = document.querySelector('#__nuxt') as unknown as { __vue_app__: { config: { globalProperties: { $router: { push: (path: string) => Promise<unknown> } } } } }
+    await root.__vue_app__.config.globalProperties.$router.push('/blog/no-existe')
+  })
+  await expect(page.locator('h1')).toHaveText('Page Not Found')
+  await expect(page.getByRole('link', { name: 'Browse Blog' })).toBeVisible()
+})

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { t } = useI18n()
+const { locale, t } = useI18n()
 const { localizePath } = useLocaleUtils()
 
 const props = defineProps<{
@@ -11,8 +11,14 @@ const props = defineProps<{
 
 const handleError = () => clearError({ redirect: '/' })
 
+useHead({
+  htmlAttrs: {
+    lang: () => locale.value,
+  },
+})
+
 useSeoMeta({
-  title: () => props.error.statusCode === 404 ? 'Page Not Found - BogDev' : 'Error - BogDev',
+  title: () => `${props.error.statusCode === 404 ? t('error.pageNotFound') : t('error.somethingWentWrong')} - BogDev`,
   robots: 'noindex',
 })
 </script>
