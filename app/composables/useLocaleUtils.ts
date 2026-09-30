@@ -1,9 +1,10 @@
-import { defaultLocale, type Locale, type LocaleSwitchTarget } from "~/interfaces";
-import { localeSwitchQuery } from "~/helpers/locale";
+import { defaultLocale, Locale, type LocalePaths, type LocaleSwitchTarget } from "~/interfaces";
+import { localeSwitchQuery, localizedPath } from "~/helpers/locale";
 
 export function useLocaleUtils() {
   const { locale, locales } = useI18n();
   const route = useRoute();
+  const { alternates } = useLocaleAlternates();
 
   function getLocalePrefix(localeCode?: string | Locale): string {
     const l = localeCode || locale.value;
@@ -32,18 +33,21 @@ export function useLocaleUtils() {
     return paths;
   }
 
-  function switchLocale(newLocale: string | Locale): LocaleSwitchTarget {
-    const currentPath = route.path;
-    const currentLocale = locale.value as string;
+  const localePaths = computed<LocalePaths>(() => {
+    if (alternates.value?.path === route.path) return alternates.value.paths;
+    const currentLocale = locale.value as Locale;
+    const basePath = currentLocale === defaultLocale
+      ? route.path
+      : route.path.replace(new RegExp(`^/${currentLocale}(?=/|$)`), "") || "/";
+    const paths: LocalePaths = {};
+    for (const code of Object.values(Locale)) {
+      paths[code] = localizedPath(basePath, code);
+    }
+    return paths;
+  });
 
-    const pathWithoutLocale = currentLocale === defaultLocale
-      ? currentPath.replace(/^\/(en|es)/, "") || "/"
-      : currentPath.replace(/^\/[a-z]{2}(-[A-Z]{2})?/, "") || "/";
-
-    const path = newLocale === defaultLocale
-      ? pathWithoutLocale
-      : `/${newLocale}${pathWithoutLocale === "/" ? "" : pathWithoutLocale}`;
-
+  function switchLocale(newLocale: Locale): LocaleSwitchTarget {
+    const path = localePaths.value[newLocale] ?? localizedPath("/blog", newLocale);
     return { path, query: localeSwitchQuery(route.query), hash: route.hash };
   }
 
@@ -55,6 +59,7 @@ export function useLocaleUtils() {
     getLocalePrefix,
     localizePath,
     getLocalizedPaths,
+    localePaths,
     switchLocale,
     isDefaultLocale,
     currentLocalePath,

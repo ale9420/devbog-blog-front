@@ -155,3 +155,47 @@ test('numbers figures and credits each image, the slides and the cover', async (
   await expect(caption.locator('.bd-fig-cap')).toHaveText('Fig. 02 La misma laguna al amanecer.')
   await expect(caption.locator('.bd-credit-k')).toHaveText('Foto')
 })
+
+test('switches to the translated article with its own slug and back', async ({ page }) => {
+  await page.goto('/blog/understanding-vue-composables', { waitUntil: 'networkidle' })
+  await page.getByRole('group', { name: 'Language' }).getByRole('button', { name: 'Español' }).click()
+  await expect(page).toHaveURL(/\/es\/blog\/guia-vue-composables$/)
+  await expect(page.locator('h1')).toHaveText('Guía de Vue Composables')
+
+  await page.getByRole('group', { name: 'Idioma' }).getByRole('button', { name: 'English' }).click()
+  await expect(page).toHaveURL(/\/blog\/understanding-vue-composables$/)
+  await expect(page.locator('h1')).toHaveText('Understanding Vue Composables')
+})
+
+test('keeps the query and the hash but not the page when switching the article language', async ({ page }) => {
+  await page.goto('/es/blog/guia-vue-composables?ref=feed&page=2#primeros-pasos', { waitUntil: 'networkidle' })
+  await page.getByRole('group', { name: 'Idioma' }).getByRole('button', { name: 'English' }).click()
+  await expect(page).toHaveURL(/\/blog\/understanding-vue-composables\?/)
+  const url = new URL(page.url())
+  expect(Object.fromEntries(url.searchParams)).toEqual({ ref: 'feed' })
+  expect(url.hash).toBe('#primeros-pasos')
+})
+
+test('opens the blog of the other language from an article without translation', async ({ page }) => {
+  await page.goto('/blog/linux-server-hardening-guide', { waitUntil: 'networkidle' })
+  await page.getByRole('group', { name: 'Language' }).getByRole('button', { name: 'Español' }).click()
+  await expect(page).toHaveURL(/\/es\/blog$/)
+  await expect(page.getByRole('group', { name: 'Idioma' }).getByRole('button', { name: 'Español' })).toHaveAttribute('aria-pressed', 'true')
+})
+
+test('server-renders hreflang links to the real URL of each version', async ({ request }) => {
+  const hreflangs = async (path: string): Promise<Record<string, string>> => {
+    const html = await (await request.get(path)).text()
+    const links = [...html.matchAll(/<link[^>]*rel="alternate"[^>]*hreflang="([^"]+)"[^>]*href="([^"]+)"[^>]*>|<link[^>]*href="([^"]+)"[^>]*rel="alternate"[^>]*hreflang="([^"]+)"[^>]*>/g)]
+    return Object.fromEntries(links.map((match) => [match[1] ?? match[4], new URL(match[2] ?? match[3]!).pathname]))
+  }
+
+  const expected = { 'en': '/blog/understanding-vue-composables', 'es': '/es/blog/guia-vue-composables', 'x-default': '/blog/understanding-vue-composables' }
+  expect(await hreflangs('/es/blog/guia-vue-composables')).toEqual(expected)
+  expect(await hreflangs('/blog/understanding-vue-composables')).toEqual(expected)
+  expect(await hreflangs('/blog/linux-server-hardening-guide')).toEqual({
+    'en': '/blog/linux-server-hardening-guide',
+    'x-default': '/blog/linux-server-hardening-guide',
+  })
+  expect(await hreflangs('/es/blog')).toEqual({ 'en': '/blog', 'es': '/es/blog', 'x-default': '/blog' })
+})

@@ -1,6 +1,6 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http'
 import qs from 'qs'
-import type { RawStrapiArticle, StrapiAuthorRef, StrapiCategoryRef, StrapiMediaRef, StrapiSEO, StrapiTagRef } from '~/interfaces/strapi-post'
+import type { RawStrapiArticle, StrapiAuthorRef, StrapiCategoryRef, StrapiLocalization, StrapiMediaRef, StrapiSEO, StrapiTagRef } from '~/interfaces/strapi-post'
 import type { StrapiRichText } from '~/interfaces/strapi-blocks'
 
 export interface RecordedRequest {
@@ -178,6 +178,12 @@ const articles: RawStrapiArticle[] = [
     blocks: [blockVueEs],
   },
 ]
+
+const localizations: Record<string, StrapiLocalization[]> = {
+  'understanding-vue-composables': [{ id: 3, documentId: 'doc-vue', slug: 'guia-vue-composables', locale: 'es', publishedAt: '2026-02-02T10:00:00.000Z' }],
+  'guia-vue-composables': [{ id: 1, documentId: 'doc-vue', slug: 'understanding-vue-composables', locale: 'en', publishedAt: '2026-02-01T10:00:00.000Z' }],
+  'linux-server-hardening-guide': [{ id: 4, documentId: 'doc-linux', slug: 'guia-endurecer-servidor-linux', locale: 'es', publishedAt: null }],
+}
 
 const blogComment = {
   id: 201,
@@ -431,7 +437,9 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
       const pageSize = Number(getNestedValue(query, ['pagination', 'pageSize']) || 10)
       const populated = (article: RawStrapiArticle): RawStrapiArticle => {
         const { tags, ...rest } = article
-        return getNestedValue(query, ['populate', 'tags']) === undefined ? rest : { ...rest, tags }
+        const withTags = getNestedValue(query, ['populate', 'tags']) === undefined ? rest : { ...rest, tags }
+        if (getNestedValue(query, ['populate', 'localizations']) === undefined) return withTags
+        return { ...withTags, localizations: localizations[article.slug] ?? [] }
       }
 
       if (getNestedValue(query, ['filters', 'tags']) !== undefined && !tagFilter) {

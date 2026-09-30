@@ -30,6 +30,7 @@ export default defineEventHandler(async (event) => {
         },
       },
       references: true,
+      localizations: { fields: ['slug', 'locale', 'publishedAt'] },
     },
   }, { skipNulls: true })
 

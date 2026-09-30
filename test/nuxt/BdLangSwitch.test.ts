@@ -30,4 +30,29 @@ describe('BdLangSwitch', () => {
     expect(route.hash).toBe('#posts')
     await useNuxtApp().$i18n.setLocale('en')
   })
+
+  it('opens the translated article with its own slug, keeping the query and the hash but not the page', async () => {
+    const wrapper = await mountSuspended(BdLangSwitch, { route: '/blog/what-is-solarpunk?ref=feed&page=2#intro' })
+    useLocaleAlternates().setAlternates({ en: '/blog/what-is-solarpunk', es: '/es/blog/que-es-solarpunk' })
+    await wrapper.findAll('button')[0]!.trigger('click')
+    await vi.waitFor(() => expect(wrapper.emitted('change')).toEqual([['es']]))
+    const route = useRouter().currentRoute.value
+    expect(route.path).toBe('/es/blog/que-es-solarpunk')
+    expect(route.query).toEqual({ ref: 'feed' })
+    expect(route.hash).toBe('#intro')
+    expect(useNuxtApp().$i18n.locale.value).toBe('es')
+    await useRouter().push('/')
+    await useNuxtApp().$i18n.setLocale('en')
+  })
+
+  it('opens the blog of the other language when the article has no translation', async () => {
+    const wrapper = await mountSuspended(BdLangSwitch, { route: '/blog/linux-server-hardening-guide' })
+    useLocaleAlternates().setAlternates({ en: '/blog/linux-server-hardening-guide' })
+    await wrapper.findAll('button')[0]!.trigger('click')
+    await vi.waitFor(() => expect(wrapper.emitted('change')).toEqual([['es']]))
+    expect(useRouter().currentRoute.value.path).toBe('/es/blog')
+    await useRouter().push('/')
+    await useNuxtApp().$i18n.setLocale('en')
+  })
 })
+

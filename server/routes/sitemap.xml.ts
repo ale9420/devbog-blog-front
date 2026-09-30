@@ -1,5 +1,7 @@
 import qs from 'qs';
-import type { RawStrapiArticle } from '~/interfaces';
+import { defaultLocale, Locale, type LocalePaths, type RawStrapiArticle } from '~/interfaces';
+import { localizedPath } from '~/helpers/locale';
+import { articlePaths, publishedTranslations } from '~/helpers/translations';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -10,16 +12,17 @@ export default defineEventHandler(async (event) => {
   setHeader(event, "Cache-Control", "public, s-maxage=3600, stale-while-revalidate=7200");
 
   try {
-    const params = qs.stringify({
-      pagination: { pageSize: 1000 },
-      populate: ['cover', 'category'],
-      sort: 'publishedAt:desc',
-    });
-
-    const response = await $fetch<{ data: RawStrapiArticle[] }>(
-      `${strapiUrl}/api/articles?${params}`,
-    );
-    const posts = response.data || [];
+    const locales = Object.values(Locale);
+    const responses = await Promise.all(locales.map((locale) => {
+      const params = qs.stringify({
+        locale,
+        pagination: { pageSize: 1000 },
+        fields: ['slug', 'locale', 'publishedAt', 'updatedAt'],
+        populate: { localizations: { fields: ['slug', 'locale', 'publishedAt'] } },
+        sort: 'publishedAt:desc',
+      });
+      return $fetch<{ data: RawStrapiArticle[] }>(`${strapiUrl}/api/articles?${params}`);
+    }));
 
     const staticPages = [
       { path: "/", changefreq: "daily", priority: "1.0" },
@@ -27,37 +30,46 @@ export default defineEventHandler(async (event) => {
       { path: "/about", changefreq: "weekly", priority: "0.7" },
     ];
 
+    const today = new Date().toISOString().slice(0, 10);
+
     const generateUrlEntry = (
-      path: string,
+      loc: string,
+      alternates: LocalePaths,
       changefreq: string,
       priority: string,
-      lastmod?: string,
+      lastmod: string = today,
     ) => {
-      const enUrl = `${siteUrl}${path}`;
-      const esUrl = `${siteUrl}/es${path === "/" ? "" : path}`;
+      const links = locales
+        .filter((locale) => alternates[locale])
+        .map((locale) => `<xhtml:link rel="alternate" hreflang="${locale}" href="${siteUrl}${alternates[locale]}"/>`);
+      const fallback = alternates[defaultLocale] ?? loc;
+      links.push(`<xhtml:link rel="alternate" hreflang="x-default" href="${siteUrl}${fallback}"/>`);
 
       return `<url>
-    <loc>${enUrl}</loc>
-    <lastmod>${lastmod || new Date().toISOString().split("T")[0]}</lastmod>
+    <loc>${siteUrl}${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="${enUrl}"/>
-    <xhtml:link rel="alternate" hreflang="es" href="${esUrl}"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="${enUrl}"/>
+    ${links.join("\n    ")}
   </url>`;
     };
 
+    const staticEntries = staticPages.flatMap((page) => {
+      const alternates: LocalePaths = Object.fromEntries(locales.map((locale) => [locale, localizedPath(page.path, locale)]));
+      return locales.map((locale) => generateUrlEntry(alternates[locale]!, alternates, page.changefreq, page.priority));
+    });
+
+    const postEntries = locales.flatMap((locale, index) =>
+      (responses[index]?.data ?? []).map((post) => {
+        const alternates = articlePaths(post.slug, locale, publishedTranslations(post.localizations));
+        const lastmod = new Date(post.updatedAt || post.publishedAt || Date.now()).toISOString().slice(0, 10);
+        return generateUrlEntry(alternates[locale]!, alternates, "monthly", "0.8", lastmod);
+      }),
+    );
+
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  ${staticPages.map((page) => generateUrlEntry(page.path, page.changefreq, page.priority)).join("\n  ")}
-  ${posts
-    .map((post) => {
-      const lastmod = new Date(post.updatedAt || post.publishedAt || Date.now())
-        .toISOString()
-        .split("T")[0];
-      return generateUrlEntry(`/blog/${post.slug}`, "monthly", "0.8", lastmod);
-    })
-    .join("\n  ")}
+  ${[...staticEntries, ...postEntries].join("\n  ")}
 </urlset>`;
 
     return sitemap;

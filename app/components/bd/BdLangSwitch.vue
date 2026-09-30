@@ -5,7 +5,7 @@ const emit = defineEmits<{
   change: [locale: Locale]
 }>()
 
-const { t, locale, setLocale } = useI18n()
+const { t, locale } = useI18n()
 const router = useRouter()
 const { switchLocale } = useLocaleUtils()
 
@@ -13,9 +13,7 @@ const options: Locale[] = [Locale.SpanishColombia, Locale.English]
 
 async function select(next: Locale): Promise<void> {
   if (next === locale.value) return
-  const target = switchLocale(next)
-  await setLocale(next)
-  await router.push(target)
+  await router.push(switchLocale(next))
   emit('change', next)
 }
 </script>

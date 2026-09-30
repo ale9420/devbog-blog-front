@@ -14,3 +14,10 @@ export interface LocaleSwitchTarget {
   query: LocationQuery
   hash: string
 }
+
+export type LocalePaths = Partial<Record<Locale, string>>
+
+export interface LocaleAlternates {
+  path: string
+  paths: LocalePaths
+}
