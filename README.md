@@ -16,7 +16,7 @@ A bilingual (English/Spanish) personal blog built with **Nuxt 4** and **Strapi C
 - **SEO** — Open Graph, Twitter Cards, JSON-LD structured data, canonical URLs
 - **Accessibility** — Skip links, semantic HTML, ARIA labels, keyboard navigation
 - **Strapi Blocks** — Rich text, quotes, images, and slider content blocks
-- **Analytics** — Plausible analytics integration (privacy-friendly)
+- **Analytics** — Self-hosted Umami, served first-party through a Nitro proxy (privacy-friendly)
 - **Responsive** — Mobile-first design with Tailwind CSS v4
 
 ## Prerequisites
@@ -58,6 +58,12 @@ cp .env.example .env
 | `SMTP_PASS` | SMTP password | Newsletter only |
 | `NEWSLETTER_FROM` | Sender address for newsletter emails | Newsletter only |
 | `SITE_URL` | Public URL of your deployed site | Yes |
+| `NUXT_PUBLIC_UMAMI_WEBSITE_ID` | Umami website ID. Empty: no tracker is loaded | Analytics only |
+| `NUXT_UMAMI_URL` | Internal Umami URL the proxy forwards to (e.g. `http://<umami-service>:3000`). Empty: no proxy | Analytics only |
+| `NUXT_PUBLIC_UMAMI_SCRIPT_PATH` | Tracker path, must match Umami's `TRACKER_SCRIPT_NAME` and stay at the root (default: `/bd.js`) | No |
+| `NUXT_UMAMI_COLLECT_PATH` | Collect path, must match Umami's `COLLECT_API_ENDPOINT` (default: `/api/bd`) | No |
+
+The tracker only reports visits whose host matches `SITE_URL`, so local and preview builds never send data. The tracker and its collect endpoint are served from the site itself (`server/middleware/umami.ts`) and forwarded to Umami with the visitor IP in `x-real-ip`, so blockers that filter third-party analytics domains don't drop visits.
 
 ### 4. Set up Strapi CMS
 

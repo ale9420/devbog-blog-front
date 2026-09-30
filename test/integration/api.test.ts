@@ -3,15 +3,19 @@ import { $fetch, fetch, setup } from '@nuxt/test-utils/e2e'
 import type { RawStrapiArticle } from '~/interfaces/strapi-post'
 import { Category } from '~/interfaces/design'
 import { startMockStrapi } from './mock-strapi'
+import { MOCK_TRACKER_SCRIPT, startMockUmami } from './mock-umami'
 
 const SITE_URL = 'https://bogdev.test'
 
 const mock = await startMockStrapi()
+const umami = await startMockUmami()
 process.env.STRAPI_URL = mock.url
 process.env.NUXT_PUBLIC_STRAPI_URL = mock.url
 process.env.NUXT_SMTP_PORT = '1'
 process.env.SITE_URL = SITE_URL
 process.env.NUXT_PUBLIC_SITE_URL = SITE_URL
+process.env.NUXT_UMAMI_URL = umami.url
+process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID = 'site-1'
 
 await setup({
   server: true,
@@ -23,6 +27,7 @@ await setup({
 
 beforeEach(() => {
   mock.requests.length = 0
+  umami.requests.length = 0
 })
 
 describe('/api/categories', () => {
@@ -692,6 +697,40 @@ describe('/api/newsletter/subscribe', () => {
     const lastPost = posts[posts.length - 1]
     expect(lastPost?.body?.data).toMatchObject({ email: 'new@example.com', confirmed: false, locale: 'en' })
     expect(lastPost?.body?.data?.confirmationToken).toBeTruthy()
+  })
+})
+
+describe('Umami', () => {
+  it('adds the tracker served from the site to the page', async () => {
+    const html = await $fetch<string>('/about')
+    expect(html).toMatch(/<script[^>]*src="\/bd\.js"[^>]*data-website-id="site-1"[^>]*data-domains="bogdev\.test"/)
+    expect(html).not.toContain('plausible.io')
+  })
+
+  it('serves the tracker script through the proxy', async () => {
+    const response = await fetch('/bd.js')
+    expect(response.status).toBe(200)
+    expect(await response.text()).toBe(MOCK_TRACKER_SCRIPT)
+    expect(umami.requests.map((request) => [request.method, request.path])).toEqual([['GET', '/bd.js']])
+  })
+
+  it('forwards collected events with the visitor IP', async () => {
+    const payload = JSON.stringify({ type: 'event', payload: { website: 'site-1', url: '/blog' } })
+    const response = await fetch('/api/bd', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-forwarded-for': '203.0.113.7, 10.0.0.2', 'user-agent': 'Mozilla/5.0 Test' },
+      body: payload,
+    })
+    expect(response.status).toBe(200)
+    const [request] = umami.requests
+    expect(request).toMatchObject({ method: 'POST', path: '/api/bd', body: payload })
+    expect(request?.headers['x-real-ip']).toBe('203.0.113.7')
+    expect(request?.headers['user-agent']).toBe('Mozilla/5.0 Test')
+  })
+
+  it('leaves the other API routes alone', async () => {
+    await $fetch('/api/categories', { query: { locale: 'en' } })
+    expect(umami.requests).toEqual([])
   })
 })
 
