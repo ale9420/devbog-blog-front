@@ -1,0 +1,32 @@
+.bd-input {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    padding: 0 var(--space-4);
+    font: 400 16px/1 var(--font-sans);
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-right: 0;
+    border-radius: var(--radius-none);
+}
+
+.bd-input::placeholder {
+    color: var(--ink-muted);
+}
+
+.bd-input:focus {
+    position: relative;
+    z-index: 1;
+    outline: none;
+    box-shadow: var(--glow-chillon);
+}
+
+.bd-input:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+
+.bd-input[aria-invalid="true"] {
+    border-color: var(--tingua);
+}

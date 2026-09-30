@@ -1,0 +1,30 @@
+.bd-wide {
+    font-family: var(--font-display);
+    font-stretch: 125%;
+}
+
+.bd-eyebrow {
+    text-transform: uppercase;
+}
+
+.bd-stretch {
+    transition: font-stretch 600ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.bd-stretch:hover,
+a:hover > .bd-stretch,
+a:focus-visible > .bd-stretch {
+    font-stretch: 125%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bd-stretch {
+        transition: none;
+    }
+
+    .bd-stretch:hover,
+    a:hover > .bd-stretch,
+    a:focus-visible > .bd-stretch {
+        font-stretch: inherit;
+    }
+}

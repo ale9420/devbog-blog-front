@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | `DESIGN.md` | Esta especificación | Leer completa la sección que cita tu issue, más las secciones 1 y 3 |
 | `tokens.json` | Tokens del sistema de diseño (colores por tema, tipo, espacio, radios, sombras) | Única fuente de valores. Nunca escribir un hex a mano |
-| `tokens.css` | Variables CSS generadas desde `tokens.json` | Referencia; el issue de tokens lo genera en `app/assets/css/tokens.css` |
+| `tokens.css` | Variables CSS generadas desde `tokens.json` | Referencia; el issue de tokens lo genera en `app/assets/css/settings/tokens.css` |
 | `build-tokens.mjs` | Generador de `tokens.css` | Se mueve a `scripts/build-tokens.mjs` |
 | `reference/canvas/*.dc.html` | Fuente HTML de cada pantalla del lienzo de diseño | Leer como especificación: estilos en línea = medidas, textos literales = copy final. **No copiar el markup**: es un prototipo con plantillas `{{…}}`, `<sc-if>`, `<sc-for>` y `<dc-import>` |
 | `reference/canvas/bogdev-site.css` | Hoja compartida del lienzo (bandada, parallax, teleférico, hoja inferior, acordeones, etc.) | Referencia de animaciones y keyframes |
@@ -118,7 +118,7 @@ El rediseño vive en una capa de tokens y componentes `Bd*` sobre la app actual;
 
 ```mermaid
 flowchart LR
-    T[tokens.json] --> C[app/assets/css/tokens.css]
+    T[tokens.json] --> C[app/assets/css/settings/tokens.css]
     C --> K[Componentes Bd*<br/>app/components/bd/]
     C --> M[Tema Mermaid<br/>useMermaidTheme]
     K --> P[Páginas<br/>index, blog, blog/slug, about]
@@ -129,7 +129,7 @@ flowchart LR
 
 ### Base
 
-- **Tokens.** `scripts/build-tokens.mjs` genera `app/assets/css/tokens.css` desde `tokens.json` (se copian desde esta carpeta). Mapear las variables actuales de `main.css` (`--foreground`, `--primary`, `--muted`, `--border`, `--surface-elevated`…) y la paleta de Nuxt UI a estas variables para no duplicar colores.
+- **Tokens.** `scripts/build-tokens.mjs` genera `app/assets/css/settings/tokens.css` desde `tokens.json` (se copian desde esta carpeta). Mapear las variables actuales de `app/assets/css/settings/aliases.css` (`--foreground`, `--primary`, `--muted`, `--border`, `--surface-elevated`…) y la paleta de Nuxt UI a estas variables para no duplicar colores.
 - **Tema.** Hoy `useTheme` envuelve `useColorMode` con valores light/dark. Configurar color mode con `dataValue: 'theme'` y mapear `dark → noche`, `light → dia`, o ampliar `useTheme` para exponer `tema: 'noche' | 'dia'`, `setTema()`, `toggle()`. La preferencia persiste y se aplica antes del primer pintado (sin parpadeo).
 - **Cambio de tema con View Transitions.** `document.startViewTransition` con barrido circular desde el botón (`--vt-x`, `--vt-y`; keyframe `bd-wipe` en `bogdev-site.css`). Sin soporte o con movimiento reducido, cambio directo.
 - **Fuentes.** Archivo (ejes wdth, wght) y JetBrains Mono autoalojadas en `public/fonts/` (preferible por privacidad) con `font-display: swap`.

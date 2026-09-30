@@ -3,7 +3,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 const DEFAULT_INPUT = fileURLToPath(new URL('../docs/design/tokens.json', import.meta.url))
-const DEFAULT_OUTPUT = fileURLToPath(new URL('../app/assets/css/tokens.css', import.meta.url))
+const DEFAULT_OUTPUT = fileURLToPath(new URL('../app/assets/css/settings/tokens.css', import.meta.url))
 
 function parseArgs(argv) {
   const opts = { check: false, aliases: {}, files: [] }

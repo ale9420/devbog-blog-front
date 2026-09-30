@@ -97,13 +97,13 @@ describe('build-tokens', () => {
     expect(() => run(['--alias', 'tarde=.x', input, join(dir, 'x.css')])).toThrow()
   })
 
-  it('keeps app/assets/css/tokens.css in sync with docs/design/tokens.json', () => {
+  it('keeps app/assets/css/settings/tokens.css in sync with docs/design/tokens.json', () => {
     expect(() => execFileSync('npm', ['run', '-s', 'tokens:check'], { stdio: 'pipe' })).not.toThrow()
   })
 
   it('defines every color token of the design system in both themes', () => {
     const data = JSON.parse(readFileSync('docs/design/tokens.json', 'utf8')) as { color: { tokens: { name: string }[] } }
-    const generated = readFileSync('app/assets/css/tokens.css', 'utf8')
+    const generated = readFileSync('app/assets/css/settings/tokens.css', 'utf8')
     expect(data.color.tokens).toHaveLength(25)
     for (const { name } of data.color.tokens) {
       expect(block(generated, '[data-theme="noche"]')).toContain(`--${name}:`)

@@ -1,0 +1,18 @@
+.input-field {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+    background-color: var(--surface-raised);
+    color: var(--foreground);
+}
+
+.input-field:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.input-field::placeholder {
+    color: var(--muted);
+}

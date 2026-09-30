@@ -1,0 +1,256 @@
+.bd-guide-grid {
+    display: flex;
+    gap: var(--space-4);
+    margin: 0 calc(-1 * var(--bd-home-gutter));
+    padding: 4px var(--bd-home-gutter) 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--bd-home-gutter);
+    scrollbar-width: none;
+}
+
+.bd-guide-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.bd-guide-card {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: 20px;
+    width: 300px;
+    min-height: 420px;
+    padding: 28px var(--space-6);
+    color: var(--ink);
+    text-decoration: none;
+    background: var(--surface-raised);
+    border: 1px solid var(--line);
+    scroll-snap-align: start;
+    transition: box-shadow 240ms var(--e), border-color 240ms var(--e);
+}
+
+.bd-guide-card:hover {
+    box-shadow: var(--glow-chillon);
+    border-color: transparent;
+}
+
+.bd-guide-card:hover .bd-card-arrow {
+    transform: translateX(4px);
+    color: var(--chillon);
+}
+
+.bd-guide-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+}
+
+.bd-guide-intro,
+.bd-guide-label,
+.bd-guide-description,
+.bd-guide-note {
+    display: none;
+}
+
+.bd-guide-label {
+    text-transform: uppercase;
+    color: var(--ink-muted);
+}
+
+.bd-guide-art {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-2) 0;
+}
+
+.bd-guide-art svg {
+    display: block;
+    width: 180px;
+    height: auto;
+}
+
+.bd-guide-title {
+    margin: 0;
+    font-size: 19px;
+    line-height: 26px;
+    font-weight: 600;
+    font-stretch: 100%;
+}
+
+.bd-guide-description {
+    margin: 0;
+    color: var(--ink-muted);
+    text-wrap: pretty;
+}
+
+.bd-guide-species {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-top: auto;
+}
+
+.bd-guide-bird,
+.bd-guide-note {
+    margin: 0;
+    font-size: 14px;
+    line-height: 22px;
+}
+
+.bd-guide-bird,
+.bd-guide-note,
+.bd-guide-foot {
+    color: var(--ink-muted);
+}
+
+.bd-guide-foot {
+    display: flex;
+    justify-content: space-between;
+    padding-top: var(--space-3);
+    text-transform: uppercase;
+    border-top: 1px solid var(--line);
+}
+
+@supports (animation-timeline: view()) {
+    .bd-guide-card {
+        animation: bd-focus linear both;
+        animation-timeline: view(inline);
+    }
+}
+
+@media (min-width: 768px) {
+    .bd-guide-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-8);
+        margin: 0;
+        padding: 0;
+        overflow: visible;
+    }
+
+    .bd-guide-card {
+        width: auto;
+        min-height: 460px;
+        gap: var(--space-6);
+        padding: var(--space-8);
+        animation: none;
+    }
+
+    .bd-guide-label {
+        display: inline;
+    }
+
+    .bd-guide-intro {
+        display: block;
+    }
+
+    .bd-guide-foot-pillar {
+        display: none;
+    }
+
+    .bd-guide-art {
+        padding: var(--space-4) 0;
+    }
+
+    .bd-guide-art svg {
+        width: 200px;
+    }
+
+    .bd-guide-title {
+        font-size: 24px;
+        line-height: 32px;
+        font-weight: 500;
+    }
+
+    .bd-guide-bird {
+        color: var(--ink-muted);
+    }
+
+    .bd-guide-foot {
+        padding-top: var(--space-4);
+    }
+
+    .bd-guide-pillar {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-rows: auto auto auto 1fr auto;
+        grid-template-areas:
+            "head art"
+            "title art"
+            "desc art"
+            "species art"
+            "foot art";
+        gap: var(--space-4) var(--space-6);
+        min-height: 420px;
+    }
+
+    .bd-guide-pillar .bd-guide-head {
+        grid-area: head;
+        justify-content: flex-start;
+    }
+
+    .bd-guide-pillar .bd-guide-art {
+        grid-area: art;
+        align-items: center;
+        padding: 0;
+    }
+
+    .bd-guide-pillar .bd-guide-title {
+        grid-area: title;
+        margin-top: var(--space-4);
+        font-family: var(--font-display);
+        font-size: 32px;
+        line-height: 40px;
+        font-weight: 300;
+        font-stretch: 125%;
+    }
+
+    .bd-guide-pillar .bd-guide-description {
+        grid-area: desc;
+        display: block;
+    }
+
+    .bd-guide-pillar .bd-guide-species {
+        grid-area: species;
+        align-self: end;
+    }
+
+    .bd-guide-pillar .bd-guide-bird {
+        color: var(--ink);
+    }
+
+    .bd-guide-pillar .bd-guide-note {
+        display: block;
+    }
+
+    .bd-guide-pillar .bd-guide-foot {
+        grid-area: foot;
+    }
+}
+
+@media (min-width: 1024px) {
+    .bd-guide-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .bd-guide-card {
+        grid-column: span 2;
+    }
+
+    .bd-guide-pillar {
+        grid-column: span 3;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bd-guide-card {
+        animation: none;
+        transition: none;
+    }
+
+    .bd-guide-card:hover .bd-card-arrow {
+        transform: none;
+    }
+}

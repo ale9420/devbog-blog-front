@@ -1,0 +1,91 @@
+.bd-code {
+    margin: 0;
+    background: var(--surface-sunken);
+    border: 1px solid var(--line);
+}
+
+.bd-code-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-muted);
+}
+
+.bd-code-lang {
+    color: var(--chillon);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.bd-code-copy {
+    position: relative;
+    margin-left: auto;
+    font: 500 12px/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    background: transparent;
+    color: var(--ink-muted);
+    border: 1px solid var(--line-strong);
+    padding: var(--space-1) var(--space-2);
+    cursor: pointer;
+}
+
+.bd-code-copy::after {
+    content: "";
+    position: absolute;
+    inset: -10px -4px;
+}
+
+.bd-code-copy:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+}
+
+.bd-code pre {
+    margin: 0;
+    padding: var(--space-4);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--ink);
+    background: transparent;
+}
+
+.bd-code .bd-prompt {
+    color: var(--mirla);
+    user-select: none;
+}
+
+.bd-mermaid-diagram {
+    padding: var(--space-6);
+    overflow-x: auto;
+    background: var(--surface-sunken);
+    border: 1px solid var(--line);
+}
+
+.bd-mermaid-diagram svg {
+    display: block;
+    max-width: none;
+    height: auto;
+    margin: 0 auto;
+}
+
+.bd-mermaid-diagram:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+
+.bd-mermaid-ready .bd-code {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .bd-mermaid-diagram svg {
+        max-width: 100%;
+    }
+}

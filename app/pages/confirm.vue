@@ -64,7 +64,7 @@ useSeoMeta({
           class="w-16 h-16 mx-auto mb-4"
           style="color: var(--success)"
         />
-        <h1 class="font-display text-2xl font-bold mb-2">
+        <h1 class="font-display text-2xl font-semibold mb-2">
           {{ t("confirm.successTitle") }}
         </h1>
         <p class="text-[var(--muted)] mb-6">{{ t("confirm.successMessage") }}</p>
@@ -83,7 +83,7 @@ useSeoMeta({
           class="w-16 h-16 mx-auto mb-4"
           style="color: var(--error)"
         />
-        <h1 class="font-display text-2xl font-bold mb-2">
+        <h1 class="font-display text-2xl font-semibold mb-2">
           {{ t("confirm.errorTitle") }}
         </h1>
         <p class="text-[var(--muted)] mb-6">{{ errorMessage }}</p>

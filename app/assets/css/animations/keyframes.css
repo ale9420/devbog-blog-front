@@ -1,0 +1,186 @@
+@keyframes bd-flap {
+    0%,
+    100% {
+        d: path("M1 9 Q6 1 11 8 Q16 1 21 9");
+    }
+
+    50% {
+        d: path("M1 6 Q6 13 11 8 Q16 13 21 6");
+    }
+}
+
+@keyframes bd-read-bar {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@keyframes bd-read-track {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes bd-sheet-in {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+
+    to {
+        transform: none;
+        opacity: 1;
+    }
+}
+
+@keyframes bd-palette-in {
+    from {
+        transform: translateY(-8px);
+        opacity: 0;
+    }
+
+    to {
+        transform: none;
+        opacity: 1;
+    }
+}
+
+@keyframes bd-blink {
+    0%,
+    60% {
+        opacity: 1;
+    }
+
+    61%,
+    100% {
+        opacity: 0.15;
+    }
+}
+
+@keyframes bd-par {
+    from {
+        translate: 0 var(--par, 0px);
+    }
+
+    to {
+        translate: 0 0;
+    }
+}
+
+@keyframes bd-fly {
+    0% {
+        offset-distance: 0%;
+        opacity: 0;
+    }
+
+    8%,
+    92% {
+        opacity: 1;
+    }
+
+    100% {
+        offset-distance: 100%;
+        opacity: 0;
+    }
+}
+
+@keyframes bd-dash {
+    to {
+        stroke-dashoffset: -540;
+    }
+}
+
+@keyframes bd-hop {
+    0%,
+    84%,
+    100% {
+        transform: translateY(0);
+    }
+
+    88% {
+        transform: translateY(-7px);
+    }
+
+    92% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes bd-in {
+    from {
+        opacity: 0;
+        filter: blur(6px);
+    }
+
+    to {
+        opacity: 1;
+        filter: none;
+    }
+}
+
+@keyframes bd-focus {
+    0%,
+    100% {
+        opacity: 0.45;
+    }
+
+    35%,
+    65% {
+        opacity: 1;
+    }
+}
+
+@keyframes bd-steam {
+    0% {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    35% {
+        opacity: 0.9;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes bd-wipe {
+    from {
+        clip-path: circle(0 at var(--vt-x, 92%) var(--vt-y, 110px));
+    }
+    to {
+        clip-path: circle(170vmax at var(--vt-x, 92%) var(--vt-y, 110px));
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
