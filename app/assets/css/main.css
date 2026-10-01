@@ -67,6 +67,7 @@
 @import "./pages/drafts/list.css" layer(bd.pages);
 @import "./pages/drafts/strip.css" layer(bd.pages);
 @import "./pages/privacy/privacy.css" layer(bd.pages);
+@import "./pages/newsletter/unsubscribe.css" layer(bd.pages);
 
 @import "./animations/keyframes.css" layer(bd.animations);
 

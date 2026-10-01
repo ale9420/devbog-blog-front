@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import { smtpTransportOptions } from "~/helpers/email";
+import { blogUrl, confirmUrl as buildConfirmUrl, unsubscribeHeaders, unsubscribeUrl } from "~/helpers/newsletter";
+import type { NewsletterLanguage } from "~/interfaces/newsletter";
 
 export function createTransporter() {
   const config = useRuntimeConfig();
@@ -16,6 +18,7 @@ export async function sendEmail(options: {
   to: string;
   subject: string;
   html: string;
+  headers?: Record<string, string>;
 }): Promise<void> {
   const config = useRuntimeConfig();
   const transporter = createTransporter();
@@ -25,17 +28,16 @@ export async function sendEmail(options: {
     to: options.to,
     subject: options.subject,
     html: options.html,
+    headers: options.headers,
   });
 }
 
 export async function sendConfirmationEmail(
   email: string,
   token: string,
-  locale: string,
+  locale: NewsletterLanguage,
 ): Promise<void> {
-  const config = useRuntimeConfig();
-  const siteUrl = config.public.siteUrl;
-  const confirmUrl = `${siteUrl}/${locale === "es" ? "es" : ""}confirm?token=${token}`;
+  const confirmUrl = buildConfirmUrl(useRuntimeConfig().public.siteUrl, locale, token);
 
   const subject =
     locale === "es"
@@ -76,8 +78,13 @@ export async function sendConfirmationEmail(
 
 export async function sendWelcomeEmail(
   email: string,
-  locale: string,
+  locale: NewsletterLanguage,
+  unsubscribeToken: string,
 ): Promise<void> {
+  const siteUrl = useRuntimeConfig().public.siteUrl;
+  const articlesUrl = blogUrl(siteUrl, locale);
+  const leaveUrl = unsubscribeUrl(siteUrl, locale, unsubscribeToken);
+
   const subject =
     locale === "es"
       ? "¡Bienvenido a BogDev!"
@@ -90,10 +97,11 @@ export async function sendWelcomeEmail(
           <h1 style="color: #333;">¡Suscripción confirmada!</h1>
           <p style="color: #666; font-size: 16px;">Gracias por confirmar tu suscripción a BogDev. Ahora recibirás los últimos artículos directamente en tu bandeja de entrada.</p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${locale === "es" ? "/es" : "/"}blog" style="background-color: #007bff; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-size: 16px;">Ver Artículos</a>
+            <a href="${articlesUrl}" style="background-color: #007bff; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-size: 16px;">Ver Artículos</a>
           </div>
           <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
           <p style="color: #999; font-size: 12px;">BogDev - Tu fuente de información sobre IA, desarrollo de software y Linux.</p>
+          <p style="color: #999; font-size: 12px;">¿Ya no quieres recibir estos correos? <a href="${leaveUrl}" style="color: #999;">Darte de baja</a>.</p>
         </div>
       `
       : `
@@ -101,12 +109,13 @@ export async function sendWelcomeEmail(
           <h1 style="color: #333;">Subscription confirmed!</h1>
           <p style="color: #666; font-size: 16px;">Thanks for confirming your subscription to BogDev. You'll now receive the latest articles directly in your inbox.</p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="/blog" style="background-color: #007bff; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-size: 16px;">View Articles</a>
+            <a href="${articlesUrl}" style="background-color: #007bff; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-size: 16px;">View Articles</a>
           </div>
           <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
           <p style="color: #999; font-size: 12px;">BogDev - Your source for AI, software development, and Linux content.</p>
+          <p style="color: #999; font-size: 12px;">Don't want these emails anymore? <a href="${leaveUrl}" style="color: #999;">Unsubscribe</a>.</p>
         </div>
       `;
 
-  await sendEmail({ to: email, subject, html });
+  await sendEmail({ to: email, subject, html, headers: unsubscribeHeaders(siteUrl, unsubscribeToken) });
 }

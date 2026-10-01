@@ -1,11 +1,10 @@
-import qs from 'qs';
 import { sendWelcomeEmail } from "../../utils/email";
-import type { ConfirmResponse, Subscriber } from "~/interfaces/newsletter";
+import { findSubscriber, newUnsubscribeToken, updateSubscriber } from "../../utils/subscribers";
+import { isNewsletterToken, newsletterLanguage } from "~/helpers/newsletter";
+import type { ConfirmResponse } from "~/interfaces/newsletter";
 
 export default defineEventHandler(async (event): Promise<ConfirmResponse> => {
-  const config = useRuntimeConfig();
-  const query = getQuery(event);
-  const token = query.token as string;
+  const token = getQuery(event).token;
 
   if (!token) {
     throw createError({
@@ -14,27 +13,7 @@ export default defineEventHandler(async (event): Promise<ConfirmResponse> => {
     });
   }
 
-  const subscriberParams = qs.stringify({
-    filters: {
-      confirmationToken: {
-        $eq: token,
-      },
-    },
-    pagination: {
-      pageSize: 1,
-    },
-  });
-
-  const subscribers = await $fetch<{ data: Subscriber[] }>(
-    `${config.public.strapiUrl}/api/subscribers?${subscriberParams}`,
-    {
-      headers: {
-        Authorization: `Bearer ${config.strapiApiToken}`,
-      },
-    },
-  );
-
-  const subscriber = subscribers.data?.[0];
+  const subscriber = isNewsletterToken(token) ? await findSubscriber("confirmationToken", token) : null;
 
   if (!subscriber) {
     throw createError({
@@ -50,38 +29,37 @@ export default defineEventHandler(async (event): Promise<ConfirmResponse> => {
     });
   }
 
+  const language = newsletterLanguage(subscriber.language);
+  const unsubscribeToken = subscriber.unsubscribeToken || newUnsubscribeToken();
+
   try {
-    await $fetch(`${config.public.strapiUrl}/api/subscribers/${subscriber.documentId}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${config.strapiApiToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        data: {
-          confirmed: true,
-          confirmationToken: null,
-        },
-      }),
+    await updateSubscriber(subscriber.documentId, {
+      confirmed: true,
+      confirmationToken: null,
+      unsubscribeToken,
     });
-
-    await sendWelcomeEmail(subscriber.email, subscriber.locale);
-
-    return {
-      success: true,
-      message:
-        subscriber.locale === "es"
-          ? "¡Suscripción confirmada! Revisa tu correo para más información."
-          : "Subscription confirmed! Check your email for more information.",
-    };
   } catch (error: unknown) {
     console.error("Newsletter confirmation error:", error);
     throw createError({
       statusCode: 500,
       statusMessage:
-        subscriber.locale === "es"
+        language === "es"
           ? "Error al confirmar la suscripción"
           : "Error confirming subscription",
     });
   }
+
+  try {
+    await sendWelcomeEmail(subscriber.email, language, unsubscribeToken);
+  } catch (error: unknown) {
+    console.error("Newsletter welcome email error:", error);
+  }
+
+  return {
+    success: true,
+    message:
+      language === "es"
+        ? "Suscripción confirmada. Revisa tu correo para más información."
+        : "Subscription confirmed. Check your email for more information.",
+  };
 });

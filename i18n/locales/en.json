@@ -812,7 +812,7 @@
       "account": "Account:",
       "accountText": "if you create one, your email, your username and your hashed password. You can delete it whenever you want from My account; your comments remain as “Anonymous”.",
       "newsletter": "Newsletter:",
-      "newsletterText": "if you subscribe, your email, only to send you new articles. To unsubscribe, write to us and we delete your email.",
+      "newsletterText": "if you subscribe, your email, only to send you new articles. You can unsubscribe whenever you want from the link in any of our emails, and we delete your address.",
       "comments": "Comments:",
       "commentsText": "the name and the text you write, published after review. Replies from the fediverse arrive with your public Mastodon address."
     },
@@ -820,6 +820,21 @@
       "label": "Your rights",
       "title": "Know, correct or delete",
       "body": "Under Colombia’s Law 1581 of 2012, you can access, update, correct and ask for the deletion of your personal data. Write to {email} and we will reply."
+    }
+  },
+  "newsletter": {
+    "unsubscribe": {
+      "meta": "Unsubscribe from the newsletter - BogDev",
+      "eyebrow": "Newsletter",
+      "title": "Unsubscribe",
+      "lead": "You will stop receiving new articles by email and we will delete your address.",
+      "submit": "Unsubscribe me",
+      "doneTitle": "Done, you are unsubscribed",
+      "doneLead": "You will no longer receive the newsletter and we deleted your email. You can subscribe again whenever you want.",
+      "invalidTitle": "This link is not valid",
+      "invalidLead": "Use the “Unsubscribe” link in one of our emails. If the problem persists, write to {email}.",
+      "error": "We could not unsubscribe you. Try again in a moment.",
+      "blog": "Go to the blog"
     }
   }
 }

@@ -713,8 +713,81 @@ describe('/api/newsletter/subscribe', () => {
     ).rejects.toMatchObject({ response: { status: 500 } })
     const posts = mock.requests.filter((request) => request.method === 'POST' && request.path === '/api/subscribers')
     const lastPost = posts[posts.length - 1]
-    expect(lastPost?.body?.data).toMatchObject({ email: 'new@example.com', confirmed: false, locale: 'en' })
+    expect(lastPost?.body?.data).toMatchObject({ email: 'new@example.com', confirmed: false, language: 'en' })
     expect(lastPost?.body?.data?.confirmationToken).toBeTruthy()
+    expect(lastPost?.body?.data?.unsubscribeToken).toMatch(/^[\w-]{43}$/)
+    expect(lastPost?.body?.data).not.toHaveProperty('locale')
+  })
+
+  it('stores the Spanish language and treats any other locale as English', async () => {
+    await $fetch('/api/newsletter/subscribe', { method: 'POST', body: { email: 'es@example.com', locale: 'es' } }).catch(() => null)
+    await $fetch('/api/newsletter/subscribe', { method: 'POST', body: { email: 'fr@example.com', locale: 'fr' } }).catch(() => null)
+    const languages = mock.requests
+      .filter((request) => request.method === 'POST' && request.path === '/api/subscribers')
+      .map((request) => [request.body?.data?.email, request.body?.data?.language])
+    expect(languages).toEqual([['es@example.com', 'es'], ['fr@example.com', 'en']])
+  })
+})
+
+describe('/api/newsletter/confirm', () => {
+  it('confirms the subscriber, keeps an unsubscribe token and succeeds even if the welcome email fails', async () => {
+    const result = await $fetch('/api/newsletter/confirm', { query: { token: 'confirmation-token-to-confirm-0001' } })
+    expect(result).toMatchObject({ success: true })
+    const update = mock.requests.find((request) => request.method === 'PUT' && request.path === '/api/subscribers/sub-to-confirm')
+    expect(update?.body?.data).toMatchObject({ confirmed: true, confirmationToken: null })
+    expect(update?.body?.data?.unsubscribeToken).toMatch(/^[\w-]{43}$/)
+  })
+
+  it('answers 404 for an unknown or malformed token', async () => {
+    for (const token of ['confirmation-token-unknown-0001', 'bad token']) {
+      await expect($fetch('/api/newsletter/confirm', { query: { token } })).rejects.toMatchObject({ response: { status: 404 } })
+    }
+  })
+})
+
+describe('/api/newsletter/unsubscribe', () => {
+  const deletes = () => mock.requests.filter((request) => request.method === 'DELETE' && request.path.startsWith('/api/subscribers/'))
+
+  it('deletes the subscriber of the token sent by the unsubscribe page', async () => {
+    const result = await $fetch('/api/newsletter/unsubscribe', { method: 'POST', body: { token: 'unsubscribe-token-leaving-0001' } })
+    expect(result).toEqual({ success: true })
+    expect(deletes().map((request) => request.path)).toEqual(['/api/subscribers/sub-leaving'])
+  })
+
+  it('accepts the RFC 8058 one-click POST with the token in the URL', async () => {
+    const response = await fetch('/api/newsletter/unsubscribe?token=unsubscribe-token-one-click-0001', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: 'List-Unsubscribe=One-Click',
+    })
+    expect(response.status).toBe(200)
+    expect(response.headers.get('cache-control')).toBe('private, no-store')
+    expect(deletes().map((request) => request.path)).toEqual(['/api/subscribers/sub-one-click'])
+  })
+
+  it('answers the same for an unknown or already used token, without deleting anything', async () => {
+    for (const token of ['unsubscribe-token-leaving-0001', 'unsubscribe-token-unknown-0001']) {
+      expect(await $fetch('/api/newsletter/unsubscribe', { method: 'POST', body: { token } })).toEqual({ success: true })
+    }
+    expect(deletes()).toEqual([])
+  })
+
+  it('rejects a missing or malformed token without calling Strapi', async () => {
+    for (const body of [{}, { token: 'short' }, { token: 'has spaces in it, sadly' }]) {
+      await expect($fetch('/api/newsletter/unsubscribe', { method: 'POST', body })).rejects.toMatchObject({ response: { status: 400 } })
+    }
+    expect(mock.requests.filter((request) => request.path.startsWith('/api/subscribers'))).toEqual([])
+  })
+})
+
+describe('/newsletter/unsubscribe', () => {
+  it('is private and kept out of search engines', async () => {
+    for (const path of ['/newsletter/unsubscribe?token=unsubscribe-token-x-0001', '/es/newsletter/unsubscribe']) {
+      const response = await fetch(path)
+      expect(response.status).toBe(200)
+      expect(response.headers.get('cache-control')).toBe('private, no-store')
+      expect(response.headers.get('x-robots-tag')).toBe('noindex, nofollow')
+    }
   })
 })
 
