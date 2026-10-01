@@ -125,5 +125,5 @@ export function createAuthMock({ frontendUrl }) {
     return null
   }
 
-  return { users, handle }
+  return { users, handle, userFromAuth }
 }

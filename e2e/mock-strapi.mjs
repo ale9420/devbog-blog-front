@@ -2,6 +2,7 @@ import { createServer } from 'node:http'
 import qs from 'qs'
 import { aboutBlocks } from './fixtures/about.mjs'
 import { createAuthMock } from './fixtures/auth.mjs'
+import { createDraftsMock } from './fixtures/drafts.mjs'
 
 const author = {
   id: 31,
@@ -319,6 +320,7 @@ function sendPng(res) {
 }
 
 const authMock = createAuthMock({ frontendUrl: process.env.MOCK_FRONTEND_URL || 'http://127.0.0.1:3210' })
+const draftsMock = createDraftsMock({ userFromAuth: authMock.userFromAuth, publishedArticles: articles })
 
 const server = createServer(async (req, res) => {
   const method = req.method || 'GET'
@@ -334,6 +336,12 @@ const server = createServer(async (req, res) => {
     } else {
       sendJson(res, auth.status, auth.body)
     }
+    return
+  }
+
+  const drafts = draftsMock.handle(method, url.pathname, query, req.headers)
+  if (drafts) {
+    sendJson(res, drafts.status, drafts.body)
     return
   }
 

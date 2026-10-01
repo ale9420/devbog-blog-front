@@ -16,7 +16,7 @@ export function headerSection(path: string): HeaderSection | undefined {
 }
 
 export function isReadingPath(path: string): boolean {
-  return /^\/blog\/[^/]+$/.test(stripLocale(path))
+  return /^\/(blog|drafts)\/[^/]+$/.test(stripLocale(path))
 }
 
 export function readingPercent(scrollTop: number, scrollHeight: number, viewportHeight: number): number {

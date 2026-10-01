@@ -14,24 +14,7 @@ export default defineEventHandler(async (event) => {
   const params = qs.stringify({
     filters: { slug: { $eq: slug } },
     locale,
-    populate: {
-      cover: { populate: '*' },
-      coverCredit: true,
-      category: { populate: '*' },
-      author: { populate: '*' },
-      seo: { populate: '*' },
-      tags: { fields: ['name', 'slug'] },
-      blocks: {
-        on: {
-          'shared.rich-text': { populate: '*' },
-          'shared.quote': { populate: '*' },
-          'shared.media': { populate: { file: true, credit: true } },
-          'shared.slider': { populate: { items: { populate: { file: true, credit: true } }, files: true } },
-        },
-      },
-      references: true,
-      localizations: { fields: ['slug', 'locale', 'publishedAt'] },
-    },
+    populate: ARTICLE_POPULATE,
   }, { skipNulls: true })
 
   const headers: Record<string, string> = {}

@@ -907,6 +907,94 @@ describe('account pages', () => {
   })
 })
 
+describe('/api/drafts', () => {
+  async function sessionFor(identifier: string, password: string): Promise<string> {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', origin: SITE_URL },
+      body: JSON.stringify({ identifier, password }),
+    })
+    expect(response.status).toBe(200)
+    mock.requests.length = 0
+    return response.headers.getSetCookie().find((value) => value.startsWith('bd_session='))!.split(';')[0]!
+  }
+
+  it('answers 404 without a session, before calling Strapi', async () => {
+    for (const path of ['/api/drafts', '/api/drafts/doc-linux?locale=en']) {
+      const response = await fetch(path)
+      expect(response.status).toBe(404)
+      expect(response.headers.get('cache-control')).toMatch(/^(no-cache|private, no-store)$/)
+    }
+    expect(mock.requests).toEqual([])
+  })
+
+  it('answers 404 to a reader, with the reader JWT and not the API token', async () => {
+    const cookie = await sessionFor(testUsers.reader.username, testUsers.reader.password)
+    const list = await fetch('/api/drafts', { headers: { cookie } })
+    const draft = await fetch('/api/drafts/doc-draft-pihole?locale=es', { headers: { cookie } })
+    expect([list.status, draft.status]).toEqual([404, 404])
+    expect(list.headers.get('cache-control')).toMatch(/^(no-cache|private, no-store)$/)
+    expect(mock.requests.length).toBeGreaterThan(0)
+    expect(mock.requests.every((request) => request.authorization === 'Bearer mock-jwt-101')).toBe(true)
+  })
+
+  it('lists the drafts of every language for an editor, newest edit first', async () => {
+    const cookie = await sessionFor(testUsers.editor.username, testUsers.editor.password)
+    const response = await fetch('/api/drafts', { headers: { cookie } })
+    expect(response.status).toBe(200)
+    expect(response.headers.get('cache-control')).toBe('private, no-store')
+    const body = await response.json() as { data: Array<{ documentId: string, locale: string, state: string }>, meta: { count: number } }
+    expect(body.meta.count).toBe(2)
+    expect(body.data.map((draft) => [draft.documentId, draft.locale, draft.state])).toEqual([
+      ['doc-draft-pihole', 'es', 'never-published'],
+      ['doc-linux', 'en', 'modified'],
+    ])
+    expect(mock.requests).toMatchObject([{ path: '/api/articles/drafts', authorization: 'Bearer mock-jwt-102' }])
+  })
+
+  it('returns a draft with the article populate and its published version', async () => {
+    const cookie = await sessionFor(testUsers.editor.username, testUsers.editor.password)
+    const response = await fetch('/api/drafts/doc-linux?locale=en', { headers: { cookie } })
+    expect(response.status).toBe(200)
+    expect(response.headers.get('cache-control')).toBe('private, no-store')
+    const body = await response.json() as { article: { title: string, blocks: unknown[] }, published: { slug: string } | null }
+    expect(body.article.title).toBe('Linux Server Hardening Guide, second edition')
+    expect(body.article.blocks).toHaveLength(1)
+    expect(body.published).toMatchObject({ slug: 'linux-server-hardening-guide' })
+
+    const draftRequest = mock.requests.find((request) => request.query.status === 'draft')
+    expect(draftRequest).toMatchObject({ path: '/api/articles/doc-linux', authorization: 'Bearer mock-jwt-102' })
+    expect(draftRequest?.query.locale).toBe('en')
+    expect(getNestedValue(draftRequest?.query, ['populate', 'blocks', 'on', 'shared.media', 'populate', 'credit'])).toBe('true')
+    expect(getNestedValue(draftRequest?.query, ['populate', 'references'])).toBe('true')
+    const publishedRequest = mock.requests.find((request) => request.query.status === 'published')
+    expect(publishedRequest?.authorization).toBe('Bearer mock-jwt-102')
+  })
+
+  it('marks a never published draft and answers 404 to an unknown one', async () => {
+    const cookie = await sessionFor(testUsers.editor.username, testUsers.editor.password)
+    const draft = await $fetch<{ article: { slug: string }, published: unknown }>('/api/drafts/doc-draft-pihole', { query: { locale: 'es' }, headers: { cookie } })
+    expect(draft).toMatchObject({ article: { slug: 'pi-hole-raspberry-pi' }, published: null })
+    const missing = await fetch('/api/drafts/doc-nope?locale=es', { headers: { cookie } })
+    expect(missing.status).toBe(404)
+  })
+
+  it('keeps drafts out of the sitemap, the feeds and the search', async () => {
+    const pages = await Promise.all(['/sitemap.xml', '/feed.xml', '/es/feed.xml', '/feed/linux.xml', '/feed/privacidad.xml'].map(async (path) => (await fetch(path)).text()))
+    const searches = await Promise.all([
+      $fetch('/api/search', { query: { q: 'pi-hole', locale: 'es', content: '1' } }),
+      $fetch('/api/search', { query: { q: 'second edition', locale: 'en', content: '1' } }),
+    ])
+    const output = [...pages, JSON.stringify(searches)].join('\n')
+    for (const leak of ['pi-hole-raspberry-pi', 'Pi-hole en una Raspberry Pi', 'second edition']) {
+      expect(output).not.toContain(leak)
+    }
+    const articleRequests = mock.requests.filter((request) => request.path.startsWith('/api/articles'))
+    expect(articleRequests.length).toBeGreaterThan(0)
+    expect(articleRequests.every((request) => request.query.status === undefined || request.query.status === 'published')).toBe(true)
+  })
+})
+
 function getNestedValue(obj: unknown, path: string[]): unknown {
   let current = obj
   for (const key of path) {

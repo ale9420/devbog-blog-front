@@ -8,7 +8,7 @@ import type {
   SearchPostResult, StrapiPaginatedResponse, PaginationMeta 
 , Locale, CategoryCount, BlogSort, TagCount} from "~/interfaces";
 import { defaultLocale } from "~/interfaces";
-import { publishedTranslations } from "~/helpers/translations";
+import { toStrapiPost } from "~/helpers/post";
 
 /**
  * Strapi data access for client pages. Every helper below goes through
@@ -86,28 +86,7 @@ export function useStrapi() {
         `/api/posts/${slug}?${query}`,
       );
 
-      if (!response) return null;
-
-      const post: StrapiPost = {
-        id: response.id,
-        documentId: response.documentId,
-        title: response.title,
-        slug: response.slug,
-        description: response.description,
-        content: response.content,
-        publishedAt: response.publishedAt,
-        readTime: response.readTime,
-        tags: response.tags,
-        cover: response.cover,
-        coverCredit: response.coverCredit,
-        category: response.category,
-        author: response.author,
-        seo: response.seo ?? undefined,
-        blocks: response.blocks ?? [],
-        references: response.references ?? [],
-        translations: publishedTranslations(response.localizations),
-      };
-      return post;
+      return response ? toStrapiPost(response) : null;
     });
   }
 

@@ -11,6 +11,7 @@ const { t } = useI18n()
 const route = useRoute()
 const { localizePath } = useLocaleUtils()
 const { user, isEditor, logout } = useAuth()
+const { count: draftCount } = useDraftCount()
 
 const rootRef = ref<HTMLElement>()
 const toggleRef = ref<HTMLButtonElement>()
@@ -21,6 +22,11 @@ const signInTarget = computed<{ path: string, query?: { redirect: string } }>(()
   const path = localizePath('/account/sign-in')
   return /\/account(\/|$)/.test(route.path) ? { path } : { path, query: { redirect: route.fullPath } }
 })
+
+const draftsLabel = computed<string>(() =>
+  draftCount.value === null ? t('bd.header.drafts') : t('bd.header.draftsCount', draftCount.value),
+)
+const showDraftCount = computed<boolean>(() => isEditor.value && draftCount.value !== null)
 
 function close(returnFocus = false): void {
   if (!open.value) return
@@ -60,6 +66,7 @@ watch(() => route.fullPath, () => close())
         @click="open = !open"
       >
         <span class="bd-account-avatar" aria-hidden="true">{{ userInitial(user.username) }}</span>
+        <span v-if="compact && showDraftCount && draftCount" class="bd-count bd-account-badge" aria-hidden="true">{{ draftCount }}</span>
         <span class="bd-account-name" aria-hidden="true">{{ user.username }}</span>
       </button>
       <ul v-show="open" :id="panelId" class="bd-account-panel">
@@ -68,7 +75,10 @@ watch(() => route.fullPath, () => close())
           <NuxtLink :to="localizePath('/account')" class="bd-account-item">{{ t('bd.header.account') }}</NuxtLink>
         </li>
         <li v-if="isEditor">
-          <NuxtLink :to="localizePath('/drafts')" class="bd-account-item">{{ t('bd.header.drafts') }}</NuxtLink>
+          <NuxtLink :to="localizePath('/drafts')" class="bd-account-item bd-account-item-drafts" :aria-label="draftsLabel">
+            {{ t('bd.header.drafts') }}
+            <span v-if="showDraftCount" class="bd-count" aria-hidden="true">{{ draftCount }}</span>
+          </NuxtLink>
         </li>
         <li>
           <button type="button" class="bd-account-item bd-account-item-signout" @click="signOut">{{ t('bd.header.signOut') }}</button>

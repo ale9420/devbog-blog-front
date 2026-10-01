@@ -40,3 +40,17 @@ export function formatDotDate(date: string | null | undefined): string {
 
   return `${part('day')}.${part('month')}.${part('year')}`
 }
+
+export function formatDotDateTime(date: string | null | undefined): string {
+  if (!date) return ''
+
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+    timeZone: 'America/Bogota',
+  }).formatToParts(new Date(date))
+  const part = (type: Intl.DateTimeFormatPartTypes): string => parts.find(p => p.type === type)?.value ?? ''
+
+  return `${formatDotDate(date)} · ${part('hour')}:${part('minute')}`
+}

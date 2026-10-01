@@ -1,22 +1,15 @@
 <script setup lang="ts">
-import type { Category, CitationIndex, Locale, NumberedReference, TocHeading } from "~/interfaces";
-import { buildCitationIndex, numberReferences } from "~/helpers/citations";
-import { isCategory } from "~/helpers/categories";
-import { formatDotDate } from "~/helpers/formatDate";
-import { mastodonShareUrl } from "~/helpers/share";
+import type { Locale } from "~/interfaces";
 import { articlePaths } from "~/helpers/translations";
-import { extractHeadings } from "~/helpers/toc";
 
 const { locale, t } = useI18n();
 const route = useRoute();
 const slug = route.params.slug as string;
 const { fetchPost, getMediaUrl } = useStrapi();
-const { localizePath } = useLocaleUtils();
 const categoryLabel = useCategoryLabel();
 const { siteUrl } = useSiteUrl();
 const { canonicalUrl } = useCanonicalUrl(`/blog/${slug}`);
 const headerSection = useHeaderSection();
-const config = useRuntimeConfig();
 const { setAlternates } = useLocaleAlternates();
 
 const { data: post, error } = await fetchPost(slug, locale.value as Locale);
@@ -56,25 +49,7 @@ const shareImageUrl = computed(() => seoImageUrl.value || coverUrl.value || `${s
 
 const shareImageAlt = computed(() => post.value?.cover?.alternativeText || post.value?.title || "Blog post cover image");
 
-const category = computed<Category | undefined>(() => {
-    const slug = post.value?.category?.slug;
-    return isCategory(slug) ? slug : undefined;
-});
-const references = computed<NumberedReference[]>(() => numberReferences(post.value?.blocks, post.value?.references));
-const citationIndex = computed<CitationIndex>(() => buildCitationIndex(post.value?.blocks, post.value?.references));
-const headings = computed<TocHeading[]>(() => {
-    const blockHeadings = extractHeadings(post.value?.blocks);
-    if (!references.value.length) return blockHeadings;
-    return [...blockHeadings, { id: "references", text: t("post.references.title"), level: 2 }];
-});
 const articleUrl = computed<string>(() => post.value?.seo?.canonicalURL || canonicalUrl.value);
-const mastodonUrl = computed<string>(() => mastodonShareUrl(post.value?.title ?? "", articleUrl.value));
-const publishedDate = computed<string>(() => formatDotDate(post.value?.publishedAt));
-const federated = computed<boolean>(() => locale.value === config.public.fediverseLocale);
-const prose = ref<HTMLElement | null>(null);
-
-provideCitations(citationIndex);
-useMarkAsRead(prose, computed(() => post.value?.documentId));
 
 useSeoMeta({
     title: () => post.value?.seo?.metaTitle || (post.value?.title ? `${post.value.title} - BogDev` : "Post - BogDev"),
@@ -208,87 +183,5 @@ useHead({
 </script>
 
 <template>
-    <div class="bd-article-page">
-        <template v-if="post">
-            <header class="bd-article-head">
-                <div class="bd-article-kicker">
-                    <BdCategoryTag v-if="category" :category="category" />
-                    <time v-if="publishedDate" class="bd-meta" :datetime="post.publishedAt ?? undefined">{{ publishedDate }}</time>
-                    <span v-if="post.readTime" class="bd-meta">{{ t("blog.readTime", { minutes: post.readTime }) }}</span>
-                </div>
-                <h1 class="bd-article-title bd-wide">{{ post.title }}</h1>
-                <p v-if="post.description" class="bd-article-lead">{{ post.description }}</p>
-                <div class="bd-article-byline">
-                    <div class="bd-article-author">
-                        <BlogAuthorBadge :author="post.author" />
-                        <div class="bd-article-author-text">
-                            <span class="bd-article-author-name">{{ post.author?.name || t("post.anonymous") }}</span>
-                            <span class="bd-meta bd-home-eyebrow bd-article-place">{{ t("bd.header.hud.city") }} · {{ t("bd.header.hud.coords") }}</span>
-                        </div>
-                    </div>
-                    <div class="bd-article-actions">
-                        <BlogCopyLinkButton :url="articleUrl" />
-                        <BdButton :href="mastodonUrl" variant="text" size="sm" target="_blank" rel="noopener noreferrer" :aria-label="t('post.shareOn', { network: 'Mastodon' })">
-                            Mastodon <span aria-hidden="true">↗</span>
-                        </BdButton>
-                    </div>
-                </div>
-                <BlogFediverseBar v-if="federated && post.documentId" :slug="slug" :document-id="post.documentId" />
-            </header>
-
-            <figure v-if="coverUrl" class="bd-article-figure">
-                <div class="bd-article-cover">
-                    <NuxtImg
-                        :src="coverUrl"
-                        :alt="post.cover?.alternativeText || post.title"
-                        width="1200"
-                        height="675"
-                        format="webp"
-                        loading="eager"
-                        fetchpriority="high"
-                        decoding="async"
-                    />
-                </div>
-                <figcaption v-if="post.coverCredit" class="bd-article-cover-credit">
-                    <BdFigureCredit :credit="post.coverCredit" />
-                </figcaption>
-            </figure>
-            <div v-else class="bd-article-cover bd-article-cover-empty" aria-hidden="true" />
-
-            <div class="bd-article-body">
-                <BlogTableOfContents class="bd-article-toc" :headings="headings" />
-
-                <article class="bd-article-content">
-                    <div ref="prose" class="bd-prose">
-                        <StrapiBlocksRenderer :blocks="post.blocks" />
-                    </div>
-
-                    <BlogReferences :entries="references" />
-
-                    <div class="bd-article-after">
-                        <div v-if="post.tags?.length" class="bd-article-tags">
-                            <span class="bd-eyebrow bd-home-eyebrow">{{ t("post.tags") }}</span>
-                            <NuxtLink
-                                v-for="tag in post.tags"
-                                :key="tag.slug"
-                                :to="{ path: localizePath('/blog'), query: { tag: tag.slug } }"
-                                class="bd-chip bd-blog-tag"
-                            >
-                                #{{ tag.name }}
-                            </NuxtLink>
-                        </div>
-                        <BlogReadingPath v-if="category && post.documentId" :category="category" :current-document-id="post.documentId" />
-                        <BlogAuthorCard :author="post.author" />
-                        <BlogBuyMeACoffee />
-                    </div>
-                </article>
-
-                <BlogShareButtons class="bd-article-share" :title="post.title" :url="articleUrl" />
-            </div>
-
-            <BlogCommentSection :slug="slug" :document-id="post.documentId" :federated="federated && Boolean(post.documentId)" />
-
-            <BlogRelatedPosts :current-post-id="post.id" :category="post.category" />
-        </template>
-    </div>
+    <BlogArticleView v-if="post" :post="post" :share-url="articleUrl" />
 </template>
