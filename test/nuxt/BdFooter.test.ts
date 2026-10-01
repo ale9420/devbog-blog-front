@@ -38,4 +38,11 @@ describe('BdFooter', () => {
     expect(wrapper.get('.bd-land img').attributes('alt')).toBe('')
     expect(wrapper.text()).toContain('Monserrate · 3,152 m')
   })
+
+  it('links to the privacy page next to the copyright', async () => {
+    const wrapper = await mountSuspended(BdFooter)
+    const link = wrapper.get('.bd-foot-legal a.bd-foot-privacy')
+    expect(link.text()).toBe('Privacy and cookies')
+    expect(link.attributes('href')).toBe('/privacy')
+  })
 })

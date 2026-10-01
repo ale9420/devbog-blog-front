@@ -549,7 +549,8 @@
         "flagPalestine": "Palestine",
         "flagColombia": "Colombia",
         "flagBogota": "Bogotá"
-      }
+      },
+      "privacy": "Privacy and cookies"
     }
   },
   "feed": {
@@ -746,6 +747,79 @@
       "edited": "Last edited {date}",
       "published": "View published version",
       "back": "Drafts"
+    }
+  },
+  "privacy": {
+    "meta": {
+      "title": "Privacy and cookies - BogDev",
+      "description": "BogDev does not track you: no ads, no tracking cookies and anonymous analytics. What data we keep and how to exercise your rights."
+    },
+    "notice": {
+      "label": "Privacy notice",
+      "text": "No tracking cookies. We count visits anonymously with Umami.",
+      "more": "Learn more",
+      "ok": "Got it"
+    },
+    "eyebrow": "Legal · updated {date}",
+    "title": "Privacy and cookies",
+    "lead": "In short: BogDev does not track you. There are no ads, no tracking cookies and no third-party analytics building a profile of you.",
+    "facts": {
+      "label": "Summary",
+      "tracking": "Tracking cookies",
+      "session": "Cookie, only when signed in | Cookies, only when signed in",
+      "anonymous": "Anonymous",
+      "analytics": "Analytics with Umami"
+    },
+    "toc": "On this page",
+    "analytics": {
+      "label": "Analytics",
+      "title": "How we count visits",
+      "body": "We use {umami} to know which articles get read. It records the page viewed, the site you came from, the browser, the operating system, the device type and the country. {noCookies}, keeps no data that identifies you and does not follow you from site to site.",
+      "noCookies": "It uses no cookies",
+      "blockers": "If your browser sends the “Do Not Track” signal or you use a blocker, nothing happens: the blog works the same."
+    },
+    "cookies": {
+      "label": "Cookies",
+      "title": "A single cookie, and only if you sign in",
+      "caption": "Cookies used by BogDev",
+      "name": "Name",
+      "purpose": "Purpose",
+      "when": "When",
+      "duration": "Duration",
+      "items": {
+        "bd_session": {
+          "purpose": "Keeps you signed in. Necessary: without it you cannot sign in to your account.",
+          "when": "Only if you sign in"
+        }
+      },
+      "days": "{count} day | {count} days",
+      "none": "We use no analytics, advertising or social media cookies, so there is no need to ask for your consent or show you a banner."
+    },
+    "browser": {
+      "label": "Your browser",
+      "title": "What is stored on your device",
+      "body": "Some preferences are kept in your browser’s local storage. {local} and you can delete them from your browser settings.",
+      "local": "They never leave your device",
+      "items": {
+        "bd-theme": "The Night or Day theme you chose.",
+        "bd-privacy-notice": "That you already closed the privacy notice.",
+        "bd-read-articles": "The articles you already read, for the “✓ Read” mark."
+      }
+    },
+    "data": {
+      "label": "Your data",
+      "title": "What personal data we hold",
+      "account": "Account:",
+      "accountText": "if you create one, your email, your username and your hashed password. You can delete it whenever you want from My account; your comments remain as “Anonymous”.",
+      "newsletter": "Newsletter:",
+      "newsletterText": "if you subscribe, your email, only to send you new articles. To unsubscribe, write to us and we delete your email.",
+      "comments": "Comments:",
+      "commentsText": "the name and the text you write, published after review. Replies from the fediverse arrive with your public Mastodon address."
+    },
+    "rights": {
+      "label": "Your rights",
+      "title": "Know, correct or delete",
+      "body": "Under Colombia’s Law 1581 of 2012, you can access, update, correct and ask for the deletion of your personal data. Write to {email} and we will reply."
     }
   }
 }

@@ -28,6 +28,7 @@ export default defineEventHandler(async (event) => {
       { path: "/", changefreq: "daily", priority: "1.0" },
       { path: "/blog", changefreq: "daily", priority: "0.9" },
       { path: "/about", changefreq: "weekly", priority: "0.7" },
+      { path: "/privacy", changefreq: "yearly", priority: "0.3" },
     ];
 
     const today = new Date().toISOString().slice(0, 10);

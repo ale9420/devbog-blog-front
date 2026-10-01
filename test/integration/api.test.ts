@@ -485,9 +485,26 @@ describe('/sitemap.xml', () => {
 
   it('lists every static page in both languages', async () => {
     const xml = await sitemap()
-    for (const loc of ['/', '/es', '/blog', '/es/blog', '/about', '/es/about']) {
+    for (const loc of ['/', '/es', '/blog', '/es/blog', '/about', '/es/about', '/privacy', '/es/privacy']) {
       const url = entry(xml, loc)
       expect(url).toContain(`hreflang="es" href="${SITE_URL}${loc.startsWith('/es') ? loc : loc === '/' ? '/es' : `/es${loc}`}"`)
+    }
+  })
+})
+
+describe('cookies without a session', () => {
+  it('redirects to the browser language without a language cookie', async () => {
+    const response = await fetch('/', { headers: { 'accept-language': 'es-CO,es;q=0.9' }, redirect: 'manual' })
+    expect(response.status).toBe(302)
+    expect(response.headers.get('location')).toMatch(/\/es$/)
+    expect(response.headers.get('set-cookie')).toBeNull()
+  })
+
+  it('serves the privacy page without setting cookies', async () => {
+    for (const path of ['/privacy', '/es/privacy']) {
+      const response = await fetch(path)
+      expect(response.status).toBe(200)
+      expect(response.headers.get('set-cookie')).toBeNull()
     }
   })
 })

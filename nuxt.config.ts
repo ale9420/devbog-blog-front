@@ -36,6 +36,8 @@ export default defineNuxtConfig({
     "/blog/**": { isr: 300 },
     "/es": { isr: 300 },
     "/es/about": { isr: 3600 },
+    "/privacy": { isr: 3600 },
+    "/es/privacy": { isr: 3600 },
     "/es/blog": { isr: 300 },
     "/es/blog/**": { isr: 300 },
     "/account": { headers: privatePageHeaders },
@@ -64,8 +66,7 @@ export default defineNuxtConfig({
     defaultLocale: Locale.English,
     strategy: "prefix_except_default",
     detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: "i18n_redirected",
+      useCookie: false,
       redirectOn: "root",
     },
   },
