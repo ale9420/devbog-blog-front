@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Comment, CommentFilter, CommentFormData } from '~/interfaces/comment'
-import { matchesCommentFilter } from '~/helpers/comments'
+import { COMMENT_LIMITS, matchesCommentFilter } from '~/helpers/comments'
 
 const FILTERS: CommentFilter[] = ['all', 'blog', 'fediverse']
 const MODERATION_RULES: string[] = ['approval', 'edited', 'deleted', 'plainText']
@@ -184,6 +184,7 @@ onMounted(() => {
               type="text"
               class="bd-comment-input"
               autocomplete="name"
+              :maxlength="COMMENT_LIMITS.name"
               :placeholder="t('comments.namePlaceholder')"
               :aria-invalid="formErrors.name ? 'true' : undefined"
               :aria-describedby="formErrors.name ? 'author-name-error' : undefined"
@@ -198,6 +199,7 @@ onMounted(() => {
               type="email"
               class="bd-comment-input"
               autocomplete="email"
+              :maxlength="COMMENT_LIMITS.email"
               :placeholder="t('comments.emailPlaceholder')"
               :aria-invalid="formErrors.email ? 'true' : undefined"
               :aria-describedby="formErrors.email ? 'author-email-error author-email-hint' : 'author-email-hint'"
@@ -213,6 +215,7 @@ onMounted(() => {
             id="comment-content"
             v-model="formData.content"
             rows="5"
+            :maxlength="COMMENT_LIMITS.content"
             class="bd-comment-input bd-comment-textarea"
             :placeholder="t('comments.placeholder')"
             :aria-invalid="formErrors.content ? 'true' : undefined"

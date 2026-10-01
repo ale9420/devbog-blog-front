@@ -90,12 +90,13 @@ describe('BdNewsletterForm', () => {
     expect(wrapper.emitted('subscribed')).toEqual([['lector@bogdev.com.co']])
   })
 
-  it('tells the reader when the email is already subscribed', async () => {
-    response = () => { throw createError({ statusCode: 409, statusMessage: 'Email already subscribed' }) }
+  it('asks the reader to wait after too many attempts', async () => {
+    response = () => { throw createError({ statusCode: 429, statusMessage: 'Too Many Requests' }) }
     const wrapper = await submit('lector@bogdev.com.co')
     const status = wrapper.get('[role="status"]')
-    expect(status.text()).toBe('◆ That email is already subscribed. Nothing else to do.')
-    expect(status.classes()).toContain('bd-news-msg-success')
+    expect(status.text()).toBe('✕ Too many attempts. Try again later.')
+    expect(status.classes()).toContain('bd-news-msg-error')
+    expect(wrapper.emitted('subscribed')).toBeUndefined()
   })
 
   it('shows a generic error when the API fails', async () => {

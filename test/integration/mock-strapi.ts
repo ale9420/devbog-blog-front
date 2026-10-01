@@ -10,6 +10,7 @@ export interface RecordedRequest {
   path: string
   query: Record<string, unknown>
   body?: { data?: Record<string, unknown>; locale?: unknown }
+  rawBody?: Record<string, unknown>
   authorization?: string
 }
 
@@ -405,6 +406,7 @@ function recordRequest(
   body: Record<string, unknown> | undefined,
 ): void {
   const recorded: RecordedRequest = { method, path, query }
+  if (body && typeof body === 'object') recorded.rawBody = body
   if (body && typeof body === 'object' && 'data' in body) {
     recorded.body = { data: body.data as Record<string, unknown> }
   }

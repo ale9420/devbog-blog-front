@@ -54,6 +54,21 @@ export interface CommentFormData {
   threadOf?: number
 }
 
+export interface GuestCommentInput extends CommentFormData {
+  locale: string
+}
+
+export interface GuestComment {
+  author: {
+    id: string
+    name: string
+    email: string
+    avatar?: string
+  }
+  content: string
+  threadOf?: number
+}
+
 export interface CommentsResponse {
   data: Comment[]
   meta?: {

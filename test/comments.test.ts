@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import type { Comment } from '../app/interfaces/comment'
-import { isFediverseComment, matchesCommentFilter, toPublicComment, toPublicComments } from '../app/helpers/comments'
+import { COMMENT_LIMITS, isCommentRelation, isFediverseComment, matchesCommentFilter, toGuestComment, toPublicComment, toPublicComments } from '../app/helpers/comments'
 
 function comment(overrides: Partial<Comment> = {}): Comment {
   return {
@@ -82,5 +82,51 @@ describe('matchesCommentFilter', () => {
     expect(matchesCommentFilter(fediverse, 'blog')).toBe(false)
     expect(matchesCommentFilter(fediverse, 'fediverse')).toBe(true)
     expect(matchesCommentFilter(comment(), 'fediverse')).toBe(false)
+  })
+})
+
+describe('isCommentRelation', () => {
+  it('accepts article relations by documentId or slug', () => {
+    expect(isCommentRelation('api::article.article:doc-vue')).toBe(true)
+    expect(isCommentRelation('api::article.article:k2x9v0l1m3n4b5c6v7b8n9m0')).toBe(true)
+  })
+
+  it('rejects paths, other content types and non-strings', () => {
+    for (const value of ['../users', 'api::article.article:../../users', 'api::article.article:a/b', 'api::article.article:a?x=1', 'api::user.user:1', 'api::article.article:', '', undefined, ['api::article.article:a']]) {
+      expect(isCommentRelation(value)).toBe(false)
+    }
+  })
+})
+
+describe('toGuestComment', () => {
+  const valid = { author: { name: ' Ana ', email: 'Ana@Example.com' }, content: ' Hola ' }
+
+  it('keeps only the allowed fields and uses the server author id', () => {
+    const result = toGuestComment({ ...valid, approvalStatus: 'APPROVED', isAdminComment: true, author: { ...valid.author, id: 'admin' } }, 'guest-server')
+    expect(result).toEqual({ author: { id: 'guest-server', name: 'Ana', email: 'ana@example.com' }, content: 'Hola' })
+  })
+
+  it('keeps an http(s) avatar and a numeric parent', () => {
+    expect(toGuestComment({ ...valid, author: { ...valid.author, avatar: 'https://example.com/a.png' }, threadOf: 7 }, 'g')).toMatchObject({
+      author: { avatar: 'https://example.com/a.png' },
+      threadOf: 7,
+    })
+    expect(toGuestComment({ ...valid, author: { ...valid.author, avatar: 'javascript:alert(1)' } }, 'g')?.author).not.toHaveProperty('avatar')
+  })
+
+  it('rejects missing, invalid or oversized fields', () => {
+    for (const body of [
+      null,
+      'text',
+      { ...valid, content: '   ' },
+      { ...valid, author: { name: 'Ana' } },
+      { ...valid, author: { name: 'Ana', email: 'not-an-email' } },
+      { ...valid, author: { name: 'x'.repeat(COMMENT_LIMITS.name + 1), email: 'a@b.co' } },
+      { ...valid, content: 'x'.repeat(COMMENT_LIMITS.content + 1) },
+      { ...valid, threadOf: '7' },
+      { ...valid, threadOf: 0 },
+    ]) {
+      expect(toGuestComment(body, 'g')).toBeNull()
+    }
   })
 })

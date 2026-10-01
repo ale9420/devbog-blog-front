@@ -287,6 +287,7 @@
     "email": "Email",
     "emailPlaceholder": "your{'@'}email.com",
     "emailRequired": "Required, never displayed publicly",
+    "tooMany": "Too many comments in a short time. Try again in a few minutes.",
     "comment": "Comment",
     "noComments": "No comments yet. Be the first to comment!",
     "replyingTo": "Replying to",
@@ -442,9 +443,9 @@
       "placeholder": "you{'@'}email.com",
       "button": "Subscribe",
       "success": "✓ Check your email to confirm the subscription.",
-      "already": "◆ That email is already subscribed. Nothing else to do.",
       "invalid": "✕ That email does not look valid.",
-      "error": "✕ We could not subscribe you. Try again in a moment."
+      "error": "✕ We could not subscribe you. Try again in a moment.",
+      "tooMany": "✕ Too many attempts. Try again later."
     },
     "header": {
       "home": "BogDev, home",
