@@ -1,17 +1,6 @@
-import type { Comment, CommentFormData, CommentsResponse } from '~/interfaces/comment'
+import type { Comment, CommentFormData, CommentsResponse, GuestCommentInput } from '~/interfaces/comment'
 import { isFediverseComment } from '~/helpers/comments'
-
-interface GuestCommentPayload {
-  author: {
-    id: string
-    name: string
-    email: string
-    avatar?: string
-  }
-  content: string
-  threadOf?: number
-  locale: string
-}
+import { asApiError } from '~/helpers/apiError'
 
 function getErrorMessage(err: unknown, fallback: string): string {
   if (err instanceof Error && err.message) return err.message
@@ -19,7 +8,7 @@ function getErrorMessage(err: unknown, fallback: string): string {
 }
 
 export function useComments(articleSlug: string, articleDocumentId?: string) {
-  const { locale } = useI18n()
+  const { t, locale } = useI18n()
 
   const relation = computed(() => {
     if (articleDocumentId) {
@@ -60,9 +49,8 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
     submitError.value = null
     submitSuccess.value = false
     
-    const cleanData: GuestCommentPayload = {
+    const cleanData: GuestCommentInput = {
       author: {
-        id: `guest-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
         name: data.author.name.trim(),
         email: data.author.email.trim()
       },
@@ -94,7 +82,10 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
       
       return response
     } catch (err: unknown) {
-      submitError.value = getErrorMessage(err, 'Failed to post comment')
+      const e = asApiError(err)
+      submitError.value = (e.response?.status || e.statusCode) === 429
+        ? t('comments.tooMany')
+        : getErrorMessage(err, 'Failed to post comment')
       console.error('Error posting comment:', err)
       throw err
     } finally {

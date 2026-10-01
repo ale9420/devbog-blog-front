@@ -22,8 +22,8 @@ export function useNewsletter(): { subscribe: (email: string) => Promise<Newslet
     } catch (err) {
       const e = asApiError(err)
       const statusCode = e.response?.status || e.statusCode
-      if (statusCode === 409) {
-        return { status: 'success', message: t('bd.newsletter.already'), invalid: false }
+      if (statusCode === 429) {
+        return { status: 'error', message: t('bd.newsletter.tooMany'), invalid: false }
       }
       if (statusCode === 400) {
         return { status: 'error', message: t('bd.newsletter.invalid'), invalid: true }

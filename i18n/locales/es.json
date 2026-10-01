@@ -287,6 +287,7 @@
     "email": "Correo",
     "emailPlaceholder": "tu{'@'}correo.com",
     "emailRequired": "Requerido, nunca se muestra públicamente",
+    "tooMany": "Demasiados comentarios en poco tiempo. Intenta de nuevo en unos minutos.",
     "comment": "Comentario",
     "noComments": "Aún no hay comentarios. ¡Sé el primero en comentar!",
     "replyingTo": "Respondiendo a",
@@ -442,9 +443,9 @@
       "placeholder": "tu{'@'}correo.com",
       "button": "Suscribirme",
       "success": "✓ Revisa tu correo para confirmar la suscripción.",
-      "already": "◆ Ese correo ya está suscrito. No tienes que hacer nada más.",
       "invalid": "✕ Ese correo no parece válido.",
-      "error": "✕ No pudimos suscribirte. Intenta de nuevo en un momento."
+      "error": "✕ No pudimos suscribirte. Intenta de nuevo en un momento.",
+      "tooMany": "✕ Demasiados intentos. Intenta más tarde."
     },
     "header": {
       "home": "BogDev, inicio",

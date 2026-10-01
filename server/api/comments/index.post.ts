@@ -1,27 +1,23 @@
+import { randomUUID } from 'node:crypto'
 import type { Comment } from '~/interfaces/comment'
-import { toPublicComment } from '~/helpers/comments'
+import { toGuestComment, toPublicComment } from '~/helpers/comments'
 
-export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
+export default defineEventHandler(async (event): Promise<Comment> => {
+  assertSameOrigin(event)
   const config = useRuntimeConfig()
-  const query = getQuery(event)
-  const relation = query.relation as string
+  const relation = commentRelation(event)
+  const body = await readBody<Record<string, unknown> | null>(event).catch(() => null)
+  const comment = toGuestComment(body, `guest-${randomUUID()}`)
 
-  if (!relation) {
+  if (!comment) {
     throw createError({
       statusCode: 400,
-      message: 'Relation parameter is required'
+      message: 'Content, author name and a valid email are required'
     })
   }
 
-  if (!body.content || !body.author?.name) {
-    throw createError({
-      statusCode: 400,
-      message: 'Content and author name are required'
-    })
-  }
-
-  const locale = commentLocale(body.locale)
+  const locale = commentLocale(body?.locale)
+  assertRateLimit(event, 'commentPerIp', clientIp(event))
 
   const url = `${config.public.strapiUrl}/api/comments/${relation}`
 
@@ -36,7 +32,7 @@ export default defineEventHandler(async (event) => {
     const response = await $fetch<Comment>(url, {
       method: 'POST',
       headers,
-      body: { ...body, locale }
+      body: { ...comment, locale }
     })
     return toPublicComment(response)
   } catch (error: unknown) {

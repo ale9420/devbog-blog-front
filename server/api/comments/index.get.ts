@@ -5,14 +5,7 @@ import { toPublicComments } from '~/helpers/comments'
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const config = useRuntimeConfig()
-  const relation = query.relation as string
-
-  if (!relation) {
-    throw createError({
-      statusCode: 400,
-      message: 'Relation parameter is required'
-    })
-  }
+  const relation = commentRelation(event)
 
   const locale = commentLocale(query.locale)
 

@@ -2,12 +2,26 @@ import { randomUUID } from "crypto";
 import { sendConfirmationEmail } from "../../utils/email";
 import { createSubscriber, deleteSubscriber, findSubscriber, newUnsubscribeToken } from "../../utils/subscribers";
 import { newsletterLanguage } from "~/helpers/newsletter";
-import type { SubscribeRequest, SubscribeResponse } from "~/interfaces/newsletter";
+import type { NewsletterLanguage, SubscribeRequest, SubscribeResponse } from "~/interfaces/newsletter";
+
+const MAX_EMAIL_LENGTH = 254;
+
+function successResponse(language: NewsletterLanguage): SubscribeResponse {
+  return {
+    success: true,
+    message:
+      language === "es"
+        ? "Revisa tu correo para confirmar la suscripción"
+        : "Check your email to confirm subscription",
+  };
+}
 
 export default defineEventHandler(async (event): Promise<SubscribeResponse> => {
-  const body = await readBody<SubscribeRequest>(event);
+  assertSameOrigin(event);
+  const body = await readBody<Partial<SubscribeRequest> | null>(event).catch(() => null);
+  const rawEmail = typeof body?.email === "string" ? body.email.trim() : "";
 
-  if (!body.email) {
+  if (!rawEmail) {
     throw createError({
       statusCode: 400,
       statusMessage: "Email is required",
@@ -15,30 +29,24 @@ export default defineEventHandler(async (event): Promise<SubscribeResponse> => {
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(body.email)) {
+  if (rawEmail.length > MAX_EMAIL_LENGTH || !emailRegex.test(rawEmail)) {
     throw createError({
       statusCode: 400,
       statusMessage: "Invalid email format",
     });
   }
 
-  const email = body.email.toLowerCase();
-  const existing = await findSubscriber("email", email);
-  if (existing) {
-    if (existing.confirmed) {
-      throw createError({
-        statusCode: 409,
-        statusMessage: "Email already subscribed",
-      });
-    }
-
-    await deleteSubscriber(existing.documentId);
-  }
-
-  const confirmationToken = randomUUID();
-  const language = newsletterLanguage(body.locale);
+  const email = rawEmail.toLowerCase();
+  const language = newsletterLanguage(body?.locale);
+  assertRateLimit(event, "newsletterPerIp", clientIp(event));
+  assertRateLimit(event, "newsletterPerEmail", email);
 
   try {
+    const existing = await findSubscriber("email", email);
+    if (existing?.confirmed) return successResponse(language);
+    if (existing) await deleteSubscriber(existing.documentId);
+
+    const confirmationToken = randomUUID();
     await createSubscriber({
       email,
       confirmationToken,
@@ -49,13 +57,7 @@ export default defineEventHandler(async (event): Promise<SubscribeResponse> => {
 
     await sendConfirmationEmail(email, confirmationToken, language);
 
-    return {
-      success: true,
-      message:
-        language === "es"
-          ? "Revisa tu correo para confirmar la suscripción"
-          : "Check your email to confirm subscription",
-    };
+    return successResponse(language);
   } catch (error: unknown) {
     console.error("Newsletter subscription error:", error);
     throw createError({

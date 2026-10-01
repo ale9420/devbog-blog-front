@@ -611,15 +611,84 @@ describe('/api/comments', () => {
     const response = await $fetch<Record<string, unknown>>('/api/comments', {
       method: 'POST',
       query: { relation },
-      body: { author: { id: 'guest-9', name: 'Dani', email: 'dani@example.com' }, content: 'Nice post.' },
+      headers: { origin: SITE_URL },
+      body: { author: { name: 'Dani', email: 'dani@example.com' }, content: 'Nice post.' },
     })
     expect(response).toMatchObject({
       content: 'Nice post.',
-      author: { id: 'guest-9', name: 'Dani' },
+      author: { name: 'Dani' },
       fediverseActorHandle: null,
       fediverseUri: null,
     })
     expect(response.author).not.toHaveProperty('email')
+  })
+
+  it('forwards only the allowed fields with an author id chosen by the server', async () => {
+    await $fetch('/api/comments', {
+      method: 'POST',
+      query: { relation },
+      headers: { origin: SITE_URL },
+      body: { author: { id: 'admin', name: 'Eva', email: 'eva@example.com' }, content: 'Hola.', approvalStatus: 'APPROVED', isAdminComment: true, threadOf: 201 },
+    })
+    const request = mock.requests.filter((recorded) => recorded.method === 'POST' && recorded.path === `/api/comments/${relation}`).at(-1)
+    expect(Object.keys(request?.rawBody ?? {}).sort()).toEqual(['author', 'content', 'threadOf'])
+    expect(request?.rawBody?.author).toMatchObject({ name: 'Eva', email: 'eva@example.com' })
+    expect((request?.rawBody?.author as { id?: string }).id).toMatch(/^guest-[\w-]{36}$/)
+  })
+
+  it('rejects a comment from another origin or without one before calling Strapi', async () => {
+    const body = { author: { name: 'Mallory', email: 'm@example.com' }, content: 'Spam.' }
+    for (const headers of [{ origin: 'https://otro.sitio' }, {}]) {
+      await expect($fetch('/api/comments', { method: 'POST', query: { relation }, headers, body })).rejects.toMatchObject({ response: { status: 403 } })
+    }
+    expect(mock.requests).toEqual([])
+  })
+
+  it('rejects an incomplete or oversized comment before calling Strapi', async () => {
+    for (const body of [
+      { author: { name: 'Ana' }, content: 'Sin correo.' },
+      { author: { name: 'Ana', email: 'ana@example.com' }, content: 'x'.repeat(5001) },
+    ]) {
+      await expect($fetch('/api/comments', { method: 'POST', query: { relation }, headers: { origin: SITE_URL }, body })).rejects.toMatchObject({ response: { status: 400 } })
+    }
+    expect(mock.requests).toEqual([])
+  })
+
+  it('rejects a relation that is not an article without calling Strapi', async () => {
+    for (const bad of ['../users', 'api::article.article:../../users', 'api::article.article:doc?x=1', 'api::user.user:1']) {
+      await expect($fetch('/api/comments/flat', { query: { relation: bad } })).rejects.toMatchObject({ response: { status: 400 } })
+      await expect($fetch('/api/comments', { query: { relation: bad } })).rejects.toMatchObject({ response: { status: 400 } })
+      await expect($fetch('/api/comments', {
+        method: 'POST',
+        query: { relation: bad },
+        headers: { origin: SITE_URL },
+        body: { author: { name: 'Ana', email: 'ana@example.com' }, content: 'Hola.' },
+      })).rejects.toMatchObject({ response: { status: 400 } })
+    }
+    expect(mock.requests).toEqual([])
+  })
+
+  it('no longer exposes comment edit or delete endpoints', async () => {
+    for (const method of ['PUT', 'DELETE'] as const) {
+      const response = await fetch(`/api/comments/201?relation=${relation}&authorId=guest-1`, { method, headers: { origin: SITE_URL } })
+      expect(response.status).toBeGreaterThanOrEqual(404)
+    }
+    expect(mock.requests.filter((request) => request.method === 'PUT' || request.method === 'DELETE')).toEqual([])
+  })
+
+  it('limits how many comments one visitor can post', async () => {
+    const headers = { origin: SITE_URL, 'x-forwarded-for': '203.0.113.10' }
+    const body = { author: { name: 'Bot', email: 'bot@example.com' }, content: 'Again.' }
+    for (let i = 0; i < 10; i++) {
+      await $fetch('/api/comments', { method: 'POST', query: { relation }, headers, body })
+    }
+    const blocked = await fetch(`/api/comments?relation=${relation}`, {
+      method: 'POST',
+      headers: { ...headers, 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    expect(blocked.status).toBe(429)
+    expect(Number(blocked.headers.get('retry-after'))).toBeGreaterThan(0)
   })
 
   it('requires the relation parameter', async () => {
@@ -646,7 +715,8 @@ describe('/api/comments', () => {
     await $fetch('/api/comments', {
       method: 'POST',
       query: { relation },
-      body: { author: { id: 'guest-10', name: 'Luis', email: 'luis@example.com' }, content: 'Buen artículo.', locale: 'es' },
+      headers: { origin: SITE_URL },
+      body: { author: { name: 'Luis', email: 'luis@example.com' }, content: 'Buen artículo.', locale: 'es' },
     })
     const request = mock.requests.filter((recorded) => recorded.method === 'POST' && recorded.path === `/api/comments/${relation}`).at(-1)
     expect(request?.body?.locale).toBe('es')
@@ -659,40 +729,49 @@ describe('/api/comments', () => {
     await expect($fetch('/api/comments', {
       method: 'POST',
       query: { relation },
-      body: { author: { id: 'guest-11', name: 'Jean', email: 'jean@example.com' }, content: 'Bonjour.', locale: 'fr' },
+      headers: { origin: SITE_URL },
+      body: { author: { name: 'Jean', email: 'jean@example.com' }, content: 'Bonjour.', locale: 'fr' },
     })).rejects.toMatchObject({ response: { status: 400 } })
     expect(mock.requests.length).toBe(before)
   })
 })
 
 describe('/api/newsletter/subscribe', () => {
+  const headers = { origin: SITE_URL }
+  const subscribe = (body: unknown, extra: Record<string, string> = {}) =>
+    $fetch('/api/newsletter/subscribe', { method: 'POST', headers: { ...headers, ...extra }, body })
+
   it('returns 400 when email is missing', async () => {
-    await expect($fetch('/api/newsletter/subscribe', { method: 'POST', body: {} })).rejects.toMatchObject({
+    await expect(subscribe({})).rejects.toMatchObject({
       response: { status: 400 },
       data: { statusMessage: 'Email is required' },
     })
   })
 
   it('returns 400 for an invalid email', async () => {
-    await expect(
-      $fetch('/api/newsletter/subscribe', { method: 'POST', body: { email: 'not-an-email' } }),
-    ).rejects.toMatchObject({ response: { status: 400 } })
+    await expect(subscribe({ email: 'not-an-email' })).rejects.toMatchObject({ response: { status: 400 } })
+    await expect(subscribe({ email: 42 })).rejects.toMatchObject({ response: { status: 400 } })
   })
 
-  it('returns 409 for an already confirmed subscriber', async () => {
-    await expect(
-      $fetch('/api/newsletter/subscribe', { method: 'POST', body: { email: 'confirmed@example.com' } }),
-    ).rejects.toMatchObject({ response: { status: 409 } })
-    const posts = mock.requests.filter(
-      (request) => request.method === 'POST' && request.path === '/api/subscribers' && request.body?.data?.email === 'confirmed@example.com',
-    )
-    expect(posts).toHaveLength(0)
+  it('rejects a subscription from another origin or without one before calling Strapi', async () => {
+    for (const origin of ['https://otro.sitio', undefined]) {
+      await expect($fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: origin ? { origin } : {},
+        body: { email: 'victim@example.com' },
+      })).rejects.toMatchObject({ response: { status: 403 } })
+    }
+    expect(mock.requests).toEqual([])
+  })
+
+  it('answers an already confirmed subscriber like a new one, without touching it', async () => {
+    expect(await subscribe({ email: 'confirmed@example.com' })).toMatchObject({ success: true })
+    const writes = mock.requests.filter((request) => request.method !== 'GET' && request.path.startsWith('/api/subscribers'))
+    expect(writes).toEqual([])
   })
 
   it('replaces a pending subscriber before creating a new one', async () => {
-    await expect(
-      $fetch('/api/newsletter/subscribe', { method: 'POST', body: { email: 'pending@example.com' } }),
-    ).rejects.toMatchObject({ response: { status: 500 } })
+    await expect(subscribe({ email: 'pending@example.com' })).rejects.toMatchObject({ response: { status: 500 } })
     const deleteRequest = mock.requests.find(
       (request) => request.method === 'DELETE' && request.path === '/api/subscribers/sub-pending',
     )
@@ -708,9 +787,7 @@ describe('/api/newsletter/subscribe', () => {
   })
 
   it('returns 500 when SMTP is unreachable but still creates the subscriber in Strapi', async () => {
-    await expect(
-      $fetch('/api/newsletter/subscribe', { method: 'POST', body: { email: 'new@example.com', locale: 'en' } }),
-    ).rejects.toMatchObject({ response: { status: 500 } })
+    await expect(subscribe({ email: 'new@example.com', locale: 'en' })).rejects.toMatchObject({ response: { status: 500 } })
     const posts = mock.requests.filter((request) => request.method === 'POST' && request.path === '/api/subscribers')
     const lastPost = posts[posts.length - 1]
     expect(lastPost?.body?.data).toMatchObject({ email: 'new@example.com', confirmed: false, language: 'en' })
@@ -720,12 +797,29 @@ describe('/api/newsletter/subscribe', () => {
   })
 
   it('stores the Spanish language and treats any other locale as English', async () => {
-    await $fetch('/api/newsletter/subscribe', { method: 'POST', body: { email: 'es@example.com', locale: 'es' } }).catch(() => null)
-    await $fetch('/api/newsletter/subscribe', { method: 'POST', body: { email: 'fr@example.com', locale: 'fr' } }).catch(() => null)
+    await subscribe({ email: 'es@example.com', locale: 'es' }).catch(() => null)
+    await subscribe({ email: 'fr@example.com', locale: 'fr' }).catch(() => null)
     const languages = mock.requests
       .filter((request) => request.method === 'POST' && request.path === '/api/subscribers')
       .map((request) => [request.body?.data?.email, request.body?.data?.language])
     expect(languages).toEqual([['es@example.com', 'es'], ['fr@example.com', 'en']])
+  })
+
+  it('limits confirmation emails to the same address, whatever the visitor', async () => {
+    for (let i = 0; i < 3; i++) {
+      await subscribe({ email: 'Target@Example.com' }, { 'x-forwarded-for': `198.51.100.${i}` }).catch(() => null)
+    }
+    await expect(subscribe({ email: 'target@example.com' }, { 'x-forwarded-for': '198.51.100.9' })).rejects.toMatchObject({ response: { status: 429 } })
+    const created = mock.requests.filter((request) => request.method === 'POST' && request.body?.data?.email === 'target@example.com')
+    expect(created).toHaveLength(3)
+  })
+
+  it('limits how many subscriptions one visitor can request', async () => {
+    const visitor = { 'x-forwarded-for': '198.51.100.50' }
+    for (let i = 0; i < 10; i++) {
+      await subscribe({ email: `reader${i}@example.com` }, visitor).catch(() => null)
+    }
+    await expect(subscribe({ email: 'reader10@example.com' }, visitor)).rejects.toMatchObject({ response: { status: 429 } })
   })
 })
 
