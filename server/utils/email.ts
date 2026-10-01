@@ -1,24 +1,15 @@
 import nodemailer from "nodemailer";
+import { smtpTransportOptions } from "~/helpers/email";
 
 export function createTransporter() {
   const config = useRuntimeConfig();
 
-  const port = config.smtpPort || 25;
-  const secure = port === 465;
-
-  return nodemailer.createTransport({
-    host: config.smtpHost || "localhost",
-    port,
-    secure,
-    requireTLS: !secure,
-    tls: {
-      rejectUnauthorized: true,
-      servername: config.smtpHost,
-    },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000,
-  });
+  return nodemailer.createTransport(smtpTransportOptions({
+    host: config.smtpHost,
+    port: config.smtpPort,
+    user: config.smtpUser,
+    pass: config.smtpPass,
+  }));
 }
 
 export async function sendEmail(options: {
