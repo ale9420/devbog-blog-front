@@ -1,6 +1,7 @@
 import { createServer } from 'node:http'
 import qs from 'qs'
 import { aboutBlocks } from './fixtures/about.mjs'
+import { createAuthMock } from './fixtures/auth.mjs'
 
 const author = {
   id: 31,
@@ -317,11 +318,24 @@ function sendPng(res) {
   res.end(png)
 }
 
+const authMock = createAuthMock({ frontendUrl: process.env.MOCK_FRONTEND_URL || 'http://127.0.0.1:3210' })
+
 const server = createServer(async (req, res) => {
   const method = req.method || 'GET'
   const url = new URL(req.url || '/', 'http://127.0.0.1')
   const query = qs.parse(url.searchParams.toString())
-  const body = method === 'POST' || method === 'PUT' ? await readJsonBody(req) : undefined
+  const body = ['POST', 'PUT', 'DELETE'].includes(method) ? await readJsonBody(req) : undefined
+
+  const auth = authMock.handle(method, url.pathname, query, body, req.headers)
+  if (auth) {
+    if (auth.headers) {
+      res.writeHead(auth.status, auth.headers)
+      res.end()
+    } else {
+      sendJson(res, auth.status, auth.body)
+    }
+    return
+  }
 
   if (method === 'GET' && url.pathname === '/api/articles/search') {
     const term = String(query.q ?? '').toLowerCase()

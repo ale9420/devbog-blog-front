@@ -348,11 +348,11 @@ Cualquier persona puede crear una cuenta; los **editores** además ven en el sit
 | --- | --- |
 | Registro | Abierto, con correo y contraseña (mínimo 10 caracteres) y confirmación obligatoria por correo. Sin proveedores sociales. |
 | Roles | `Authenticated` (lector, sin permisos extra) y `Editor` (lee borradores). El rol Editor se asigna a mano en el admin de Strapi. |
-| Datos | Solo correo, nombre de usuario y contraseña. Cada persona elimina su cuenta desde `/cuenta`, confirmando con su usuario y su contraseña; sus comentarios quedan como «Anónimo». |
+| Datos | Solo correo, nombre de usuario y contraseña. Cada persona elimina su cuenta desde `/account`, confirmando con su usuario y su contraseña; sus comentarios quedan como «Anónimo». |
 | Backend | El frontend consume los endpoints de `users-permissions` (`/api/auth/local`, `/api/auth/local/register`, `/api/auth/forgot-password`, `/api/auth/reset-password`, `/api/auth/email-confirmation`, `/api/users/me`). Hay que configurar el correo, los ajustes avanzados y el rol Editor. Código nuevo: `DELETE /api/users/me` (B9) y la restricción de borradores (B10). |
 | Sesión | El JWT de Strapi vive en la cookie `bd_session` (`httpOnly`, `Secure`, `SameSite=Lax`, 7 días). El navegador nunca lo lee; las rutas de `server/api/auth/*` de Nuxt hacen de intermediario. |
 | Borradores | Strapi rechaza `status=draft` salvo para editores, incluso con el API token del servidor. Nuxt los pide con el JWT del editor. |
-| Rutas | `/cuenta/entrar`, `/cuenta/registro`, `/cuenta/confirmada`, `/cuenta/recuperar`, `/cuenta/restablecer`, `/cuenta`, `/borradores`, `/borradores/[documentId]`. Todas con `noindex`, fuera del sitemap y con `Cache-Control: private, no-store`. |
+| Rutas | En inglés, como todas las rutas de Nuxt (en español llevan el prefijo `/es`): `/account/sign-in`, `/account/sign-up`, `/account/confirmed`, `/account/forgot-password`, `/account/reset-password`, `/account`, `/drafts`, `/drafts/[documentId]`. Todas con `noindex`, fuera del sitemap y con `Cache-Control: private, no-store`. |
 
 ```mermaid
 sequenceDiagram
@@ -379,4 +379,4 @@ La analítica es **Umami**: no usa cookies ni guarda datos personales, así que 
 | --- | --- |
 | Aviso (`Aviso.dc.html`) | Tarjeta pequeña de una sola vez, abajo a la izquierda (escritorio) o sobre la tab bar (móvil): «Sin cookies de seguimiento. Contamos visitas de forma anónima con Umami. Más información» + «Entendido». Se recuerda en `localStorage` (`bd-aviso`). No bloquea nada. |
 | Footer | Enlace «Privacidad y cookies» junto al copyright. |
-| `/privacidad` (`Privacidad.dc.html`, `PrivacidadMovil.dc.html`) | Resumen en tres cifras y secciones: Analítica, Cookies (solo `bd_session`, necesaria y con sesión), Tu navegador (claves de `localStorage`), Tus datos y Tus derechos (Ley 1581 de 2012). El texto es un borrador: revisarlo antes de publicar. Correo de contacto: gx_alejandro@hotmail.com. |
+| `/privacy` (`Privacidad.dc.html`, `PrivacidadMovil.dc.html`) | Resumen en tres cifras y secciones: Analítica, Cookies (solo `bd_session`, necesaria y con sesión), Tu navegador (claves de `localStorage`), Tus datos y Tus derechos (Ley 1581 de 2012). El texto es un borrador: revisarlo antes de publicar. Correo de contacto: gx_alejandro@hotmail.com. |

@@ -1,0 +1,107 @@
+.bd-account {
+    position: relative;
+}
+
+.bd-account-avatar {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    font: 500 12px/1 var(--font-mono);
+    text-transform: uppercase;
+    color: var(--chillon);
+    background: var(--chillon-soft);
+    border: 1px solid var(--chillon);
+    border-radius: var(--radius-full);
+}
+
+.bd-account-editor .bd-account-avatar {
+    color: var(--monjita);
+    background: var(--monjita-soft);
+    border-color: var(--monjita);
+}
+
+.bd-account-toggle {
+    padding-left: var(--space-2);
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: 0.02em;
+}
+
+.bd-account-toggle[aria-expanded="true"] {
+    border-color: var(--ink);
+}
+
+.bd-account-name {
+    max-width: 16ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bd-account-compact .bd-account-toggle {
+    min-width: 44px;
+    padding: 0 var(--space-2);
+    border-color: transparent;
+}
+
+.bd-account-compact .bd-account-name {
+    display: none;
+}
+
+.bd-account-panel {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    right: 0;
+    z-index: 60;
+    min-width: 220px;
+    margin: 0;
+    padding: var(--space-2) 0;
+    list-style: none;
+    background: var(--surface-raised);
+    border: 1px solid var(--line-strong);
+}
+
+.bd-account-who {
+    padding: var(--space-2) var(--space-4) var(--space-3);
+    border-bottom: 1px solid var(--line);
+    font: var(--text-meta);
+    color: var(--ink-muted);
+    overflow-wrap: anywhere;
+}
+
+.bd-account-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    font: 400 15px/22px var(--font-sans);
+    color: var(--ink);
+    text-align: left;
+    text-decoration: none;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+.bd-account-item:hover,
+.bd-account-item:focus-visible {
+    background: var(--surface-sunken);
+}
+
+.bd-account-item:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: -2px;
+}
+
+.bd-account-item-signout {
+    border-top: 1px solid var(--line);
+}
+
+.bd-account-signin {
+    color: var(--ink);
+    border-color: var(--line-strong);
+}

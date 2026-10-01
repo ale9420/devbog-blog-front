@@ -18,6 +18,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const route = useRoute()
 const { localizePath } = useLocaleUtils()
+const { user } = useAuth()
 
 const dialogRef = ref<HTMLElement>()
 const isOpen = computed<boolean>(() => props.open)
@@ -124,6 +125,13 @@ watch(() => route.fullPath, () => {
           {{ section.label }} <span aria-hidden="true" class="bd-sheet-arrow">→</span>
         </NuxtLink>
       </nav>
+
+      <NuxtLink
+        :to="localizePath(user ? '/account' : '/account/sign-in')"
+        class="bd-sheet-link bd-sheet-account bd-wide"
+      >
+        {{ user ? t('bd.header.account') : t('bd.header.signIn') }} <span aria-hidden="true" class="bd-sheet-arrow">→</span>
+      </NuxtLink>
 
       <section class="bd-sheet-group" aria-labelledby="bd-sheet-topics">
         <h2 id="bd-sheet-topics" class="bd-eyebrow bd-sheet-label">{{ t('bd.mobile.topics') }}</h2>

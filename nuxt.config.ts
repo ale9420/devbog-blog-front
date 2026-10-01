@@ -1,6 +1,11 @@
 import { Locale } from "./app/interfaces/locale";
 import { themeInitScript } from "./app/helpers/theme";
 
+const privatePageHeaders = {
+  "cache-control": "private, no-store",
+  "x-robots-tag": "noindex, nofollow",
+};
+
 export default defineNuxtConfig({
   devtools: { enabled: false },
   ssr: true,
@@ -33,6 +38,11 @@ export default defineNuxtConfig({
     "/es/about": { isr: 3600 },
     "/es/blog": { isr: 300 },
     "/es/blog/**": { isr: 300 },
+    "/account": { headers: privatePageHeaders },
+    "/account/**": { headers: privatePageHeaders },
+    "/es/account": { headers: privatePageHeaders },
+    "/es/account/**": { headers: privatePageHeaders },
+    "/api/auth/**": { headers: { "cache-control": "private, no-store" } },
   },
   modules: ["@nuxt/ui", "@nuxt/image", "@vueuse/nuxt", "@nuxtjs/i18n", "@nuxt/eslint"],
   i18n: {

@@ -38,6 +38,9 @@
 @import "./components/corner.css" layer(bd.components);
 @import "./components/card.css" layer(bd.components);
 @import "./components/input-field.css" layer(bd.components);
+@import "./components/field.css" layer(bd.components);
+@import "./components/notice.css" layer(bd.components);
+@import "./components/account-menu.css" layer(bd.components);
 
 @import "./layout/page.css" layer(bd.layout);
 @import "./layout/header.css" layer(bd.layout);
@@ -58,6 +61,7 @@
 @import "./pages/about/sections.css" layer(bd.pages);
 @import "./pages/about/topics.css" layer(bd.pages);
 @import "./pages/about/projects.css" layer(bd.pages);
+@import "./pages/account/account.css" layer(bd.pages);
 
 @import "./animations/keyframes.css" layer(bd.animations);
 

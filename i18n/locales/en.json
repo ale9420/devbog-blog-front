@@ -466,7 +466,13 @@
         "city": "Bogotá",
         "coords": "4.61°N 74.08°W",
         "altitude": "2,640 m a.s.l."
-      }
+      },
+      "signIn": "Sign in",
+      "signInLabel": "Sign in to your account",
+      "accountMenu": "Your account menu, {username}",
+      "account": "My account",
+      "drafts": "Drafts",
+      "signOut": "Sign out"
     },
     "mobile": {
       "tabs": "Bottom navigation",
@@ -548,5 +554,146 @@
   "feed": {
     "categoryTitle": "BogDev - {category}",
     "categoryDescription": "BogDev articles about {category}, from Bogotá, Colombia."
+  },
+  "account": {
+    "meta": {
+      "signIn": "Sign in",
+      "register": "Create an account",
+      "checkEmail": "Check your email",
+      "confirmed": "Account confirmed",
+      "recover": "Recover your password",
+      "reset": "New password",
+      "profile": "My account"
+    },
+    "eyebrow": {
+      "signIn": "Account · Sign in",
+      "register": "Account · Sign up",
+      "checkEmail": "Account · Confirm your email",
+      "confirmed": "Account · Confirmed",
+      "recover": "Account · Recover",
+      "reset": "Account · New password",
+      "profile": "Account · {role}"
+    },
+    "signIn": {
+      "title": "Sign in to BogDev",
+      "lead": "With your email or your username.",
+      "identifier": "Email or username",
+      "password": "Password",
+      "submit": "Sign in",
+      "forgot": "Forgot your password?",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create one"
+    },
+    "register": {
+      "title": "Create your account",
+      "lead": "Free and ad-free. We'll ask you to confirm your email.",
+      "username": "Username",
+      "usernameHelp": "3 to 30 characters: letters, numbers, dot or hyphen",
+      "email": "Email",
+      "password": "Password",
+      "passwordHelp": "At least 10 characters. A long phrase is safer than an odd word.",
+      "privacy": "I read the {link}: BogDev only stores my email, my username and my encrypted password.",
+      "privacyLink": "privacy notice",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "checkEmail": {
+      "title": "Check your email",
+      "lead": "We sent a link to {email}. Open it to confirm your account, then sign in.",
+      "notArrived": "Didn't get it? Check your spam folder or ask for another link.",
+      "resend": "Resend the email",
+      "resent": "We sent you another link."
+    },
+    "confirmed": {
+      "title": "Your account is ready",
+      "lead": "You confirmed your email. You can sign in now.",
+      "signIn": "Sign in"
+    },
+    "recover": {
+      "title": "Recover your password",
+      "lead": "Type your account's email and we'll send you a link to choose a new password.",
+      "email": "Email",
+      "submit": "Send link",
+      "sent": "If there's an account with that email, a link will arrive in a few minutes.",
+      "back": "← Back to sign in"
+    },
+    "reset": {
+      "title": "Choose a new password",
+      "lead": "The link works only once.",
+      "password": "New password",
+      "passwordHelp": "At least 10 characters.",
+      "confirm": "Repeat the password",
+      "submit": "Save password",
+      "missingCode": "This link is invalid or incomplete. Ask for a new one.",
+      "requestNew": "Ask for another link"
+    },
+    "profile": {
+      "title": "My account",
+      "username": "Username",
+      "email": "Email",
+      "role": "Role",
+      "memberSince": "Member since",
+      "signOut": "Sign out",
+      "drafts": "Drafts",
+      "draftsLead": "Read draft articles with the real design."
+    },
+    "roles": {
+      "reader": "Reader",
+      "editor": "Editor"
+    },
+    "delete": {
+      "title": "Delete my account",
+      "lead": "Erases your email, your username and your password right away. Your comments stay published as “Anonymous”. This cannot be undone.",
+      "open": "Delete my account…",
+      "confirmUsername": "Type {username} to confirm",
+      "password": "Your password",
+      "submit": "Delete forever",
+      "cancel": "Cancel"
+    },
+    "password": {
+      "show": "Show",
+      "hide": "Hide",
+      "strength": {
+        "empty": "Strength: type a password",
+        "short": "Strength: too short",
+        "fair": "Strength: fair",
+        "good": "Strength: good",
+        "great": "Strength: very good"
+      }
+    },
+    "errors": {
+      "required": "Type your username or email and your password.",
+      "username": "Use 3 to 30 letters, numbers, dots or hyphens.",
+      "email": "Type a valid email, for example name{'@'}mail.com.",
+      "password": "The password needs at least 10 characters.",
+      "privacy": "Check the box to create the account.",
+      "mismatch": "The passwords don't match.",
+      "invalidCredentials": "The username or password don't match. Check them and try again.",
+      "emailNotConfirmed": "You haven't confirmed your email yet. Open the link we sent you to sign in.",
+      "emailTaken": "There is already an account with that email or username.",
+      "tooManyRequests": "Too many attempts. Wait a few minutes and try again.",
+      "invalidCode": "The link is no longer valid. Ask for a new one.",
+      "wrongPassword": "The password is not correct.",
+      "unknown": "Something went wrong. Try again in a moment."
+    },
+    "notices": {
+      "signed-out": "You signed out.",
+      "account-deleted": "We deleted your account and your data.",
+      "password-reset": "We saved your new password. You can sign in now."
+    },
+    "aside": {
+      "eyebrow": "Your data",
+      "title": "An account with the bare minimum",
+      "minimalTitle": "Only what is needed",
+      "minimalText": "Your email, your username and your encrypted password. Nothing else.",
+      "trackersTitle": "No trackers",
+      "trackersText": "No ads and no third-party analytics. Your session lives in a cookie that no script on the page can read.",
+      "leaveTitle": "Leave whenever you want",
+      "leaveText": "Delete your account and your data from My account, in one step.",
+      "editorTitle": "Do you write for BogDev?",
+      "editorText": "With the Editor role you see drafts with the real design before they are published. The administrator assigns the role.",
+      "privacy": "Privacy and cookies"
+    }
   }
 }

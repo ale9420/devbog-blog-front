@@ -68,6 +68,7 @@ onMounted(() => {
         </nav>
         <BdLangSwitch class="bd-nav-lang" @change="emit('lang', $event)" />
         <div class="bd-nav-mobile">
+          <BdAccountMenu compact />
           <button
             type="button"
             class="bd-iconbtn"
@@ -130,6 +131,7 @@ onMounted(() => {
             {{ t('bd.header.search') }} <kbd class="bd-kbd" aria-hidden="true">{{ shortcut }}</kbd>
           </button>
           <BdThemeSwitch @change="emit('theme', $event)" />
+          <BdAccountMenu />
         </div>
       </div>
     </div>
