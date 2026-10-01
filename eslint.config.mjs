@@ -8,6 +8,6 @@ export default withNuxt(
     },
   },
   {
-    ignores: ['test/**', 'vitest.config.ts', 'ecosystem.config.js'],
+    ignores: ['test/**', 'docs/**', 'vitest.config.ts', 'ecosystem.config.js'],
   },
 )
