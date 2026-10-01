@@ -466,7 +466,13 @@
         "city": "Bogotá",
         "coords": "4.61°N 74.08°W",
         "altitude": "2.640 m s.n.m."
-      }
+      },
+      "signIn": "Entrar",
+      "signInLabel": "Entrar a tu cuenta",
+      "accountMenu": "Menú de tu cuenta, {username}",
+      "account": "Mi cuenta",
+      "drafts": "Borradores",
+      "signOut": "Cerrar sesión"
     },
     "mobile": {
       "tabs": "Navegación inferior",
@@ -548,5 +554,146 @@
   "feed": {
     "categoryTitle": "BogDev - {category}",
     "categoryDescription": "Los artículos de BogDev sobre {category}, desde Bogotá, Colombia."
+  },
+  "account": {
+    "meta": {
+      "signIn": "Entrar",
+      "register": "Crear cuenta",
+      "checkEmail": "Revisa tu correo",
+      "confirmed": "Cuenta confirmada",
+      "recover": "Recuperar contraseña",
+      "reset": "Contraseña nueva",
+      "profile": "Mi cuenta"
+    },
+    "eyebrow": {
+      "signIn": "Cuenta · Entrar",
+      "register": "Cuenta · Registro",
+      "checkEmail": "Cuenta · Confirma tu correo",
+      "confirmed": "Cuenta · Confirmada",
+      "recover": "Cuenta · Recuperar",
+      "reset": "Cuenta · Contraseña nueva",
+      "profile": "Cuenta · {role}"
+    },
+    "signIn": {
+      "title": "Entra a BogDev",
+      "lead": "Con tu correo o tu nombre de usuario.",
+      "identifier": "Correo o nombre de usuario",
+      "password": "Contraseña",
+      "submit": "Entrar",
+      "forgot": "¿Olvidaste tu contraseña?",
+      "noAccount": "¿No tienes cuenta?",
+      "createAccount": "Crear una cuenta"
+    },
+    "register": {
+      "title": "Crea tu cuenta",
+      "lead": "Gratis y sin publicidad. Te pediremos confirmar tu correo.",
+      "username": "Nombre de usuario",
+      "usernameHelp": "3 a 30 caracteres: letras, números, punto o guion",
+      "email": "Correo",
+      "password": "Contraseña",
+      "passwordHelp": "Mínimo 10 caracteres. Una frase larga es más segura que una palabra rara.",
+      "privacy": "Leí el {link}: BogDev guarda solo mi correo, mi nombre de usuario y mi contraseña cifrada.",
+      "privacyLink": "aviso de privacidad",
+      "submit": "Crear cuenta",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "signIn": "Entrar"
+    },
+    "checkEmail": {
+      "title": "Revisa tu correo",
+      "lead": "Te enviamos un enlace a {email}. Ábrelo para confirmar tu cuenta y luego entra.",
+      "notArrived": "¿No llegó? Mira en la carpeta de spam o pide otro enlace.",
+      "resend": "Reenviar el correo",
+      "resent": "Te enviamos otro enlace."
+    },
+    "confirmed": {
+      "title": "Tu cuenta está lista",
+      "lead": "Confirmaste tu correo. Ya puedes entrar.",
+      "signIn": "Entrar"
+    },
+    "recover": {
+      "title": "Recupera tu contraseña",
+      "lead": "Escribe el correo de tu cuenta y te enviaremos un enlace para elegir una contraseña nueva.",
+      "email": "Correo",
+      "submit": "Enviar enlace",
+      "sent": "Si hay una cuenta con ese correo, te llegará un enlace en unos minutos.",
+      "back": "← Volver a entrar"
+    },
+    "reset": {
+      "title": "Elige una contraseña nueva",
+      "lead": "El enlace funciona una sola vez.",
+      "password": "Contraseña nueva",
+      "passwordHelp": "Mínimo 10 caracteres.",
+      "confirm": "Repite la contraseña",
+      "submit": "Guardar contraseña",
+      "missingCode": "Este enlace no es válido o está incompleto. Pide uno nuevo.",
+      "requestNew": "Pedir otro enlace"
+    },
+    "profile": {
+      "title": "Mi cuenta",
+      "username": "Usuario",
+      "email": "Correo",
+      "role": "Rol",
+      "memberSince": "Miembro desde",
+      "signOut": "Cerrar sesión",
+      "drafts": "Borradores",
+      "draftsLead": "Lee los artículos en borrador con el diseño real."
+    },
+    "roles": {
+      "reader": "Lector",
+      "editor": "Editor"
+    },
+    "delete": {
+      "title": "Eliminar mi cuenta",
+      "lead": "Borra tu correo, tu usuario y tu contraseña al instante. Tus comentarios quedan publicados como «Anónimo». No se puede deshacer.",
+      "open": "Eliminar mi cuenta…",
+      "confirmUsername": "Escribe {username} para confirmar",
+      "password": "Tu contraseña",
+      "submit": "Eliminar para siempre",
+      "cancel": "Cancelar"
+    },
+    "password": {
+      "show": "Mostrar",
+      "hide": "Ocultar",
+      "strength": {
+        "empty": "Fuerza: escribe una contraseña",
+        "short": "Fuerza: muy corta",
+        "fair": "Fuerza: aceptable",
+        "good": "Fuerza: buena",
+        "great": "Fuerza: muy buena"
+      }
+    },
+    "errors": {
+      "required": "Escribe tu usuario o correo y tu contraseña.",
+      "username": "Usa de 3 a 30 letras, números, punto o guion.",
+      "email": "Escribe un correo válido, por ejemplo nombre{'@'}correo.co.",
+      "password": "La contraseña necesita al menos 10 caracteres.",
+      "privacy": "Marca la casilla para crear la cuenta.",
+      "mismatch": "Las contraseñas no coinciden.",
+      "invalidCredentials": "El usuario o la contraseña no coinciden. Revisa e inténtalo de nuevo.",
+      "emailNotConfirmed": "Aún no confirmas tu correo. Abre el enlace que te enviamos para poder entrar.",
+      "emailTaken": "Ya hay una cuenta con ese correo o ese nombre de usuario.",
+      "tooManyRequests": "Demasiados intentos. Espera unos minutos y vuelve a intentarlo.",
+      "invalidCode": "El enlace ya no es válido. Pide uno nuevo.",
+      "wrongPassword": "La contraseña no es correcta.",
+      "unknown": "Algo salió mal. Inténtalo de nuevo en un momento."
+    },
+    "notices": {
+      "signed-out": "Cerraste sesión.",
+      "account-deleted": "Eliminamos tu cuenta y tus datos.",
+      "password-reset": "Guardamos tu contraseña nueva. Ya puedes entrar."
+    },
+    "aside": {
+      "eyebrow": "Tus datos",
+      "title": "Una cuenta con lo mínimo",
+      "minimalTitle": "Solo lo necesario",
+      "minimalText": "Tu correo, tu nombre de usuario y tu contraseña cifrada. Nada más.",
+      "trackersTitle": "Sin rastreadores",
+      "trackersText": "Sin publicidad ni analítica de terceros. La sesión vive en una cookie que ningún script de la página puede leer.",
+      "leaveTitle": "Te vas cuando quieras",
+      "leaveText": "Eliminas tu cuenta y tus datos desde Mi cuenta, en un paso.",
+      "editorTitle": "¿Escribes en BogDev?",
+      "editorText": "Con el rol Editor ves los borradores con el diseño real antes de publicarlos. El rol lo asigna el administrador.",
+      "privacy": "Privacidad y cookies"
+    }
   }
 }

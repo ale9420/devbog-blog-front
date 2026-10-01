@@ -2,12 +2,14 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 import qs from 'qs'
 import type { RawStrapiArticle, StrapiAuthorRef, StrapiCategoryRef, StrapiLocalization, StrapiMediaRef, StrapiSEO, StrapiTagRef } from '~/interfaces/strapi-post'
 import type { StrapiRichText } from '~/interfaces/strapi-blocks'
+import { createAuthMock } from '../../e2e/fixtures/auth.mjs'
 
 export interface RecordedRequest {
   method: string
   path: string
   query: Record<string, unknown>
   body?: { data?: Record<string, unknown>; locale?: unknown }
+  authorization?: string
 }
 
 interface MockSubscriber {
@@ -25,6 +27,7 @@ interface MockStrapiResult {
   server: Server
   url: string
   requests: RecordedRequest[]
+  users: Array<{ id: number, username: string, email: string, password: string, confirmed: boolean, role: string }>
 }
 
 const author: StrapiAuthorRef = {
@@ -376,14 +379,23 @@ function recordRequest(
 
 export async function startMockStrapi(): Promise<MockStrapiResult> {
   const requests: RecordedRequest[] = []
+  const authMock = createAuthMock({ frontendUrl: 'https://bogdev.test' })
 
   const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
     const method = req.method || 'GET'
     const url = new URL(req.url || '/', 'http://127.0.0.1')
     const query = qs.parse(url.searchParams.toString(), { depth: 20 })
-    const body = method === 'POST' || method === 'PUT' ? await readJsonBody(req) : undefined
+    const body = ['POST', 'PUT', 'DELETE'].includes(method) ? await readJsonBody(req) : undefined
 
     recordRequest(requests, method, url.pathname, query, body)
+    if (req.headers.authorization) requests[requests.length - 1]!.authorization = req.headers.authorization
+
+    const auth = authMock.handle(method, url.pathname, query, body, req.headers)
+    if (auth) {
+      res.writeHead(auth.status, auth.headers ?? { 'Content-Type': 'application/json' })
+      res.end(auth.headers ? undefined : JSON.stringify(auth.body))
+      return
+    }
 
     if (method === 'GET' && url.pathname === '/api/articles/search') {
       const term = String(query.q ?? '').toLowerCase()
@@ -688,7 +700,7 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
     server.listen(0, '127.0.0.1', () => {
       const address = server.address()
       const port = typeof address === 'object' && address !== null ? address.port : 0
-      resolve({ server, url: `http://127.0.0.1:${port}`, requests })
+      resolve({ server, url: `http://127.0.0.1:${port}`, requests, users: authMock.users })
     })
   })
 }

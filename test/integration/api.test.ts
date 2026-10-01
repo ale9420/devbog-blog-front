@@ -4,6 +4,7 @@ import type { RawStrapiArticle } from '~/interfaces/strapi-post'
 import { Category } from '~/interfaces/design'
 import { startMockStrapi } from './mock-strapi'
 import { MOCK_TRACKER_SCRIPT, startMockUmami } from './mock-umami'
+import { resetCode, testUsers } from '../../e2e/fixtures/auth.mjs'
 
 const SITE_URL = 'https://bogdev.test'
 
@@ -731,6 +732,178 @@ describe('Umami', () => {
   it('leaves the other API routes alone', async () => {
     await $fetch('/api/categories', { query: { locale: 'en' } })
     expect(umami.requests).toEqual([])
+  })
+})
+
+describe('/api/auth', () => {
+  const origin = SITE_URL
+
+  function post(path: string, body: unknown, headers: Record<string, string> = { origin }): Promise<Response> {
+    return fetch(path, { method: 'POST', headers: { 'content-type': 'application/json', ...headers }, body: JSON.stringify(body) })
+  }
+
+  function sessionCookie(response: Response): string {
+    return response.headers.getSetCookie().find((cookie) => cookie.startsWith('bd_session=')) ?? ''
+  }
+
+  async function signIn(identifier: string, password: string): Promise<string> {
+    const response = await post('/api/auth/login', { identifier, password })
+    expect(response.status).toBe(200)
+    return sessionCookie(response).split(';')[0]!
+  }
+
+  async function errorCode(response: Response): Promise<string | undefined> {
+    return ((await response.json()) as { data?: { code?: string } }).data?.code
+  }
+
+  it('signs in with an httpOnly session cookie and returns the public user without the JWT', async () => {
+    const response = await post('/api/auth/login', { identifier: testUsers.editor.email, password: testUsers.editor.password })
+    expect(response.status).toBe(200)
+    expect(response.headers.get('cache-control')).toBe('private, no-store')
+    const cookie = sessionCookie(response)
+    expect(cookie).toMatch(/^bd_session=mock-jwt-102;/)
+    expect(cookie).toContain('Max-Age=604800')
+    expect(cookie).toContain('Path=/')
+    expect(cookie).toContain('HttpOnly')
+    expect(cookie).toContain('Secure')
+    expect(cookie).toContain('SameSite=Lax')
+    const text = await response.text()
+    expect(text).not.toContain('mock-jwt')
+    expect(JSON.parse(text)).toEqual({ user: { username: 'alejandro', email: testUsers.editor.email, role: 'editor', createdAt: '2026-01-15T15:00:00.000Z' } })
+    const me = mock.requests.find((request) => request.path === '/api/users/me')
+    expect(me?.authorization).toBe('Bearer mock-jwt-102')
+    expect(me?.query).toMatchObject({ populate: 'role' })
+  })
+
+  it('rejects state changes from another origin or without one before calling Strapi', async () => {
+    const foreign = await post('/api/auth/login', { identifier: testUsers.reader.username, password: testUsers.reader.password }, { origin: 'https://otro.sitio' })
+    expect(foreign.status).toBe(403)
+    expect(await errorCode(foreign)).toBe('forbiddenOrigin')
+    const missing = await post('/api/auth/logout', {}, {})
+    expect(missing.status).toBe(403)
+    expect(mock.requests).toEqual([])
+  })
+
+  it('translates wrong credentials, unconfirmed emails and rate limits', async () => {
+    const wrong = await post('/api/auth/login', { identifier: testUsers.reader.username, password: 'no-es-esta-1' })
+    expect([wrong.status, await errorCode(wrong)]).toEqual([400, 'invalidCredentials'])
+    expect(sessionCookie(wrong)).toBe('')
+    const unconfirmed = await post('/api/auth/login', { identifier: testUsers.unconfirmed.username, password: testUsers.unconfirmed.password })
+    expect([unconfirmed.status, await errorCode(unconfirmed)]).toEqual([400, 'emailNotConfirmed'])
+    const limited = await post('/api/auth/login', { identifier: testUsers.rateLimited.username, password: testUsers.rateLimited.password })
+    expect([limited.status, await errorCode(limited)]).toEqual([429, 'tooManyRequests'])
+  })
+
+  it('returns the current user from the cookie and null without it', async () => {
+    const cookie = await signIn(testUsers.reader.username, testUsers.reader.password)
+    const signedIn = await fetch('/api/auth/me', { headers: { cookie } })
+    expect(signedIn.headers.get('cache-control')).toBe('private, no-store')
+    expect(await signedIn.json()).toEqual({ user: { username: 'lectora', email: testUsers.reader.email, role: 'reader', createdAt: '2026-09-29T15:00:00.000Z' } })
+    expect(await $fetch('/api/auth/me')).toEqual({ user: null })
+    const expired = await fetch('/api/auth/me', { headers: { cookie: 'bd_session=mock-jwt-999' } })
+    expect(await expired.json()).toEqual({ user: null })
+    expect(sessionCookie(expired)).toContain('Max-Age=0')
+  })
+
+  it('signs out by clearing the cookie', async () => {
+    const response = await post('/api/auth/logout', {})
+    expect(response.status).toBe(200)
+    expect(sessionCookie(response)).toMatch(/^bd_session=;.*Max-Age=0/)
+  })
+
+  it('registers only with valid data and reports taken accounts', async () => {
+    const invalid = await post('/api/auth/register', { username: 'ab', email: 'nuevo@example.com', password: 'corta', acceptPrivacy: true })
+    expect([invalid.status, await errorCode(invalid)]).toEqual([400, 'invalidInput'])
+    const noPrivacy = await post('/api/auth/register', { username: 'nueva', email: 'nueva@example.com', password: 'una-frase-larga', acceptPrivacy: false })
+    expect(noPrivacy.status).toBe(400)
+    expect(mock.requests).toEqual([])
+    const taken = await post('/api/auth/register', { username: 'otra', email: testUsers.reader.email, password: 'una-frase-larga', acceptPrivacy: true })
+    expect([taken.status, await errorCode(taken)]).toEqual([409, 'emailTaken'])
+    const created = await post('/api/auth/register', { username: 'nueva', email: 'Nueva@Example.com', password: 'una-frase-larga', acceptPrivacy: true, role: 'editor' })
+    expect(created.status).toBe(201)
+    expect(sessionCookie(created)).toBe('')
+    expect(mock.users.find((user) => user.username === 'nueva')).toMatchObject({ email: 'nueva@example.com', confirmed: false, role: 'authenticated' })
+  })
+
+  it('never tells whether an email exists when recovering a password', async () => {
+    const unknown = await post('/api/auth/forgot-password', { email: 'nadie@example.com' })
+    const known = await post('/api/auth/forgot-password', { email: testUsers.reader.email })
+    expect([unknown.status, await unknown.json()]).toEqual([200, { ok: true }])
+    expect([known.status, await known.json()]).toEqual([200, { ok: true }])
+    const resent = await post('/api/auth/resend-confirmation', { email: 'nadie@example.com' })
+    expect(await resent.json()).toEqual({ ok: true })
+    const limited = await post('/api/auth/forgot-password', { email: testUsers.rateLimited.email })
+    expect(limited.status).toBe(429)
+  })
+
+  it('resets the password with a valid code without starting a session', async () => {
+    const invalid = await post('/api/auth/reset-password', { code: 'nope', password: 'otra-frase-larga', passwordConfirmation: 'otra-frase-larga' })
+    expect([invalid.status, await errorCode(invalid)]).toEqual([400, 'invalidCode'])
+    const mismatch = await post('/api/auth/reset-password', { code: resetCode('pendiente'), password: 'otra-frase-larga', passwordConfirmation: 'distinta-frase-1' })
+    expect(mismatch.status).toBe(400)
+    const reset = await post('/api/auth/reset-password', { code: resetCode('pendiente'), password: 'otra-frase-larga', passwordConfirmation: 'otra-frase-larga' })
+    expect(reset.status).toBe(200)
+    expect(sessionCookie(reset)).toBe('')
+    expect(await reset.text()).not.toContain('mock-jwt')
+  })
+
+  it('deletes the account only with the right username and password', async () => {
+    mock.users.push({ id: 150, username: 'borrable', email: 'borrable@example.com', password: 'borrable-segura-1', confirmed: true, role: 'authenticated' })
+    const cookie = await signIn('borrable', 'borrable-segura-1')
+
+    function remove(body: unknown): Promise<Response> {
+      return fetch('/api/auth/me', { method: 'DELETE', headers: { 'content-type': 'application/json', origin, cookie }, body: JSON.stringify(body) })
+    }
+
+    const wrongPassword = await remove({ username: 'borrable', password: 'no-es-esta-1' })
+    expect([wrongPassword.status, await errorCode(wrongPassword)]).toEqual([400, 'wrongPassword'])
+    expect(sessionCookie(wrongPassword)).toBe('')
+    const wrongUser = await remove({ username: 'lectora', password: 'borrable-segura-1' })
+    expect(wrongUser.status).toBe(400)
+    expect(mock.users.some((user) => user.username === 'borrable')).toBe(true)
+    expect(mock.requests.filter((request) => request.method === 'DELETE')).toHaveLength(1)
+
+    const deleted = await remove({ username: 'borrable', password: 'borrable-segura-1' })
+    expect(deleted.status).toBe(200)
+    expect(sessionCookie(deleted)).toContain('Max-Age=0')
+    expect(mock.users.some((user) => user.username === 'borrable')).toBe(false)
+    const strapiDelete = mock.requests.filter((request) => request.method === 'DELETE').at(-1)
+    expect(strapiDelete).toMatchObject({ path: '/api/users/me', authorization: 'Bearer mock-jwt-150' })
+  })
+
+  it('asks for a session before deleting', async () => {
+    const response = await fetch('/api/auth/me', { method: 'DELETE', headers: { 'content-type': 'application/json', origin }, body: JSON.stringify({ username: 'lectora', password: 'x' }) })
+    expect([response.status, await errorCode(response)]).toEqual([401, 'unauthorized'])
+  })
+})
+
+describe('account pages', () => {
+  it('are private, noindex and kept out of the sitemap', async () => {
+    const response = await fetch('/account/sign-in')
+    expect(response.status).toBe(200)
+    expect(response.headers.get('cache-control')).toBe('private, no-store')
+    expect(response.headers.get('x-robots-tag')).toBe('noindex, nofollow')
+    expect(await response.text()).toMatch(/<meta name="robots" content="noindex, nofollow">/)
+    const xml = await (await fetch('/sitemap.xml')).text()
+    expect(xml).not.toContain('/account')
+  })
+
+  it('sends visitors without a session from /account to the sign-in page', async () => {
+    const response = await fetch('/es/account', { redirect: 'manual' })
+    expect(response.status).toBe(302)
+    expect(response.headers.get('location')).toBe('/es/account/sign-in?redirect=/es/account')
+  })
+
+  it('renders the account page for a signed-in reader', async () => {
+    const login = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', origin: SITE_URL },
+      body: JSON.stringify({ identifier: testUsers.reader.username, password: testUsers.reader.password }),
+    })
+    const cookie = login.headers.getSetCookie().find((value) => value.startsWith('bd_session='))!.split(';')[0]!
+    const html = await (await fetch('/account', { headers: { cookie } })).text()
+    expect(html).toContain(testUsers.reader.email)
+    expect(html).not.toContain('mock-jwt')
   })
 })
 
