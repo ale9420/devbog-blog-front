@@ -259,9 +259,10 @@ const subscribers = [
     id: 5,
     documentId: 'sub-confirmed',
     email: 'confirmed@example.com',
-    confirmationToken: 'token-confirmed',
+    confirmationToken: null,
+    unsubscribeToken: 'unsubscribe-token-confirmed-0001',
     confirmed: true,
-    locale: 'en',
+    language: 'en',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
   },
@@ -269,9 +270,10 @@ const subscribers = [
     id: 6,
     documentId: 'sub-pending',
     email: 'pending@example.com',
-    confirmationToken: 'token-pending',
+    confirmationToken: 'confirmation-token-pending-0001',
+    unsubscribeToken: 'unsubscribe-token-pending-0001',
     confirmed: false,
-    locale: 'en',
+    language: 'en',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
   },
@@ -526,8 +528,9 @@ const server = createServer(async (req, res) => {
   }
 
   if (method === 'GET' && url.pathname === '/api/subscribers') {
-    const emailFilter = getNestedValue(query, ['filters', 'email', '$eq'])
-    const data = subscribers.filter((subscriber) => subscriber.email === emailFilter)
+    const field = ['email', 'confirmationToken', 'unsubscribeToken'].find((name) => getNestedValue(query, ['filters', name, '$eq']) !== undefined)
+    const value = field ? getNestedValue(query, ['filters', field, '$eq']) : undefined
+    const data = field ? subscribers.filter((subscriber) => subscriber[field] === value) : []
     sendJson(res, 200, { data })
     return
   }
@@ -540,9 +543,10 @@ const server = createServer(async (req, res) => {
       id,
       documentId: `sub-${id}`,
       email: String(data.email || ''),
-      confirmationToken: String(data.confirmationToken || ''),
+      confirmationToken: data.confirmationToken ?? null,
+      unsubscribeToken: data.unsubscribeToken ?? null,
       confirmed: Boolean(data.confirmed),
-      locale: String(data.locale || 'en'),
+      language: String(data.language || 'en'),
       createdAt: now,
       updatedAt: now,
     }

@@ -812,7 +812,7 @@
       "account": "Cuenta:",
       "accountText": "si creas una, tu correo, tu nombre de usuario y tu contraseña cifrada. Puedes eliminarla cuando quieras desde Mi cuenta; tus comentarios quedan como «Anónimo».",
       "newsletter": "Newsletter:",
-      "newsletterText": "si te suscribes, tu correo, solo para enviarte los artículos nuevos. Si quieres darte de baja, escríbenos y borramos tu correo.",
+      "newsletterText": "si te suscribes, tu correo, solo para enviarte los artículos nuevos. Puedes darte de baja cuando quieras desde el enlace de cualquiera de nuestros correos, y borramos tu dirección.",
       "comments": "Comentarios:",
       "commentsText": "el nombre y el texto que escribes, que se publican después de revisarlos. Las respuestas desde el fediverso llegan con tu dirección pública de Mastodon."
     },
@@ -820,6 +820,21 @@
       "label": "Tus derechos",
       "title": "Conocer, corregir o borrar",
       "body": "Según la Ley 1581 de 2012 de Colombia, puedes conocer, actualizar, rectificar y pedir que se supriman tus datos personales. Escribe a {email} y te respondemos."
+    }
+  },
+  "newsletter": {
+    "unsubscribe": {
+      "meta": "Darte de baja del newsletter - BogDev",
+      "eyebrow": "Newsletter",
+      "title": "Darte de baja",
+      "lead": "Dejarás de recibir los artículos nuevos por correo y borraremos tu dirección.",
+      "submit": "Darme de baja",
+      "doneTitle": "Listo, te diste de baja",
+      "doneLead": "Ya no recibirás el newsletter y borramos tu correo. Puedes volver a suscribirte cuando quieras.",
+      "invalidTitle": "Este enlace no es válido",
+      "invalidLead": "Usa el enlace «Darte de baja» de uno de nuestros correos. Si el problema sigue, escríbenos a {email}.",
+      "error": "No pudimos darte de baja. Inténtalo de nuevo en un momento.",
+      "blog": "Ir al blog"
     }
   }
 }

@@ -17,9 +17,10 @@ interface MockSubscriber {
   id: number
   documentId: string
   email: string
-  confirmationToken: string
+  confirmationToken: string | null
+  unsubscribeToken: string | null
   confirmed: boolean
-  locale: string
+  language: string
   createdAt: string
   updatedAt: string
 }
@@ -301,9 +302,10 @@ const subscribers: MockSubscriber[] = [
     id: 5,
     documentId: 'sub-confirmed',
     email: 'confirmed@example.com',
-    confirmationToken: 'token-confirmed',
+    confirmationToken: null,
+    unsubscribeToken: 'unsubscribe-token-confirmed-0001',
     confirmed: true,
-    locale: 'en',
+    language: 'en',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
   },
@@ -311,9 +313,43 @@ const subscribers: MockSubscriber[] = [
     id: 6,
     documentId: 'sub-pending',
     email: 'pending@example.com',
-    confirmationToken: 'token-pending',
+    confirmationToken: 'confirmation-token-pending-0001',
+    unsubscribeToken: 'unsubscribe-token-pending-0001',
     confirmed: false,
-    locale: 'en',
+    language: 'es',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
+    id: 3,
+    documentId: 'sub-to-confirm',
+    email: 'to-confirm@example.com',
+    confirmationToken: 'confirmation-token-to-confirm-0001',
+    unsubscribeToken: null,
+    confirmed: false,
+    language: 'es',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
+    id: 4,
+    documentId: 'sub-leaving',
+    email: 'leaving@example.com',
+    confirmationToken: null,
+    unsubscribeToken: 'unsubscribe-token-leaving-0001',
+    confirmed: true,
+    language: 'en',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
+    id: 2,
+    documentId: 'sub-one-click',
+    email: 'one-click@example.com',
+    confirmationToken: null,
+    unsubscribeToken: 'unsubscribe-token-one-click-0001',
+    confirmed: true,
+    language: 'en',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
   },
@@ -661,9 +697,23 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
     }
 
     if (method === 'GET' && url.pathname === '/api/subscribers') {
-      const emailFilter = getNestedValue(query, ['filters', 'email', '$eq']) as string | undefined
-      const data = subscribers.filter((subscriber) => subscriber.email === emailFilter)
+      const fields = ['email', 'confirmationToken', 'unsubscribeToken'] as const
+      const field = fields.find((name) => getNestedValue(query, ['filters', name, '$eq']) !== undefined)
+      const value = field ? getNestedValue(query, ['filters', field, '$eq']) : undefined
+      const data = field ? subscribers.filter((subscriber) => subscriber[field] === value) : []
       sendJson(res, 200, { data })
+      return
+    }
+
+    if (method === 'PUT' && url.pathname.startsWith('/api/subscribers/')) {
+      const documentId = url.pathname.split('/').pop()
+      const subscriber = subscribers.find((entry) => entry.documentId === documentId)
+      if (!subscriber) {
+        sendJson(res, 404, { error: { status: 404, message: 'Not Found' } })
+        return
+      }
+      Object.assign(subscriber, body?.data ?? {}, { updatedAt: new Date().toISOString() })
+      sendJson(res, 200, { data: subscriber })
       return
     }
 
@@ -675,9 +725,10 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
         id,
         documentId: `sub-${id}`,
         email: String(data.email || ''),
-        confirmationToken: String(data.confirmationToken || ''),
+        confirmationToken: data.confirmationToken ?? null,
+        unsubscribeToken: data.unsubscribeToken ?? null,
         confirmed: Boolean(data.confirmed),
-        locale: String(data.locale || 'en'),
+        language: String(data.language || 'en'),
         createdAt: now,
         updatedAt: now,
       }

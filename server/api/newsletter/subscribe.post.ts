@@ -1,10 +1,10 @@
-import qs from 'qs';
 import { randomUUID } from "crypto";
 import { sendConfirmationEmail } from "../../utils/email";
-import type { SubscribeRequest, SubscribeResponse, Subscriber } from "~/interfaces/newsletter";
+import { createSubscriber, deleteSubscriber, findSubscriber, newUnsubscribeToken } from "../../utils/subscribers";
+import { newsletterLanguage } from "~/helpers/newsletter";
+import type { SubscribeRequest, SubscribeResponse } from "~/interfaces/newsletter";
 
 export default defineEventHandler(async (event): Promise<SubscribeResponse> => {
-  const config = useRuntimeConfig();
   const body = await readBody<SubscribeRequest>(event);
 
   if (!body.email) {
@@ -22,24 +22,8 @@ export default defineEventHandler(async (event): Promise<SubscribeResponse> => {
     });
   }
 
-  const subscriberParams = qs.stringify({
-    filters: {
-      email: {
-        $eq: body.email.toLowerCase(),
-      },
-    },
-  });
-
-  const existingSubscriber = await $fetch<{ data: Subscriber[] }>(
-    `${config.public.strapiUrl}/api/subscribers?${subscriberParams}`,
-    {
-      headers: {
-        Authorization: `Bearer ${config.strapiApiToken}`,
-      },
-    },
-  );
-
-  const existing = existingSubscriber.data?.[0];
+  const email = body.email.toLowerCase();
+  const existing = await findSubscriber("email", email);
   if (existing) {
     if (existing.confirmed) {
       throw createError({
@@ -48,40 +32,27 @@ export default defineEventHandler(async (event): Promise<SubscribeResponse> => {
       });
     }
 
-    await $fetch(`${config.public.strapiUrl}/api/subscribers/${existing.documentId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${config.strapiApiToken}`,
-      },
-    });
+    await deleteSubscriber(existing.documentId);
   }
 
   const confirmationToken = randomUUID();
-  const locale = body.locale || "en";
+  const language = newsletterLanguage(body.locale);
 
   try {
-    await $fetch(`${config.public.strapiUrl}/api/subscribers`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${config.strapiApiToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        data: {
-          email: body.email.toLowerCase(),
-          confirmationToken,
-          confirmed: false,
-          locale,
-        },
-      }),
+    await createSubscriber({
+      email,
+      confirmationToken,
+      unsubscribeToken: newUnsubscribeToken(),
+      confirmed: false,
+      language,
     });
 
-    await sendConfirmationEmail(body.email, confirmationToken, locale);
+    await sendConfirmationEmail(email, confirmationToken, language);
 
     return {
       success: true,
       message:
-        locale === "es"
+        language === "es"
           ? "Revisa tu correo para confirmar la suscripción"
           : "Check your email to confirm subscription",
     };
@@ -90,7 +61,7 @@ export default defineEventHandler(async (event): Promise<SubscribeResponse> => {
     throw createError({
       statusCode: 500,
       statusMessage:
-        locale === "es"
+        language === "es"
           ? "Error al procesar la suscripción"
           : "Error processing subscription",
     });
