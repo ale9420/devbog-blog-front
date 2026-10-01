@@ -472,6 +472,7 @@
       "accountMenu": "Your account menu, {username}",
       "account": "My account",
       "drafts": "Drafts",
+      "draftsCount": "Drafts, none to review | Drafts, {n} to review | Drafts, {n} to review",
       "signOut": "Sign out"
     },
     "mobile": {
@@ -694,6 +695,57 @@
       "editorTitle": "Do you write for BogDev?",
       "editorText": "With the Editor role you see drafts with the real design before they are published. The administrator assigns the role.",
       "privacy": "Privacy and cookies"
+    }
+  },
+  "drafts": {
+    "meta": {
+      "list": "Drafts",
+      "article": "Draft: {title}"
+    },
+    "editorsOnly": "Editors only",
+    "total": "{n} drafts | {n} draft | {n} drafts",
+    "title": "Drafts",
+    "lead": "Review each article with the real design before publishing it. To edit or publish it, open Strapi.",
+    "note": "Drafts don't appear on the blog, in search, the RSS feed or the sitemap, and search engines don't index them.",
+    "openStrapi": "Open Strapi",
+    "openStrapiLabel": "Open Strapi in a new tab",
+    "filters": {
+      "label": "Filter drafts",
+      "all": "All",
+      "neverPublished": "Never published",
+      "modified": "With changes"
+    },
+    "state": {
+      "neverPublished": "Never published",
+      "modified": "Published with changes"
+    },
+    "table": {
+      "caption": "Article drafts",
+      "state": "Status",
+      "article": "Article",
+      "category": "Category",
+      "language": "Language",
+      "edited": "Last edited",
+      "action": "Action"
+    },
+    "review": "Review",
+    "reviewLabel": "Review the draft {title}",
+    "empty": {
+      "title": "No drafts",
+      "text": "Everything in Strapi is already published. New drafts show up here as soon as they're saved.",
+      "filtered": "No draft matches this filter."
+    },
+    "strip": {
+      "badge": "Draft",
+      "editorsOnly": "Only editors can see it.",
+      "state": {
+        "neverPublished": "It has never been published.",
+        "modified": "It has unpublished changes.",
+        "unchanged": "It has no unpublished changes."
+      },
+      "edited": "Last edited {date}",
+      "published": "View published version",
+      "back": "Drafts"
     }
   }
 }

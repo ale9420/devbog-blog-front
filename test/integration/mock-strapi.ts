@@ -3,6 +3,7 @@ import qs from 'qs'
 import type { RawStrapiArticle, StrapiAuthorRef, StrapiCategoryRef, StrapiLocalization, StrapiMediaRef, StrapiSEO, StrapiTagRef } from '~/interfaces/strapi-post'
 import type { StrapiRichText } from '~/interfaces/strapi-blocks'
 import { createAuthMock } from '../../e2e/fixtures/auth.mjs'
+import { createDraftsMock } from '../../e2e/fixtures/drafts.mjs'
 
 export interface RecordedRequest {
   method: string
@@ -380,6 +381,7 @@ function recordRequest(
 export async function startMockStrapi(): Promise<MockStrapiResult> {
   const requests: RecordedRequest[] = []
   const authMock = createAuthMock({ frontendUrl: 'https://bogdev.test' })
+  const draftsMock = createDraftsMock({ userFromAuth: authMock.userFromAuth, publishedArticles: articles })
 
   const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
     const method = req.method || 'GET'
@@ -394,6 +396,12 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
     if (auth) {
       res.writeHead(auth.status, auth.headers ?? { 'Content-Type': 'application/json' })
       res.end(auth.headers ? undefined : JSON.stringify(auth.body))
+      return
+    }
+
+    const drafts = draftsMock.handle(method, url.pathname, query, req.headers)
+    if (drafts) {
+      sendJson(res, drafts.status, drafts.body)
       return
     }
 

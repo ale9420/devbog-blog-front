@@ -1,12 +1,18 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { mountSuspended, registerEndpoint } from '@nuxt/test-utils/runtime'
+import { createError } from 'h3'
 import type { AuthUser } from '~/interfaces'
 import BdAccountMenu from '~/components/bd/BdAccountMenu.vue'
 import BdMenuSheet from '~/components/bd/BdMenuSheet.vue'
 
-function signInAs(user: AuthUser | null): void {
+function signInAs(user: AuthUser | null, draftCount: number | null = null): void {
   useState<AuthUser | null>('auth-user').value = user
   useState<boolean>('auth-resolved').value = true
+  useState<number | null>('draft-count').value = draftCount
+  registerEndpoint('/api/drafts', () => {
+    if (draftCount === null) throw createError({ statusCode: 404 })
+    return { data: [], meta: { count: draftCount } }
+  })
 }
 
 const reader: AuthUser = { username: 'lectora', email: 'lectora@example.com', role: 'reader', createdAt: null }
@@ -53,6 +59,28 @@ describe('BdAccountMenu', () => {
     expect(wrapper.classes()).toContain('bd-account-editor')
     await wrapper.get('button.bd-account-toggle').trigger('click')
     expect(wrapper.findAll('.bd-account-panel a').map(a => a.attributes('href'))).toEqual(['/account', '/drafts'])
+    expect(wrapper.get('.bd-account-item-drafts').attributes('aria-label')).toBe('Drafts')
+    expect(wrapper.find('.bd-account-item-drafts .bd-count').exists()).toBe(false)
+  })
+
+  it('shows how many drafts are pending in the menu and on the compact avatar', async () => {
+    signInAs(editor, 3)
+    const wrapper = await mountSuspended(BdAccountMenu)
+    const drafts = wrapper.get('.bd-account-item-drafts')
+    expect(drafts.attributes('aria-label')).toBe('Drafts, 3 to review')
+    expect(drafts.get('.bd-count').text()).toBe('3')
+    expect(wrapper.find('.bd-account-badge').exists()).toBe(false)
+
+    const compact = await mountSuspended(BdAccountMenu, { props: { compact: true } })
+    expect(compact.get('.bd-account-badge').text()).toBe('3')
+    expect(compact.get('.bd-account-badge').attributes('aria-hidden')).toBe('true')
+  })
+
+  it('hides the compact badge when there are no drafts', async () => {
+    signInAs(editor, 0)
+    const wrapper = await mountSuspended(BdAccountMenu, { props: { compact: true } })
+    expect(wrapper.find('.bd-account-badge').exists()).toBe(false)
+    expect(wrapper.get('.bd-account-item-drafts').attributes('aria-label')).toBe('Drafts, none to review')
   })
 })
 
@@ -69,5 +97,10 @@ describe('BdMenuSheet account link', () => {
     const signedIn = await mountSuspended(BdMenuSheet, { props: { open: false } })
     expect(signedIn.get('.bd-sheet-account').attributes('href')).toBe('/account')
     expect(signedIn.get('.bd-sheet-account').text()).toContain('My account')
+    expect(signedIn.find('.bd-sheet-drafts').exists()).toBe(false)
+
+    signInAs(editor)
+    const asEditor = await mountSuspended(BdMenuSheet, { props: { open: false } })
+    expect(asEditor.get('.bd-sheet-drafts').attributes('href')).toBe('/drafts')
   })
 })

@@ -472,6 +472,7 @@
       "accountMenu": "Menú de tu cuenta, {username}",
       "account": "Mi cuenta",
       "drafts": "Borradores",
+      "draftsCount": "Borradores, ninguno por revisar | Borradores, {n} por revisar | Borradores, {n} por revisar",
       "signOut": "Cerrar sesión"
     },
     "mobile": {
@@ -694,6 +695,57 @@
       "editorTitle": "¿Escribes en BogDev?",
       "editorText": "Con el rol Editor ves los borradores con el diseño real antes de publicarlos. El rol lo asigna el administrador.",
       "privacy": "Privacidad y cookies"
+    }
+  },
+  "drafts": {
+    "meta": {
+      "list": "Borradores",
+      "article": "Borrador: {title}"
+    },
+    "editorsOnly": "Solo editores",
+    "total": "{n} borradores | {n} borrador | {n} borradores",
+    "title": "Borradores",
+    "lead": "Revisa cada artículo con el diseño real antes de publicarlo. Para editarlo o publicarlo, abre Strapi.",
+    "note": "Los borradores no aparecen en el blog, la búsqueda, el RSS ni el sitemap, y los buscadores no los indexan.",
+    "openStrapi": "Abrir Strapi",
+    "openStrapiLabel": "Abrir Strapi en una pestaña nueva",
+    "filters": {
+      "label": "Filtrar borradores",
+      "all": "Todos",
+      "neverPublished": "Nunca publicados",
+      "modified": "Con cambios"
+    },
+    "state": {
+      "neverPublished": "Nunca publicado",
+      "modified": "Publicado con cambios"
+    },
+    "table": {
+      "caption": "Borradores de artículos",
+      "state": "Estado",
+      "article": "Artículo",
+      "category": "Categoría",
+      "language": "Idioma",
+      "edited": "Última edición",
+      "action": "Acción"
+    },
+    "review": "Revisar",
+    "reviewLabel": "Revisar el borrador {title}",
+    "empty": {
+      "title": "No hay borradores",
+      "text": "Todo lo que está en Strapi ya está publicado. Los borradores nuevos aparecen aquí en cuanto se guardan.",
+      "filtered": "Ningún borrador coincide con este filtro."
+    },
+    "strip": {
+      "badge": "Borrador",
+      "editorsOnly": "Solo lo ven los editores.",
+      "state": {
+        "neverPublished": "Nunca se ha publicado.",
+        "modified": "Tiene cambios sin publicar.",
+        "unchanged": "No tiene cambios sin publicar."
+      },
+      "edited": "Última edición {date}",
+      "published": "Ver versión publicada",
+      "back": "Borradores"
     }
   }
 }

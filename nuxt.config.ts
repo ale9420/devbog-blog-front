@@ -42,7 +42,13 @@ export default defineNuxtConfig({
     "/account/**": { headers: privatePageHeaders },
     "/es/account": { headers: privatePageHeaders },
     "/es/account/**": { headers: privatePageHeaders },
+    "/drafts": { headers: privatePageHeaders },
+    "/drafts/**": { headers: privatePageHeaders },
+    "/es/drafts": { headers: privatePageHeaders },
+    "/es/drafts/**": { headers: privatePageHeaders },
     "/api/auth/**": { headers: { "cache-control": "private, no-store" } },
+    "/api/drafts": { headers: { "cache-control": "private, no-store" } },
+    "/api/drafts/**": { headers: { "cache-control": "private, no-store" } },
   },
   modules: ["@nuxt/ui", "@nuxt/image", "@vueuse/nuxt", "@nuxtjs/i18n", "@nuxt/eslint"],
   i18n: {

@@ -58,7 +58,7 @@ test('registers, confirms, signs in and signs out without exposing the JWT', asy
   const toggle = page.getByRole('button', { name: `Your account menu, ${user.username}` }).first()
   await toggle.click()
   await expect(page.getByRole('link', { name: 'My account' })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Drafts', exact: true })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: /^Drafts/ })).toHaveCount(0)
   await page.getByRole('button', { name: 'Sign out' }).click()
 
   await expect(page).toHaveURL(/\/account\/sign-in\?notice=signed-out$/)
@@ -74,7 +74,7 @@ test('shows the editor role and the drafts entry', async ({ page }) => {
   await expect(page.locator('.bd-badge')).toHaveText('Editor')
   await expect(page.locator('.bd-account-drafts')).toHaveAttribute('href', '/drafts')
   await page.getByRole('button', { name: `Your account menu, ${testUsers.editor.username}` }).first().click()
-  await expect(page.getByRole('link', { name: 'Drafts', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Drafts, 2 to review' })).toBeVisible()
 })
 
 for (const [label, identifier, password, message] of [

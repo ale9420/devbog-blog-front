@@ -40,6 +40,7 @@
 @import "./components/input-field.css" layer(bd.components);
 @import "./components/field.css" layer(bd.components);
 @import "./components/notice.css" layer(bd.components);
+@import "./components/badge.css" layer(bd.components);
 @import "./components/account-menu.css" layer(bd.components);
 
 @import "./layout/page.css" layer(bd.layout);
@@ -62,6 +63,8 @@
 @import "./pages/about/topics.css" layer(bd.pages);
 @import "./pages/about/projects.css" layer(bd.pages);
 @import "./pages/account/account.css" layer(bd.pages);
+@import "./pages/drafts/list.css" layer(bd.pages);
+@import "./pages/drafts/strip.css" layer(bd.pages);
 
 @import "./animations/keyframes.css" layer(bd.animations);
 

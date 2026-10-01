@@ -20,9 +20,12 @@ describe('headerSection', () => {
 })
 
 describe('isReadingPath', () => {
-  it('is true only for a single article', () => {
+  it('is true only for a single article or draft', () => {
     expect(isReadingPath('/blog/vue-composables')).toBe(true)
     expect(isReadingPath('/es/blog/vue-composables')).toBe(true)
+    expect(isReadingPath('/drafts/doc-draft')).toBe(true)
+    expect(isReadingPath('/es/drafts/doc-draft')).toBe(true)
+    expect(isReadingPath('/drafts')).toBe(false)
     expect(isReadingPath('/blog')).toBe(false)
     expect(isReadingPath('/es/blog/')).toBe(false)
     expect(isReadingPath('/about')).toBe(false)

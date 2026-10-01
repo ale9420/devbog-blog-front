@@ -125,27 +125,6 @@
     font-family: var(--font-mono);
 }
 
-.bd-badge {
-    display: inline-flex;
-    align-items: center;
-    height: 22px;
-    padding: 0 var(--space-2);
-    font: 500 11px/1 var(--font-mono);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
-.bd-badge-reader {
-    color: var(--chillon);
-    background: var(--chillon-soft);
-}
-
-.bd-badge-editor {
-    color: var(--monjita);
-    background: var(--monjita-soft);
-}
-
 .bd-account-drafts {
     position: relative;
     display: flex;

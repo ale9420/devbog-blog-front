@@ -18,7 +18,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const route = useRoute()
 const { localizePath } = useLocaleUtils()
-const { user } = useAuth()
+const { user, isEditor } = useAuth()
 
 const dialogRef = ref<HTMLElement>()
 const isOpen = computed<boolean>(() => props.open)
@@ -131,6 +131,13 @@ watch(() => route.fullPath, () => {
         class="bd-sheet-link bd-sheet-account bd-wide"
       >
         {{ user ? t('bd.header.account') : t('bd.header.signIn') }} <span aria-hidden="true" class="bd-sheet-arrow">→</span>
+      </NuxtLink>
+      <NuxtLink
+        v-if="isEditor"
+        :to="localizePath('/drafts')"
+        class="bd-sheet-link bd-sheet-drafts bd-wide"
+      >
+        {{ t('bd.header.drafts') }} <span aria-hidden="true" class="bd-sheet-arrow">→</span>
       </NuxtLink>
 
       <section class="bd-sheet-group" aria-labelledby="bd-sheet-topics">
