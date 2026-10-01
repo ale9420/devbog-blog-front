@@ -26,8 +26,13 @@ function run({ stored = {}, prefersLight = false, storageThrows = false }: Env):
 
 describe('themeInitScript', () => {
   it('uses the stored theme', () => {
+    expect(run({ stored: { 'bd-theme': 'dia' } })).toBe('dia')
+    expect(run({ stored: { 'bd-theme': 'noche' }, prefersLight: true })).toBe('noche')
+  })
+
+  it('reads the previous theme key', () => {
     expect(run({ stored: { 'devbog-theme': 'dia' } })).toBe('dia')
-    expect(run({ stored: { 'devbog-theme': 'noche' }, prefersLight: true })).toBe('noche')
+    expect(run({ stored: { 'bd-theme': 'noche', 'devbog-theme': 'dia' } })).toBe('noche')
   })
 
   it('migrates the legacy color mode value', () => {
@@ -39,7 +44,7 @@ describe('themeInitScript', () => {
     expect(run({ prefersLight: true })).toBe('dia')
     expect(run({ prefersLight: false })).toBe('noche')
     expect(run({ stored: { 'devbog-color-mode': 'system' }, prefersLight: true })).toBe('dia')
-    expect(run({ stored: { 'devbog-theme': 'sepia' } })).toBe('noche')
+    expect(run({ stored: { 'bd-theme': 'sepia' } })).toBe('noche')
   })
 
   it('falls back to noche when storage is blocked', () => {

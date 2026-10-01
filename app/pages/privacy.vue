@@ -1,0 +1,137 @@
+<script setup lang="ts">
+import { BROWSER_STORAGE_KEYS, SITE_COOKIES } from '~/helpers/privacy'
+import { formatDotDate } from '~/helpers/formatDate'
+
+interface PrivacySection {
+  id: string
+  label: string
+}
+
+const { t } = useI18n()
+const config = useAppConfig()
+const { canonicalUrl } = useCanonicalUrl('/privacy')
+const { siteUrl } = useSiteUrl()
+
+const contactEmail = config.site.privacy.contactEmail
+const updatedAt = formatDotDate(config.site.privacy.updatedAt)
+
+const sections = computed<PrivacySection[]>(() => [
+  { id: 'analytics', label: t('privacy.analytics.label') },
+  { id: 'cookies', label: t('privacy.cookies.label') },
+  { id: 'browser', label: t('privacy.browser.label') },
+  { id: 'data', label: t('privacy.data.label') },
+  { id: 'rights', label: t('privacy.rights.label') },
+])
+
+useSeoMeta({
+  title: () => t('privacy.meta.title'),
+  ogTitle: () => t('privacy.meta.title'),
+  description: () => t('privacy.meta.description'),
+  ogDescription: () => t('privacy.meta.description'),
+  ogImage: () => `${siteUrl.value}/og-image.png`,
+  ogUrl: () => canonicalUrl.value,
+  twitterCard: 'summary',
+  twitterTitle: () => t('privacy.meta.title'),
+  twitterDescription: () => t('privacy.meta.description'),
+})
+
+useHead({
+  link: [{ rel: 'canonical', href: () => canonicalUrl.value }],
+})
+</script>
+
+<template>
+  <div class="bd-privacy">
+    <header class="bd-privacy-head">
+      <p class="bd-eyebrow bd-privacy-updated">{{ t('privacy.eyebrow', { date: updatedAt }) }}</p>
+      <h1 class="bd-wide bd-privacy-title">{{ t('privacy.title') }}</h1>
+      <p class="bd-privacy-lead">{{ t('privacy.lead') }}</p>
+      <ul class="bd-privacy-facts" :aria-label="t('privacy.facts.label')">
+        <li class="bd-privacy-fact">
+          <span class="bd-wide bd-privacy-fact-value">0</span>
+          <span class="bd-meta bd-privacy-fact-label">{{ t('privacy.facts.tracking') }}</span>
+        </li>
+        <li class="bd-privacy-fact">
+          <span class="bd-wide bd-privacy-fact-value">{{ SITE_COOKIES.length }}</span>
+          <span class="bd-meta bd-privacy-fact-label">{{ t('privacy.facts.session', SITE_COOKIES.length) }}</span>
+        </li>
+        <li class="bd-privacy-fact">
+          <span class="bd-wide bd-privacy-fact-value">{{ t('privacy.facts.anonymous') }}</span>
+          <span class="bd-meta bd-privacy-fact-label">{{ t('privacy.facts.analytics') }}</span>
+        </li>
+      </ul>
+    </header>
+
+    <nav class="bd-privacy-toc" :aria-label="t('privacy.toc')">
+      <span class="bd-eyebrow bd-privacy-toc-title" aria-hidden="true">{{ t('privacy.toc') }}</span>
+      <a v-for="section in sections" :key="section.id" :href="`#${section.id}`" class="bd-privacy-toc-link">{{ section.label }}</a>
+    </nav>
+
+    <div class="bd-privacy-body">
+      <section id="analytics" class="bd-privacy-section" aria-labelledby="analytics-title">
+        <p class="bd-eyebrow bd-privacy-label">{{ t('privacy.analytics.label') }}</p>
+        <h2 id="analytics-title">{{ t('privacy.analytics.title') }}</h2>
+        <i18n-t keypath="privacy.analytics.body" tag="p" scope="global">
+          <template #umami><strong>Umami</strong></template>
+          <template #noCookies><strong>{{ t('privacy.analytics.noCookies') }}</strong></template>
+        </i18n-t>
+        <p>{{ t('privacy.analytics.blockers') }}</p>
+      </section>
+
+      <section id="cookies" class="bd-privacy-section" aria-labelledby="cookies-title">
+        <p class="bd-eyebrow bd-privacy-label">{{ t('privacy.cookies.label') }}</p>
+        <h2 id="cookies-title">{{ t('privacy.cookies.title') }}</h2>
+        <table class="bd-privacy-table">
+          <caption class="bd-sr">{{ t('privacy.cookies.caption') }}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{{ t('privacy.cookies.name') }}</th>
+              <th scope="col">{{ t('privacy.cookies.purpose') }}</th>
+              <th scope="col">{{ t('privacy.cookies.when') }}</th>
+              <th scope="col">{{ t('privacy.cookies.duration') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="cookie in SITE_COOKIES" :key="cookie.name">
+              <td class="bd-privacy-key">{{ cookie.name }}</td>
+              <td>{{ t(`privacy.cookies.items.${cookie.name}.purpose`) }}</td>
+              <td class="bd-privacy-when">{{ t(`privacy.cookies.items.${cookie.name}.when`) }}</td>
+              <td class="bd-privacy-duration">{{ t('privacy.cookies.days', cookie.maxAgeDays) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>{{ t('privacy.cookies.none') }}</p>
+      </section>
+
+      <section id="browser" class="bd-privacy-section" aria-labelledby="browser-title">
+        <p class="bd-eyebrow bd-privacy-label">{{ t('privacy.browser.label') }}</p>
+        <h2 id="browser-title">{{ t('privacy.browser.title') }}</h2>
+        <i18n-t keypath="privacy.browser.body" tag="p" scope="global">
+          <template #local><strong>{{ t('privacy.browser.local') }}</strong></template>
+        </i18n-t>
+        <dl class="bd-privacy-keys">
+          <div v-for="key in BROWSER_STORAGE_KEYS" :key="key" class="bd-privacy-kv">
+            <dt class="bd-privacy-key">{{ key }}</dt>
+            <dd>{{ t(`privacy.browser.items.${key}`) }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="data" class="bd-privacy-section" aria-labelledby="data-title">
+        <p class="bd-eyebrow bd-privacy-label">{{ t('privacy.data.label') }}</p>
+        <h2 id="data-title">{{ t('privacy.data.title') }}</h2>
+        <p><strong>{{ t('privacy.data.account') }}</strong> {{ t('privacy.data.accountText') }}</p>
+        <p><strong>{{ t('privacy.data.newsletter') }}</strong> {{ t('privacy.data.newsletterText') }}</p>
+        <p><strong>{{ t('privacy.data.comments') }}</strong> {{ t('privacy.data.commentsText') }}</p>
+      </section>
+
+      <section id="rights" class="bd-privacy-section" aria-labelledby="rights-title">
+        <p class="bd-eyebrow bd-privacy-label">{{ t('privacy.rights.label') }}</p>
+        <h2 id="rights-title">{{ t('privacy.rights.title') }}</h2>
+        <i18n-t keypath="privacy.rights.body" tag="p" scope="global">
+          <template #email><a :href="`mailto:${contactEmail}`"><strong>{{ contactEmail }}</strong></a></template>
+        </i18n-t>
+      </section>
+    </div>
+  </div>
+</template>

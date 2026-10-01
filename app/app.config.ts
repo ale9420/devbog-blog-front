@@ -20,5 +20,9 @@ export default defineAppConfig({
     support: {
       buyMeACoffee: "ale9420",
     },
+    privacy: {
+      contactEmail: "gx_alejandro@hotmail.com",
+      updatedAt: "2026-10-01T12:00:00-05:00",
+    },
   },
 });

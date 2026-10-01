@@ -174,7 +174,10 @@ function scrollToTop(): void {
     <BdPanorama />
 
     <div class="bd-meta bd-foot-credits">
-      <span>© {{ year }} BogDev · Alejandro Ramírez</span>
+      <span class="bd-foot-legal">
+        <span>© {{ year }} BogDev · Alejandro Ramírez</span>
+        <NuxtLink :to="localizePath('/privacy')" class="bd-foot-privacy">{{ t('bd.footer.privacy') }}</NuxtLink>
+      </span>
       <span>{{ t('bd.footer.madeIn') }} <span class="bd-foot-diamond" aria-hidden="true">◆</span> {{ t('bd.header.hud.coords') }}</span>
       <span>{{ t('bd.footer.illustration') }}</span>
       <button type="button" class="bd-foot-row bd-foot-top" @click="scrollToTop">

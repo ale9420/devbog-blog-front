@@ -50,6 +50,8 @@ onMounted(() => {
 
         <BdFooter />
 
+        <BdPrivacyNotice />
+
         <BdTabBar
             :active="active"
             :menu-open="isMobileMenuOpen"
