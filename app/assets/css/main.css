@@ -54,6 +54,8 @@
 @import "./pages/home/guide.css" layer(bd.pages);
 @import "./pages/home/fediverse.css" layer(bd.pages);
 @import "./pages/blog/index.css" layer(bd.pages);
+@import "./pages/blog/filters.css" layer(bd.pages);
+@import "./pages/blog/sidebar.css" layer(bd.pages);
 @import "./pages/blog/log.css" layer(bd.pages);
 @import "./pages/article/layout.css" layer(bd.pages);
 @import "./pages/article/after.css" layer(bd.pages);
