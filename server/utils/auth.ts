@@ -68,12 +68,3 @@ export function fetchStrapiMe(jwt: string): Promise<StrapiAuthUser> {
     headers: { Authorization: `Bearer ${jwt}` },
   })
 }
-
-export async function readAuthBody<T>(event: H3Event): Promise<Partial<T>> {
-  const body = await readBody<Partial<T> | null>(event).catch(() => null)
-  return body && typeof body === 'object' ? body : {}
-}
-
-export function bodyString(value: unknown): string {
-  return typeof value === 'string' ? value : ''
-}

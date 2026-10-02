@@ -1,16 +1,11 @@
-import type { AuthUserResponse, RegisterInput, StrapiAuthUser } from '~/interfaces/auth'
-import { isValidEmail, isValidPassword, isValidUsername, toPublicUser } from '~/helpers/auth'
+import type { AuthUserResponse, StrapiAuthUser } from '~/interfaces/auth'
+import { toPublicUser } from '~/helpers/auth'
+import { registerSchema } from '../../schemas/auth'
 
 export default defineEventHandler(async (event): Promise<AuthUserResponse> => {
   preventCaching(event)
   assertSameOrigin(event)
-  const body = await readAuthBody<RegisterInput>(event)
-  const username = bodyString(body.username).trim()
-  const email = bodyString(body.email).trim().toLowerCase()
-  const password = bodyString(body.password)
-  if (!isValidUsername(username) || !isValidEmail(email) || !isValidPassword(password) || body.acceptPrivacy !== true) {
-    throw authFailure('invalidInput')
-  }
+  const { username, email, password } = await validBody(event, registerSchema, () => authFailure('invalidInput'))
 
   try {
     const response = await $fetch<{ user: StrapiAuthUser }>(strapiUrl('/api/auth/local/register'), {

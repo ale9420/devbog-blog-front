@@ -1,13 +1,11 @@
-import type { AuthUserResponse, LoginInput, StrapiAuthUser } from '~/interfaces/auth'
+import type { AuthUserResponse, StrapiAuthUser } from '~/interfaces/auth'
 import { toPublicUser } from '~/helpers/auth'
+import { loginSchema } from '../../schemas/auth'
 
 export default defineEventHandler(async (event): Promise<AuthUserResponse> => {
   preventCaching(event)
   assertSameOrigin(event)
-  const body = await readAuthBody<LoginInput>(event)
-  const identifier = bodyString(body.identifier).trim()
-  const password = bodyString(body.password)
-  if (!identifier || !password) throw authFailure('invalidInput')
+  const { identifier, password } = await validBody(event, loginSchema, () => authFailure('invalidInput'))
 
   let jwt: string
   try {
