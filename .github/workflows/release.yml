@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Create a dated release
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tag main and publish the release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          base="v$(date -u +%Y.%m.%d)"
+          tag="$base"
+          n=1
+          while gh api "repos/$REPO/git/ref/tags/$tag" >/dev/null 2>&1; do
+            n=$((n + 1))
+            tag="$base.$n"
+          done
+          gh release create "$tag" --repo "$REPO" --target "$GITHUB_SHA" --title "$tag" --generate-notes
+          echo "Released $tag at $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"

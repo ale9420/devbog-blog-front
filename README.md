@@ -109,6 +109,12 @@ The pipeline can also be started by hand from the Actions tab (`workflow_dispatc
 
 The server, DNS and reverse proxy (Traefik on Dokploy) are managed with Terraform in the private `bogdev-infra` repository.
 
+### Releases
+
+Every merge to `main` is deployed; a release is a dated snapshot of what is live. Run the **Release** workflow from the Actions tab on `main`: it tags the current commit `vYYYY.MM.DD` (`.2`, `.3`… for more than one a day) and publishes a GitHub release whose notes list the PRs merged since the previous one, grouped by label (security, features, fixes, quality, docs, dependencies).
+
+The labels come from the PR title: the `PR labels` workflow reads its conventional prefix (`feat` → enhancement, `fix` → bug, `docs` → documentation, `refactor`/`style` → refactor, `test` → testing, `ci` → ci, `chore` → code-quality, `chore(deps)` → dependencies; a `security`/`seguridad` scope adds security). Dependabot labels its own PRs. Add `ignore-for-release` to leave a PR out of the notes.
+
 ### Environment variables in production
 
 Set the variables from `.env.example` in the production environment (Dokploy) with their `NUXT_*` names. The image is built in GitHub Actions without any of them, so a plain name like `STRAPI_API_TOKEN` leaves the token empty and every Strapi call goes out without it. The server logs a warning at startup for each required value that is missing.
