@@ -16,7 +16,7 @@ export default defineConfig({
       timeout: 15_000,
     },
     {
-      command: 'HOST=127.0.0.1 STRAPI_URL=http://127.0.0.1:4310 NUXT_PUBLIC_STRAPI_URL=http://127.0.0.1:4310 PORT=3210 npm run dev',
+      command: 'HOST=127.0.0.1 NUXT_PUBLIC_STRAPI_URL=http://127.0.0.1:4310 PORT=3210 npm run dev',
       port: 3210,
       reuseExistingServer: !process.env.CI,
       timeout: 240_000,

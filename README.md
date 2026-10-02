@@ -48,22 +48,24 @@ Copy the example environment file and fill in your values:
 cp .env.example .env
 ```
 
+All variables are read when the server starts, so the same Docker image works in every environment. Only `NUXT_*` names reach the built server: Nuxt ignores plain names like `STRAPI_API_TOKEN` at runtime.
+
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `STRAPI_URL` | URL of your Strapi instance | Yes |
-| `STRAPI_API_TOKEN` | API token from Strapi settings | Yes |
-| `SMTP_HOST` | SMTP server hostname | Newsletter only |
-| `SMTP_PORT` | SMTP server port (default: 587) | Newsletter only |
-| `SMTP_USER` | SMTP username | Newsletter only |
-| `SMTP_PASS` | SMTP password | Newsletter only |
-| `NEWSLETTER_FROM` | Sender address for newsletter emails | Newsletter only |
-| `SITE_URL` | Public URL of your deployed site | Yes |
+| `NUXT_PUBLIC_STRAPI_URL` | URL of your Strapi instance (default: `https://api.bogdev.com.co`) | Yes |
+| `NUXT_STRAPI_API_TOKEN` | API token from Strapi settings | Yes |
+| `NUXT_SMTP_HOST` | SMTP server hostname | Newsletter only |
+| `NUXT_SMTP_PORT` | SMTP server port (default: 587) | Newsletter only |
+| `NUXT_SMTP_USER` | SMTP username | Newsletter only |
+| `NUXT_SMTP_PASS` | SMTP password | Newsletter only |
+| `NUXT_NEWSLETTER_FROM` | Sender address for newsletter emails | Newsletter only |
+| `NUXT_PUBLIC_SITE_URL` | Public URL of your deployed site (default: `https://bogdev.com.co`) | Yes |
 | `NUXT_PUBLIC_UMAMI_WEBSITE_ID` | Umami website ID. Empty: no tracker is loaded | Analytics only |
 | `NUXT_UMAMI_URL` | Internal Umami URL the proxy forwards to (e.g. `http://<umami-service>:3000`). Empty: no proxy | Analytics only |
 | `NUXT_PUBLIC_UMAMI_SCRIPT_PATH` | Tracker path, must match Umami's `TRACKER_SCRIPT_NAME` and stay at the root (default: `/bd.js`) | No |
 | `NUXT_UMAMI_COLLECT_PATH` | Collect path, must match Umami's `COLLECT_API_ENDPOINT` (default: `/api/bd`) | No |
 
-The tracker only reports visits whose host matches `SITE_URL`, so local and preview builds never send data. The tracker and its collect endpoint are served from the site itself (`server/middleware/umami.ts`) and forwarded to Umami with the visitor IP in `x-real-ip`, so blockers that filter third-party analytics domains don't drop visits.
+The tracker only reports visits whose host matches `NUXT_PUBLIC_SITE_URL`, so local and preview builds never send data. The tracker and its collect endpoint are served from the site itself (`server/middleware/umami.ts`) and forwarded to Umami with the visitor IP in `x-real-ip`, so blockers that filter third-party analytics domains don't drop visits.
 
 ### 4. Set up Strapi CMS
 
@@ -126,7 +128,7 @@ pm2 start ecosystem.config.js
 
 ### Environment variables in production
 
-Ensure all environment variables from `.env` are set in your production environment.
+Set the variables from `.env.example` in the production environment (Dokploy) with their `NUXT_*` names. The image is built in GitHub Actions without any of them, so a plain name like `STRAPI_API_TOKEN` leaves the token empty and every Strapi call goes out without it. The server logs a warning at startup for each required value that is missing.
 
 ## Project Structure
 
