@@ -156,7 +156,7 @@ Edit `app/app.config.ts` to customize:
 
 ### Strapi API
 
-The Strapi connection is configured via environment variables. See `.env.example` for all options. Server code calls Strapi through `server/utils/strapi.ts`: `strapiFetch()` adds the API token, `strapiUrl()` builds URLs for the anonymous fediverse and sitemap calls.
+The Strapi connection is configured via environment variables. See `.env.example` for all options, and [docs/security.md](docs/security.md) for the exact permissions of the API token and how every endpoint is protected. Server code calls Strapi through `server/utils/strapi.ts`: `strapiFetch()` adds the API token, `strapiUrl()` builds URLs for the anonymous fediverse and sitemap calls.
 
 ### i18n
 
