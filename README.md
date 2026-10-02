@@ -90,6 +90,7 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 | `npm run typecheck` | Type-check the app and server with vue-tsc |
 | `npm run lint` | Lint with ESLint (flat config from `@nuxt/eslint`) |
 | `npm run test` | Unit and component tests with Vitest (`test/*.test.ts`, `test/nuxt/`) |
+| `npm run test:coverage` | The same tests with v8 coverage of `app/`; fails under the thresholds in `vitest.config.ts` (report in `coverage/`) |
 | `npm run test:integration` | API and page tests against a production build and a mock Strapi (`test/integration/`) |
 | `npm run test:e2e` | Playwright end-to-end tests; starts a mock Strapi and the dev server (`e2e/`) |
 | `npm run tokens` | Regenerate `app/assets/css/settings/tokens.css` from `docs/design/tokens.json` |
@@ -99,7 +100,7 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 
 Every push to `main` runs `.github/workflows/deploy.yml`:
 
-1. Lint, type check, `npm audit` (critical), design tokens check and unit tests
+1. Lint, type check, `npm audit` (critical), design tokens check and unit tests with coverage thresholds
 2. Integration tests and Playwright e2e tests
 3. Build the Docker image (`Dockerfile`: Node 22 builder, distroless Node 22 runtime, non-root) and push it to GHCR as `:latest` and `:<short sha>`
 4. Ask Dokploy to redeploy the application, which pulls `:latest`

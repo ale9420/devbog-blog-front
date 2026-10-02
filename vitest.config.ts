@@ -4,6 +4,24 @@ import { fileURLToPath } from 'node:url'
 
 export default defineConfig({
   test: {
+    coverage: {
+      provider: 'v8',
+      include: ['app/**/*.{ts,vue}'],
+      exclude: ['app/interfaces/**', 'app/**/*.d.ts'],
+      reporter: ['text-summary', 'html', 'json-summary'],
+      thresholds: {
+        'statements': 63,
+        'branches': 65,
+        'functions': 60,
+        'lines': 64,
+        'app/helpers/**': {
+          statements: 95,
+          branches: 92,
+          functions: 95,
+          lines: 95,
+        },
+      },
+    },
     projects: [
       {
         resolve: {
