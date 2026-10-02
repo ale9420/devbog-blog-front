@@ -1,4 +1,5 @@
-import type { DeleteAccountInput, StrapiAuthUser } from '~/interfaces/auth'
+import type { StrapiAuthUser } from '~/interfaces/auth'
+import { deleteAccountSchema } from '../../schemas/auth'
 
 export default defineEventHandler(async (event): Promise<{ ok: true }> => {
   preventCaching(event)
@@ -6,10 +7,7 @@ export default defineEventHandler(async (event): Promise<{ ok: true }> => {
   const jwt = getSessionToken(event)
   if (!jwt) throw authFailure('unauthorized')
 
-  const body = await readAuthBody<DeleteAccountInput>(event)
-  const username = bodyString(body.username)
-  const password = bodyString(body.password)
-  if (!username || !password) throw authFailure('invalidInput')
+  const { username, password } = await validBody(event, deleteAccountSchema, () => authFailure('invalidInput'))
 
   let user: StrapiAuthUser
   try {

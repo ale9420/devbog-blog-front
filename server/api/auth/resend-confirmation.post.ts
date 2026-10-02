@@ -1,11 +1,9 @@
-import { isValidEmail } from '~/helpers/auth'
+import { emailSchema } from '../../schemas/auth'
 
 export default defineEventHandler(async (event): Promise<{ ok: true }> => {
   preventCaching(event)
   assertSameOrigin(event)
-  const body = await readAuthBody<{ email: string }>(event)
-  const email = bodyString(body.email).trim().toLowerCase()
-  if (!isValidEmail(email)) throw authFailure('invalidInput')
+  const { email } = await validBody(event, emailSchema, () => authFailure('invalidInput'))
 
   try {
     await $fetch(strapiUrl('/api/auth/send-email-confirmation'), { method: 'POST', body: { email } })

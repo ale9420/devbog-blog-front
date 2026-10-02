@@ -1,14 +1,9 @@
-import type { ResetPasswordInput } from '~/interfaces/auth'
-import { isValidPassword } from '~/helpers/auth'
+import { resetPasswordSchema } from '../../schemas/auth'
 
 export default defineEventHandler(async (event): Promise<{ ok: true }> => {
   preventCaching(event)
   assertSameOrigin(event)
-  const body = await readAuthBody<ResetPasswordInput>(event)
-  const code = bodyString(body.code)
-  const password = bodyString(body.password)
-  const passwordConfirmation = bodyString(body.passwordConfirmation)
-  if (!code || !isValidPassword(password) || password !== passwordConfirmation) throw authFailure('invalidInput')
+  const { code, password, passwordConfirmation } = await validBody(event, resetPasswordSchema, () => authFailure('invalidInput'))
 
   try {
     await $fetch(strapiUrl('/api/auth/reset-password'), {

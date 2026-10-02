@@ -1,10 +1,8 @@
 import { randomUUID } from 'crypto'
 import { sendConfirmationEmail } from '../../utils/email'
 import { createSubscriber, deleteSubscriber, findSubscriber, newUnsubscribeToken } from '../../utils/subscribers'
-import { newsletterLanguage } from '~/helpers/newsletter'
-import type { NewsletterLanguage, SubscribeRequest, SubscribeResponse } from '~/interfaces/newsletter'
-
-const MAX_EMAIL_LENGTH = 254
+import { subscribeSchema } from '../../schemas/newsletter'
+import type { NewsletterLanguage, SubscribeResponse } from '~/interfaces/newsletter'
 
 function successResponse(language: NewsletterLanguage): SubscribeResponse {
   return {
@@ -18,26 +16,10 @@ function successResponse(language: NewsletterLanguage): SubscribeResponse {
 
 export default defineEventHandler(async (event): Promise<SubscribeResponse> => {
   assertSameOrigin(event)
-  const body = await readBody<Partial<SubscribeRequest> | null>(event).catch(() => null)
-  const rawEmail = typeof body?.email === 'string' ? body.email.trim() : ''
-
-  if (!rawEmail) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Email is required',
-    })
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (rawEmail.length > MAX_EMAIL_LENGTH || !emailRegex.test(rawEmail)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Invalid email format',
-    })
-  }
-
-  const email = rawEmail.toLowerCase()
-  const language = newsletterLanguage(body?.locale)
+  const { email, locale: language } = await validBody(event, subscribeSchema, error => createError({
+    statusCode: 400,
+    statusMessage: error.issues[0]?.message ?? 'Invalid email format',
+  }))
   assertRateLimit(event, 'newsletterPerIp', clientIp(event))
   assertRateLimit(event, 'newsletterPerEmail', email)
 
