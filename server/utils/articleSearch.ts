@@ -45,15 +45,9 @@ function toResult(row: UpstreamSearchRow): SearchPostResult | null {
 }
 
 export async function searchArticles({ query, locale, content, limit }: ArticleSearchOptions): Promise<SearchPostResult[]> {
-  const config = useRuntimeConfig()
-  const headers: Record<string, string> = {}
-  if (config.strapiApiToken) {
-    headers['Authorization'] = `Bearer ${config.strapiApiToken}`
-  }
 
-  const response = await $fetch<{ data?: UpstreamSearchRow[] }>(`${config.public.strapiUrl}/api/articles/search`, {
+  const response = await strapiFetch<{ data?: UpstreamSearchRow[] }>('/api/articles/search', {
     query: { q: query, locale, content: content ? '1' : undefined, limit: Math.min(limit, SEARCH_MAX_RESULTS) },
-    headers,
     timeout: SEARCH_TIMEOUT_MS,
   })
   return (response?.data ?? []).flatMap(row => toResult(row) ?? [])

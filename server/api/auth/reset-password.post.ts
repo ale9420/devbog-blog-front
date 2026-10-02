@@ -11,7 +11,7 @@ export default defineEventHandler(async (event): Promise<{ ok: true }> => {
   if (!code || !isValidPassword(password) || password !== passwordConfirmation) throw authFailure('invalidInput')
 
   try {
-    await $fetch(strapiAuthUrl(event, '/api/auth/reset-password'), {
+    await $fetch(strapiUrl('/api/auth/reset-password'), {
       method: 'POST',
       body: { code, password, passwordConfirmation },
     })

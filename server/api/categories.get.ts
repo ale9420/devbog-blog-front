@@ -4,7 +4,6 @@ import { categoryOrder, isCategory } from '~/helpers/categories'
 
 export default defineEventHandler(async (event): Promise<CategoryCount[]> => {
   const query = getQuery(event)
-  const config = useRuntimeConfig()
   const locale = (query.locale as string | undefined) || 'en'
 
   const params = qs.stringify({
@@ -18,21 +17,16 @@ export default defineEventHandler(async (event): Promise<CategoryCount[]> => {
     },
   })
 
-  const headers: Record<string, string> = {}
-  if (config.strapiApiToken) {
-    headers['Authorization'] = `Bearer ${config.strapiApiToken}`
-  }
-
   setHeader(event, 'Cache-Control', 'public, s-maxage=600, stale-while-revalidate=1200')
 
-  const response = await $fetch<{
+  const response = await strapiFetch<{
     data: Array<{
       id: number
       name: string
       slug?: string | null
       articles?: Array<{ id: number }>
     }>
-  }>(`${config.public.strapiUrl}/api/categories?${params}`, { headers })
+  }>(`/api/categories?${params}`)
 
   return response.data
     .map((category) => ({

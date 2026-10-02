@@ -10,7 +10,6 @@ function toCount(value: unknown): number {
 
 export default defineEventHandler(async (event): Promise<FediverseStats> => {
   const documentId = getRouterParam(event, 'documentId') ?? ''
-  const config = useRuntimeConfig()
 
   if (!DOCUMENT_ID.test(documentId)) {
     throw createError({ statusCode: 400, message: 'Invalid document id' })
@@ -19,7 +18,7 @@ export default defineEventHandler(async (event): Promise<FediverseStats> => {
   let response: Partial<Record<keyof FediverseStats, unknown>>
   try {
     response = await $fetch<Partial<Record<keyof FediverseStats, unknown>>>(
-      `${config.public.strapiUrl}/api/fediverse/articles/${documentId}/stats`,
+      strapiUrl(`/api/fediverse/articles/${documentId}/stats`),
       { timeout: UPSTREAM_TIMEOUT_MS },
     )
   } catch (error: unknown) {

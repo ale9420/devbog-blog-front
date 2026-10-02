@@ -8,7 +8,7 @@ export default defineEventHandler(async (event): Promise<{ ok: true }> => {
   if (!isValidEmail(email)) throw authFailure('invalidInput')
 
   try {
-    await $fetch(strapiAuthUrl(event, '/api/auth/forgot-password'), { method: 'POST', body: { email } })
+    await $fetch(strapiUrl('/api/auth/forgot-password'), { method: 'POST', body: { email } })
   } catch (error: unknown) {
     if (asUpstreamError(error).response?.status === 429) throw authFailure('tooManyRequests')
     console.error('Strapi forgot-password error:', asUpstreamError(error).data?.error?.message || error)

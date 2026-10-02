@@ -13,7 +13,7 @@ export default defineEventHandler(async (event): Promise<AuthUserResponse> => {
   }
 
   try {
-    const response = await $fetch<{ user: StrapiAuthUser }>(strapiAuthUrl(event, '/api/auth/local/register'), {
+    const response = await $fetch<{ user: StrapiAuthUser }>(strapiUrl('/api/auth/local/register'), {
       method: 'POST',
       body: { username, email, password },
     })

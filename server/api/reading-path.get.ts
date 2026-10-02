@@ -6,17 +6,11 @@ const MAX_STEPS = 50
 
 export default defineEventHandler(async (event): Promise<ReadingPath> => {
   const query = getQuery(event)
-  const config = useRuntimeConfig()
   const category = typeof query.category === 'string' ? query.category.trim().toLowerCase() : ''
   const locale = typeof query.locale === 'string' && query.locale ? query.locale : undefined
 
   if (!isCategory(category)) {
     throw createError({ statusCode: 400, message: 'Unknown category' })
-  }
-
-  const headers: Record<string, string> = {}
-  if (config.strapiApiToken) {
-    headers['Authorization'] = `Bearer ${config.strapiApiToken}`
   }
 
   async function fetchSteps(editorial: boolean): Promise<ReadingPathStep[]> {
@@ -30,7 +24,7 @@ export default defineEventHandler(async (event): Promise<ReadingPath> => {
       pagination: { page: 1, pageSize: MAX_STEPS },
       locale,
     }, { skipNulls: true })
-    const response = await $fetch<StrapiPaginatedResponse<RawStrapiArticle[]>>(`${config.public.strapiUrl}/api/articles?${params}`, { headers })
+    const response = await strapiFetch<StrapiPaginatedResponse<RawStrapiArticle[]>>(`/api/articles?${params}`)
     return response.data.map(article => ({ documentId: article.documentId, slug: article.slug, title: article.title }))
   }
 

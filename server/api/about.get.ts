@@ -2,7 +2,6 @@ import qs from 'qs';
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
-  const config = useRuntimeConfig()
   const locale = query.locale as string | undefined
 
   const params = qs.stringify({
@@ -27,16 +26,11 @@ export default defineEventHandler(async (event) => {
     },
   }, { skipNulls: true })
 
-  const headers: Record<string, string> = {}
-  if (config.strapiApiToken) {
-    headers['Authorization'] = `Bearer ${config.strapiApiToken}`
-  }
-
   setHeader(event, 'Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
 
   let response: { data?: unknown }
   try {
-    response = await $fetch<{ data?: unknown }, string>(`${config.public.strapiUrl}/api/about?${params}`, { headers })
+    response = await strapiFetch<{ data?: unknown }>(`/api/about?${params}`)
   } catch (error: unknown) {
     console.error('Strapi fetch about error:', asUpstreamError(error).data || error)
     throw createError({
