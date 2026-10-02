@@ -1,10 +1,8 @@
 import qs from 'qs'
-import type { BlogSort, RawStrapiArticle, StrapiPaginatedResponse } from '~/interfaces'
-import { parseSort } from '~/helpers/blog'
-import { MIN_SEARCH_LENGTH, isContentSearch } from '~/helpers/search'
-import { parsePagination } from '~/helpers/pagination'
+import type { RawStrapiArticle, StrapiPaginatedResponse } from '~/interfaces'
+import { MIN_SEARCH_LENGTH } from '~/helpers/search'
+import { postsQuerySchema } from '../../schemas/query'
 
-const DEFAULT_PAGE_SIZE = 10
 const RANKING_TIMEOUT_MS = 3000
 const STATS_TIMEOUT_MS = 3000
 
@@ -38,19 +36,9 @@ function publishedTime(article: RawStrapiArticle): number {
 }
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event)
-  const pagination = parsePagination(query, DEFAULT_PAGE_SIZE)
-  if (!pagination) {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid pagination' })
-  }
-  const { page, pageSize } = pagination
-  const locale = query.locale as string | undefined
-  const category = query.category as string | undefined
-  const tag = query.tag as string | undefined
-  const search = typeof query.search === 'string' ? query.search.trim() : ''
-  const sort: BlogSort = parseSort(query.sort) ?? 'recent'
-  const validSearch = search.length >= MIN_SEARCH_LENGTH ? search : undefined
-  const contentSearch = Boolean(validSearch) && isContentSearch(query.content)
+  const { page, pageSize, locale, category, tag, search, sort, content } = validQuery(event, postsQuerySchema)
+  const validSearch = search && search.length >= MIN_SEARCH_LENGTH ? search : undefined
+  const contentSearch = Boolean(validSearch) && content
 
   const filters: Record<string, unknown> = {}
   if (category) filters.category = { slug: { $eq: category } }

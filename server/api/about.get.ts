@@ -1,8 +1,8 @@
 import qs from 'qs'
+import { localeQuerySchema } from '../schemas/query'
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event)
-  const locale = query.locale as string | undefined
+  const { locale } = validQuery(event, localeQuerySchema)
 
   const params = qs.stringify({
     locale,

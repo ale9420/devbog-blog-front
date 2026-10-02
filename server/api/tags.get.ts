@@ -1,10 +1,10 @@
 import qs from 'qs'
 import type { TagCount } from '~/interfaces'
 import { sortTags } from '~/helpers/tags'
+import { listLocaleQuerySchema } from '../schemas/query'
 
 export default defineEventHandler(async (event): Promise<TagCount[]> => {
-  const query = getQuery(event)
-  const locale = (query.locale as string | undefined) || 'en'
+  const { locale } = validQuery(event, listLocaleQuerySchema)
 
   const params = qs.stringify({
     locale,

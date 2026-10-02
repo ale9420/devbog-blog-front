@@ -1,19 +1,15 @@
 import qs from 'qs'
 import type { Comment, CommentsResponse } from '~/interfaces/comment'
 import { toPublicComments } from '~/helpers/comments'
+import { commentsQuerySchema } from '../../schemas/query'
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event)
   const relation = commentRelation(event)
-
-  const locale = commentLocale(query.locale)
+  const { locale, page, pageSize, sort } = validQuery(event, commentsQuerySchema)
 
   const params = qs.stringify({
-    pagination: {
-      page: query.page,
-      pageSize: query.pageSize,
-    },
-    sort: query.sort,
+    pagination: { page, pageSize },
+    sort,
     locale,
   }, { skipNulls: true })
 

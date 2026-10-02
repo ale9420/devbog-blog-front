@@ -29,6 +29,8 @@ await setup({
 
 beforeEach(() => {
   mock.requests.length = 0
+  mock.failures.pathOrder = false
+  mock.failures.about = false
   umami.requests.length = 0
 })
 
@@ -253,8 +255,14 @@ describe('/api/reading-path', () => {
   })
 
   it('falls back to publication date when Strapi does not know pathOrder yet', async () => {
-    const path = await $fetch<{ editorial: boolean }>('/api/reading-path', { query: { category: 'linux', locale: 'legacy' } })
+    mock.failures.pathOrder = true
+    const path = await $fetch<{ editorial: boolean }>('/api/reading-path', { query: { category: 'linux', locale: 'en' } })
     expect(path.editorial).toBe(false)
+  })
+
+  it('rejects an unknown locale without calling Strapi', async () => {
+    await expect($fetch('/api/reading-path', { query: { category: 'linux', locale: 'legacy' } })).rejects.toMatchObject({ response: { status: 400 } })
+    expect(mock.requests).toEqual([])
   })
 
   it('rejects unknown categories without calling Strapi', async () => {
@@ -512,10 +520,16 @@ describe('cookies without a session', () => {
 
 describe('/api/about', () => {
   it('answers 502 with the Strapi message when Strapi rejects the query', async () => {
-    await expect($fetch('/api/about', { query: { locale: 'invalid' } })).rejects.toMatchObject({
+    mock.failures.about = true
+    await expect($fetch('/api/about', { query: { locale: 'es' } })).rejects.toMatchObject({
       response: { status: 502 },
       data: { message: 'Invalid key about.profile at blocks.on.about.profile' },
     })
+  })
+
+  it('rejects an unknown locale without calling Strapi', async () => {
+    await expect($fetch('/api/about', { query: { locale: 'invalid' } })).rejects.toMatchObject({ response: { status: 400 } })
+    expect(mock.requests).toEqual([])
   })
 })
 
@@ -1248,6 +1262,14 @@ describe('/api/posts pagination', () => {
       await expect($fetch('/api/posts', { query })).rejects.toMatchObject({ response: { status: 400 } })
     }
     expect(articleRequests()).toEqual([])
+  })
+
+  it('rejects unknown locales and repeated parameters on the read routes without calling Strapi', async () => {
+    for (const path of ['/api/posts?locale=fr', '/api/posts?category=a&category=b', '/api/posts?tag=vue&tag=ts', '/api/search?q=vue&locale=fr', '/api/categories?locale=fr', '/api/tags?locale=en&locale=es', '/api/posts/understanding-vue-composables?locale=fr']) {
+      const response = await fetch(path)
+      expect(response.status, path).toBe(400)
+    }
+    expect(mock.requests).toEqual([])
   })
 })
 

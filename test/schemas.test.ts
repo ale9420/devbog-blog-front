@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { deleteAccountSchema, emailSchema, loginSchema, registerSchema, resetPasswordSchema } from '../server/schemas/auth'
 import { guestCommentSchema } from '../server/schemas/comments'
 import { subscribeSchema } from '../server/schemas/newsletter'
+import { commentsQuerySchema, DEFAULT_PAGE_SIZE, listLocaleQuerySchema, localeQuerySchema, MAX_PAGE_SIZE, postsQuerySchema, readingPathQuerySchema, searchQuerySchema } from '../server/schemas/query'
 import { COMMENT_LIMITS } from '../app/helpers/comments'
 
 describe('auth schemas', () => {
@@ -88,6 +89,62 @@ describe('guestCommentSchema', () => {
       { ...valid, threadOf: 0 },
     ]) {
       expect(guestCommentSchema.safeParse(body).success).toBe(false)
+    }
+  })
+})
+
+describe('query schemas', () => {
+  it('reads the posts query with defaults and caps the page size', () => {
+    expect(postsQuerySchema.parse({})).toEqual({ page: 1, pageSize: DEFAULT_PAGE_SIZE, sort: 'recent', content: false })
+    expect(postsQuerySchema.parse({ page: '3', pageSize: '10000', locale: 'es', category: ' Software ', tag: 'vue', search: ' composables ', sort: 'OLDEST', content: '1' })).toEqual({
+      page: 3,
+      pageSize: MAX_PAGE_SIZE,
+      locale: 'es',
+      category: 'software',
+      tag: 'vue',
+      search: 'composables',
+      sort: 'oldest',
+      content: true,
+    })
+    expect(postsQuerySchema.parse({ page: '', pageSize: '', locale: '', category: '', search: '' })).toMatchObject({ page: 1, pageSize: DEFAULT_PAGE_SIZE })
+  })
+
+  it('rejects a bad page, an unknown locale or sort, arrays and slugs that are not slugs', () => {
+    for (const query of [
+      { page: '0' }, { page: '-1' }, { page: 'abc' }, { pageSize: '1.5' }, { pageSize: 'NaN' }, { pageSize: '1e3' }, { page: ['1', '2'] },
+      { locale: 'fr' }, { locale: ['en', 'es'] }, { category: 'a b' }, { tag: ['vue', 'ts'] }, { search: 'x'.repeat(201) },
+    ]) {
+      expect(postsQuerySchema.safeParse(query).success, JSON.stringify(query)).toBe(false)
+    }
+  })
+
+  it('falls back to the newest first order for an unknown sort', () => {
+    expect(postsQuerySchema.parse({ sort: 'popular' }).sort).toBe('recent')
+    expect(postsQuerySchema.parse({ sort: ['oldest'] }).sort).toBe('recent')
+  })
+
+  it('keeps the error messages the routes used to send', () => {
+    expect(postsQuerySchema.safeParse({ page: 'abc' }).error?.issues[0]?.message).toBe('Invalid pagination')
+    expect(localeQuerySchema.safeParse({ locale: 'fr' }).error?.issues[0]?.message).toBe('Unsupported locale')
+    expect(readingPathQuerySchema.safeParse({ category: 'cocina' }).error?.issues[0]?.message).toBe('Unknown category')
+  })
+
+  it('defaults the category and tag lists to English', () => {
+    expect(listLocaleQuerySchema.parse({})).toEqual({ locale: 'en' })
+    expect(listLocaleQuerySchema.parse({ locale: 'es' })).toEqual({ locale: 'es' })
+  })
+
+  it('reads the palette search and the reading path', () => {
+    expect(searchQuerySchema.parse({ q: ' vue ', locale: 'en', content: 'true' })).toEqual({ q: 'vue', locale: 'en', content: true })
+    expect(searchQuerySchema.parse({})).toEqual({ q: '', content: false })
+    expect(readingPathQuerySchema.parse({ category: ' Software ' })).toEqual({ category: 'software' })
+  })
+
+  it('accepts only a field:direction sort and capped pagination for comments', () => {
+    expect(commentsQuerySchema.parse({ sort: 'createdAt:desc', pageSize: '500' })).toEqual({ sort: 'createdAt:desc', pageSize: MAX_PAGE_SIZE })
+    expect(commentsQuerySchema.parse({})).toEqual({})
+    for (const query of [{ sort: 'createdAt;drop' }, { sort: 'createdAt' }, { page: '0' }, { locale: 'fr' }]) {
+      expect(commentsQuerySchema.safeParse(query).success, JSON.stringify(query)).toBe(false)
     }
   })
 })

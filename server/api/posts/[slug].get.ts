@@ -1,10 +1,10 @@
 import qs from 'qs'
 import type { RawStrapiArticle } from '~/interfaces'
+import { localeQuerySchema } from '../../schemas/query'
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
-  const query = getQuery(event)
-  const locale = query.locale as string | undefined
+  const { locale } = validQuery(event, localeQuerySchema)
 
   if (!slug) {
     throw createError({ statusCode: 400, message: 'Slug is required' })

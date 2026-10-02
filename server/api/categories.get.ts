@@ -1,10 +1,10 @@
 import qs from 'qs'
 import type { CategoryCount } from '~/interfaces'
 import { categoryOrder, isCategory } from '~/helpers/categories'
+import { listLocaleQuerySchema } from '../schemas/query'
 
 export default defineEventHandler(async (event): Promise<CategoryCount[]> => {
-  const query = getQuery(event)
-  const locale = (query.locale as string | undefined) || 'en'
+  const { locale } = validQuery(event, listLocaleQuerySchema)
 
   const params = qs.stringify({
     pagination: { pageSize: 100 },
