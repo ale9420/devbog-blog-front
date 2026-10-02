@@ -2,7 +2,9 @@ import qs from 'qs';
 import type { BlogSort, RawStrapiArticle, StrapiPaginatedResponse } from '~/interfaces'
 import { parseSort } from '~/helpers/blog'
 import { MIN_SEARCH_LENGTH, isContentSearch } from '~/helpers/search'
+import { parsePagination } from '~/helpers/pagination'
 
+const DEFAULT_PAGE_SIZE = 10
 const RANKING_TIMEOUT_MS = 3000
 const STATS_TIMEOUT_MS = 3000
 
@@ -38,8 +40,11 @@ function publishedTime(article: RawStrapiArticle): number {
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const config = useRuntimeConfig()
-  const page = query.page ? Number(query.page) : 1
-  const pageSize = query.pageSize ? Number(query.pageSize) : 10
+  const pagination = parsePagination(query, DEFAULT_PAGE_SIZE)
+  if (!pagination) {
+    throw createError({ statusCode: 400, statusMessage: 'Invalid pagination' })
+  }
+  const { page, pageSize } = pagination
   const locale = query.locale as string | undefined
   const category = query.category as string | undefined
   const tag = query.tag as string | undefined
