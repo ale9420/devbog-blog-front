@@ -1,17 +1,11 @@
 import qs from 'qs'
 import type { RawStrapiArticle, ReadingPath, ReadingPathStep, StrapiPaginatedResponse } from '~/interfaces'
-import { isCategory } from '~/helpers/categories'
+import { readingPathQuerySchema } from '../schemas/query'
 
 const MAX_STEPS = 50
 
 export default defineEventHandler(async (event): Promise<ReadingPath> => {
-  const query = getQuery(event)
-  const category = typeof query.category === 'string' ? query.category.trim().toLowerCase() : ''
-  const locale = typeof query.locale === 'string' && query.locale ? query.locale : undefined
-
-  if (!isCategory(category)) {
-    throw createError({ statusCode: 400, message: 'Unknown category' })
-  }
+  const { category, locale } = validQuery(event, readingPathQuerySchema)
 
   async function fetchSteps(editorial: boolean): Promise<ReadingPathStep[]> {
     const params = qs.stringify({

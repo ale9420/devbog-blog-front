@@ -1,0 +1,67 @@
+import { z } from 'zod'
+import { Locale } from '~/interfaces/locale'
+import { isCategory } from '~/helpers/categories'
+import { isContentSearch } from '~/helpers/search'
+import { parseSort } from '~/helpers/blog'
+
+export const MAX_PAGE_SIZE = 50
+export const DEFAULT_PAGE_SIZE = 10
+export const MAX_SEARCH_LENGTH = 200
+
+const SLUG_PATTERN = /^[a-z0-9-]{1,64}$/
+const COMMENT_SORT_PATTERN = /^[a-zA-Z]+:(asc|desc)$/
+const INVALID_PAGINATION = 'Invalid pagination'
+
+function blank(value: unknown): unknown {
+  return value === '' ? undefined : value
+}
+
+function lowerTrimmed(value: unknown): unknown {
+  return typeof value === 'string' ? blank(value.trim().toLowerCase()) : value
+}
+
+const locale = z.preprocess(blank, z.enum(Object.values(Locale) as [Locale, ...Locale[]], { error: 'Unsupported locale' }).optional())
+const slug = z.preprocess(lowerTrimmed, z.string({ error: 'Invalid slug' }).regex(SLUG_PATTERN, 'Invalid slug').optional())
+const searchText = z.preprocess(blank, z.string({ error: 'Invalid search' }).trim().max(MAX_SEARCH_LENGTH, 'Search is too long').optional())
+const content = z.unknown().optional().transform(isContentSearch)
+const positiveInteger = z.string({ error: INVALID_PAGINATION })
+  .regex(/^\d+$/, INVALID_PAGINATION)
+  .transform(Number)
+  .pipe(z.number().int().min(1, INVALID_PAGINATION).max(Number.MAX_SAFE_INTEGER, INVALID_PAGINATION))
+const page = z.preprocess(blank, positiveInteger.optional())
+const pageSize = z.preprocess(blank, positiveInteger.optional())
+
+export const localeQuerySchema = z.object({ locale })
+
+export const listLocaleQuerySchema = z.object({
+  locale: locale.transform(value => value ?? Locale.English),
+})
+
+export const postsQuerySchema = z.object({
+  page: page.transform(value => value ?? 1),
+  pageSize: pageSize.transform(value => Math.min(value ?? DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)),
+  locale,
+  category: slug,
+  tag: slug,
+  search: searchText,
+  sort: z.unknown().optional().transform(value => parseSort(value) ?? 'recent'),
+  content,
+})
+
+export const searchQuerySchema = z.object({
+  q: searchText.transform(value => value ?? ''),
+  locale,
+  content,
+})
+
+export const readingPathQuerySchema = z.object({
+  category: z.preprocess(lowerTrimmed, z.string({ error: 'Unknown category' }).refine(isCategory, 'Unknown category')),
+  locale,
+})
+
+export const commentsQuerySchema = z.object({
+  locale,
+  page,
+  pageSize: pageSize.transform(value => (value === undefined ? undefined : Math.min(value, MAX_PAGE_SIZE))),
+  sort: z.preprocess(blank, z.string({ error: 'Invalid sort' }).regex(COMMENT_SORT_PATTERN, 'Invalid sort').optional()),
+})

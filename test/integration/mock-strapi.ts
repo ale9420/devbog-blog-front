@@ -26,10 +26,16 @@ interface MockSubscriber {
   updatedAt: string
 }
 
+interface MockFailures {
+  pathOrder: boolean
+  about: boolean
+}
+
 interface MockStrapiResult {
   server: Server
   url: string
   requests: RecordedRequest[]
+  failures: MockFailures
   users: Array<{ id: number, username: string, email: string, password: string, confirmed: boolean, role: string }>
 }
 
@@ -418,6 +424,7 @@ function recordRequest(
 
 export async function startMockStrapi(): Promise<MockStrapiResult> {
   const requests: RecordedRequest[] = []
+  const failures: MockFailures = { pathOrder: false, about: false }
   const authMock = createAuthMock({ frontendUrl: 'https://bogdev.test' })
   const draftsMock = createDraftsMock({ userFromAuth: authMock.userFromAuth, publishedArticles: articles })
 
@@ -538,7 +545,7 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
         data = data.filter(article => documentIdFilter.includes(article.documentId))
       }
       if (pathFilter) {
-        if (localeFilter === 'legacy') {
+        if (failures.pathOrder) {
           sendJson(res, 400, { data: null, error: { status: 400, name: 'ValidationError', message: 'Invalid key pathOrder' } })
           return
         }
@@ -593,14 +600,14 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
     }
 
     if (method === 'GET' && url.pathname === '/api/about') {
-      const locale = (query.locale as string | undefined) ?? 'en'
-      if (locale === 'invalid') {
+      if (failures.about) {
         sendJson(res, 400, {
           data: null,
           error: { status: 400, name: 'ValidationError', message: 'Invalid key about.profile at blocks.on.about.profile' },
         })
         return
       }
+      const locale = (query.locale as string | undefined) ?? 'en'
       sendJson(res, 200, {
         data: {
           id: 1,
@@ -761,7 +768,7 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
     server.listen(0, '127.0.0.1', () => {
       const address = server.address()
       const port = typeof address === 'object' && address !== null ? address.port : 0
-      resolve({ server, url: `http://127.0.0.1:${port}`, requests, users: authMock.users })
+      resolve({ server, url: `http://127.0.0.1:${port}`, requests, failures, users: authMock.users })
     })
   })
 }
