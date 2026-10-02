@@ -145,6 +145,7 @@ Global styles live in `app/assets/css/`, split by responsibility (ITCSS-style, p
 
 - Server routes go in `server/api/` or `server/routes/`
 - Use `$fetch` for internal API calls
+- Call Strapi only through `strapiFetch()` / `strapiUrl()` from `server/utils/strapi.ts`; never build the URL or the `Authorization` header by hand
 - Return proper HTTP status codes with `createError()`
 - Use `useRuntimeConfig()` for configuration access
 
@@ -180,26 +181,32 @@ app/
 └── pages/               # Route pages
     ├── index.vue        # Home (/)
     ├── about.vue        # About (/about)
+    ├── privacy.vue      # Privacy and cookies (/privacy)
+    ├── confirm.vue      # Newsletter confirmation (/confirm)
+    ├── account/         # Sign up, sign in, password reset, profile
+    ├── drafts/          # Draft list and preview (editors)
+    ├── newsletter/      # Unsubscribe page
     └── blog/
         ├── index.vue    # Blog list (/blog)
         └── [slug].vue   # Blog post (/blog/:slug)
 
 server/
-├── api/                 # API routes
-│   ├── comments/        # Comment CRUD endpoints
-│   └── posts/           # Post endpoints
-└── routes/              # Static routes (feed.xml, sitemap, robots.txt)
+├── api/                 # API routes: posts, search, comments, newsletter, auth, drafts, fediverse…
+├── routes/              # feed.xml, sitemap.xml, robots.txt
+├── middleware/          # Umami first-party proxy
+├── plugins/             # Content Security Policy, runtime config check
+└── utils/               # strapi.ts (strapiUrl, strapiFetch), auth, rate limit…
 
 i18n/locales/            # Translation files
-content/                 # Nuxt Content (markdown)
 public/                  # Static assets
 ```
 
 ## Key Dependencies
 
 - `@nuxt/ui` - UI components
-- `@nuxt/content` - Markdown content
 - `@nuxt/image` - Image optimization
 - `@nuxtjs/i18n` - Internationalization
-- `@nuxtjs/google-fonts` - Google Fonts
 - `@vueuse/nuxt` - VueUse composables
+- `marked` + `sanitize-html` - Markdown rendering of Strapi rich text, always sanitized
+- `mermaid` - Diagrams, loaded only on articles that have them
+- `nodemailer` - Newsletter emails over SMTP

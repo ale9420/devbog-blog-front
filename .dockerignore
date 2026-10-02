@@ -13,4 +13,3 @@ LICENSE
 README.md
 *.log
 .gitignore
-ecosystem.config.js

@@ -4,25 +4,25 @@ A bilingual (English/Spanish) personal blog built with **Nuxt 4** and **Strapi C
 
 ## Features
 
-- **Nuxt 4 SSR** — Server-side rendered for performance and SEO
-- **Strapi CMS** — Headless CMS for content management (posts, comments, newsletter)
-- **Bilingual** — Full English and Spanish support with URL prefix strategy (`prefix_except_default`)
-- **Dark/Light mode** — System-aware theming with manual toggle
-- **Commenting system** — Threaded comments with author identification, powered by Strapi
-- **Newsletter** — Email subscription with confirmation flow via SMTP (nodemailer)
-- **RSS Feed** — Auto-generated `/feed.xml` from published articles
-- **Sitemap** — Dynamic XML sitemap with hreflang alternates for SEO
-- **Search** — Full-text search across posts with keyboard shortcut (Cmd+K)
-- **SEO** — Open Graph, Twitter Cards, JSON-LD structured data, canonical URLs
-- **Accessibility** — Skip links, semantic HTML, ARIA labels, keyboard navigation
-- **Strapi Blocks** — Rich text, quotes, images, and slider content blocks
-- **Analytics** — Self-hosted Umami, served first-party through a Nitro proxy (privacy-friendly)
-- **Responsive** — Mobile-first design with Tailwind CSS v4
+- **Nuxt 4 SSR** — Server-side rendered, with ISR caching for public pages
+- **Strapi 5 CMS** — Articles, authors, categories, tags, the About page and newsletter subscribers
+- **Bilingual** — English and Spanish with the `prefix_except_default` URL strategy
+- **Night and day themes** — System-aware, with a manual toggle and no flash on load
+- **Comments** — Guest comments through the Strapi Comments plugin, plus replies from the fediverse
+- **Fediverse** — Articles are federated by the backend; likes, boosts and replies are shown on each article
+- **Accounts** — Sign up, sign in, password reset and account deletion; editors can preview drafts
+- **Newsletter** — Double opt-in over SMTP (nodemailer) with one-click unsubscribe (RFC 8058)
+- **Feeds and sitemap** — RSS per language and category, XML sitemap with hreflang alternates
+- **Search** — Title and full-text search, with a keyboard palette (Cmd/Ctrl+K)
+- **Rich articles** — Code blocks with copy, callouts, citations, figures and Mermaid diagrams
+- **SEO** — Open Graph, Twitter Cards, JSON-LD and canonical URLs
+- **Accessibility** — Skip links, semantic HTML, ARIA labels and keyboard navigation
+- **Privacy and security** — First-party Umami analytics, no cookies without a session, security headers and a hash-based Content Security Policy
 
 ## Prerequisites
 
-- **Node.js** >= 18
-- **Strapi 5** instance (headless CMS backend)
+- **Node.js** >= 22.12
+- **Strapi 5** backend: [devbog-blog-backend](https://github.com/ale9420/devbog-blog-backend)
 - **SMTP server** (for newsletter emails) — optional
 
 ## Getting Started
@@ -30,7 +30,7 @@ A bilingual (English/Spanish) personal blog built with **Nuxt 4** and **Strapi C
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/devbog-blog-front.git
+git clone https://github.com/ale9420/devbog-blog-front.git
 cd devbog-blog-front
 ```
 
@@ -70,33 +70,7 @@ The tracker only reports visits whose host matches `NUXT_PUBLIC_SITE_URL`, so lo
 
 ### 4. Set up Strapi CMS
 
-This project expects a Strapi 5 instance with the following content types:
-
-#### Posts collection type
-| Field | Type | Notes |
-|-------|------|-------|
-| `title` | Text | |
-| `slug` | UID | From title |
-| `description` | Text | Short excerpt |
-| `content` | Rich Text (blocks) | Legacy markdown support |
-| `blocks` | Dynamic Zone | Rich text, quote, media, slider blocks |
-| `cover` | Media | Single image |
-| `category` | Relation | Categories collection |
-| `tags` | JSON | Array of tag strings |
-| `readTime` | Integer | Estimated reading time in minutes |
-| `publishedAt` | DateTime | Publication date |
-| `author` | Relation | Authors collection |
-
-#### Comments plugin
-Enable the **Strapi Comments** plugin (or implement the `comments` API endpoints).
-
-#### Newsletter subscribers collection
-| Field | Type | Notes |
-|-------|------|-------|
-| `email` | Email | Subscriber email |
-| `token` | Text | Confirmation token |
-| `confirmed` | Boolean | Whether confirmed |
-| `locale` | Text | Language preference |
+Run the [devbog-blog-backend](https://github.com/ale9420/devbog-blog-backend) Strapi project: it defines every content type this frontend reads (articles, authors, categories, tags, About, subscribers), the Comments plugin and the fediverse endpoints. Point `NUXT_PUBLIC_STRAPI_URL` at it and create an API token for `NUXT_STRAPI_API_TOKEN` with read access to the content and create, update and delete on subscribers.
 
 ### 5. Start the development server
 
@@ -110,22 +84,29 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build locally |
-| `npm run generate` | Generate static output |
-| `npm run typecheck` | Run TypeScript type checking |
+| `npm run dev` | Start the development server on http://localhost:3000 |
+| `npm run build` | Build for production into `.output/` |
+| `npm run preview` | Preview the production build locally |
+| `npm run typecheck` | Type-check the app and server with vue-tsc |
+| `npm run lint` | Lint with ESLint (flat config from `@nuxt/eslint`) |
+| `npm run test` | Unit and component tests with Vitest (`test/*.test.ts`, `test/nuxt/`) |
+| `npm run test:integration` | API and page tests against a production build and a mock Strapi (`test/integration/`) |
+| `npm run test:e2e` | Playwright end-to-end tests; starts a mock Strapi and the dev server (`e2e/`) |
+| `npm run tokens` | Regenerate `app/assets/css/settings/tokens.css` from `docs/design/tokens.json` |
+| `npm run tokens:check` | Fail if the generated tokens are out of date (runs in CI) |
 
 ## Deployment
 
-### PM2 (recommended for Node servers)
+Every push to `main` runs `.github/workflows/deploy.yml`:
 
-An `ecosystem.config.js` is included for PM2 process management:
+1. Lint, type check, `npm audit` (critical), design tokens check and unit tests
+2. Integration tests and Playwright e2e tests
+3. Build the Docker image (`Dockerfile`: Node 22 builder, distroless Node 22 runtime, non-root) and push it to GHCR as `:latest` and `:<short sha>`
+4. Ask Dokploy to redeploy the application, which pulls `:latest`
 
-```bash
-npm run build
-pm2 start ecosystem.config.js
-```
+The pipeline can also be started by hand from the Actions tab (`workflow_dispatch`); on `main` it builds and deploys like a push. Dependabot opens weekly update PRs for npm, the GitHub Actions and the Docker base image.
+
+The server, DNS and reverse proxy (Traefik on Dokploy) are managed with Terraform in the private `bogdev-infra` repository.
 
 ### Environment variables in production
 
@@ -135,43 +116,30 @@ Set the variables from `.env.example` in the production environment (Dokploy) wi
 
 ```
 ├── app/
-│   ├── app.config.ts          # Site configuration (name, social links, etc.)
-│   ├── app.vue                # Root component
-│   ├── assets/css/            # Global styles: main.css imports settings/, base/, components/, layout/, pages/, utilities/
-│   ├── components/            # Vue components (auto-imported, grouped by feature)
-│   │   ├── layout/            # Shell: Header, Footer, MobileMenu, SearchModal, etc.
-│   │   ├── home/              # Home page: Hero, Newsletter
-│   │   ├── blog/              # Blog: PostCard, Sidebar, Pagination, CommentSection, etc.
-│   │   ├── strapi/            # Strapi block renderers: BlocksRenderer, RichTextBlock, etc.
-│   │   └── icons/             # SVG icons: LinkedIn, GitHub, Codeberg, Mastodon
-│   ├── composables/           # Auto-imported composables
-│   │   ├── useStrapi.ts       # Strapi CMS integration
-│   │   ├── useComments.ts     # Comment CRUD operations
-│   │   ├── useLocaleUtils.ts  # i18n path localization helpers
-│   │   ├── useSiteUrl.ts      # Site URL singleton
-│   │   ├── useCanonicalUrl.ts # Canonical URL builder
-│   │   ├── useKeyboardShortcut.ts  # Cmd/Ctrl+key bindings
-│   │   ├── useTheme.ts        # Dark/light theme toggle
-│   │   └── useMarkdownRenderer.ts  # Markdown rendering
-│   ├── helpers/               # Pure utility functions (explicit imports)
-│   │   ├── formatDate.ts      # Date formatting with style presets
-│   │   └── string.ts          # String utilities (getInitial, etc.)
+│   ├── app.config.ts          # Site name, author, social links, privacy contact
+│   ├── assets/css/            # Global styles by layer (see AGENTS.md, CSS Architecture)
+│   ├── components/            # Auto-imported, grouped by feature
+│   │   ├── bd/                # BogDev design system: BdButton, BdHeader, BdSearchPalette…
+│   │   ├── blog/              # Article view, comments, filters, pagination
+│   │   ├── account/           # Account pages: shell, fields, notices
+│   │   ├── drafts/            # Draft list and preview
+│   │   ├── home/              # Home sections
+│   │   ├── strapi/            # Renderers for the Strapi dynamic zone blocks
+│   │   ├── layout/ icons/     # Shell pieces and SVG icons
+│   ├── composables/           # Auto-imported composables (useStrapi, useAuth, useComments…)
+│   ├── helpers/               # Pure functions, imported explicitly and unit tested
 │   ├── interfaces/            # TypeScript interfaces and enums
-│   ├── layouts/default.vue    # Default layout
-│   └── pages/                 # Route pages (file-based routing)
-│       ├── index.vue          # Homepage
-│       ├── about.vue          # About page
-│       ├── blog/              # Blog listing and post pages
-│       └── confirm.vue        # Newsletter confirmation
-├── i18n/locales/              # Translation files (en.json, es.json)
-├── public/                    # Static assets (logos, robots.txt)
+│   └── pages/                 # index, about, privacy, blog/, account/, drafts/, confirm, newsletter/unsubscribe
+├── i18n/locales/              # en.json, es.json
 ├── server/
-│   ├── api/                   # API endpoints
-│   │   ├── posts/             # Post listing and detail
-│   │   ├── comments/          # Comment CRUD
-│   │   └── newsletter/        # Subscription and confirmation
-│   └── routes/                # Static routes (feed.xml, sitemap.xml, robots.txt)
-└── nuxt.config.ts             # Nuxt configuration
+│   ├── api/                   # posts, search, categories, tags, comments, newsletter, auth, drafts, fediverse…
+│   ├── routes/                # feed.xml (per language and category), sitemap.xml, robots.txt
+│   ├── middleware/umami.ts    # First-party proxy for the Umami tracker
+│   ├── plugins/               # Content Security Policy, runtime config check
+│   └── utils/strapi.ts        # strapiUrl() and strapiFetch(): the only way to call Strapi
+├── docs/design/               # BogDev design system: DESIGN.md, tokens, reference canvases
+├── test/ e2e/                 # Vitest (unit, component, integration) and Playwright
+└── nuxt.config.ts             # Route rules (ISR, private pages, security headers), runtime config
 ```
 
 ## Configuration
@@ -183,10 +151,11 @@ Edit `app/app.config.ts` to customize:
 - Social media links (GitHub, LinkedIn, Codeberg, Mastodon)
 - Comment provider
 - Buy Me a Coffee username
+- Privacy contact email and last update date
 
 ### Strapi API
 
-The Strapi connection is configured via environment variables. See `.env.example` for all options.
+The Strapi connection is configured via environment variables. See `.env.example` for all options. Server code calls Strapi through `server/utils/strapi.ts`: `strapiFetch()` adds the API token, `strapiUrl()` builds URLs for the anonymous fediverse and sitemap calls.
 
 ### i18n
 
