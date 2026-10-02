@@ -10,7 +10,6 @@ interface FocusTarget {
 const { t } = useI18n()
 const { localizePath } = useLocaleUtils()
 const { register, resendConfirmation } = useAuth()
-const { errorMessage } = useAccountPage(() => sentTo.value ? t('account.meta.checkEmail') : t('account.meta.register'))
 
 const username = ref('')
 const email = ref('')
@@ -27,6 +26,8 @@ const passwordRef = ref<FocusTarget>()
 const privacyRef = ref<HTMLInputElement>()
 const errorRef = ref<FocusTarget>()
 const headingRef = ref<FocusTarget>()
+
+const { errorMessage } = useAccountPage(() => sentTo.value ? t('account.meta.checkEmail') : t('account.meta.register'))
 
 function validate(): Partial<Record<RegisterField, string>> {
   const found: Partial<Record<RegisterField, string>> = {}

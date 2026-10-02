@@ -8,9 +8,16 @@ export interface UmamiScriptConfig {
   siteUrl: string
 }
 
+export type UmamiScriptAttributes = {
+  src: string
+  defer: boolean
+  'data-website-id': string
+  'data-domains': string
+}
+
 export const OUTBOUND_LINK_EVENT = 'outbound-link'
 
-export function umamiScriptAttributes(config: UmamiScriptConfig): Record<string, string | boolean> | null {
+export function umamiScriptAttributes(config: UmamiScriptConfig): UmamiScriptAttributes | null {
   if (!config.websiteId) return null
   return {
     src: config.scriptPath,
