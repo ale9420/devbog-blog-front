@@ -4,7 +4,6 @@ import { toPublicComments } from '~/helpers/comments'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
-  const config = useRuntimeConfig()
   const relation = commentRelation(event)
 
   const locale = commentLocale(query.locale)
@@ -18,15 +17,10 @@ export default defineEventHandler(async (event) => {
     locale,
   }, { skipNulls: true })
 
-  const headers: Record<string, string> = {}
-  if (config.strapiApiToken) {
-    headers['Authorization'] = `Bearer ${config.strapiApiToken}`
-  }
-
-  const url = `${config.public.strapiUrl}/api/comments/${relation}${params ? '?' + params : ''}`
+  const url = `/api/comments/${relation}${params ? '?' + params : ''}`
 
   try {
-    const response = await $fetch<Comment[] | CommentsResponse>(url, { headers })
+    const response = await strapiFetch<Comment[] | CommentsResponse>(url)
     if (Array.isArray(response)) return toPublicComments(response)
     return { ...response, data: toPublicComments(response?.data ?? []) }
   } catch (error: unknown) {

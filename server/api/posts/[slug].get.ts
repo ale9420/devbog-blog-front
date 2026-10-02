@@ -4,7 +4,6 @@ import type { RawStrapiArticle } from '~/interfaces';
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
   const query = getQuery(event)
-  const config = useRuntimeConfig()
   const locale = query.locale as string | undefined
 
   if (!slug) {
@@ -17,18 +16,12 @@ export default defineEventHandler(async (event) => {
     populate: ARTICLE_POPULATE,
   }, { skipNulls: true })
 
-  const headers: Record<string, string> = {}
-  if (config.strapiApiToken) {
-    headers['Authorization'] = `Bearer ${config.strapiApiToken}`
-  }
-
   setHeader(event, 'Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
 
   let response: { data?: RawStrapiArticle[] }
   try {
-    response = await $fetch<{ data?: RawStrapiArticle[] }>(
-      `${config.public.strapiUrl}/api/articles?${params}`,
-      { headers },
+    response = await strapiFetch<{ data?: RawStrapiArticle[] }>(
+      `/api/articles?${params}`,
     )
   } catch (error: unknown) {
     console.error('Strapi fetch post error:', asUpstreamError(error).data || error)

@@ -39,7 +39,6 @@ function publishedTime(article: RawStrapiArticle): number {
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
-  const config = useRuntimeConfig()
   const pagination = parsePagination(query, DEFAULT_PAGE_SIZE)
   if (!pagination) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid pagination' })
@@ -58,20 +57,15 @@ export default defineEventHandler(async (event) => {
   if (tag) filters.tags = { slug: { $eq: tag } }
   if (validSearch && !contentSearch) filters.title = { $containsi: validSearch }
 
-  const headers: Record<string, string> = {}
-  if (config.strapiApiToken) {
-    headers['Authorization'] = `Bearer ${config.strapiApiToken}`
-  }
-
   async function fetchArticles(params: Record<string, unknown>): Promise<StrapiPaginatedResponse<RawStrapiArticle[]>> {
     const queryString = qs.stringify({ populate: POPULATE, locale, ...params }, { skipNulls: true })
-    return $fetch<StrapiPaginatedResponse<RawStrapiArticle[]>>(`${config.public.strapiUrl}/api/articles?${queryString}`, { headers })
+    return strapiFetch<StrapiPaginatedResponse<RawStrapiArticle[]>>(`/api/articles?${queryString}`)
   }
 
   async function fetchRanked(): Promise<StrapiPaginatedResponse<RawStrapiArticle[]> | null> {
     let ranking: RankingPage
     try {
-      ranking = await $fetch<RankingPage>(`${config.public.strapiUrl}/api/fediverse/articles/ranking`, {
+      ranking = await $fetch<RankingPage>(strapiUrl('/api/fediverse/articles/ranking'), {
         query: { page, pageSize, locale, category, tag, search: validSearch },
         timeout: RANKING_TIMEOUT_MS,
       })
@@ -100,7 +94,7 @@ export default defineEventHandler(async (event) => {
 
   async function fetchStats(ids: string[]): Promise<BatchStats | null> {
     try {
-      return await $fetch<BatchStats>(`${config.public.strapiUrl}/api/fediverse/articles/stats`, {
+      return await $fetch<BatchStats>(strapiUrl('/api/fediverse/articles/stats'), {
         query: { documentIds: ids.join(',') },
         timeout: STATS_TIMEOUT_MS,
       })

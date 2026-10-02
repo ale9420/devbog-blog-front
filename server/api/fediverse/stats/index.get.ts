@@ -22,7 +22,6 @@ function parseIds(value: unknown): string[] {
 
 export default defineEventHandler(async (event): Promise<Record<string, FediverseStats>> => {
   const ids = parseIds(getQuery(event).documentIds)
-  const config = useRuntimeConfig()
 
   if (ids.length === 0 || ids.length > MAX_IDS || !ids.every(id => DOCUMENT_ID.test(id))) {
     throw createError({ statusCode: 400, message: `documentIds needs between 1 and ${MAX_IDS} valid ids` })
@@ -30,7 +29,7 @@ export default defineEventHandler(async (event): Promise<Record<string, Fedivers
 
   let response: UpstreamStats
   try {
-    response = await $fetch<UpstreamStats>(`${config.public.strapiUrl}/api/fediverse/articles/stats`, {
+    response = await $fetch<UpstreamStats>(strapiUrl('/api/fediverse/articles/stats'), {
       query: { documentIds: ids.join(',') },
       timeout: UPSTREAM_TIMEOUT_MS,
     })

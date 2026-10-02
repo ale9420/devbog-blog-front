@@ -5,7 +5,6 @@ import { articlePaths, publishedTranslations } from '~/helpers/translations';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
-  const strapiUrl = config.public.strapiUrl.replace(/\/$/, "");
   const siteUrl = config.public.siteUrl;
 
   setHeader(event, "Content-Type", "application/xml");
@@ -21,7 +20,7 @@ export default defineEventHandler(async (event) => {
         populate: { localizations: { fields: ['slug', 'locale', 'publishedAt'] } },
         sort: 'publishedAt:desc',
       });
-      return $fetch<{ data: RawStrapiArticle[] }>(`${strapiUrl}/api/articles?${params}`);
+      return $fetch<{ data: RawStrapiArticle[] }>(strapiUrl(`/api/articles?${params}`));
     }));
 
     const staticPages = [

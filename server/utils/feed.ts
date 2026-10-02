@@ -47,11 +47,6 @@ function channelDescription(locale: FeedLocale, category?: Category): string {
 }
 
 async function fetchFeedPosts({ locale, category }: FeedOptions): Promise<RawStrapiArticle[]> {
-  const config = useRuntimeConfig()
-  const headers: Record<string, string> = {}
-  if (config.strapiApiToken) {
-    headers['Authorization'] = `Bearer ${config.strapiApiToken}`
-  }
   const params = qs.stringify({
     pagination: { pageSize: FEED_SIZE },
     populate: ['cover', 'category', 'author'],
@@ -59,7 +54,7 @@ async function fetchFeedPosts({ locale, category }: FeedOptions): Promise<RawStr
     locale,
     ...(category ? { filters: { category: { slug: { $eq: category } } } } : {}),
   })
-  const response = await $fetch<{ data: RawStrapiArticle[] }>(`${config.public.strapiUrl}/api/articles?${params}`, { headers })
+  const response = await strapiFetch<{ data: RawStrapiArticle[] }>(`/api/articles?${params}`)
   return response.data || []
 }
 
@@ -93,7 +88,7 @@ export async function renderFeed(options: FeedOptions): Promise<string> {
         const coverUrl = post.cover?.url
           ? post.cover.url.startsWith('http')
             ? post.cover.url
-            : `${config.public.strapiUrl}${post.cover.url}`
+            : strapiUrl(post.cover.url)
           : ''
         const pubDate = post.publishedAt
           ? new Date(post.publishedAt).toUTCString()

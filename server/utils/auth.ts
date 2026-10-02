@@ -62,12 +62,8 @@ export function clearSessionCookie(event: H3Event): void {
   deleteCookie(event, SESSION_COOKIE, { httpOnly: true, secure: true, sameSite: 'lax', path: '/' })
 }
 
-export function strapiAuthUrl(event: H3Event, path: string): string {
-  return `${useRuntimeConfig(event).public.strapiUrl.replace(/\/$/, '')}${path}`
-}
-
-export function fetchStrapiMe(event: H3Event, jwt: string): Promise<StrapiAuthUser> {
-  return $fetch<StrapiAuthUser>(strapiAuthUrl(event, '/api/users/me'), {
+export function fetchStrapiMe(jwt: string): Promise<StrapiAuthUser> {
+  return $fetch<StrapiAuthUser>(strapiUrl('/api/users/me'), {
     query: { populate: 'role' },
     headers: { Authorization: `Bearer ${jwt}` },
   })

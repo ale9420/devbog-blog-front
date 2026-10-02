@@ -4,7 +4,6 @@ import { toGuestComment, toPublicComment } from '~/helpers/comments'
 
 export default defineEventHandler(async (event): Promise<Comment> => {
   assertSameOrigin(event)
-  const config = useRuntimeConfig()
   const relation = commentRelation(event)
   const body = await readBody<Record<string, unknown> | null>(event).catch(() => null)
   const comment = toGuestComment(body, `guest-${randomUUID()}`)
@@ -19,19 +18,11 @@ export default defineEventHandler(async (event): Promise<Comment> => {
   const locale = commentLocale(body?.locale)
   assertRateLimit(event, 'commentPerIp', clientIp(event))
 
-  const url = `${config.public.strapiUrl}/api/comments/${relation}`
-
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json'
-  }
-  if (config.strapiApiToken) {
-    headers['Authorization'] = `Bearer ${config.strapiApiToken}`
-  }
+  const url = `/api/comments/${relation}`
 
   try {
-    const response = await $fetch<Comment>(url, {
+    const response = await strapiFetch<Comment>(url, {
       method: 'POST',
-      headers,
       body: { ...comment, locale }
     })
     return toPublicComment(response)

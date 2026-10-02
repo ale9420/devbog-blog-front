@@ -11,7 +11,7 @@ export default defineEventHandler(async (event): Promise<AuthUserResponse> => {
 
   let jwt: string
   try {
-    const response = await $fetch<{ jwt: string, user: StrapiAuthUser }>(strapiAuthUrl(event, '/api/auth/local'), {
+    const response = await $fetch<{ jwt: string, user: StrapiAuthUser }>(strapiUrl('/api/auth/local'), {
       method: 'POST',
       body: { identifier, password },
     })
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event): Promise<AuthUserResponse> => {
   }
 
   try {
-    const user = await fetchStrapiMe(event, jwt)
+    const user = await fetchStrapiMe(jwt)
     setSessionCookie(event, jwt)
     return { user: toPublicUser(user) }
   } catch (error: unknown) {

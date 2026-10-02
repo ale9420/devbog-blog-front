@@ -14,6 +14,7 @@ const mock = await startMockStrapi()
 const umami = await startMockUmami()
 process.env.NUXT_PUBLIC_STRAPI_URL = mock.url
 process.env.NUXT_SMTP_PORT = '1'
+process.env.NUXT_STRAPI_API_TOKEN = 'test-api-token'
 process.env.NUXT_PUBLIC_SITE_URL = SITE_URL
 process.env.NUXT_UMAMI_URL = umami.url
 process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID = 'site-1'
@@ -1247,5 +1248,31 @@ describe('/api/posts pagination', () => {
       await expect($fetch('/api/posts', { query })).rejects.toMatchObject({ response: { status: 400 } })
     }
     expect(articleRequests()).toEqual([])
+  })
+})
+
+describe('Strapi API token', () => {
+  const API_TOKEN = 'Bearer test-api-token'
+
+  it('sends the API token on content, comment and newsletter calls', async () => {
+    await $fetch('/api/posts')
+    await $fetch('/api/tags')
+    await $fetch('/api/comments/flat', { query: { relation: 'api::article.article:doc-vue' } })
+    await $fetch('/api/newsletter/confirm', { query: { token: 'confirmation-token-unknown-0002' } }).catch(() => null)
+    const paths = ['/api/articles', '/api/tags', '/api/comments/api::article.article:doc-vue/flat', '/api/subscribers']
+    for (const path of paths) {
+      const request = mock.requests.find((recorded) => recorded.path === path)
+      expect(request, path).toBeDefined()
+      expect(request?.authorization, path).toBe(API_TOKEN)
+    }
+  })
+
+  it('keeps the public fediverse endpoints and the sitemap anonymous', async () => {
+    await $fetch('/api/fediverse/stats', { query: { documentIds: 'doc-vue' } }).catch(() => null)
+    await $fetch('/api/posts', { query: { sort: 'fediverse' } }).catch(() => null)
+    await fetch('/sitemap.xml')
+    const anonymous = mock.requests.filter((request) => request.path.startsWith('/api/fediverse/') || request.query.fields !== undefined)
+    expect(anonymous.length).toBeGreaterThan(0)
+    expect(anonymous.every((request) => request.authorization === undefined)).toBe(true)
   })
 })
