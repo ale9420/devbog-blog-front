@@ -1,0 +1,106 @@
+# Server API
+
+Every route under `server/api/` and `server/routes/`: what it takes, what it returns and how it fails. Inputs are validated by the zod schemas in `server/schemas/` (or the checks named below); response types live in `app/interfaces/`. Who may call each route and how it is protected is in [security.md](security.md).
+
+Conventions:
+
+- **Errors** are Nitro errors: `{ statusCode, statusMessage, message, data? }`. Auth routes put a machine-readable code in `statusMessage` and `data.code` (see [Auth error codes](#auth-error-codes)); the client translates it.
+- **Locales** are `en` and `es`. An unknown locale is a `400`; an empty one counts as absent.
+- **502** means Strapi failed or rejected the call; the message carries Strapi's when it has one.
+- **429** comes with `Retry-After` (seconds).
+
+## Content
+
+| Route | Query | Returns | Cache | Errors |
+| --- | --- | --- | --- | --- |
+| `GET /api/posts` | `page` (≥ 1, default 1), `pageSize` (1–50, default 10), `locale`, `category`, `tag` (slugs), `search` (≤ 200 chars; used from 3), `sort` (`recent` · `oldest` · `fediverse`, unknown → `recent`), `content` (`1`/`true`: search the body and return a `snippet`) | `StrapiPaginatedResponse<RawStrapiArticle[]>` | 5 min | 400 bad query |
+| `GET /api/posts/:slug` | `locale` | `RawStrapiArticle` | 5 min | 400, 404 not found, 502 |
+| `GET /api/search` | `q` (≤ 200; under 3 chars returns `[]`), `locale`, `content` | `SearchPostResult[]` (at most 10) | 1 min | 400; Strapi errors return `[]` |
+| `GET /api/categories` | `locale` (default `en`) | `CategoryCount[]` | 10 min | 400 |
+| `GET /api/tags` | `locale` (default `en`) | `TagCount[]` | 10 min | 400 |
+| `GET /api/reading-path` | `category` (required, a known category), `locale` | `ReadingPath` (`editorial` is false when Strapi has no `pathOrder` yet) | 5 min | 400 unknown category, 502 |
+| `GET /api/about` | `locale` | `StrapiAbout` | 5 min | 400, 404, 502 |
+
+Types: `app/interfaces/strapi-post.ts` (`RawStrapiArticle`, `SearchPostResult`, `TagCount`), `strapi-response.ts`, `design.ts` (`CategoryCount`), `blog.ts` (`ReadingPath`), `strapi-about.ts`.
+
+## Comments
+
+`relation` is required on every comment route and must be `api::article.article:<documentId or slug>`, or the answer is `400`.
+
+| Route | Input | Returns | Errors |
+| --- | --- | --- | --- |
+| `GET /api/comments` | Query: `relation`, `locale`, `page`, `pageSize` (≤ 50), `sort` (`field:asc` / `field:desc`) | `Comment[]` as a tree (`children`) | 400, Strapi's status |
+| `GET /api/comments/flat` | Same query | `CommentsResponse` (`data` flat, with `threadOf`) | 400, Strapi's status |
+| `POST /api/comments` | Query: `relation`. Body: `author.name` (≤ 100), `author.email` (≤ 254), `author.avatar` (http(s), optional, dropped if invalid), `content` (≤ 5000), `threadOf` (positive integer, optional), `locale` | `Comment` | 400 invalid body or locale, 403 other origin, 429 (10 per IP / 10 min), Strapi's status |
+
+Every comment response hides `PENDING` and `REJECTED` comments and never includes the author's email. The author id of a posted comment is set by the server (`guest-<uuid>`). Types: `app/interfaces/comment.ts`.
+
+## Fediverse
+
+| Route | Input | Returns | Cache | Errors |
+| --- | --- | --- | --- | --- |
+| `GET /api/fediverse/stats` | Query: `documentIds`, comma-separated or repeated, 1–50 ids (`[\w-]+`) | `Record<documentId, FediverseStats>` (likes, boosts) | 1 min | 400, 502 |
+| `GET /api/fediverse/stats/:documentId` | — | `FediverseStats` | 1 min | 400, 404 not federated, 502 |
+
+These call Strapi anonymously. Type: `app/interfaces/fediverse.ts`.
+
+## Newsletter
+
+| Route | Input | Returns | Errors |
+| --- | --- | --- | --- |
+| `POST /api/newsletter/subscribe` | Body: `email` (≤ 254), `locale` (`es` or English for anything else) | `SubscribeResponse` — the same for new and already confirmed addresses | 400 `Email is required` / `Invalid email format`, 403 other origin, 429 (10 per IP and 3 per email / hour), 500 |
+| `GET /api/newsletter/confirm` | Query: `token` | `ConfirmResponse`; `alreadyConfirmed: true` when the link is opened again | 400 missing token, 404 unknown or malformed token, 500 |
+| `POST /api/newsletter/unsubscribe` | `token` in the body (unsubscribe page) or the query (RFC 8058 one-click) | `{ success: true }`, also for unknown or used tokens | 400 malformed token, 502 |
+
+Every newsletter response is `private, no-store`. Types: `app/interfaces/newsletter.ts`.
+
+## Account
+
+All account routes answer `private, no-store`. The session is the `bd_session` cookie set by sign-in.
+
+| Route | Body | Returns | Errors |
+| --- | --- | --- | --- |
+| `POST /api/auth/login` | `identifier` (username or email), `password` | `AuthUserResponse`; sets the session cookie | `invalidInput`, `invalidCredentials`, `emailNotConfirmed`, `tooManyRequests`, `forbiddenOrigin` |
+| `POST /api/auth/register` | `username`, `email`, `password` (rules in `app/helpers/auth.ts`), `acceptPrivacy: true` | `201` + `AuthUserResponse` (no session until the email is confirmed) | `invalidInput`, `emailTaken`, `tooManyRequests`, `forbiddenOrigin` |
+| `POST /api/auth/resend-confirmation` | `email` | `{ ok: true }`, whether or not the account exists | `invalidInput`, `tooManyRequests`, `forbiddenOrigin` |
+| `POST /api/auth/forgot-password` | `email` | `{ ok: true }`, whether or not the account exists | `invalidInput`, `tooManyRequests`, `forbiddenOrigin` |
+| `POST /api/auth/reset-password` | `code` (from the email), `password`, `passwordConfirmation` | `{ ok: true }` | `invalidInput`, `invalidCode`, `forbiddenOrigin` |
+| `POST /api/auth/logout` | — | `{ ok: true }`; clears the cookie | `forbiddenOrigin` |
+| `GET /api/auth/me` | — | `AuthUserResponse`; `user: null` without a valid session (and clears an expired cookie) | Other Strapi failures, usually `unknown` |
+| `DELETE /api/auth/me` | `username` (must be the signed-in user), `password` | `{ ok: true }`; deletes the Strapi user and clears the cookie | `unauthorized`, `invalidInput` (also for another username), `wrongPassword`, `forbiddenOrigin` |
+
+Types: `app/interfaces/auth.ts`.
+
+### Auth error codes
+
+| Code | Status | Meaning |
+| --- | --- | --- |
+| `invalidInput` | 400 | The body does not match the schema |
+| `invalidCredentials` | 400 | Wrong identifier or password |
+| `emailNotConfirmed` | 400 | The account exists but its email is not confirmed |
+| `invalidCode` | 400 | Expired or unknown reset code |
+| `wrongPassword` | 400 | Password check failed when deleting the account |
+| `unauthorized` | 401 | No valid session |
+| `forbiddenOrigin` | 403 | Missing `Origin` header or from another site |
+| `emailTaken` | 409 | Username or email already registered |
+| `tooManyRequests` | 429 | Strapi's rate limit |
+| `unknown` | 502 | Any other Strapi failure |
+
+## Drafts (editors)
+
+| Route | Query | Returns | Errors |
+| --- | --- | --- | --- |
+| `GET /api/drafts` | `locale` (optional) | `DraftListResponse`, newest edit first | 404 for anyone who is not an editor |
+| `GET /api/drafts/:documentId` | `locale` | `DraftArticleResponse`: the draft plus its published version, if any | 404 when missing or not an editor |
+
+They use the editor's own JWT, never the API token, and answer `private, no-store`. Types: `app/interfaces/draft.ts`.
+
+## Routes outside `/api`
+
+| Route | Returns |
+| --- | --- |
+| `GET /feed.xml`, `/es/feed.xml` | RSS 2.0 of the latest articles in each language |
+| `GET /feed/:category.xml`, `/es/feed/:category.xml` | RSS of one category; `404` for an unknown one |
+| `GET /sitemap.xml` | Every page and article with `hreflang` alternates |
+| `GET /robots.txt` | Crawl rules and the sitemap URL |
+| `/bd.js`, `/api/bd` | Umami tracker and collect endpoint, proxied by `server/middleware/umami.ts` when `NUXT_UMAMI_URL` is set |
