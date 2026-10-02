@@ -66,7 +66,7 @@ test('lists exactly the cookies and browser keys the site uses', async ({ page }
   await page.getByRole('button', { name: 'Got it' }).click()
   await page.getByRole('group', { name: 'Color theme' }).getByRole('button', { name: 'Night' }).click()
   await page.goto('/blog/understanding-vue-composables', { waitUntil: 'networkidle' })
-  await page.locator('.bd-prose').evaluate((element) => element.scrollIntoView({ block: 'end' }))
+  await page.locator('.bd-prose').evaluate(element => element.scrollIntoView({ block: 'end' }))
   await expect.poll(() => page.evaluate(() => localStorage.getItem('bd-read-articles'))).not.toBeNull()
 
   const stored = await page.evaluate(() => [...Object.keys(localStorage), ...Object.keys(sessionStorage)])

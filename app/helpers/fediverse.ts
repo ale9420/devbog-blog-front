@@ -14,8 +14,7 @@ export function normalizeInstance(input: string): InstanceResult {
   let hostname: string
   try {
     hostname = new URL(`https://${value}`).hostname
-  }
-  catch {
+  } catch {
     return { error: 'invalid' }
   }
 

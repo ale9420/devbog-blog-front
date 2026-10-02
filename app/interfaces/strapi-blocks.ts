@@ -23,16 +23,16 @@ export interface StrapiQuote {
 
 export type StrapiImageCreditKind = 'photo' | 'illustration' | 'diagram' | 'screenshot'
 
-export type StrapiImageLicense =
-  | 'own-work'
-  | 'cc0'
-  | 'public-domain'
-  | 'cc-by-4.0'
-  | 'cc-by-sa-4.0'
-  | 'cc-by-nc-4.0'
-  | 'unsplash'
-  | 'permission'
-  | 'other'
+export type StrapiImageLicense
+  = | 'own-work'
+    | 'cc0'
+    | 'public-domain'
+    | 'cc-by-4.0'
+    | 'cc-by-sa-4.0'
+    | 'cc-by-nc-4.0'
+    | 'unsplash'
+    | 'permission'
+    | 'other'
 
 export interface StrapiImageCredit {
   id?: number
@@ -198,15 +198,15 @@ export interface StrapiContact {
   socials?: StrapiContactLink[]
 }
 
-export type StrapiBlock =
-  | StrapiRichText
-  | StrapiQuote
-  | StrapiMedia
-  | StrapiSlider
-  | StrapiProfile
-  | StrapiStatement
-  | StrapiTopics
-  | StrapiProjects
-  | StrapiPrinciples
-  | StrapiOpenSource
-  | StrapiContact
+export type StrapiBlock
+  = | StrapiRichText
+    | StrapiQuote
+    | StrapiMedia
+    | StrapiSlider
+    | StrapiProfile
+    | StrapiStatement
+    | StrapiTopics
+    | StrapiProjects
+    | StrapiPrinciples
+    | StrapiOpenSource
+    | StrapiContact

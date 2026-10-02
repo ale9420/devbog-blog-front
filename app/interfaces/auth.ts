@@ -11,17 +11,17 @@ export interface AuthUserResponse {
   user: AuthUser | null
 }
 
-export type AuthErrorCode =
-  | 'invalidCredentials'
-  | 'emailNotConfirmed'
-  | 'emailTaken'
-  | 'tooManyRequests'
-  | 'invalidCode'
-  | 'wrongPassword'
-  | 'invalidInput'
-  | 'unauthorized'
-  | 'forbiddenOrigin'
-  | 'unknown'
+export type AuthErrorCode
+  = | 'invalidCredentials'
+    | 'emailNotConfirmed'
+    | 'emailTaken'
+    | 'tooManyRequests'
+    | 'invalidCode'
+    | 'wrongPassword'
+    | 'invalidInput'
+    | 'unauthorized'
+    | 'forbiddenOrigin'
+    | 'unknown'
 
 export type AuthNotice = 'signed-out' | 'account-deleted' | 'password-reset'
 

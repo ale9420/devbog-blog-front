@@ -15,5 +15,5 @@ useMermaid(root)
 </script>
 
 <template>
-  <div ref="root" v-html="renderMarkdown(block.body, citations)"/>
+  <div ref="root" v-html="renderMarkdown(block.body, citations)" />
 </template>

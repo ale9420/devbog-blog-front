@@ -23,7 +23,7 @@ export function useCodeBlockCopy(target: Ref<HTMLElement | null>): void {
     if (!button || !code) return
 
     const clone = code.cloneNode(true) as HTMLElement
-    clone.querySelectorAll('.bd-prompt').forEach((prompt) => prompt.remove())
+    clone.querySelectorAll('.bd-prompt').forEach(prompt => prompt.remove())
 
     try {
       await navigator.clipboard.writeText(clone.textContent ?? '')

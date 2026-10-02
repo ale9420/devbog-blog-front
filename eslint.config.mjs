@@ -5,6 +5,9 @@ export default withNuxt(
     files: ['**/*.ts', '**/*.vue', '**/*.js', '**/*.mjs'],
     rules: {
       'no-console': ['error', { allow: ['warn', 'error'] }],
+      'vue/max-attributes-per-line': 'off',
+      'vue/singleline-html-element-content-newline': 'off',
+      'vue/multiline-html-element-content-newline': 'off',
     },
   },
   {

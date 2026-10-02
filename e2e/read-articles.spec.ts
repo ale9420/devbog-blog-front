@@ -11,7 +11,7 @@ test('marks an article as read after reading it and keeps it in the browser', as
   await expect(card.locator('.bd-read-mark')).toHaveCount(0)
 
   await page.goto('/blog/understanding-vue-composables', { waitUntil: 'networkidle' })
-  await page.locator('.bd-prose').evaluate((element) => element.scrollIntoView({ block: 'end' }))
+  await page.locator('.bd-prose').evaluate(element => element.scrollIntoView({ block: 'end' }))
   await expect.poll(() => page.evaluate(() => localStorage.getItem('bd-read-articles'))).toBe('["doc-vue"]')
 
   await page.goto('/blog', { waitUntil: 'networkidle' })
@@ -46,7 +46,7 @@ test('keeps the history out of every request', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('bd-read-articles', '["doc-linux"]'))
   await page.goto('/blog', { waitUntil: 'networkidle' })
   await page.goto('/blog/understanding-vue-composables', { waitUntil: 'networkidle' })
-  await page.locator('.bd-prose').evaluate((element) => element.scrollIntoView({ block: 'end' }))
+  await page.locator('.bd-prose').evaluate(element => element.scrollIntoView({ block: 'end' }))
   await expect.poll(() => page.evaluate(() => localStorage.getItem('bd-read-articles'))).toBe('["doc-linux","doc-vue"]')
   expect(leaks).toEqual([])
 })

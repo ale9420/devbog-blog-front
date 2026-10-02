@@ -11,7 +11,7 @@ export default defineEventHandler(async (event): Promise<Comment> => {
   if (!comment) {
     throw createError({
       statusCode: 400,
-      message: 'Content, author name and a valid email are required'
+      message: 'Content, author name and a valid email are required',
     })
   }
 
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event): Promise<Comment> => {
   try {
     const response = await strapiFetch<Comment>(url, {
       method: 'POST',
-      body: { ...comment, locale }
+      body: { ...comment, locale },
     })
     return toPublicComment(response)
   } catch (error: unknown) {

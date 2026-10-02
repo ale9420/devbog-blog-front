@@ -1,30 +1,30 @@
 <script setup lang="ts">
-import type { BlogFilters, BlogSort, BlogView, Category, Locale, PostListItem, TagCount } from "~/interfaces";
-import { BLOG_SORTS, blogPageSize, blogQuery, hasActiveFilters, parseBlogQuery, parseSort, searchTerm } from "~/helpers/blog";
-import { isCategory } from "~/helpers/categories";
-import { feedPath } from "~/helpers/feed";
-import { padCount } from "~/helpers/search";
-import { popularTags as pickPopularTags } from "~/helpers/tags";
+import type { BlogFilters, BlogSort, BlogView, Category, Locale, PostListItem, TagCount } from '~/interfaces'
+import { BLOG_SORTS, blogPageSize, blogQuery, hasActiveFilters, parseBlogQuery, parseSort, searchTerm } from '~/helpers/blog'
+import { isCategory } from '~/helpers/categories'
+import { feedPath } from '~/helpers/feed'
+import { padCount } from '~/helpers/search'
+import { popularTags as pickPopularTags } from '~/helpers/tags'
 
-const RECENT_SIZE = 4;
-const SEARCH_DEBOUNCE_MS = 300;
-const POPULAR_TAGS = 8;
-const VIEWS: BlogView[] = ["grid", "log"];
+const RECENT_SIZE = 4
+const SEARCH_DEBOUNCE_MS = 300
+const POPULAR_TAGS = 8
+const VIEWS: BlogView[] = ['grid', 'log']
 
-const { locale, t } = useI18n();
-const route = useRoute();
-const router = useRouter();
-const { fetchPosts, fetchCategories, fetchTags } = useStrapi();
-const { canonicalUrl } = useCanonicalUrl('/blog');
-const { siteUrl } = useSiteUrl();
-const config = useRuntimeConfig();
-const toPostCard = usePostCard();
+const { locale, t } = useI18n()
+const route = useRoute()
+const router = useRouter()
+const { fetchPosts, fetchCategories, fetchTags } = useStrapi()
+const { canonicalUrl } = useCanonicalUrl('/blog')
+const { siteUrl } = useSiteUrl()
+const config = useRuntimeConfig()
+const toPostCard = usePostCard()
 
-const filters = computed<BlogFilters>(() => parseBlogQuery(route.query));
-const currentLocale = computed<Locale>(() => locale.value as Locale);
-const view = computed<BlogView>(() => filters.value.view ?? "grid");
-const pageSize = computed<number>(() => blogPageSize(filters.value.view));
-const sort = computed<BlogSort>(() => filters.value.sort ?? "recent");
+const filters = computed<BlogFilters>(() => parseBlogQuery(route.query))
+const currentLocale = computed<Locale>(() => locale.value as Locale)
+const view = computed<BlogView>(() => filters.value.view ?? 'grid')
+const pageSize = computed<number>(() => blogPageSize(filters.value.view))
+const sort = computed<BlogSort>(() => filters.value.sort ?? 'recent')
 
 const { data: postsResult, status } = fetchPosts({
   page: computed(() => filters.value.page),
@@ -35,115 +35,115 @@ const { data: postsResult, status } = fetchPosts({
   search: computed(() => filters.value.search),
   sort: computed(() => filters.value.sort),
   content: computed(() => filters.value.content),
-});
-const { data: recentResult } = fetchPosts({ pageSize: RECENT_SIZE, locale: currentLocale });
-const { data: categories } = fetchCategories(locale.value as Locale);
-const { data: tags } = fetchTags(locale.value as Locale);
+})
+const { data: recentResult } = fetchPosts({ pageSize: RECENT_SIZE, locale: currentLocale })
+const { data: categories } = fetchCategories(locale.value as Locale)
+const { data: tags } = fetchTags(locale.value as Locale)
 
-const results = useSettledData(postsResult, status);
-const searchInput = ref<string>(filters.value.search ?? "");
+const results = useSettledData(postsResult, status)
+const searchInput = ref<string>(filters.value.search ?? '')
 
-const posts = computed<PostListItem[]>(() => results.value?.data ?? []);
-const totalPages = computed<number>(() => results.value?.pagination.pageCount ?? 1);
-const recentPosts = computed<PostListItem[]>(() => recentResult.value?.data ?? []);
-const total = computed<number>(() => recentResult.value?.pagination.total ?? 0);
+const posts = computed<PostListItem[]>(() => results.value?.data ?? [])
+const totalPages = computed<number>(() => results.value?.pagination.pageCount ?? 1)
+const recentPosts = computed<PostListItem[]>(() => recentResult.value?.data ?? [])
+const total = computed<number>(() => recentResult.value?.pagination.total ?? 0)
 const counts = computed<Partial<Record<Category, number>>>(() =>
   Object.fromEntries(
     (categories.value ?? [])
       .filter(category => isCategory(category.slug))
       .map(category => [category.slug, category.count]),
   ),
-);
-const popularTags = computed<TagCount[]>(() => pickPopularTags(tags.value ?? [], POPULAR_TAGS, filters.value.tag));
+)
+const popularTags = computed<TagCount[]>(() => pickPopularTags(tags.value ?? [], POPULAR_TAGS, filters.value.tag))
 const resultCount = computed<number | undefined>(() =>
   filters.value.search ? (results.value?.pagination.total ?? 0) : undefined,
-);
-const filtered = computed<boolean>(() => hasActiveFilters(filters.value));
-const federated = computed<boolean>(() => locale.value === config.public.fediverseLocale);
-const eyebrow = computed<string>(() => t("blog.eyebrow", { count: padCount(total.value) }, total.value));
+)
+const filtered = computed<boolean>(() => hasActiveFilters(filters.value))
+const federated = computed<boolean>(() => locale.value === config.public.fediverseLocale)
+const eyebrow = computed<string>(() => t('blog.eyebrow', { count: padCount(total.value) }, total.value))
 
 const applySearch = useDebounceFn(() => {
-  const search = searchTerm(searchInput.value);
-  if (search !== filters.value.search) navigate({ search, page: 1 }, true);
-}, SEARCH_DEBOUNCE_MS);
+  const search = searchTerm(searchInput.value)
+  if (search !== filters.value.search) navigate({ search, page: 1 }, true)
+}, SEARCH_DEBOUNCE_MS)
 
 function navigate(patch: Partial<BlogFilters>, replace = false): void {
-  const query = blogQuery({ ...filters.value, ...patch });
-  if (replace) router.replace({ query });
-  else router.push({ query });
+  const query = blogQuery({ ...filters.value, ...patch })
+  if (replace) router.replace({ query })
+  else router.push({ query })
 }
 
 function selectView(next: BlogView): void {
-  if (next === view.value) return;
-  navigate({ view: next === "log" ? "log" : undefined, page: 1 });
+  if (next === view.value) return
+  navigate({ view: next === 'log' ? 'log' : undefined, page: 1 })
 }
 
 function selectSort(event: Event): void {
-  const next = parseSort((event.target as HTMLSelectElement).value) ?? "recent";
-  if (next === sort.value) return;
-  navigate({ sort: next === "recent" ? undefined : next, page: 1 });
+  const next = parseSort((event.target as HTMLSelectElement).value) ?? 'recent'
+  if (next === sort.value) return
+  navigate({ sort: next === 'recent' ? undefined : next, page: 1 })
 }
 
 function toggleContent(enabled: boolean): void {
-  navigate({ content: enabled || undefined, page: 1 });
+  navigate({ content: enabled || undefined, page: 1 })
 }
 
 function selectCategory(category: Category | undefined): void {
-  navigate({ category, page: 1 });
+  navigate({ category, page: 1 })
 }
 
 function selectTag(tag: string | undefined): void {
-  navigate({ tag, page: 1 });
+  navigate({ tag, page: 1 })
 }
 
-function removeFilter(filter: "category" | "tag" | "search"): void {
-  if (filter === "search") searchInput.value = "";
-  navigate({ [filter]: undefined, page: 1 });
+function removeFilter(filter: 'category' | 'tag' | 'search'): void {
+  if (filter === 'search') searchInput.value = ''
+  navigate({ [filter]: undefined, page: 1 })
 }
 
 function clearFilters(): void {
-  searchInput.value = "";
-  navigate({ category: undefined, tag: undefined, search: undefined, page: 1 });
+  searchInput.value = ''
+  navigate({ category: undefined, tag: undefined, search: undefined, page: 1 })
 }
 
-watch(searchInput, () => applySearch());
+watch(searchInput, () => applySearch())
 
 watch(() => filters.value.search, (search) => {
-  if (search !== searchTerm(searchInput.value)) searchInput.value = search ?? "";
-});
+  if (search !== searchTerm(searchInput.value)) searchInput.value = search ?? ''
+})
 
 watch(() => filters.value.page, () => {
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  document.getElementById("posts")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
-});
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  document.getElementById('posts')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' })
+})
 
 useHead(() => ({
   link: filters.value.category
     ? [{
-        rel: "alternate",
-        type: "application/rss+xml",
-        title: t("blog.feeds.title", { category: t(`bd.categories.${filters.value.category}`) }),
+        rel: 'alternate',
+        type: 'application/rss+xml',
+        title: t('blog.feeds.title', { category: t(`bd.categories.${filters.value.category}`) }),
         href: `${siteUrl.value}${feedPath(locale.value, filters.value.category)}`,
       }]
     : [],
-}));
+}))
 
 useSeoMeta({
-  title: "Blog - BogDev",
-  ogTitle: "Blog - BogDev",
+  title: 'Blog - BogDev',
+  ogTitle: 'Blog - BogDev',
   description:
-    "Browse all articles on AI, software development, Linux, DevOps, and more. Find tutorials, tips, and insights from my tech journey.",
+    'Browse all articles on AI, software development, Linux, DevOps, and more. Find tutorials, tips, and insights from my tech journey.',
   ogDescription:
-    "Browse all articles on AI, software development, Linux, DevOps, and more. Find tutorials, tips, and insights from my tech journey.",
+    'Browse all articles on AI, software development, Linux, DevOps, and more. Find tutorials, tips, and insights from my tech journey.',
   ogUrl: () => canonicalUrl.value,
   ogImage: () => `${siteUrl.value}/og-image.png`,
   ogImageAlt: 'BogDev — Blog',
-  twitterCard: "summary_large_image",
+  twitterCard: 'summary_large_image',
   twitterImage: () => `${siteUrl.value}/og-image.png`,
-  twitterTitle: "Blog - BogDev",
+  twitterTitle: 'Blog - BogDev',
   twitterDescription:
-    "Browse all articles on AI, software development, Linux, DevOps, and more.",
-});
+    'Browse all articles on AI, software development, Linux, DevOps, and more.',
+})
 </script>
 
 <template>

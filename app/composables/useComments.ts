@@ -28,12 +28,12 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
   async function fetchComments() {
     pending.value = true
     error.value = null
-    
+
     try {
       const response = await $fetch<CommentsResponse>('/api/comments/flat', {
-        query: { relation: relation.value, locale: locale.value }
+        query: { relation: relation.value, locale: locale.value },
       })
-      
+
       allComments.value = response.data || []
       loaded.value = true
     } catch (err: unknown) {
@@ -48,38 +48,38 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
     submitting.value = true
     submitError.value = null
     submitSuccess.value = false
-    
+
     const cleanData: GuestCommentInput = {
       author: {
         name: data.author.name.trim(),
-        email: data.author.email.trim()
+        email: data.author.email.trim(),
       },
       content: data.content.trim(),
-      locale: locale.value
+      locale: locale.value,
     }
-    
+
     if (data.author.avatar && data.author.avatar.trim()) {
       cleanData.author.avatar = data.author.avatar.trim()
     }
-    
+
     if (data.threadOf) {
       cleanData.threadOf = data.threadOf
     }
-    
+
     try {
       const response = await $fetch('/api/comments', {
         method: 'POST',
         query: { relation: relation.value },
-        body: cleanData
+        body: cleanData,
       })
-      
+
       submitSuccess.value = true
       await fetchComments()
-      
+
       setTimeout(() => {
         submitSuccess.value = false
       }, 3000)
-      
+
       return response
     } catch (err: unknown) {
       const e = asApiError(err)
@@ -113,6 +113,6 @@ export function useComments(articleSlug: string, articleDocumentId?: string) {
     submitError,
     submitSuccess,
     fetchComments,
-    postComment
+    postComment,
   }
 }

@@ -100,7 +100,7 @@ export interface SearchPostResult {
   slug: string
   description: string | null
   publishedAt: string | null
-  category: { name: string | null; slug: string | null } | null
+  category: { name: string | null, slug: string | null } | null
   matchedIn: SearchMatch
   snippet: string
 }

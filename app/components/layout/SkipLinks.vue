@@ -15,22 +15,22 @@ function skipToSearch() {
 </script>
 
 <template>
-  <div 
+  <div
     class="fixed top-0 left-0 right-0 z-[9999] skip-links-container"
     role="navigation"
     :aria-label="t('common.ariaSkipLinks')"
   >
-    <div 
+    <div
       class="bg-[var(--primary)] text-[var(--on-primary)] px-4 py-2 flex flex-wrap gap-4"
     >
-      <a 
+      <a
         href="#main-content"
         class="text-sm font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-white rounded px-2 py-1"
         @click.prevent="skipToContent"
       >
         {{ t('common.skipToMain') }}
       </a>
-      <a 
+      <a
         href="#search"
         class="text-sm font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-white rounded px-2 py-1"
         @click.prevent="skipToSearch"

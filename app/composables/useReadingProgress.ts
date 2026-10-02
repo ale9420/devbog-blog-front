@@ -31,7 +31,7 @@ export function useReadingProgress(enabled: Ref<boolean>): Ref<number> {
   }
 
   onMounted(() => {
-    watch(enabled, (on) => (on ? start() : stop()), { immediate: true })
+    watch(enabled, on => (on ? start() : stop()), { immediate: true })
   })
 
   onBeforeUnmount(stop)

@@ -1,12 +1,12 @@
-export type StrapiReferenceType =
-  | 'journal'
-  | 'conference'
-  | 'preprint'
-  | 'book'
-  | 'chapter'
-  | 'web'
-  | 'software'
-  | 'docs'
+export type StrapiReferenceType
+  = | 'journal'
+    | 'conference'
+    | 'preprint'
+    | 'book'
+    | 'chapter'
+    | 'web'
+    | 'software'
+    | 'docs'
 
 export interface StrapiReference {
   id?: number

@@ -29,12 +29,12 @@ export default defineEventHandler(async (event): Promise<CategoryCount[]> => {
   }>(`/api/categories?${params}`)
 
   return response.data
-    .map((category) => ({
+    .map(category => ({
       id: category.id,
       slug: category.slug ?? null,
       name: category.name,
       count: category.articles?.length || 0,
     }))
-    .filter((category) => isCategory(category.slug) || category.count > 0)
+    .filter(category => isCategory(category.slug) || category.count > 0)
     .sort((a, b) => categoryOrder(a.slug) - categoryOrder(b.slug) || b.count - a.count)
 })

@@ -10,7 +10,7 @@ async function parseFeed(page: import('@playwright/test').Page, path: string) {
     return {
       error: doc.querySelector('parsererror')?.textContent ?? null,
       title: doc.querySelector('channel > title')?.textContent,
-      items: Array.from(doc.querySelectorAll('item > title')).map((node) => node.textContent),
+      items: Array.from(doc.querySelectorAll('item > title')).map(node => node.textContent),
     }
   }, xml)
 }

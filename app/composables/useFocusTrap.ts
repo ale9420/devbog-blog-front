@@ -1,5 +1,5 @@
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+const FOCUSABLE_SELECTOR
+  = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
 export function useFocusTrap(
   container: Ref<HTMLElement | undefined>,
@@ -12,11 +12,11 @@ export function useFocusTrap(
     if (!container.value) return []
     return Array.from(
       container.value.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-    ).filter((el) => el.offsetParent !== null || el === document.activeElement)
+    ).filter(el => el.offsetParent !== null || el === document.activeElement)
   }
 
   function handleKeydown(e: KeyboardEvent) {
-    if (e.key !== "Tab" || !container.value) return
+    if (e.key !== 'Tab' || !container.value) return
 
     const focusable = getFocusableElements()
     if (focusable.length === 0) return
@@ -43,10 +43,10 @@ export function useFocusTrap(
   watch(active, (isActive) => {
     if (isActive && !isTrapActive) {
       previouslyFocused = document.activeElement as HTMLElement | null
-      document.addEventListener("keydown", handleKeydown)
+      document.addEventListener('keydown', handleKeydown)
       isTrapActive = true
     } else if (!isActive && isTrapActive) {
-      document.removeEventListener("keydown", handleKeydown)
+      document.removeEventListener('keydown', handleKeydown)
       isTrapActive = false
       previouslyFocused?.focus?.()
       previouslyFocused = null
@@ -55,7 +55,7 @@ export function useFocusTrap(
 
   onUnmounted(() => {
     if (isTrapActive) {
-      document.removeEventListener("keydown", handleKeydown)
+      document.removeEventListener('keydown', handleKeydown)
     }
   })
 }

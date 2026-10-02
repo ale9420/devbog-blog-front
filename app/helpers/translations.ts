@@ -4,8 +4,8 @@ import { isLocale, localizedPath } from '~/helpers/locale'
 
 export function publishedTranslations(localizations: StrapiLocalization[] | null | undefined): PostTranslation[] {
   return (localizations ?? [])
-    .filter((localization) => Boolean(localization.publishedAt) && Boolean(localization.slug) && isLocale(localization.locale))
-    .map((localization) => ({ locale: localization.locale as Locale, slug: localization.slug }))
+    .filter(localization => Boolean(localization.publishedAt) && Boolean(localization.slug) && isLocale(localization.locale))
+    .map(localization => ({ locale: localization.locale as Locale, slug: localization.slug }))
 }
 
 export function articlePath(slug: string, locale: Locale): string {

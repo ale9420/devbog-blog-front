@@ -157,7 +157,7 @@ const content = {
     },
     contact: {
       eyebrow: 'Find me online',
-      title: "Let's talk.",
+      title: 'Let\'s talk.',
       fediverseLabel: 'The blog on the fediverse',
       follow: 'How to follow it',
       coffee: 'Buy me a coffee',

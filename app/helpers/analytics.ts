@@ -9,8 +9,8 @@ export interface UmamiScriptConfig {
 }
 
 export type UmamiScriptAttributes = {
-  src: string
-  defer: boolean
+  'src': string
+  'defer': boolean
   'data-website-id': string
   'data-domains': string
 }
@@ -20,8 +20,8 @@ export const OUTBOUND_LINK_EVENT = 'outbound-link'
 export function umamiScriptAttributes(config: UmamiScriptConfig): UmamiScriptAttributes | null {
   if (!config.websiteId) return null
   return {
-    src: config.scriptPath,
-    defer: true,
+    'src': config.scriptPath,
+    'defer': true,
     'data-website-id': config.websiteId,
     'data-domains': new URL(config.siteUrl).hostname,
   }

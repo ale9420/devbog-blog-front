@@ -121,8 +121,7 @@ export function formatApa(reference: StrapiReference): ApaSegment[] {
     segments.push({ kind, text: container })
     const tail = details ? `, ${withPeriod(details)}` : withPeriod(container).slice(container.length)
     if (tail) segments.push({ kind: 'text', text: tail })
-  }
-  else if (details) {
+  } else if (details) {
     segments.push({ kind: 'text', text: ` ${withPeriod(details)}` })
   }
   return segments

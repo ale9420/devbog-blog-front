@@ -6,6 +6,6 @@ export function commentRelation(event: H3Event): string {
   if (isCommentRelation(relation)) return relation
   throw createError({
     statusCode: 400,
-    message: 'A valid relation parameter is required'
+    message: 'A valid relation parameter is required',
   })
 }
