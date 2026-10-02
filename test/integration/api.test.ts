@@ -824,10 +824,17 @@ describe('/api/newsletter/subscribe', () => {
 describe('/api/newsletter/confirm', () => {
   it('confirms the subscriber, keeps an unsubscribe token and succeeds even if the welcome email fails', async () => {
     const result = await $fetch('/api/newsletter/confirm', { query: { token: 'confirmation-token-to-confirm-0001' } })
-    expect(result).toMatchObject({ success: true })
+    expect(result).toMatchObject({ success: true, alreadyConfirmed: false })
     const update = mock.requests.find((request) => request.method === 'PUT' && request.path === '/api/subscribers/sub-to-confirm')
-    expect(update?.body?.data).toMatchObject({ confirmed: true, confirmationToken: null })
+    expect(update?.body?.data).toMatchObject({ confirmed: true })
+    expect(update?.body?.data).not.toHaveProperty('confirmationToken')
     expect(update?.body?.data?.unsubscribeToken).toMatch(/^[\w-]{43}$/)
+  })
+
+  it('answers a reopened link as already confirmed without writing again', async () => {
+    const result = await $fetch('/api/newsletter/confirm', { query: { token: 'confirmation-token-to-confirm-0001' } })
+    expect(result).toMatchObject({ success: true, alreadyConfirmed: true })
+    expect(mock.requests.filter((request) => request.method !== 'GET')).toEqual([])
   })
 
   it('answers 404 for an unknown or malformed token', async () => {
