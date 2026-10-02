@@ -60,6 +60,7 @@ All variables are read when the server starts, so the same Docker image works in
 | `NUXT_SMTP_PASS` | SMTP password | Newsletter only |
 | `NUXT_NEWSLETTER_FROM` | Sender address for newsletter emails | Newsletter only |
 | `NUXT_PUBLIC_SITE_URL` | Public URL of your deployed site (default: `https://bogdev.com.co`) | Yes |
+| `NUXT_MEDIA_URL` | Host of the Strapi uploads, allowed in the images Content Security Policy (default: `https://resources.bogdev.com.co`) | No |
 | `NUXT_PUBLIC_UMAMI_WEBSITE_ID` | Umami website ID. Empty: no tracker is loaded | Analytics only |
 | `NUXT_UMAMI_URL` | Internal Umami URL the proxy forwards to (e.g. `http://<umami-service>:3000`). Empty: no proxy | Analytics only |
 | `NUXT_PUBLIC_UMAMI_SCRIPT_PATH` | Tracker path, must match Umami's `TRACKER_SCRIPT_NAME` and stay at the root (default: `/bd.js`) | No |

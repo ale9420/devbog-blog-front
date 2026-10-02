@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { $fetch, fetch, setup } from '@nuxt/test-utils/e2e'
 import type { RawStrapiArticle } from '~/interfaces/strapi-post'
@@ -5,6 +6,7 @@ import { Category } from '~/interfaces/design'
 import { startMockStrapi } from './mock-strapi'
 import { MOCK_TRACKER_SCRIPT, startMockUmami } from './mock-umami'
 import { resetCode, testUsers } from '../../e2e/fixtures/auth.mjs'
+import { inlineScripts } from '~/helpers/securityHeaders'
 
 const SITE_URL = 'https://bogdev.test'
 
@@ -1195,3 +1197,55 @@ function getNestedValue(obj: unknown, path: string[]): unknown {
   }
   return current
 }
+
+describe('security headers', () => {
+  const sha256 = (content: string) => `'sha256-${createHash('sha256').update(content).digest('base64')}'`
+  const scriptSources = (policy: string) => policy.split('; ').find((directive) => directive.startsWith('script-src '))?.split(' ').slice(1) ?? []
+
+  it('sends the fixed headers on pages and API routes', async () => {
+    for (const path of ['/', '/account/sign-in', '/api/tags']) {
+      const response = await fetch(path)
+      expect(response.headers.get('strict-transport-security')).toBe('max-age=31536000')
+      expect(response.headers.get('x-content-type-options')).toBe('nosniff')
+      expect(response.headers.get('x-frame-options')).toBe('DENY')
+      expect(response.headers.get('referrer-policy')).toBe('strict-origin-when-cross-origin')
+      expect(response.headers.get('cross-origin-opener-policy')).toBe('same-origin')
+    }
+  })
+
+  it('allows exactly the inline scripts of each page by hash, also when the page comes from the ISR cache', async () => {
+    for (const path of ['/', '/', '/blog', '/es/blog', '/account/sign-in', '/privacy']) {
+      const response = await fetch(path)
+      const policy = response.headers.get('content-security-policy') ?? ''
+      const html = await response.text()
+      const hashes = inlineScripts(html).map(sha256)
+      expect(hashes.length).toBeGreaterThan(0)
+      expect(scriptSources(policy).sort()).toEqual(["'self'", ...new Set(hashes)].sort())
+      expect(policy).not.toContain("'unsafe-inline' 'sha256")
+      expect(policy).toContain("frame-ancestors 'none'")
+    }
+  })
+
+  it('allows images from Strapi and the media host', async () => {
+    const policy = (await fetch('/blog')).headers.get('content-security-policy') ?? ''
+    const images = policy.split('; ').find((directive) => directive.startsWith('img-src ')) ?? ''
+    expect(images).toContain(new URL(mock.url).origin)
+    expect(images).toContain('https://resources.bogdev.com.co')
+  })
+})
+
+describe('/api/posts pagination', () => {
+  const articleRequests = () => mock.requests.filter((request) => request.method === 'GET' && request.path === '/api/articles')
+
+  it('caps the page size before asking Strapi', async () => {
+    await $fetch('/api/posts', { query: { pageSize: 10000 } })
+    expect((articleRequests().at(-1)?.query.pagination as { pageSize?: string })?.pageSize).toBe('50')
+  })
+
+  it('rejects a page or page size that is not a positive integer without calling Strapi', async () => {
+    for (const query of [{ page: 'abc' }, { page: '0' }, { pageSize: 'NaN' }, { pageSize: '-5' }]) {
+      await expect($fetch('/api/posts', { query })).rejects.toMatchObject({ response: { status: 400 } })
+    }
+    expect(articleRequests()).toEqual([])
+  })
+})

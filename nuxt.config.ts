@@ -1,5 +1,6 @@
 import { Locale } from "./app/interfaces/locale";
 import { themeInitScript } from "./app/helpers/theme";
+import { SECURITY_HEADERS } from "./app/helpers/securityHeaders";
 
 const privatePageHeaders = {
   "cache-control": "private, no-store",
@@ -30,6 +31,7 @@ export default defineNuxtConfig({
   //   take effect if a shared cache/CDN is introduced later. Do not add
   //   Vercel-only headers (CDN-Cache-Control / Vercel-CDN-Cache-Control).
   routeRules: {
+    "/**": { headers: SECURITY_HEADERS },
     "/": { isr: 300 },
     "/about": { isr: 3600 },
     "/blog": { isr: 300 },
@@ -136,6 +138,7 @@ export default defineNuxtConfig({
     smtpUser: "",
     smtpPass: "",
     newsletterFrom: "",
+    mediaUrl: "https://resources.bogdev.com.co",
     umamiUrl: "",
     umamiCollectPath: "/api/bd",
     public: {
