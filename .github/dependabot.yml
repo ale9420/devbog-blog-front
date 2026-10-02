@@ -1,0 +1,84 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: America/Bogota
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore(deps)
+      prefix-development: chore(deps-dev)
+    groups:
+      testing:
+        patterns:
+          - vitest
+          - "@vitest/*"
+          - "@playwright/test"
+          - "@nuxt/test-utils"
+          - "@vue/test-utils"
+          - happy-dom
+        update-types:
+          - minor
+          - patch
+      lint-and-types:
+        patterns:
+          - eslint
+          - "eslint-*"
+          - "@eslint/*"
+          - "@nuxt/eslint"
+          - typescript-eslint
+          - vue-tsc
+          - globals
+          - "@types/*"
+        update-types:
+          - minor
+          - patch
+      nuxt:
+        patterns:
+          - nuxt
+          - "@nuxt/*"
+          - "@nuxtjs/*"
+          - vue
+          - vue-router
+          - "@vue/*"
+          - "@vueuse/*"
+          - "@unhead/*"
+        update-types:
+          - minor
+          - patch
+      other:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: America/Bogota
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: America/Bogota
+    commit-message:
+      prefix: chore(docker)
