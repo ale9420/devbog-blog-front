@@ -10,10 +10,8 @@ const SITE_URL = 'https://bogdev.test'
 
 const mock = await startMockStrapi()
 const umami = await startMockUmami()
-process.env.STRAPI_URL = mock.url
 process.env.NUXT_PUBLIC_STRAPI_URL = mock.url
 process.env.NUXT_SMTP_PORT = '1'
-process.env.SITE_URL = SITE_URL
 process.env.NUXT_PUBLIC_SITE_URL = SITE_URL
 process.env.NUXT_UMAMI_URL = umami.url
 process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID = 'site-1'
