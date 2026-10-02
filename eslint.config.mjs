@@ -11,6 +11,12 @@ export default withNuxt(
     },
   },
   {
+    files: ['.claude/skills/**/scripts/*.mjs'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
     ignores: ['docs/**'],
   },
 )

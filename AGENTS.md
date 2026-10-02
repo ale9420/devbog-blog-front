@@ -34,6 +34,19 @@ npm run test:e2e          # Run Playwright e2e tests (e2e/, starts mock Strapi +
 npm run generate     # Generate static output
 ```
 
+## Agent Skills
+
+Project skills live in `.claude/skills/`; load the one that matches the task before starting:
+
+| Skill | Use it to |
+| --- | --- |
+| `server-route` | Add or change a route in `server/api` or `server/routes`, or any call to Strapi |
+| `strapi-block` | Render a new or changed Strapi dynamic-zone block |
+| `ui-component` | Build or change a component, page or styles |
+| `verify-change` | Run the checks and prove a change did not alter behaviour (scripts for computed styles, HTML and CSP) |
+| `ship-pr` | Branch, commit, open or rebase a PR, and cut a release |
+| `dependency-update` | Triage Dependabot, fix `npm audit` findings, upgrade a major |
+
 ## Commits and Pull Requests
 
 - Commit messages in English; PR titles and descriptions in Spanish
