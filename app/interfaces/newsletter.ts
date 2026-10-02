@@ -24,6 +24,7 @@ export interface SubscribeResponse {
 
 export interface ConfirmResponse {
   success: boolean;
+  alreadyConfirmed: boolean;
   message: string;
 }
 

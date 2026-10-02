@@ -383,8 +383,9 @@
     "successTitle": "Subscription Confirmed!",
     "successMessage": "Welcome to BogDev! You're now subscribed to receive our latest posts.",
     "errorTitle": "Confirmation Failed",
-    "alreadyConfirmed": "This subscription has already been confirmed.",
+    "alreadyConfirmed": "This subscription was already confirmed. Nothing else to do.",
     "invalidToken": "The confirmation link is invalid or has expired.",
+    "serverError": "We could not confirm your subscription right now. Try the link again in a few minutes.",
     "browseBlog": "Browse Blog",
     "goHome": "Go Home"
   },

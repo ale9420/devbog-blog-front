@@ -22,20 +22,24 @@ export default defineEventHandler(async (event): Promise<ConfirmResponse> => {
     });
   }
 
+  const language = newsletterLanguage(subscriber.language);
+
   if (subscriber.confirmed) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Subscription already confirmed",
-    });
+    return {
+      success: true,
+      alreadyConfirmed: true,
+      message:
+        language === "es"
+          ? "Esta suscripción ya estaba confirmada."
+          : "This subscription was already confirmed.",
+    };
   }
 
-  const language = newsletterLanguage(subscriber.language);
   const unsubscribeToken = subscriber.unsubscribeToken || newUnsubscribeToken();
 
   try {
     await updateSubscriber(subscriber.documentId, {
       confirmed: true,
-      confirmationToken: null,
       unsubscribeToken,
     });
   } catch (error: unknown) {
@@ -57,6 +61,7 @@ export default defineEventHandler(async (event): Promise<ConfirmResponse> => {
 
   return {
     success: true,
+    alreadyConfirmed: false,
     message:
       language === "es"
         ? "Suscripción confirmada. Revisa tu correo para más información."

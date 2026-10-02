@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import { asApiError } from '~/helpers/apiError'
+import type { ConfirmResponse } from '~/interfaces/newsletter'
 
 const { t } = useI18n();
 const route = useRoute();
 const token = route.query.token as string;
 
 const status = ref<"loading" | "success" | "error">("loading");
+const successMessage = ref("");
 const errorMessage = ref("");
-
-const errorCodes: Record<number, string> = {
-  400: "alreadyConfirmed",
-  404: "invalidToken",
-};
 
 async function confirmSubscription() {
   if (!token) {
@@ -21,16 +18,17 @@ async function confirmSubscription() {
   }
 
   try {
-    await $fetch("/api/newsletter/confirm", {
+    const response = await $fetch<ConfirmResponse>("/api/newsletter/confirm", {
       method: "GET",
       params: { token },
     });
+    successMessage.value = t(response.alreadyConfirmed ? "confirm.alreadyConfirmed" : "confirm.successMessage");
     status.value = "success";
   } catch (err) {
     const e = asApiError(err);
     status.value = "error";
     const statusCode = e.response?.status || e.statusCode;
-    errorMessage.value = t(`confirm.${errorCodes[statusCode ?? 0] || "invalidToken"}`);
+    errorMessage.value = t(statusCode === 404 ? "confirm.invalidToken" : "confirm.serverError");
   }
 }
 
@@ -67,7 +65,7 @@ useSeoMeta({
         <h1 class="font-display text-2xl font-semibold mb-2">
           {{ t("confirm.successTitle") }}
         </h1>
-        <p class="text-[var(--muted)] mb-6">{{ t("confirm.successMessage") }}</p>
+        <p class="text-[var(--muted)] mb-6">{{ successMessage }}</p>
         <BdButton href="/blog">
           {{ t("confirm.browseBlog") }}
         </BdButton>

@@ -383,8 +383,9 @@
     "successTitle": "¡Suscripción Confirmada!",
     "successMessage": "¡Bienvenido a BogDev! Ahora estás suscrito para recibir nuestros últimos artículos.",
     "errorTitle": "Confirmación Fallida",
-    "alreadyConfirmed": "Esta suscripción ya ha sido confirmada.",
+    "alreadyConfirmed": "Esta suscripción ya estaba confirmada. No tienes que hacer nada más.",
     "invalidToken": "El enlace de confirmación es inválido o ha expirado.",
+    "serverError": "No pudimos confirmar tu suscripción en este momento. Vuelve a abrir el enlace en unos minutos.",
     "browseBlog": "Explorar Blog",
     "goHome": "Ir al Inicio"
   },
