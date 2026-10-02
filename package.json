@@ -16,6 +16,7 @@
     "typecheck": "nuxi typecheck",
     "lint": "eslint .",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:integration": "vitest run -c vitest.config.integration.ts",
     "test:e2e": "playwright test"
   },
@@ -42,6 +43,7 @@
     "@types/node": "^22.20.5",
     "@types/qs": "^6.15.1",
     "@types/sanitize-html": "^2.16.1",
+    "@vitest/coverage-v8": "^5.0.2",
     "@vue/test-utils": "^2.5.1",
     "eslint": "^9.39.5",
     "eslint-plugin-vue": "^10.10.0",

@@ -29,3 +29,6 @@ test-results/
 
 # Playwright MCP
 .playwright-mcp/
+
+# Test coverage
+coverage/
