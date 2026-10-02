@@ -6,8 +6,8 @@ const ORIGIN = 'https://bogdev.com.co'
 describe('umamiScriptAttributes', () => {
   it('builds the tracker tag limited to the site host', () => {
     expect(umamiScriptAttributes({ websiteId: 'site-1', scriptPath: '/bd.js', siteUrl: 'https://bogdev.com.co/' })).toEqual({
-      src: '/bd.js',
-      defer: true,
+      'src': '/bd.js',
+      'defer': true,
       'data-website-id': 'site-1',
       'data-domains': 'bogdev.com.co',
     })

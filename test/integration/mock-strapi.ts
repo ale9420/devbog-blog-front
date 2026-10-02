@@ -9,7 +9,7 @@ export interface RecordedRequest {
   method: string
   path: string
   query: Record<string, unknown>
-  body?: { data?: Record<string, unknown>; locale?: unknown }
+  body?: { data?: Record<string, unknown>, locale?: unknown }
   rawBody?: Record<string, unknown>
   authorization?: string
 }
@@ -456,7 +456,7 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
         'doc-vue-es': 'Los composables comparten estado con la app.',
       }
       const data = articles
-        .filter((article) => !query.locale || article.locale === query.locale)
+        .filter(article => !query.locale || article.locale === query.locale)
         .sort((a, b) => new Date(b.publishedAt || 0).getTime() - new Date(a.publishedAt || 0).getTime())
         .flatMap((article) => {
           const fields = [['title', article.title], ...(content ? [['description', article.description ?? ''], ['content', plainTexts[article.documentId] ?? '']] : [])]
@@ -522,27 +522,27 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
 
       let data = articles.map(populated)
       if (localeFilter) {
-        data = data.filter((article) => article.locale === localeFilter)
+        data = data.filter(article => article.locale === localeFilter)
       }
       if (categoryFilter) {
-        data = data.filter((article) => article.category?.slug === categoryFilter)
+        data = data.filter(article => article.category?.slug === categoryFilter)
       }
       if (titleFilter) {
         const term = titleFilter.toLowerCase()
-        data = data.filter((article) => article.title.toLowerCase().includes(term))
+        data = data.filter(article => article.title.toLowerCase().includes(term))
       }
       if (tagFilter) {
-        data = data.filter((article) => article.tags?.some((tag) => tag.slug === tagFilter))
+        data = data.filter(article => article.tags?.some(tag => tag.slug === tagFilter))
       }
       if (documentIdFilter) {
-        data = data.filter((article) => documentIdFilter.includes(article.documentId))
+        data = data.filter(article => documentIdFilter.includes(article.documentId))
       }
       if (pathFilter) {
         if (localeFilter === 'legacy') {
           sendJson(res, 400, { data: null, error: { status: 400, name: 'ValidationError', message: 'Invalid key pathOrder' } })
           return
         }
-        data = data.filter((article) => pathOrders[article.documentId] !== undefined)
+        data = data.filter(article => pathOrders[article.documentId] !== undefined)
       }
       data.sort((a, b) => {
         if (byPath) return (pathOrders[a.documentId] ?? 0) - (pathOrders[b.documentId] ?? 0)
@@ -565,14 +565,14 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
 
     if (method === 'GET' && url.pathname === '/api/tags') {
       const locale = (query.locale as string | undefined) ?? 'en'
-      const localized = articles.filter((article) => article.locale === locale)
+      const localized = articles.filter(article => article.locale === locale)
       const tags = new Map<string, StrapiTagRef>()
-      for (const tag of localized.flatMap((article) => article.tags ?? [])) tags.set(tag.slug, tag)
-      const data = [...tags.values(), ...unusedTags].map((tag) => ({
+      for (const tag of localized.flatMap(article => article.tags ?? [])) tags.set(tag.slug, tag)
+      const data = [...tags.values(), ...unusedTags].map(tag => ({
         id: tag.id,
         name: tag.name,
         slug: tag.slug,
-        articles: localized.filter((article) => article.tags?.some((own) => own.slug === tag.slug)).map((article) => ({ id: article.id })),
+        articles: localized.filter(article => article.tags?.some(own => own.slug === tag.slug)).map(article => ({ id: article.id })),
       }))
       sendJson(res, 200, { data })
       return
@@ -580,13 +580,13 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
 
     if (method === 'GET' && url.pathname === '/api/categories') {
       const localeFilter = getNestedValue(query, ['populate', 'articles', 'filters', 'locale', '$eq']) as string | undefined ?? 'en'
-      const categories = [categoryVue, categoryLinux, ...emptyCategories].map((category) => ({
+      const categories = [categoryVue, categoryLinux, ...emptyCategories].map(category => ({
         id: category.id,
         name: category.name,
         slug: category.slug,
         articles: articles
-          .filter((article) => article.category?.slug === category.slug && article.locale === localeFilter)
-          .map((article) => ({ id: article.id })),
+          .filter(article => article.category?.slug === category.slug && article.locale === localeFilter)
+          .map(article => ({ id: article.id })),
       }))
       sendJson(res, 200, { data: categories })
       return
@@ -622,15 +622,15 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
       const locale = (query.locale as string | undefined) ?? 'en'
       const term = typeof query.search === 'string' ? query.search.toLowerCase() : ''
       const ranked = articles
-        .filter((article) => article.locale === locale)
-        .filter((article) => !query.category || article.category?.slug === query.category)
-        .filter((article) => !query.tag || article.tags?.some((tag) => tag.slug === query.tag))
-        .filter((article) => !term || article.title.toLowerCase().includes(term))
+        .filter(article => article.locale === locale)
+        .filter(article => !query.category || article.category?.slug === query.category)
+        .filter(article => !query.tag || article.tags?.some(tag => tag.slug === query.tag))
+        .filter(article => !term || article.title.toLowerCase().includes(term))
         .sort((a, b) => (scores[b.documentId] ?? 0) - (scores[a.documentId] ?? 0))
       const page = Number(query.page || 1)
       const pageSize = Number(query.pageSize || 6)
       sendJson(res, 200, {
-        data: ranked.slice((page - 1) * pageSize, page * pageSize).map((article) => ({
+        data: ranked.slice((page - 1) * pageSize, page * pageSize).map(article => ({
           documentId: article.documentId,
           likes: scores[article.documentId] ?? 0,
           boosts: 0,
@@ -647,11 +647,11 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
         sendJson(res, 500, { data: null, error: { status: 500, name: 'InternalServerError', message: 'Internal Server Error' } })
         return
       }
-      const known: Record<string, { likes: number; boosts: number; replies: number }> = {
+      const known: Record<string, { likes: number, boosts: number, replies: number }> = {
         'doc-vue-es': { likes: 4, boosts: 2, replies: 1 },
         'doc-linux': { likes: 0, boosts: 1, replies: 0 },
       }
-      sendJson(res, 200, Object.fromEntries(ids.filter((id) => known[id]).map((id) => [id, known[id]])))
+      sendJson(res, 200, Object.fromEntries(ids.filter(id => known[id]).map(id => [id, known[id]])))
       return
     }
 
@@ -700,16 +700,16 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
 
     if (method === 'GET' && url.pathname === '/api/subscribers') {
       const fields = ['email', 'confirmationToken', 'unsubscribeToken'] as const
-      const field = fields.find((name) => getNestedValue(query, ['filters', name, '$eq']) !== undefined)
+      const field = fields.find(name => getNestedValue(query, ['filters', name, '$eq']) !== undefined)
       const value = field ? getNestedValue(query, ['filters', field, '$eq']) : undefined
-      const data = field ? subscribers.filter((subscriber) => subscriber[field] === value) : []
+      const data = field ? subscribers.filter(subscriber => subscriber[field] === value) : []
       sendJson(res, 200, { data })
       return
     }
 
     if (method === 'PUT' && url.pathname.startsWith('/api/subscribers/')) {
       const documentId = url.pathname.split('/').pop()
-      const subscriber = subscribers.find((entry) => entry.documentId === documentId)
+      const subscriber = subscribers.find(entry => entry.documentId === documentId)
       if (!subscriber) {
         sendJson(res, 404, { error: { status: 404, message: 'Not Found' } })
         return
@@ -741,7 +741,7 @@ export async function startMockStrapi(): Promise<MockStrapiResult> {
 
     if (method === 'DELETE' && url.pathname.startsWith('/api/subscribers/')) {
       const documentId = url.pathname.split('/').pop()
-      const index = subscribers.findIndex((subscriber) => subscriber.documentId === documentId)
+      const index = subscribers.findIndex(subscriber => subscriber.documentId === documentId)
       if (index !== -1) {
         subscribers.splice(index, 1)
       }

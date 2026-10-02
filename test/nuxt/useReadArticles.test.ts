@@ -54,8 +54,12 @@ describe('useReadArticles', () => {
   })
 
   it('keeps working in memory when localStorage is not available', async () => {
-    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('SecurityError') })
-    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('SecurityError') })
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('SecurityError')
+    })
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('SecurityError')
+    })
     const reader = await mountReader()
     expect(reader.count.value).toBe(0)
     expect(() => reader.markRead('doc-rag')).not.toThrow()

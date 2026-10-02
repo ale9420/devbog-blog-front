@@ -34,8 +34,8 @@ beforeEach(() => {
 
 describe('/api/categories', () => {
   it('returns the five redesign categories in order, including empty ones, and hides unknown empty ones', async () => {
-    const result = await $fetch<Array<{ slug: string | null; name: string; count: number }>>('/api/categories', { query: { locale: 'en' } })
-    expect(result.map((category) => [category.slug, category.count])).toEqual([
+    const result = await $fetch<Array<{ slug: string | null, name: string, count: number }>>('/api/categories', { query: { locale: 'en' } })
+    expect(result.map(category => [category.slug, category.count])).toEqual([
       [Category.Privacy, 0],
       [Category.Diy, 0],
       [Category.Ai, 0],
@@ -45,36 +45,36 @@ describe('/api/categories', () => {
   })
 
   it('counts articles of the requested locale only', async () => {
-    const result = await $fetch<Array<{ slug: string | null; count: number }>>('/api/categories', { query: { locale: 'es' } })
-    expect(result.find((category) => category.slug === Category.Software)?.count).toBe(1)
-    expect(result.find((category) => category.slug === Category.Linux)?.count).toBe(0)
+    const result = await $fetch<Array<{ slug: string | null, count: number }>>('/api/categories', { query: { locale: 'es' } })
+    expect(result.find(category => category.slug === Category.Software)?.count).toBe(1)
+    expect(result.find(category => category.slug === Category.Linux)?.count).toBe(0)
   })
 })
 
 describe('/api/posts category filter', () => {
   it('filters by category slug', async () => {
     const result = await $fetch<{ data: Array<{ slug: string }> }>('/api/posts', { query: { locale: 'en', category: Category.Linux } })
-    expect(result.data.map((post) => post.slug)).toEqual(['linux-server-hardening-guide'])
-    const strapiRequests = mock.requests.filter((request) => request.method === 'GET' && request.path === '/api/articles')
+    expect(result.data.map(post => post.slug)).toEqual(['linux-server-hardening-guide'])
+    const strapiRequests = mock.requests.filter(request => request.method === 'GET' && request.path === '/api/articles')
     expect(getNestedValue(strapiRequests[strapiRequests.length - 1].query, ['filters', 'category', 'slug', '$eq'])).toBe(Category.Linux)
   })
 })
 
 describe('/api/tags', () => {
   it('returns the tags used in the locale, most used first, and hides unused ones', async () => {
-    const result = await $fetch<Array<{ slug: string; name: string; count: number }>>('/api/tags', { query: { locale: 'en' } })
+    const result = await $fetch<Array<{ slug: string, name: string, count: number }>>('/api/tags', { query: { locale: 'en' } })
     expect(result).toEqual([
       { slug: 'devops', name: 'DevOps', count: 2 },
       { slug: 'linux', name: 'Linux', count: 1 },
       { slug: 'typescript', name: 'TypeScript', count: 1 },
       { slug: 'vue', name: 'Vue', count: 1 },
     ])
-    const upstream = mock.requests.find((request) => request.path === '/api/tags')
+    const upstream = mock.requests.find(request => request.path === '/api/tags')
     expect(upstream?.query).toMatchObject({ locale: 'en', fields: ['name', 'slug'] })
   })
 
   it('counts articles of the requested locale only', async () => {
-    const result = await $fetch<Array<{ slug: string; count: number }>>('/api/tags', { query: { locale: 'es' } })
+    const result = await $fetch<Array<{ slug: string, count: number }>>('/api/tags', { query: { locale: 'es' } })
     expect(result).toEqual([{ slug: 'vue', name: 'Vue', count: 1 }])
   })
 })
@@ -82,12 +82,12 @@ describe('/api/tags', () => {
 describe('/api/posts tag filter', () => {
   it('filters by the tag relation and returns each article with its tags', async () => {
     const result = await $fetch<{ data: RawStrapiArticle[] }>('/api/posts', { query: { locale: 'en', tag: 'devops' } })
-    expect(result.data.map((post) => post.slug)).toEqual(['understanding-vue-composables', 'linux-server-hardening-guide'])
+    expect(result.data.map(post => post.slug)).toEqual(['understanding-vue-composables', 'linux-server-hardening-guide'])
     expect(result.data[1]?.tags).toEqual([
       { id: 53, documentId: 'tag-linux', name: 'Linux', slug: 'linux' },
       { id: 54, documentId: 'tag-devops', name: 'DevOps', slug: 'devops' },
     ])
-    const upstream = mock.requests.filter((request) => request.path === '/api/articles').at(-1)!
+    const upstream = mock.requests.filter(request => request.path === '/api/articles').at(-1)!
     expect(getNestedValue(upstream.query, ['filters', 'tags', 'slug', '$eq'])).toBe('devops')
     expect(getNestedValue(upstream.query, ['populate', 'tags', 'fields'])).toEqual(['name', 'slug'])
   })
@@ -99,21 +99,21 @@ describe('/api/posts tag filter', () => {
 })
 
 describe('/api/posts sort', () => {
-  type PostsPage = { data: Array<{ documentId: string }>; meta: { pagination: { page: number; pageSize: number; total: number; pageCount: number } } }
-  const ids = (response: PostsPage) => response.data.map((post) => post.documentId)
+  type PostsPage = { data: Array<{ documentId: string }>, meta: { pagination: { page: number, pageSize: number, total: number, pageCount: number } } }
+  const ids = (response: PostsPage) => response.data.map(post => post.documentId)
 
   it('sorts by newest first by default and for unknown values', async () => {
     expect(ids(await $fetch<PostsPage>('/api/posts', { query: { locale: 'en' } }))).toEqual(['doc-vue', 'doc-linux'])
     expect(ids(await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'recent' } }))).toEqual(['doc-vue', 'doc-linux'])
     expect(ids(await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'popular' } }))).toEqual(['doc-vue', 'doc-linux'])
-    const upstream = mock.requests.filter((request) => request.path === '/api/articles')
-    expect(upstream.every((request) => request.query.sort === 'publishedAt:desc')).toBe(true)
+    const upstream = mock.requests.filter(request => request.path === '/api/articles')
+    expect(upstream.every(request => request.query.sort === 'publishedAt:desc')).toBe(true)
   })
 
   it('sorts by oldest first', async () => {
     const response = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'oldest' } })
     expect(ids(response)).toEqual(['doc-linux', 'doc-vue'])
-    expect(mock.requests.find((request) => request.path === '/api/articles')?.query.sort).toBe('publishedAt:asc')
+    expect(mock.requests.find(request => request.path === '/api/articles')?.query.sort).toBe('publishedAt:asc')
   })
 
   it('sorts by fediverse conversation with the backend ranking, page by page', async () => {
@@ -123,8 +123,8 @@ describe('/api/posts sort', () => {
     expect(ids(second)).toEqual(['doc-vue'])
     expect(second.meta.pagination).toEqual({ page: 2, pageSize: 1, pageCount: 2, total: 2 })
 
-    const ranking = mock.requests.filter((request) => request.path === '/api/fediverse/articles/ranking')
-    expect(ranking.map((request) => request.query)).toEqual([
+    const ranking = mock.requests.filter(request => request.path === '/api/fediverse/articles/ranking')
+    expect(ranking.map(request => request.query)).toEqual([
       { page: '1', pageSize: '1', locale: 'en' },
       { page: '2', pageSize: '1', locale: 'en' },
     ])
@@ -133,30 +133,30 @@ describe('/api/posts sort', () => {
   it('passes the category and search filters to the ranking', async () => {
     const response = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'fediverse', category: 'software', search: 'vue' } })
     expect(ids(response)).toEqual(['doc-vue'])
-    const ranking = mock.requests.find((request) => request.path === '/api/fediverse/articles/ranking')
+    const ranking = mock.requests.find(request => request.path === '/api/fediverse/articles/ranking')
     expect(ranking?.query).toMatchObject({ category: 'software', search: 'vue' })
   })
 
   it('passes the tag to the ranking', async () => {
     const response = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'fediverse', tag: 'vue' } })
     expect(ids(response)).toEqual(['doc-vue'])
-    const ranking = mock.requests.find((request) => request.path === '/api/fediverse/articles/ranking')
+    const ranking = mock.requests.find(request => request.path === '/api/fediverse/articles/ranking')
     expect(ranking?.query).toMatchObject({ tag: 'vue' })
   })
 
   it('falls back to newest first when the ranking fails', async () => {
     const response = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', sort: 'fediverse', search: 'fail' } })
     expect(response.data).toEqual([])
-    expect(mock.requests.find((request) => request.path === '/api/articles')?.query.sort).toBe('publishedAt:desc')
+    expect(mock.requests.find(request => request.path === '/api/articles')?.query.sort).toBe('publishedAt:desc')
   })
 })
 
 describe('content search', () => {
-  type PostsPage = { data: Array<{ documentId: string; snippet?: string | null }>; meta: { pagination: { total: number } } }
+  type PostsPage = { data: Array<{ documentId: string, snippet?: string | null }>, meta: { pagination: { total: number } } }
 
   it('searches only titles by default', async () => {
     expect(await $fetch('/api/search', { query: { q: 'ssh', locale: 'en' } })).toEqual([])
-    const upstream = mock.requests.find((request) => request.path === '/api/articles/search')
+    const upstream = mock.requests.find(request => request.path === '/api/articles/search')
     expect(upstream?.query).toEqual({ q: 'ssh', locale: 'en', limit: '10' })
   })
 
@@ -172,19 +172,19 @@ describe('content search', () => {
       matchedIn: 'content',
       snippet: 'Start with SSH key authentication.',
     }])
-    expect(mock.requests.find((request) => request.path === '/api/articles/search')?.query).toMatchObject({ content: '1' })
+    expect(mock.requests.find(request => request.path === '/api/articles/search')?.query).toMatchObject({ content: '1' })
   })
 
   it('does not call the backend for short queries', async () => {
     expect(await $fetch('/api/search', { query: { q: 'ss', content: '1' } })).toEqual([])
-    expect(mock.requests.some((request) => request.path === '/api/articles/search')).toBe(false)
+    expect(mock.requests.some(request => request.path === '/api/articles/search')).toBe(false)
   })
 
   it('lists the blog posts whose body matches, with the snippet', async () => {
     const response = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'ssh', content: '1' } })
-    expect(response.data.map((post) => post.documentId)).toEqual(['doc-linux'])
+    expect(response.data.map(post => post.documentId)).toEqual(['doc-linux'])
     expect(response.data[0]?.snippet).toBe('Start with SSH key authentication.')
-    const articles = mock.requests.find((request) => request.path === '/api/articles')
+    const articles = mock.requests.find(request => request.path === '/api/articles')
     expect(articles?.query.filters).toEqual({ documentId: { $in: ['doc-linux'] } })
 
     const titlesOnly = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'ssh' } })
@@ -193,38 +193,38 @@ describe('content search', () => {
 
   it('keeps the category filter and the sort with content search', async () => {
     const recent = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'with', content: '1' } })
-    expect(recent.data.map((post) => post.documentId)).toEqual(['doc-vue', 'doc-linux'])
+    expect(recent.data.map(post => post.documentId)).toEqual(['doc-vue', 'doc-linux'])
 
     const oldest = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'with', content: '1', sort: 'oldest' } })
-    expect(oldest.data.map((post) => post.documentId)).toEqual(['doc-linux', 'doc-vue'])
+    expect(oldest.data.map(post => post.documentId)).toEqual(['doc-linux', 'doc-vue'])
 
     const fediverse = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'with', content: '1', sort: 'fediverse', pageSize: 1, page: 2 } })
-    expect(fediverse.data.map((post) => post.documentId)).toEqual(['doc-vue'])
+    expect(fediverse.data.map(post => post.documentId)).toEqual(['doc-vue'])
     expect(fediverse.meta.pagination.total).toBe(2)
 
     const linux = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'with', content: '1', category: 'linux' } })
-    expect(linux.data.map((post) => post.documentId)).toEqual(['doc-linux'])
+    expect(linux.data.map(post => post.documentId)).toEqual(['doc-linux'])
   })
 
   it('returns an empty page when nothing matches', async () => {
     const response = await $fetch<PostsPage>('/api/posts', { query: { locale: 'en', search: 'kubernetes', content: '1' } })
     expect(response.data).toEqual([])
     expect(response.meta.pagination.total).toBe(0)
-    expect(mock.requests.some((request) => request.path === '/api/articles')).toBe(false)
+    expect(mock.requests.some(request => request.path === '/api/articles')).toBe(false)
   })
 })
 
 describe('/api/posts search', () => {
   it('filters titles from three letters on and combines with the category', async () => {
     const result = await $fetch<{ data: Array<{ slug: string }> }>('/api/posts', { query: { locale: 'en', search: 'vue', category: Category.Software } })
-    expect(result.data.map((post) => post.slug)).toEqual(['understanding-vue-composables'])
-    const strapiRequests = mock.requests.filter((request) => request.method === 'GET' && request.path === '/api/articles')
+    expect(result.data.map(post => post.slug)).toEqual(['understanding-vue-composables'])
+    const strapiRequests = mock.requests.filter(request => request.method === 'GET' && request.path === '/api/articles')
     expect(getNestedValue(strapiRequests[strapiRequests.length - 1].query, ['filters', 'title', '$containsi'])).toBe('vue')
   })
 
   it('ignores searches shorter than three letters', async () => {
     await $fetch('/api/posts', { query: { locale: 'en', search: 'vu' } })
-    const strapiRequests = mock.requests.filter((request) => request.method === 'GET' && request.path === '/api/articles')
+    const strapiRequests = mock.requests.filter(request => request.method === 'GET' && request.path === '/api/articles')
     expect(getNestedValue(strapiRequests[strapiRequests.length - 1].query, ['filters', 'title', '$containsi'])).toBeUndefined()
   })
 })
@@ -237,7 +237,7 @@ describe('/api/reading-path', () => {
       editorial: true,
       steps: [{ documentId: 'doc-linux', slug: 'linux-server-hardening-guide', title: 'Linux Server Hardening Guide' }],
     })
-    const request = mock.requests.find((item) => item.path === '/api/articles')
+    const request = mock.requests.find(item => item.path === '/api/articles')
     expect(request?.query).toMatchObject({
       filters: { category: { slug: { $eq: 'linux' } }, pathOrder: { $notNull: 'true' } },
       sort: ['pathOrder:asc', 'publishedAt:asc'],
@@ -246,10 +246,10 @@ describe('/api/reading-path', () => {
   })
 
   it('falls back to publication date when no article of the category has a pathOrder', async () => {
-    const path = await $fetch<{ editorial: boolean; steps: Array<{ documentId: string }> }>('/api/reading-path', { query: { category: 'software', locale: 'es' } })
+    const path = await $fetch<{ editorial: boolean, steps: Array<{ documentId: string }> }>('/api/reading-path', { query: { category: 'software', locale: 'es' } })
     expect(path.editorial).toBe(false)
-    expect(path.steps.map((step) => step.documentId)).toEqual(['doc-vue-es'])
-    expect(mock.requests.filter((item) => item.path === '/api/articles').at(-1)?.query.sort).toBe('publishedAt:asc')
+    expect(path.steps.map(step => step.documentId)).toEqual(['doc-vue-es'])
+    expect(mock.requests.filter(item => item.path === '/api/articles').at(-1)?.query.sort).toBe('publishedAt:asc')
   })
 
   it('falls back to publication date when Strapi does not know pathOrder yet', async () => {
@@ -260,12 +260,12 @@ describe('/api/reading-path', () => {
   it('rejects unknown categories without calling Strapi', async () => {
     await expect($fetch('/api/reading-path', { query: { category: 'cooking' } })).rejects.toMatchObject({ response: { status: 400 } })
     await expect($fetch('/api/reading-path')).rejects.toMatchObject({ response: { status: 400 } })
-    expect(mock.requests.some((item) => item.path === '/api/articles')).toBe(false)
+    expect(mock.requests.some(item => item.path === '/api/articles')).toBe(false)
   })
 })
 
 describe('RSS feeds', () => {
-  async function feed(path: string): Promise<{ status: number; type: string | null; cache: string | null; body: string }> {
+  async function feed(path: string): Promise<{ status: number, type: string | null, cache: string | null, body: string }> {
     const response = await fetch(path)
     return {
       status: response.status,
@@ -276,7 +276,7 @@ describe('RSS feeds', () => {
   }
 
   function items(body: string): string[] {
-    return [...body.matchAll(/<item>[\s\S]*?<title><!\[CDATA\[(.*?)\]\]><\/title>/g)].map((match) => match[1]!)
+    return [...body.matchAll(/<item>[\s\S]*?<title><!\[CDATA\[(.*?)\]\]><\/title>/g)].map(match => match[1]!)
   }
 
   it('keeps the full feed in English and Spanish, now also at /es/feed.xml', async () => {
@@ -315,7 +315,7 @@ describe('RSS feeds', () => {
     expect(software.body).toContain(`<atom:link href="${SITE_URL}/es/feed/software.xml" rel="self" type="application/rss+xml"/>`)
     expect(items(software.body)).toEqual(['Guía de Vue Composables'])
 
-    const request = mock.requests.filter((item) => item.path === '/api/articles').at(-1)
+    const request = mock.requests.filter(item => item.path === '/api/articles').at(-1)
     expect(request?.query).toMatchObject({ locale: 'es', filters: { category: { slug: { $eq: 'software' } } } })
   })
 
@@ -331,7 +331,7 @@ describe('RSS feeds', () => {
     expect((await feed('/feed/cooking.xml')).status).toBe(404)
     expect((await feed('/es/feed/cooking.xml')).status).toBe(404)
     expect((await feed('/feed/linux.json')).status).toBe(404)
-    expect(mock.requests.some((item) => item.path === '/api/articles')).toBe(false)
+    expect(mock.requests.some(item => item.path === '/api/articles')).toBe(false)
   })
 })
 
@@ -374,8 +374,8 @@ describe('/api/search', () => {
 
   it('searches only the requested locale', async () => {
     const result = await $fetch<Array<{ slug: string }>>('/api/search', { query: { q: 'composables', locale: 'es' } })
-    expect(result.map((post) => post.slug)).toEqual(['guia-vue-composables'])
-    const upstream = mock.requests.filter((request) => request.path === '/api/articles/search')
+    expect(result.map(post => post.slug)).toEqual(['guia-vue-composables'])
+    const upstream = mock.requests.filter(request => request.path === '/api/articles/search')
     expect(upstream.at(-1)?.query.locale).toBe('es')
   })
 
@@ -391,18 +391,18 @@ describe('/api/posts/[slug]', () => {
     expect(result.slug).toBe('understanding-vue-composables')
     expect(result.blocks).toHaveLength(1)
     expect(result.category?.slug).toBe(Category.Software)
-    expect(result.tags?.map((tag) => tag.name)).toEqual(['Vue', 'TypeScript', 'DevOps'])
+    expect(result.tags?.map(tag => tag.name)).toEqual(['Vue', 'TypeScript', 'DevOps'])
   })
 
   it('asks Strapi for the article references', async () => {
     await $fetch('/api/posts/understanding-vue-composables', { query: { locale: 'en' } })
-    const upstream = mock.requests.filter((request) => request.path === '/api/articles')
+    const upstream = mock.requests.filter(request => request.path === '/api/articles')
     expect(getNestedValue(upstream[upstream.length - 1].query, ['populate', 'references'])).toBe('true')
   })
 
   it('asks Strapi for the cover credit and the credit of every figure', async () => {
     await $fetch('/api/posts/understanding-vue-composables', { query: { locale: 'en' } })
-    const upstream = mock.requests.filter((request) => request.path === '/api/articles')
+    const upstream = mock.requests.filter(request => request.path === '/api/articles')
     const query = upstream[upstream.length - 1].query
     expect(getNestedValue(query, ['populate', 'coverCredit'])).toBe('true')
     expect(getNestedValue(query, ['populate', 'blocks', 'on', 'shared.media', 'populate'])).toEqual({ file: 'true', credit: 'true' })
@@ -433,7 +433,7 @@ describe('/api/posts/[slug]', () => {
     expect(result.localizations).toEqual([
       { id: 1, documentId: 'doc-vue', slug: 'understanding-vue-composables', locale: 'en', publishedAt: '2026-02-01T10:00:00.000Z' },
     ])
-    const upstream = mock.requests.filter((request) => request.path === '/api/articles')
+    const upstream = mock.requests.filter(request => request.path === '/api/articles')
     expect(getNestedValue(upstream[upstream.length - 1].query, ['populate', 'localizations', 'fields'])).toEqual(['slug', 'locale', 'publishedAt'])
   })
 })
@@ -453,8 +453,8 @@ describe('/sitemap.xml', () => {
 
   it('asks Strapi for the articles of each language with their translations', async () => {
     await sitemap()
-    const upstream = mock.requests.filter((request) => request.path === '/api/articles')
-    expect(upstream.map((request) => request.query.locale).sort()).toEqual(['en', 'es'])
+    const upstream = mock.requests.filter(request => request.path === '/api/articles')
+    expect(upstream.map(request => request.query.locale).sort()).toEqual(['en', 'es'])
     for (const request of upstream) {
       expect(getNestedValue(request.query, ['populate', 'localizations', 'fields'])).toEqual(['slug', 'locale', 'publishedAt'])
     }
@@ -528,7 +528,7 @@ describe('/api/fediverse/stats', () => {
       'doc-vue-es': { likes: 4, boosts: 2 },
       'doc-linux': { likes: 0, boosts: 1 },
     })
-    const upstream = mock.requests.filter((request) => request.path === '/api/fediverse/articles/stats')
+    const upstream = mock.requests.filter(request => request.path === '/api/fediverse/articles/stats')
     expect(upstream).toHaveLength(1)
     expect(upstream[0]?.query.documentIds).toBe('doc-vue-es,doc-linux,doc-missing')
   })
@@ -538,7 +538,7 @@ describe('/api/fediverse/stats', () => {
     await expect($fetch('/api/fediverse/stats')).rejects.toMatchObject({ response: { status: 400 } })
     await expect($fetch('/api/fediverse/stats', { query: { documentIds: 'doc-vue-es,../admin' } })).rejects.toMatchObject({ response: { status: 400 } })
     await expect($fetch('/api/fediverse/stats', { query: { documentIds: tooMany } })).rejects.toMatchObject({ response: { status: 400 } })
-    expect(mock.requests.some((request) => request.path.startsWith('/api/fediverse'))).toBe(false)
+    expect(mock.requests.some(request => request.path.startsWith('/api/fediverse'))).toBe(false)
   })
 
   it('answers 502 when the backend fails', async () => {
@@ -552,7 +552,7 @@ describe('/api/fediverse/stats/[documentId]', () => {
     expect(response.status).toBe(200)
     expect(response.headers.get('cache-control')).toBe('public, s-maxage=60, stale-while-revalidate=120')
     expect(await response.json()).toEqual({ likes: 4, boosts: 2 })
-    expect(mock.requests.map((request) => request.path)).toContain('/api/fediverse/articles/doc-vue-es/stats')
+    expect(mock.requests.map(request => request.path)).toContain('/api/fediverse/articles/doc-vue-es/stats')
   })
 
   it('answers 404 when the article is not federated', async () => {
@@ -565,7 +565,7 @@ describe('/api/fediverse/stats/[documentId]', () => {
 
   it('rejects malformed document ids without calling the backend', async () => {
     await expect($fetch('/api/fediverse/stats/doc%2F..%2Fadmin')).rejects.toMatchObject({ response: { status: 400 } })
-    expect(mock.requests.some((request) => request.path.startsWith('/api/fediverse'))).toBe(false)
+    expect(mock.requests.some(request => request.path.startsWith('/api/fediverse'))).toBe(false)
   })
 })
 
@@ -574,7 +574,7 @@ describe('/api/comments', () => {
 
   it('returns approved comments with the fediverse fields and hides pending or rejected ones', async () => {
     const response = await $fetch<{ data: Array<Record<string, unknown>> }>('/api/comments/flat', { query: { relation } })
-    const byId = new Map(response.data.map((comment) => [comment.id, comment]))
+    const byId = new Map(response.data.map(comment => [comment.id, comment]))
 
     expect([...byId.keys()]).toEqual([201, 202, 203, 205])
     expect(byId.get(201)).toMatchObject({
@@ -593,19 +593,19 @@ describe('/api/comments', () => {
 
   it('keeps fediverse content as plain text and drops links that are not http(s)', async () => {
     const response = await $fetch<{ data: Array<Record<string, unknown>> }>('/api/comments/flat', { query: { relation } })
-    const unsafe = response.data.find((comment) => comment.id === 205)
+    const unsafe = response.data.find(comment => comment.id === 205)
     expect(unsafe).toMatchObject({ content: '<script>alert(1)</script>', fediverseActorHandle: '@eve@evil.example', fediverseUri: null })
   })
 
   it('never exposes the commenter email', async () => {
     const response = await $fetch<{ data: Array<{ author: Record<string, unknown> }> }>('/api/comments/flat', { query: { relation } })
-    expect(response.data.every((comment) => !('email' in comment.author))).toBe(true)
+    expect(response.data.every(comment => !('email' in comment.author))).toBe(true)
   })
 
   it('prunes hidden comments from the hierarchy, children included', async () => {
-    const response = await $fetch<Array<{ id: number; children?: Array<{ id: number }> }>>('/api/comments', { query: { relation } })
-    expect(response.map((comment) => comment.id)).toEqual([201, 202])
-    expect(response[1]?.children?.map((child) => child.id)).toEqual([203])
+    const response = await $fetch<Array<{ id: number, children?: Array<{ id: number }> }>>('/api/comments', { query: { relation } })
+    expect(response.map(comment => comment.id)).toEqual([201, 202])
+    expect(response[1]?.children?.map(child => child.id)).toEqual([203])
   })
 
   it('returns the posted blog comment without fediverse fields or email', async () => {
@@ -631,7 +631,7 @@ describe('/api/comments', () => {
       headers: { origin: SITE_URL },
       body: { author: { id: 'admin', name: 'Eva', email: 'eva@example.com' }, content: 'Hola.', approvalStatus: 'APPROVED', isAdminComment: true, threadOf: 201 },
     })
-    const request = mock.requests.filter((recorded) => recorded.method === 'POST' && recorded.path === `/api/comments/${relation}`).at(-1)
+    const request = mock.requests.filter(recorded => recorded.method === 'POST' && recorded.path === `/api/comments/${relation}`).at(-1)
     expect(Object.keys(request?.rawBody ?? {}).sort()).toEqual(['author', 'content', 'threadOf'])
     expect(request?.rawBody?.author).toMatchObject({ name: 'Eva', email: 'eva@example.com' })
     expect((request?.rawBody?.author as { id?: string }).id).toMatch(/^guest-[\w-]{36}$/)
@@ -674,11 +674,11 @@ describe('/api/comments', () => {
       const response = await fetch(`/api/comments/201?relation=${relation}&authorId=guest-1`, { method, headers: { origin: SITE_URL } })
       expect(response.status).toBeGreaterThanOrEqual(404)
     }
-    expect(mock.requests.filter((request) => request.method === 'PUT' || request.method === 'DELETE')).toEqual([])
+    expect(mock.requests.filter(request => request.method === 'PUT' || request.method === 'DELETE')).toEqual([])
   })
 
   it('limits how many comments one visitor can post', async () => {
-    const headers = { origin: SITE_URL, 'x-forwarded-for': '203.0.113.10' }
+    const headers = { 'origin': SITE_URL, 'x-forwarded-for': '203.0.113.10' }
     const body = { author: { name: 'Bot', email: 'bot@example.com' }, content: 'Again.' }
     for (let i = 0; i < 10; i++) {
       await $fetch('/api/comments', { method: 'POST', query: { relation }, headers, body })
@@ -699,16 +699,16 @@ describe('/api/comments', () => {
   it('forwards the locale so each language gets its own thread', async () => {
     const english = await $fetch<{ data: Array<{ id: number }> }>('/api/comments/flat', { query: { relation, locale: 'en' } })
     const spanish = await $fetch<{ data: Array<{ id: number }> }>('/api/comments/flat', { query: { relation, locale: 'es' } })
-    expect(english.data.map((comment) => comment.id)).toEqual([201, 202, 203, 205])
-    expect(spanish.data.map((comment) => comment.id)).toEqual([208])
+    expect(english.data.map(comment => comment.id)).toEqual([201, 202, 203, 205])
+    expect(spanish.data.map(comment => comment.id)).toEqual([208])
 
-    const flatRequests = mock.requests.filter((request) => request.path === `/api/comments/${relation}/flat`)
-    expect(flatRequests.slice(-2).map((request) => request.query.locale)).toEqual(['en', 'es'])
+    const flatRequests = mock.requests.filter(request => request.path === `/api/comments/${relation}/flat`)
+    expect(flatRequests.slice(-2).map(request => request.query.locale)).toEqual(['en', 'es'])
   })
 
   it('forwards the locale to the hierarchical thread', async () => {
     await $fetch('/api/comments', { query: { relation, locale: 'es' } })
-    const request = mock.requests.filter((recorded) => recorded.method === 'GET' && recorded.path === `/api/comments/${relation}`).at(-1)
+    const request = mock.requests.filter(recorded => recorded.method === 'GET' && recorded.path === `/api/comments/${relation}`).at(-1)
     expect(request?.query.locale).toBe('es')
   })
 
@@ -719,7 +719,7 @@ describe('/api/comments', () => {
       headers: { origin: SITE_URL },
       body: { author: { name: 'Luis', email: 'luis@example.com' }, content: 'Buen artículo.', locale: 'es' },
     })
-    const request = mock.requests.filter((recorded) => recorded.method === 'POST' && recorded.path === `/api/comments/${relation}`).at(-1)
+    const request = mock.requests.filter(recorded => recorded.method === 'POST' && recorded.path === `/api/comments/${relation}`).at(-1)
     expect(request?.body?.locale).toBe('es')
   })
 
@@ -767,29 +767,29 @@ describe('/api/newsletter/subscribe', () => {
 
   it('answers an already confirmed subscriber like a new one, without touching it', async () => {
     expect(await subscribe({ email: 'confirmed@example.com' })).toMatchObject({ success: true })
-    const writes = mock.requests.filter((request) => request.method !== 'GET' && request.path.startsWith('/api/subscribers'))
+    const writes = mock.requests.filter(request => request.method !== 'GET' && request.path.startsWith('/api/subscribers'))
     expect(writes).toEqual([])
   })
 
   it('replaces a pending subscriber before creating a new one', async () => {
     await expect(subscribe({ email: 'pending@example.com' })).rejects.toMatchObject({ response: { status: 500 } })
     const deleteRequest = mock.requests.find(
-      (request) => request.method === 'DELETE' && request.path === '/api/subscribers/sub-pending',
+      request => request.method === 'DELETE' && request.path === '/api/subscribers/sub-pending',
     )
     expect(deleteRequest).toBeDefined()
     const posts = mock.requests.filter(
-      (request) =>
-        request.method === 'POST' &&
-        request.path === '/api/subscribers' &&
-        request.body?.data?.email === 'pending@example.com' &&
-        request.body?.data?.confirmed === false,
+      request =>
+        request.method === 'POST'
+        && request.path === '/api/subscribers'
+        && request.body?.data?.email === 'pending@example.com'
+        && request.body?.data?.confirmed === false,
     )
     expect(posts.length).toBeGreaterThan(0)
   })
 
   it('returns 500 when SMTP is unreachable but still creates the subscriber in Strapi', async () => {
     await expect(subscribe({ email: 'new@example.com', locale: 'en' })).rejects.toMatchObject({ response: { status: 500 } })
-    const posts = mock.requests.filter((request) => request.method === 'POST' && request.path === '/api/subscribers')
+    const posts = mock.requests.filter(request => request.method === 'POST' && request.path === '/api/subscribers')
     const lastPost = posts[posts.length - 1]
     expect(lastPost?.body?.data).toMatchObject({ email: 'new@example.com', confirmed: false, language: 'en' })
     expect(lastPost?.body?.data?.confirmationToken).toBeTruthy()
@@ -801,8 +801,8 @@ describe('/api/newsletter/subscribe', () => {
     await subscribe({ email: 'es@example.com', locale: 'es' }).catch(() => null)
     await subscribe({ email: 'fr@example.com', locale: 'fr' }).catch(() => null)
     const languages = mock.requests
-      .filter((request) => request.method === 'POST' && request.path === '/api/subscribers')
-      .map((request) => [request.body?.data?.email, request.body?.data?.language])
+      .filter(request => request.method === 'POST' && request.path === '/api/subscribers')
+      .map(request => [request.body?.data?.email, request.body?.data?.language])
     expect(languages).toEqual([['es@example.com', 'es'], ['fr@example.com', 'en']])
   })
 
@@ -811,7 +811,7 @@ describe('/api/newsletter/subscribe', () => {
       await subscribe({ email: 'Target@Example.com' }, { 'x-forwarded-for': `198.51.100.${i}` }).catch(() => null)
     }
     await expect(subscribe({ email: 'target@example.com' }, { 'x-forwarded-for': '198.51.100.9' })).rejects.toMatchObject({ response: { status: 429 } })
-    const created = mock.requests.filter((request) => request.method === 'POST' && request.body?.data?.email === 'target@example.com')
+    const created = mock.requests.filter(request => request.method === 'POST' && request.body?.data?.email === 'target@example.com')
     expect(created).toHaveLength(3)
   })
 
@@ -828,7 +828,7 @@ describe('/api/newsletter/confirm', () => {
   it('confirms the subscriber, keeps an unsubscribe token and succeeds even if the welcome email fails', async () => {
     const result = await $fetch('/api/newsletter/confirm', { query: { token: 'confirmation-token-to-confirm-0001' } })
     expect(result).toMatchObject({ success: true, alreadyConfirmed: false })
-    const update = mock.requests.find((request) => request.method === 'PUT' && request.path === '/api/subscribers/sub-to-confirm')
+    const update = mock.requests.find(request => request.method === 'PUT' && request.path === '/api/subscribers/sub-to-confirm')
     expect(update?.body?.data).toMatchObject({ confirmed: true })
     expect(update?.body?.data).not.toHaveProperty('confirmationToken')
     expect(update?.body?.data?.unsubscribeToken).toMatch(/^[\w-]{43}$/)
@@ -837,7 +837,7 @@ describe('/api/newsletter/confirm', () => {
   it('answers a reopened link as already confirmed without writing again', async () => {
     const result = await $fetch('/api/newsletter/confirm', { query: { token: 'confirmation-token-to-confirm-0001' } })
     expect(result).toMatchObject({ success: true, alreadyConfirmed: true })
-    expect(mock.requests.filter((request) => request.method !== 'GET')).toEqual([])
+    expect(mock.requests.filter(request => request.method !== 'GET')).toEqual([])
   })
 
   it('answers 404 for an unknown or malformed token', async () => {
@@ -848,12 +848,12 @@ describe('/api/newsletter/confirm', () => {
 })
 
 describe('/api/newsletter/unsubscribe', () => {
-  const deletes = () => mock.requests.filter((request) => request.method === 'DELETE' && request.path.startsWith('/api/subscribers/'))
+  const deletes = () => mock.requests.filter(request => request.method === 'DELETE' && request.path.startsWith('/api/subscribers/'))
 
   it('deletes the subscriber of the token sent by the unsubscribe page', async () => {
     const result = await $fetch('/api/newsletter/unsubscribe', { method: 'POST', body: { token: 'unsubscribe-token-leaving-0001' } })
     expect(result).toEqual({ success: true })
-    expect(deletes().map((request) => request.path)).toEqual(['/api/subscribers/sub-leaving'])
+    expect(deletes().map(request => request.path)).toEqual(['/api/subscribers/sub-leaving'])
   })
 
   it('accepts the RFC 8058 one-click POST with the token in the URL', async () => {
@@ -864,7 +864,7 @@ describe('/api/newsletter/unsubscribe', () => {
     })
     expect(response.status).toBe(200)
     expect(response.headers.get('cache-control')).toBe('private, no-store')
-    expect(deletes().map((request) => request.path)).toEqual(['/api/subscribers/sub-one-click'])
+    expect(deletes().map(request => request.path)).toEqual(['/api/subscribers/sub-one-click'])
   })
 
   it('answers the same for an unknown or already used token, without deleting anything', async () => {
@@ -878,7 +878,7 @@ describe('/api/newsletter/unsubscribe', () => {
     for (const body of [{}, { token: 'short' }, { token: 'has spaces in it, sadly' }]) {
       await expect($fetch('/api/newsletter/unsubscribe', { method: 'POST', body })).rejects.toMatchObject({ response: { status: 400 } })
     }
-    expect(mock.requests.filter((request) => request.path.startsWith('/api/subscribers'))).toEqual([])
+    expect(mock.requests.filter(request => request.path.startsWith('/api/subscribers'))).toEqual([])
   })
 })
 
@@ -904,7 +904,7 @@ describe('Umami', () => {
     const response = await fetch('/bd.js')
     expect(response.status).toBe(200)
     expect(await response.text()).toBe(MOCK_TRACKER_SCRIPT)
-    expect(umami.requests.map((request) => [request.method, request.path])).toEqual([['GET', '/bd.js']])
+    expect(umami.requests.map(request => [request.method, request.path])).toEqual([['GET', '/bd.js']])
   })
 
   it('forwards collected events with the visitor IP', async () => {
@@ -935,7 +935,7 @@ describe('/api/auth', () => {
   }
 
   function sessionCookie(response: Response): string {
-    return response.headers.getSetCookie().find((cookie) => cookie.startsWith('bd_session=')) ?? ''
+    return response.headers.getSetCookie().find(cookie => cookie.startsWith('bd_session=')) ?? ''
   }
 
   async function signIn(identifier: string, password: string): Promise<string> {
@@ -962,7 +962,7 @@ describe('/api/auth', () => {
     const text = await response.text()
     expect(text).not.toContain('mock-jwt')
     expect(JSON.parse(text)).toEqual({ user: { username: 'alejandro', email: testUsers.editor.email, role: 'editor', createdAt: '2026-01-15T15:00:00.000Z' } })
-    const me = mock.requests.find((request) => request.path === '/api/users/me')
+    const me = mock.requests.find(request => request.path === '/api/users/me')
     expect(me?.authorization).toBe('Bearer mock-jwt-102')
     expect(me?.query).toMatchObject({ populate: 'role' })
   })
@@ -1014,7 +1014,7 @@ describe('/api/auth', () => {
     const created = await post('/api/auth/register', { username: 'nueva', email: 'Nueva@Example.com', password: 'una-frase-larga', acceptPrivacy: true, role: 'editor' })
     expect(created.status).toBe(201)
     expect(sessionCookie(created)).toBe('')
-    expect(mock.users.find((user) => user.username === 'nueva')).toMatchObject({ email: 'nueva@example.com', confirmed: false, role: 'authenticated' })
+    expect(mock.users.find(user => user.username === 'nueva')).toMatchObject({ email: 'nueva@example.com', confirmed: false, role: 'authenticated' })
   })
 
   it('never tells whether an email exists when recovering a password', async () => {
@@ -1052,14 +1052,14 @@ describe('/api/auth', () => {
     expect(sessionCookie(wrongPassword)).toBe('')
     const wrongUser = await remove({ username: 'lectora', password: 'borrable-segura-1' })
     expect(wrongUser.status).toBe(400)
-    expect(mock.users.some((user) => user.username === 'borrable')).toBe(true)
-    expect(mock.requests.filter((request) => request.method === 'DELETE')).toHaveLength(1)
+    expect(mock.users.some(user => user.username === 'borrable')).toBe(true)
+    expect(mock.requests.filter(request => request.method === 'DELETE')).toHaveLength(1)
 
     const deleted = await remove({ username: 'borrable', password: 'borrable-segura-1' })
     expect(deleted.status).toBe(200)
     expect(sessionCookie(deleted)).toContain('Max-Age=0')
-    expect(mock.users.some((user) => user.username === 'borrable')).toBe(false)
-    const strapiDelete = mock.requests.filter((request) => request.method === 'DELETE').at(-1)
+    expect(mock.users.some(user => user.username === 'borrable')).toBe(false)
+    const strapiDelete = mock.requests.filter(request => request.method === 'DELETE').at(-1)
     expect(strapiDelete).toMatchObject({ path: '/api/users/me', authorization: 'Bearer mock-jwt-150' })
   })
 
@@ -1089,10 +1089,10 @@ describe('account pages', () => {
   it('renders the account page for a signed-in reader', async () => {
     const login = await fetch('/api/auth/login', {
       method: 'POST',
-      headers: { 'content-type': 'application/json', origin: SITE_URL },
+      headers: { 'content-type': 'application/json', 'origin': SITE_URL },
       body: JSON.stringify({ identifier: testUsers.reader.username, password: testUsers.reader.password }),
     })
-    const cookie = login.headers.getSetCookie().find((value) => value.startsWith('bd_session='))!.split(';')[0]!
+    const cookie = login.headers.getSetCookie().find(value => value.startsWith('bd_session='))!.split(';')[0]!
     const html = await (await fetch('/account', { headers: { cookie } })).text()
     expect(html).toContain(testUsers.reader.email)
     expect(html).not.toContain('mock-jwt')
@@ -1103,12 +1103,12 @@ describe('/api/drafts', () => {
   async function sessionFor(identifier: string, password: string): Promise<string> {
     const response = await fetch('/api/auth/login', {
       method: 'POST',
-      headers: { 'content-type': 'application/json', origin: SITE_URL },
+      headers: { 'content-type': 'application/json', 'origin': SITE_URL },
       body: JSON.stringify({ identifier, password }),
     })
     expect(response.status).toBe(200)
     mock.requests.length = 0
-    return response.headers.getSetCookie().find((value) => value.startsWith('bd_session='))!.split(';')[0]!
+    return response.headers.getSetCookie().find(value => value.startsWith('bd_session='))!.split(';')[0]!
   }
 
   it('answers 404 without a session, before calling Strapi', async () => {
@@ -1127,7 +1127,7 @@ describe('/api/drafts', () => {
     expect([list.status, draft.status]).toEqual([404, 404])
     expect(list.headers.get('cache-control')).toMatch(/^(no-cache|private, no-store)$/)
     expect(mock.requests.length).toBeGreaterThan(0)
-    expect(mock.requests.every((request) => request.authorization === 'Bearer mock-jwt-101')).toBe(true)
+    expect(mock.requests.every(request => request.authorization === 'Bearer mock-jwt-101')).toBe(true)
   })
 
   it('lists the drafts of every language for an editor, newest edit first', async () => {
@@ -1137,7 +1137,7 @@ describe('/api/drafts', () => {
     expect(response.headers.get('cache-control')).toBe('private, no-store')
     const body = await response.json() as { data: Array<{ documentId: string, locale: string, state: string }>, meta: { count: number } }
     expect(body.meta.count).toBe(2)
-    expect(body.data.map((draft) => [draft.documentId, draft.locale, draft.state])).toEqual([
+    expect(body.data.map(draft => [draft.documentId, draft.locale, draft.state])).toEqual([
       ['doc-draft-pihole', 'es', 'never-published'],
       ['doc-linux', 'en', 'modified'],
     ])
@@ -1154,12 +1154,12 @@ describe('/api/drafts', () => {
     expect(body.article.blocks).toHaveLength(1)
     expect(body.published).toMatchObject({ slug: 'linux-server-hardening-guide' })
 
-    const draftRequest = mock.requests.find((request) => request.query.status === 'draft')
+    const draftRequest = mock.requests.find(request => request.query.status === 'draft')
     expect(draftRequest).toMatchObject({ path: '/api/articles/doc-linux', authorization: 'Bearer mock-jwt-102' })
     expect(draftRequest?.query.locale).toBe('en')
     expect(getNestedValue(draftRequest?.query, ['populate', 'blocks', 'on', 'shared.media', 'populate', 'credit'])).toBe('true')
     expect(getNestedValue(draftRequest?.query, ['populate', 'references'])).toBe('true')
-    const publishedRequest = mock.requests.find((request) => request.query.status === 'published')
+    const publishedRequest = mock.requests.find(request => request.query.status === 'published')
     expect(publishedRequest?.authorization).toBe('Bearer mock-jwt-102')
   })
 
@@ -1172,7 +1172,7 @@ describe('/api/drafts', () => {
   })
 
   it('keeps drafts out of the sitemap, the feeds and the search', async () => {
-    const pages = await Promise.all(['/sitemap.xml', '/feed.xml', '/es/feed.xml', '/feed/linux.xml', '/feed/privacidad.xml'].map(async (path) => (await fetch(path)).text()))
+    const pages = await Promise.all(['/sitemap.xml', '/feed.xml', '/es/feed.xml', '/feed/linux.xml', '/feed/privacidad.xml'].map(async path => (await fetch(path)).text()))
     const searches = await Promise.all([
       $fetch('/api/search', { query: { q: 'pi-hole', locale: 'es', content: '1' } }),
       $fetch('/api/search', { query: { q: 'second edition', locale: 'en', content: '1' } }),
@@ -1181,9 +1181,9 @@ describe('/api/drafts', () => {
     for (const leak of ['pi-hole-raspberry-pi', 'Pi-hole en una Raspberry Pi', 'second edition']) {
       expect(output).not.toContain(leak)
     }
-    const articleRequests = mock.requests.filter((request) => request.path.startsWith('/api/articles'))
+    const articleRequests = mock.requests.filter(request => request.path.startsWith('/api/articles'))
     expect(articleRequests.length).toBeGreaterThan(0)
-    expect(articleRequests.every((request) => request.query.status === undefined || request.query.status === 'published')).toBe(true)
+    expect(articleRequests.every(request => request.query.status === undefined || request.query.status === 'published')).toBe(true)
   })
 })
 
@@ -1201,7 +1201,7 @@ function getNestedValue(obj: unknown, path: string[]): unknown {
 
 describe('security headers', () => {
   const sha256 = (content: string) => `'sha256-${createHash('sha256').update(content).digest('base64')}'`
-  const scriptSources = (policy: string) => policy.split('; ').find((directive) => directive.startsWith('script-src '))?.split(' ').slice(1) ?? []
+  const scriptSources = (policy: string) => policy.split('; ').find(directive => directive.startsWith('script-src '))?.split(' ').slice(1) ?? []
 
   it('sends the fixed headers on pages and API routes', async () => {
     for (const path of ['/', '/account/sign-in', '/api/tags']) {
@@ -1221,22 +1221,22 @@ describe('security headers', () => {
       const html = await response.text()
       const hashes = inlineScripts(html).map(sha256)
       expect(hashes.length).toBeGreaterThan(0)
-      expect(scriptSources(policy).sort()).toEqual(["'self'", ...new Set(hashes)].sort())
-      expect(policy).not.toContain("'unsafe-inline' 'sha256")
-      expect(policy).toContain("frame-ancestors 'none'")
+      expect(scriptSources(policy).sort()).toEqual(['\'self\'', ...new Set(hashes)].sort())
+      expect(policy).not.toContain('\'unsafe-inline\' \'sha256')
+      expect(policy).toContain('frame-ancestors \'none\'')
     }
   })
 
   it('allows images from Strapi and the media host', async () => {
     const policy = (await fetch('/blog')).headers.get('content-security-policy') ?? ''
-    const images = policy.split('; ').find((directive) => directive.startsWith('img-src ')) ?? ''
+    const images = policy.split('; ').find(directive => directive.startsWith('img-src ')) ?? ''
     expect(images).toContain(new URL(mock.url).origin)
     expect(images).toContain('https://resources.bogdev.com.co')
   })
 })
 
 describe('/api/posts pagination', () => {
-  const articleRequests = () => mock.requests.filter((request) => request.method === 'GET' && request.path === '/api/articles')
+  const articleRequests = () => mock.requests.filter(request => request.method === 'GET' && request.path === '/api/articles')
 
   it('caps the page size before asking Strapi', async () => {
     await $fetch('/api/posts', { query: { pageSize: 10000 } })
@@ -1261,7 +1261,7 @@ describe('Strapi API token', () => {
     await $fetch('/api/newsletter/confirm', { query: { token: 'confirmation-token-unknown-0002' } }).catch(() => null)
     const paths = ['/api/articles', '/api/tags', '/api/comments/api::article.article:doc-vue/flat', '/api/subscribers']
     for (const path of paths) {
-      const request = mock.requests.find((recorded) => recorded.path === path)
+      const request = mock.requests.find(recorded => recorded.path === path)
       expect(request, path).toBeDefined()
       expect(request?.authorization, path).toBe(API_TOKEN)
     }
@@ -1271,8 +1271,8 @@ describe('Strapi API token', () => {
     await $fetch('/api/fediverse/stats', { query: { documentIds: 'doc-vue' } }).catch(() => null)
     await $fetch('/api/posts', { query: { sort: 'fediverse' } }).catch(() => null)
     await fetch('/sitemap.xml')
-    const anonymous = mock.requests.filter((request) => request.path.startsWith('/api/fediverse/') || request.query.fields !== undefined)
+    const anonymous = mock.requests.filter(request => request.path.startsWith('/api/fediverse/') || request.query.fields !== undefined)
     expect(anonymous.length).toBeGreaterThan(0)
-    expect(anonymous.every((request) => request.authorization === undefined)).toBe(true)
+    expect(anonymous.every(request => request.authorization === undefined)).toBe(true)
   })
 })

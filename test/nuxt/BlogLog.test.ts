@@ -71,4 +71,3 @@ describe('BlogLog', () => {
     localStorage.clear()
   })
 })
-

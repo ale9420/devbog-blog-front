@@ -42,4 +42,3 @@ describe('BlogSidebar reading history', () => {
     expect(wrapper.get('a[href="/feed.xml"]').text()).toContain('RSS')
   })
 })
-
