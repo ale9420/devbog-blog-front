@@ -48,17 +48,17 @@ function origins(urls: string[]): string[] {
 export function contentSecurityPolicy(options: ContentSecurityPolicyOptions): string {
   const hashes = [...new Set(options.scriptHashes)].map(hash => `'sha256-${hash}'`)
   const directives: [string, string[]][] = [
-    ['default-src', ["'self'"]],
-    ['script-src', ["'self'", ...hashes]],
-    ['style-src', ["'self'", "'unsafe-inline'"]],
-    ['img-src', ["'self'", 'data:', 'blob:', ...origins(options.imageOrigins)]],
-    ['font-src', ["'self'"]],
-    ['connect-src', ["'self'"]],
+    ['default-src', ['\'self\'']],
+    ['script-src', ['\'self\'', ...hashes]],
+    ['style-src', ['\'self\'', '\'unsafe-inline\'']],
+    ['img-src', ['\'self\'', 'data:', 'blob:', ...origins(options.imageOrigins)]],
+    ['font-src', ['\'self\'']],
+    ['connect-src', ['\'self\'']],
     ['frame-src', FRAME_ORIGINS],
-    ['frame-ancestors', ["'none'"]],
-    ['base-uri', ["'self'"]],
-    ['form-action', ["'self'"]],
-    ['object-src', ["'none'"]],
+    ['frame-ancestors', ['\'none\'']],
+    ['base-uri', ['\'self\'']],
+    ['form-action', ['\'self\'']],
+    ['object-src', ['\'none\'']],
   ]
   return directives.map(([name, values]) => [name, ...values].join(' ')).join('; ')
 }

@@ -67,7 +67,7 @@ export function createDraftsMock({ userFromAuth, publishedArticles }) {
   }
 
   function publishedVersion(documentId, locale) {
-    return publishedArticles.find((article) => article.documentId === documentId && article.locale === locale) ?? null
+    return publishedArticles.find(article => article.documentId === documentId && article.locale === locale) ?? null
   }
 
   function handle(method, pathname, query, headers) {
@@ -76,8 +76,8 @@ export function createDraftsMock({ userFromAuth, publishedArticles }) {
     if (pathname === '/api/articles/drafts') {
       if (!isEditor(headers)) return strapiError(403, 'ForbiddenError', 'Forbidden')
       const data = draftArticles
-        .filter((draft) => !query.locale || draft.locale === query.locale)
-        .map((draft) => listRow(draft, publishedVersion(draft.documentId, draft.locale)))
+        .filter(draft => !query.locale || draft.locale === query.locale)
+        .map(draft => listRow(draft, publishedVersion(draft.documentId, draft.locale)))
         .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
       return { status: 200, body: { data, meta: { count: data.length } } }
     }
@@ -88,7 +88,7 @@ export function createDraftsMock({ userFromAuth, publishedArticles }) {
       const locale = query.locale || 'en'
       if (query.status === 'draft') {
         if (!isEditor(headers)) return strapiError(403, 'ForbiddenError', 'Forbidden')
-        const draft = draftArticles.find((article) => article.documentId === documentId && article.locale === locale)
+        const draft = draftArticles.find(article => article.documentId === documentId && article.locale === locale)
         return draft ? { status: 200, body: { data: draft, meta: {} } } : strapiError(404, 'NotFoundError', 'Not Found')
       }
       const published = publishedVersion(documentId, locale)

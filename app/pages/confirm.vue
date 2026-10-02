@@ -2,43 +2,43 @@
 import { asApiError } from '~/helpers/apiError'
 import type { ConfirmResponse } from '~/interfaces/newsletter'
 
-const { t } = useI18n();
-const route = useRoute();
-const token = route.query.token as string;
+const { t } = useI18n()
+const route = useRoute()
+const token = route.query.token as string
 
-const status = ref<"loading" | "success" | "error">("loading");
-const successMessage = ref("");
-const errorMessage = ref("");
+const status = ref<'loading' | 'success' | 'error'>('loading')
+const successMessage = ref('')
+const errorMessage = ref('')
 
 async function confirmSubscription() {
   if (!token) {
-    status.value = "error";
-    errorMessage.value = t("confirm.invalidToken");
-    return;
+    status.value = 'error'
+    errorMessage.value = t('confirm.invalidToken')
+    return
   }
 
   try {
-    const response = await $fetch<ConfirmResponse>("/api/newsletter/confirm", {
-      method: "GET",
+    const response = await $fetch<ConfirmResponse>('/api/newsletter/confirm', {
+      method: 'GET',
       params: { token },
-    });
-    successMessage.value = t(response.alreadyConfirmed ? "confirm.alreadyConfirmed" : "confirm.successMessage");
-    status.value = "success";
+    })
+    successMessage.value = t(response.alreadyConfirmed ? 'confirm.alreadyConfirmed' : 'confirm.successMessage')
+    status.value = 'success'
   } catch (err) {
-    const e = asApiError(err);
-    status.value = "error";
-    const statusCode = e.response?.status || e.statusCode;
-    errorMessage.value = t(statusCode === 404 ? "confirm.invalidToken" : "confirm.serverError");
+    const e = asApiError(err)
+    status.value = 'error'
+    const statusCode = e.response?.status || e.statusCode
+    errorMessage.value = t(statusCode === 404 ? 'confirm.invalidToken' : 'confirm.serverError')
   }
 }
 
 onMounted(() => {
-  confirmSubscription();
-});
+  confirmSubscription()
+})
 
 useSeoMeta({
-  title: t("confirm.title"),
-});
+  title: t('confirm.title'),
+})
 </script>
 
 <template>

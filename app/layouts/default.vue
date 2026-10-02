@@ -12,51 +12,51 @@ const active = computed<HeaderSection | undefined>(() => headerSection(route.pat
 const reading = computed<boolean>(() => isReadingPath(route.path))
 
 useKeyboardShortcut('k', () => {
-    isSearchOpen.value = !isSearchOpen.value
+  isSearchOpen.value = !isSearchOpen.value
 })
 
 onMounted(() => {
-    window.addEventListener('skip-to-search', () => {
-        isSearchOpen.value = true
-    })
+  window.addEventListener('skip-to-search', () => {
+    isSearchOpen.value = true
+  })
 })
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col">
-        <LayoutSkipLinks />
-        <LayoutBackToTop />
+  <div class="min-h-screen flex flex-col">
+    <LayoutSkipLinks />
+    <LayoutBackToTop />
 
-        <BdHeader
-            :active="active"
-            :reading="reading"
-            :section="section || undefined"
-            :menu-open="isMobileMenuOpen"
-            @search="isSearchOpen = true"
-            @menu="isMobileMenuOpen = true"
-        />
+    <BdHeader
+      :active="active"
+      :reading="reading"
+      :section="section || undefined"
+      :menu-open="isMobileMenuOpen"
+      @search="isSearchOpen = true"
+      @menu="isMobileMenuOpen = true"
+    />
 
-        <BdMenuSheet
-            :open="isMobileMenuOpen"
-            :active="active"
-            @close="isMobileMenuOpen = false"
-        />
+    <BdMenuSheet
+      :open="isMobileMenuOpen"
+      :active="active"
+      @close="isMobileMenuOpen = false"
+    />
 
-        <BdSearchPalette :open="isSearchOpen" @close="isSearchOpen = false" />
+    <BdSearchPalette :open="isSearchOpen" @close="isSearchOpen = false" />
 
-        <main id="main-content" class="flex-1" role="main">
-            <slot />
-        </main>
+    <main id="main-content" class="flex-1" role="main">
+      <slot />
+    </main>
 
-        <BdFooter />
+    <BdFooter />
 
-        <BdPrivacyNotice />
+    <BdPrivacyNotice />
 
-        <BdTabBar
-            :active="active"
-            :menu-open="isMobileMenuOpen"
-            @search="isSearchOpen = true"
-            @menu="isMobileMenuOpen = true"
-        />
-    </div>
+    <BdTabBar
+      :active="active"
+      :menu-open="isMobileMenuOpen"
+      @search="isSearchOpen = true"
+      @menu="isMobileMenuOpen = true"
+    />
+  </div>
 </template>

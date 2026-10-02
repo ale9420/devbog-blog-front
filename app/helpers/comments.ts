@@ -17,8 +17,7 @@ function webUrlOrNull(value: unknown): string | null {
   try {
     const url = new URL(text)
     return WEB_PROTOCOLS.has(url.protocol) ? url.href : null
-  }
-  catch {
+  } catch {
     return null
   }
 }

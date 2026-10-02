@@ -34,9 +34,9 @@ test('keeps the source visible when a diagram cannot be parsed', async ({ page }
 test('does not run markup from the diagram source', async ({ page }) => {
   await page.goto(ARTICLE, { waitUntil: 'networkidle' })
   await expect(page.locator('.bd-mermaid-diagram')).toHaveCount(2)
-  const handlers = await page.locator('.bd-mermaid-diagram').evaluateAll((diagrams) =>
-    diagrams.flatMap((diagram) => Array.from(diagram.querySelectorAll('*')))
-      .flatMap((element) => element.getAttributeNames().filter((name) => name.startsWith('on'))),
+  const handlers = await page.locator('.bd-mermaid-diagram').evaluateAll(diagrams =>
+    diagrams.flatMap(diagram => Array.from(diagram.querySelectorAll('*')))
+      .flatMap(element => element.getAttributeNames().filter(name => name.startsWith('on'))),
   )
   expect(handlers).toEqual([])
   await expect(page.locator('.bd-mermaid-diagram script')).toHaveCount(0)
@@ -47,10 +47,10 @@ test('redraws the diagrams with the colors of the new theme', async ({ page }) =
   await page.goto(ARTICLE, { waitUntil: 'networkidle' })
   const node = page.getByRole('img', { name: 'SSH login flow' }).locator('.node rect').first()
   await expect(node).toBeVisible()
-  const dayFill = await node.evaluate((element) => getComputedStyle(element).fill)
+  const dayFill = await node.evaluate(element => getComputedStyle(element).fill)
   await page.getByRole('group', { name: 'Color theme' }).getByRole('button', { name: 'Night' }).click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'noche')
-  await expect.poll(async () => page.getByRole('img', { name: 'SSH login flow' }).locator('.node rect').first().evaluate((element) => getComputedStyle(element).fill)).not.toBe(dayFill)
+  await expect.poll(async () => page.getByRole('img', { name: 'SSH login flow' }).locator('.node rect').first().evaluate(element => getComputedStyle(element).fill)).not.toBe(dayFill)
 })
 
 test('only downloads Mermaid on articles with diagrams', async ({ page }) => {

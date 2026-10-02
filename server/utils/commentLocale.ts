@@ -7,6 +7,6 @@ export function commentLocale(value: unknown): Locale | undefined {
   if (typeof value === 'string' && COMMENT_LOCALES.has(value)) return value as Locale
   throw createError({
     statusCode: 400,
-    message: 'Unsupported locale'
+    message: 'Unsupported locale',
   })
 }

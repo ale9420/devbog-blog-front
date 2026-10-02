@@ -35,7 +35,7 @@ useSeoMeta({
   twitterCard: 'summary_large_image',
   twitterImage: () => `${siteUrl.value}/og-image.png`,
   twitterTitle: 'BogDev - Personal Blog',
-  twitterDescription: 'Explore articles on AI, software development, Linux, and modern tech.'
+  twitterDescription: 'Explore articles on AI, software development, Linux, and modern tech.',
 })
 
 const structuredData = computed(() => ({
@@ -44,48 +44,48 @@ const structuredData = computed(() => ({
     {
       '@type': 'WebSite',
       '@id': `${siteUrl.value}/#website`,
-      url: siteUrl.value,
-      name: 'BogDev',
-      description: 'Personal blog about AI, Software, Linux and more',
-      publisher: {
-        '@id': `${siteUrl.value}/#organization`
+      'url': siteUrl.value,
+      'name': 'BogDev',
+      'description': 'Personal blog about AI, Software, Linux and more',
+      'publisher': {
+        '@id': `${siteUrl.value}/#organization`,
       },
-      potentialAction: {
+      'potentialAction': {
         '@type': 'SearchAction',
-        target: {
+        'target': {
           '@type': 'EntryPoint',
-          urlTemplate: `${siteUrl.value}/blog?search={search_term_string}`
+          'urlTemplate': `${siteUrl.value}/blog?search={search_term_string}`,
         },
-        'query-input': 'required name=search_term_string'
+        'query-input': 'required name=search_term_string',
       },
-      inLanguage: locale.value === 'es' ? 'es-CO' : 'en-US'
+      'inLanguage': locale.value === 'es' ? 'es-CO' : 'en-US',
     },
     {
       '@type': 'Organization',
       '@id': `${siteUrl.value}/#organization`,
-      name: 'BogDev',
-      url: siteUrl.value,
-      logo: {
+      'name': 'BogDev',
+      'url': siteUrl.value,
+      'logo': {
         '@type': 'ImageObject',
-        url: `${siteUrl.value}/bogdev.svg`
+        'url': `${siteUrl.value}/bogdev.svg`,
       },
-      sameAs: [
+      'sameAs': [
         'https://github.com/ale9420',
         'https://www.linkedin.com/in/alejandro-ramirez-garcia-046713139',
         'https://codeberg.org/alejo9420',
-        'https://mastodon.social/@bogdev'
-      ]
-    }
-  ]
+        'https://mastodon.social/@bogdev',
+      ],
+    },
+  ],
 }))
 
 useHead({
   script: [
     {
       type: 'application/ld+json',
-      innerHTML: JSON.stringify(structuredData.value)
-    }
-  ]
+      innerHTML: JSON.stringify(structuredData.value),
+    },
+  ],
 })
 </script>
 

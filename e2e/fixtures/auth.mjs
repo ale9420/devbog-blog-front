@@ -51,7 +51,7 @@ export function createAuthMock({ frontendUrl }) {
     const header = String(headers.authorization ?? '')
     if (!header.startsWith(`Bearer ${JWT_PREFIX}`)) return null
     const id = Number(header.slice(`Bearer ${JWT_PREFIX}`.length))
-    return users.find((user) => user.id === id) ?? null
+    return users.find(user => user.id === id) ?? null
   }
 
   function handle(method, pathname, query, body, headers) {
@@ -62,7 +62,7 @@ export function createAuthMock({ frontendUrl }) {
       if (identifier === testUsers.rateLimited.username || identifier === testUsers.rateLimited.email) {
         return strapiError(429, 'TooManyRequestsError', 'Too many requests, please try again later.')
       }
-      const user = users.find((item) => item.username.toLowerCase() === identifier || item.email === identifier)
+      const user = users.find(item => item.username.toLowerCase() === identifier || item.email === identifier)
       if (!user || user.password !== input.password) return strapiError(400, 'ValidationError', 'Invalid identifier or password')
       if (!user.confirmed) return strapiError(400, 'ApplicationError', 'Your account email is not confirmed')
       return { status: 200, body: { jwt: `${JWT_PREFIX}${user.id}`, user: publicUser(user, false) } }
@@ -71,7 +71,7 @@ export function createAuthMock({ frontendUrl }) {
     if (method === 'POST' && pathname === '/api/auth/local/register') {
       const username = String(input.username ?? '')
       const email = String(input.email ?? '').toLowerCase()
-      if (users.some((user) => user.username === username || user.email === email)) {
+      if (users.some(user => user.username === username || user.email === email)) {
         return strapiError(400, 'ApplicationError', 'Email or Username are already taken')
       }
       const user = { id: nextId++, username, email, password: String(input.password ?? ''), confirmed: false, role: 'authenticated', createdAt: new Date().toISOString() }
@@ -80,7 +80,7 @@ export function createAuthMock({ frontendUrl }) {
     }
 
     if (method === 'GET' && pathname === '/api/auth/email-confirmation') {
-      const user = users.find((item) => confirmationToken(item.username) === query.confirmation)
+      const user = users.find(item => confirmationToken(item.username) === query.confirmation)
       if (!user) return strapiError(400, 'ValidationError', 'Invalid token')
       user.confirmed = true
       return { status: 302, headers: { Location: `${frontendUrl}/account/confirmed` } }
@@ -102,7 +102,7 @@ export function createAuthMock({ frontendUrl }) {
 
     if (method === 'POST' && pathname === '/api/auth/reset-password') {
       if (input.password !== input.passwordConfirmation) return strapiError(400, 'ValidationError', 'Passwords do not match')
-      const user = users.find((item) => resetCode(item.username) === input.code)
+      const user = users.find(item => resetCode(item.username) === input.code)
       if (!user) return strapiError(400, 'ValidationError', 'Incorrect code provided')
       user.password = String(input.password ?? '')
       return { status: 200, body: { jwt: `${JWT_PREFIX}${user.id}`, user: publicUser(user, false) } }

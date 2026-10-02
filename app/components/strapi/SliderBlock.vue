@@ -34,7 +34,9 @@ function goTo(index: number) {
   isTransitioning.value = true
   currentIndex.value = index
   progress.value = 0
-  setTimeout(() => { isTransitioning.value = false }, 600)
+  setTimeout(() => {
+    isTransitioning.value = false
+  }, 600)
 }
 
 function prev() {
@@ -167,7 +169,7 @@ onUnmounted(stopAutoplay)
             draggable="false"
             class="w-full h-full object-cover"
             :class="{
-              'scale-105 animate-[kenburns_8s_ease-out_forwards]': index === currentIndex && !prefersReducedMotion
+              'scale-105 animate-[kenburns_8s_ease-out_forwards]': index === currentIndex && !prefersReducedMotion,
             }"
           />
         </div>

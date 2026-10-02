@@ -187,7 +187,7 @@ test('server-renders hreflang links to the real URL of each version', async ({ r
   const hreflangs = async (path: string): Promise<Record<string, string>> => {
     const html = await (await request.get(path)).text()
     const links = [...html.matchAll(/<link[^>]*rel="alternate"[^>]*hreflang="([^"]+)"[^>]*href="([^"]+)"[^>]*>|<link[^>]*href="([^"]+)"[^>]*rel="alternate"[^>]*hreflang="([^"]+)"[^>]*>/g)]
-    return Object.fromEntries(links.map((match) => [match[1] ?? match[4], new URL(match[2] ?? match[3]!).pathname]))
+    return Object.fromEntries(links.map(match => [match[1] ?? match[4], new URL(match[2] ?? match[3]!).pathname]))
   }
 
   const expected = { 'en': '/blog/understanding-vue-composables', 'es': '/es/blog/guia-vue-composables', 'x-default': '/blog/understanding-vue-composables' }

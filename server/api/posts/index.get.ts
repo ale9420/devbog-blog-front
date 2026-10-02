@@ -1,4 +1,4 @@
-import qs from 'qs';
+import qs from 'qs'
 import type { BlogSort, RawStrapiArticle, StrapiPaginatedResponse } from '~/interfaces'
 import { parseSort } from '~/helpers/blog'
 import { MIN_SEARCH_LENGTH, isContentSearch } from '~/helpers/search'

@@ -11,7 +11,7 @@ interface UpstreamSearchRow {
   title?: unknown
   description?: unknown
   publishedAt?: unknown
-  category?: { slug?: unknown; name?: unknown } | null
+  category?: { slug?: unknown, name?: unknown } | null
   matchedIn?: unknown
   snippet?: unknown
 }
@@ -45,7 +45,6 @@ function toResult(row: UpstreamSearchRow): SearchPostResult | null {
 }
 
 export async function searchArticles({ query, locale, content, limit }: ArticleSearchOptions): Promise<SearchPostResult[]> {
-
   const response = await strapiFetch<{ data?: UpstreamSearchRow[] }>('/api/articles/search', {
     query: { q: query, locale, content: content ? '1' : undefined, limit: Math.min(limit, SEARCH_MAX_RESULTS) },
     timeout: SEARCH_TIMEOUT_MS,

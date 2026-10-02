@@ -8,9 +8,9 @@
   >
     <defs>
       <linearGradient id="codeberg-gradient" x1="259.804" x2="383.132" y1="161.4" y2="407.835" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
-        <stop offset=".5" stop-color="#71c2ff"/>
-        <stop offset="1" stop-color="#39aaff"/>
+        <stop offset="0" stop-color="#ffffff" stop-opacity="0" />
+        <stop offset=".5" stop-color="#71c2ff" />
+        <stop offset="1" stop-color="#39aaff" />
       </linearGradient>
     </defs>
     <path

@@ -6,7 +6,7 @@ test('unsubscribes from the link in the email', async ({ browser }) => {
   await page.goto('/es/newsletter/unsubscribe?token=unsubscribe-token-confirmed-0001', { waitUntil: 'networkidle' })
   await expect(page.getByRole('heading', { level: 1, name: 'Darte de baja' })).toBeVisible()
 
-  const request = page.waitForRequest((req) => req.url().endsWith('/api/newsletter/unsubscribe') && req.method() === 'POST')
+  const request = page.waitForRequest(req => req.url().endsWith('/api/newsletter/unsubscribe') && req.method() === 'POST')
   await page.getByRole('button', { name: 'Darme de baja' }).click()
   expect((await request).postDataJSON()).toEqual({ token: 'unsubscribe-token-confirmed-0001' })
 

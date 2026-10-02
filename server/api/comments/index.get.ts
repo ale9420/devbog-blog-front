@@ -1,4 +1,4 @@
-import qs from 'qs';
+import qs from 'qs'
 import type { Comment, CommentsResponse } from '~/interfaces/comment'
 import { toPublicComments } from '~/helpers/comments'
 

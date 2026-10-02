@@ -23,7 +23,7 @@ const {
   submitError,
   submitSuccess,
   fetchComments,
-  postComment
+  postComment,
 } = useComments(props.slug, props.documentId)
 const { openReply } = useFediverseReply(props.documentId ?? props.slug)
 
@@ -31,10 +31,10 @@ const formData = reactive<CommentFormData>({
   author: {
     name: '',
     email: '',
-    avatar: ''
+    avatar: '',
   },
   content: '',
-  threadOf: undefined
+  threadOf: undefined,
 })
 
 const filter = ref<CommentFilter>('all')
@@ -43,7 +43,7 @@ const replyingToName = ref<string>('')
 const formErrors = reactive({
   name: '',
   email: '',
-  content: ''
+  content: '',
 })
 
 function validateForm(): boolean {

@@ -31,18 +31,18 @@ useSeoMeta({
           {{ error.statusCode || 404 }}
         </span>
       </div>
-      
+
       <h1 class="text-3xl font-display font-semibold mb-4">
         {{ error.statusCode === 404 ? t('error.pageNotFound') : t('error.somethingWentWrong') }}
       </h1>
-      
+
       <p class="text-[var(--muted)] mb-8">
-        {{ error.statusCode === 404 
+        {{ error.statusCode === 404
           ? t('error.notExist')
           : t('error.unexpected')
         }}
       </p>
-      
+
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
         <BdButton @click="handleError">
           <UIcon name="i-heroicons-home" class="w-4 h-4" />
@@ -53,7 +53,7 @@ useSeoMeta({
           {{ t('error.browseBlog') }}
         </BdButton>
       </div>
-      
+
       <div class="mt-12 p-4 rounded-lg bg-[var(--surface-elevated)]">
         <p class="text-sm text-[var(--muted)]">
           {{ t('error.contactSupport') }}

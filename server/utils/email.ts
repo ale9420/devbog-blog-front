@@ -1,27 +1,27 @@
-import nodemailer from "nodemailer";
-import { smtpTransportOptions } from "~/helpers/email";
-import { blogUrl, confirmUrl as buildConfirmUrl, unsubscribeHeaders, unsubscribeUrl } from "~/helpers/newsletter";
-import type { NewsletterLanguage } from "~/interfaces/newsletter";
+import nodemailer from 'nodemailer'
+import { smtpTransportOptions } from '~/helpers/email'
+import { blogUrl, confirmUrl as buildConfirmUrl, unsubscribeHeaders, unsubscribeUrl } from '~/helpers/newsletter'
+import type { NewsletterLanguage } from '~/interfaces/newsletter'
 
 export function createTransporter() {
-  const config = useRuntimeConfig();
+  const config = useRuntimeConfig()
 
   return nodemailer.createTransport(smtpTransportOptions({
     host: config.smtpHost,
     port: config.smtpPort,
     user: config.smtpUser,
     pass: config.smtpPass,
-  }));
+  }))
 }
 
 export async function sendEmail(options: {
-  to: string;
-  subject: string;
-  html: string;
-  headers?: Record<string, string>;
+  to: string
+  subject: string
+  html: string
+  headers?: Record<string, string>
 }): Promise<void> {
-  const config = useRuntimeConfig();
-  const transporter = createTransporter();
+  const config = useRuntimeConfig()
+  const transporter = createTransporter()
 
   await transporter.sendMail({
     from: config.newsletterFrom,
@@ -29,7 +29,7 @@ export async function sendEmail(options: {
     subject: options.subject,
     html: options.html,
     headers: options.headers,
-  });
+  })
 }
 
 export async function sendConfirmationEmail(
@@ -37,15 +37,15 @@ export async function sendConfirmationEmail(
   token: string,
   locale: NewsletterLanguage,
 ): Promise<void> {
-  const confirmUrl = buildConfirmUrl(useRuntimeConfig().public.siteUrl, locale, token);
+  const confirmUrl = buildConfirmUrl(useRuntimeConfig().public.siteUrl, locale, token)
 
-  const subject =
-    locale === "es"
-      ? "Confirma tu suscripción a BogDev"
-      : "Confirm your BogDev subscription";
+  const subject
+    = locale === 'es'
+      ? 'Confirma tu suscripción a BogDev'
+      : 'Confirm your BogDev subscription'
 
-  const html =
-    locale === "es"
+  const html
+    = locale === 'es'
       ? `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <h1 style="color: #333;">¡Gracias por suscribirte!</h1>
@@ -71,9 +71,9 @@ export async function sendConfirmationEmail(
           <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
           <p style="color: #999; font-size: 12px;">If you didn't request this subscription, you can ignore this email.</p>
         </div>
-      `;
+      `
 
-  await sendEmail({ to: email, subject, html });
+  await sendEmail({ to: email, subject, html })
 }
 
 export async function sendWelcomeEmail(
@@ -81,17 +81,17 @@ export async function sendWelcomeEmail(
   locale: NewsletterLanguage,
   unsubscribeToken: string,
 ): Promise<void> {
-  const siteUrl = useRuntimeConfig().public.siteUrl;
-  const articlesUrl = blogUrl(siteUrl, locale);
-  const leaveUrl = unsubscribeUrl(siteUrl, locale, unsubscribeToken);
+  const siteUrl = useRuntimeConfig().public.siteUrl
+  const articlesUrl = blogUrl(siteUrl, locale)
+  const leaveUrl = unsubscribeUrl(siteUrl, locale, unsubscribeToken)
 
-  const subject =
-    locale === "es"
-      ? "¡Bienvenido a BogDev!"
-      : "Welcome to BogDev!";
+  const subject
+    = locale === 'es'
+      ? '¡Bienvenido a BogDev!'
+      : 'Welcome to BogDev!'
 
-  const html =
-    locale === "es"
+  const html
+    = locale === 'es'
       ? `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <h1 style="color: #333;">¡Suscripción confirmada!</h1>
@@ -115,7 +115,7 @@ export async function sendWelcomeEmail(
           <p style="color: #999; font-size: 12px;">BogDev - Your source for AI, software development, and Linux content.</p>
           <p style="color: #999; font-size: 12px;">Don't want these emails anymore? <a href="${leaveUrl}" style="color: #999;">Unsubscribe</a>.</p>
         </div>
-      `;
+      `
 
-  await sendEmail({ to: email, subject, html, headers: unsubscribeHeaders(siteUrl, unsubscribeToken) });
+  await sendEmail({ to: email, subject, html, headers: unsubscribeHeaders(siteUrl, unsubscribeToken) })
 }

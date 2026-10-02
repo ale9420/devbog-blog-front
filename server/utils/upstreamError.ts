@@ -1,7 +1,7 @@
 interface UpstreamFetchError {
   response?: { status?: number }
   statusCode?: number
-  data?: { error?: { message?: string }; message?: string }
+  data?: { error?: { message?: string }, message?: string }
   message?: string
 }
 

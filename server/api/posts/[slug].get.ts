@@ -1,5 +1,5 @@
-import qs from 'qs';
-import type { RawStrapiArticle } from '~/interfaces';
+import qs from 'qs'
+import type { RawStrapiArticle } from '~/interfaces'
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')

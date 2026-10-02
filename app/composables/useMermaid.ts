@@ -43,8 +43,7 @@ export function useMermaid(target: Ref<HTMLElement | null>): void {
       diagram.setAttribute('aria-label', mermaidTitle(source) ?? t('bd.mermaid.label'))
       diagram.innerHTML = svg
       block.classList.add(READY_CLASS)
-    }
-    catch {
+    } catch {
       if (current === run) showSource(block)
     }
   }

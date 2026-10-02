@@ -356,7 +356,7 @@ const server = createServer(async (req, res) => {
       'doc-vue-es': 'Los composables permiten compartir lógica.',
     }
     const data = articles
-      .filter((article) => !query.locale || article.locale === query.locale)
+      .filter(article => !query.locale || article.locale === query.locale)
       .sort((a, b) => new Date(b.publishedAt || 0).getTime() - new Date(a.publishedAt || 0).getTime())
       .flatMap((article) => {
         const fields = [['title', article.title], ...(content ? [['description', article.description ?? ''], ['content', plainTexts[article.documentId] ?? '']] : [])]
@@ -407,20 +407,20 @@ const server = createServer(async (req, res) => {
 
     let data = [...articles]
     if (localeFilter) {
-      data = data.filter((article) => article.locale === localeFilter)
+      data = data.filter(article => article.locale === localeFilter)
     }
     if (categoryFilter) {
-      data = data.filter((article) => article.category?.slug === categoryFilter)
+      data = data.filter(article => article.category?.slug === categoryFilter)
     }
     if (titleFilter) {
       const term = titleFilter.toLowerCase()
-      data = data.filter((article) => article.title.toLowerCase().includes(term))
+      data = data.filter(article => article.title.toLowerCase().includes(term))
     }
     if (tagFilter) {
-      data = data.filter((article) => article.tags?.some((tag) => tag.slug === tagFilter))
+      data = data.filter(article => article.tags?.some(tag => tag.slug === tagFilter))
     }
     if (documentIdFilter) {
-      data = data.filter((article) => documentIdFilter.includes(article.documentId))
+      data = data.filter(article => documentIdFilter.includes(article.documentId))
     }
     data.sort((a, b) => {
       const dateA = new Date(a.publishedAt || 0).getTime()
@@ -442,13 +442,13 @@ const server = createServer(async (req, res) => {
 
   if (method === 'GET' && url.pathname === '/api/tags') {
     const locale = query.locale ?? 'en'
-    const localized = articles.filter((article) => article.locale === locale)
-    const tags = new Map(localized.flatMap((article) => article.tags ?? []).map((tag) => [tag.slug, tag]))
-    const data = [...tags.values()].map((tag) => ({
+    const localized = articles.filter(article => article.locale === locale)
+    const tags = new Map(localized.flatMap(article => article.tags ?? []).map(tag => [tag.slug, tag]))
+    const data = [...tags.values()].map(tag => ({
       id: tag.id,
       name: tag.name,
       slug: tag.slug,
-      articles: localized.filter((article) => article.tags?.some((own) => own.slug === tag.slug)).map((article) => ({ id: article.id })),
+      articles: localized.filter(article => article.tags?.some(own => own.slug === tag.slug)).map(article => ({ id: article.id })),
     }))
     sendJson(res, 200, { data })
     return
@@ -456,13 +456,13 @@ const server = createServer(async (req, res) => {
 
   if (method === 'GET' && url.pathname === '/api/categories') {
     const localeFilter = getNestedValue(query, ['populate', 'articles', 'filters', 'locale', '$eq']) ?? 'en'
-    const categories = [categoryVue, categoryLinux, ...emptyCategories].map((category) => ({
+    const categories = [categoryVue, categoryLinux, ...emptyCategories].map(category => ({
       id: category.id,
       name: category.name,
       slug: category.slug,
       articles: articles
-        .filter((article) => article.category?.slug === category.slug && article.locale === localeFilter)
-        .map((article) => ({ id: article.id })),
+        .filter(article => article.category?.slug === category.slug && article.locale === localeFilter)
+        .map(article => ({ id: article.id })),
     }))
     sendJson(res, 200, { data: categories })
     return
@@ -491,14 +491,14 @@ const server = createServer(async (req, res) => {
     const scores = { 'doc-linux': 5, 'doc-vue-es': 7, 'doc-vue': 1 }
     const locale = query.locale ?? 'en'
     const ranked = articles
-      .filter((article) => article.locale === locale)
-      .filter((article) => !query.category || article.category?.slug === query.category)
-      .filter((article) => !query.tag || article.tags?.some((tag) => tag.slug === query.tag))
+      .filter(article => article.locale === locale)
+      .filter(article => !query.category || article.category?.slug === query.category)
+      .filter(article => !query.tag || article.tags?.some(tag => tag.slug === query.tag))
       .sort((a, b) => (scores[b.documentId] ?? 0) - (scores[a.documentId] ?? 0))
     const page = Number(query.page || 1)
     const pageSize = Number(query.pageSize || 6)
     sendJson(res, 200, {
-      data: ranked.slice((page - 1) * pageSize, page * pageSize).map((article) => ({ documentId: article.documentId })),
+      data: ranked.slice((page - 1) * pageSize, page * pageSize).map(article => ({ documentId: article.documentId })),
       meta: { pagination: { page, pageSize, pageCount: Math.ceil(ranked.length / pageSize), total: ranked.length } },
     })
     return
@@ -528,9 +528,9 @@ const server = createServer(async (req, res) => {
   }
 
   if (method === 'GET' && url.pathname === '/api/subscribers') {
-    const field = ['email', 'confirmationToken', 'unsubscribeToken'].find((name) => getNestedValue(query, ['filters', name, '$eq']) !== undefined)
+    const field = ['email', 'confirmationToken', 'unsubscribeToken'].find(name => getNestedValue(query, ['filters', name, '$eq']) !== undefined)
     const value = field ? getNestedValue(query, ['filters', field, '$eq']) : undefined
-    const data = field ? subscribers.filter((subscriber) => subscriber[field] === value) : []
+    const data = field ? subscribers.filter(subscriber => subscriber[field] === value) : []
     sendJson(res, 200, { data })
     return
   }
@@ -557,7 +557,7 @@ const server = createServer(async (req, res) => {
 
   if (method === 'DELETE' && url.pathname.startsWith('/api/subscribers/')) {
     const documentId = url.pathname.split('/').pop()
-    const index = subscribers.findIndex((subscriber) => subscriber.documentId === documentId)
+    const index = subscribers.findIndex(subscriber => subscriber.documentId === documentId)
     if (index !== -1) {
       subscribers.splice(index, 1)
     }

@@ -1,28 +1,28 @@
 export default defineAppConfig({
   site: {
-    name: "BogDev",
-    description: "Personal blog about AI, Software, Linux and more",
-    url: "https://bogdev.com.co",
+    name: 'BogDev',
+    description: 'Personal blog about AI, Software, Linux and more',
+    url: 'https://bogdev.com.co',
     author: {
-      name: "Alejandro Ramirez",
-      url: "https://bogdev.com.co/about",
+      name: 'Alejandro Ramirez',
+      url: 'https://bogdev.com.co/about',
     },
     social: {
-      github: "https://github.com/ale9420",
+      github: 'https://github.com/ale9420',
       linkedin:
-        "https://www.linkedin.com/in/alejandro-ramirez-garcia-046713139",
-      codeberg: "https://codeberg.org/alejo9420",
-      mastodon: "https://mastodon.social/@bogdev",
+        'https://www.linkedin.com/in/alejandro-ramirez-garcia-046713139',
+      codeberg: 'https://codeberg.org/alejo9420',
+      mastodon: 'https://mastodon.social/@bogdev',
     },
     comments: {
-      provider: "strapi",
+      provider: 'strapi',
     },
     support: {
-      buyMeACoffee: "ale9420",
+      buyMeACoffee: 'ale9420',
     },
     privacy: {
-      contactEmail: "gx_alejandro@hotmail.com",
-      updatedAt: "2026-10-01T12:00:00-05:00",
+      contactEmail: 'gx_alejandro@hotmail.com',
+      updatedAt: '2026-10-01T12:00:00-05:00',
     },
   },
-});
+})
