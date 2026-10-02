@@ -91,7 +91,9 @@ describe('BdNewsletterForm', () => {
   })
 
   it('asks the reader to wait after too many attempts', async () => {
-    response = () => { throw createError({ statusCode: 429, statusMessage: 'Too Many Requests' }) }
+    response = () => {
+      throw createError({ statusCode: 429, statusMessage: 'Too Many Requests' })
+    }
     const wrapper = await submit('lector@bogdev.com.co')
     const status = wrapper.get('[role="status"]')
     expect(status.text()).toBe('✕ Too many attempts. Try again later.')
@@ -100,7 +102,9 @@ describe('BdNewsletterForm', () => {
   })
 
   it('shows a generic error when the API fails', async () => {
-    response = () => { throw createError({ statusCode: 500, statusMessage: 'Boom' }) }
+    response = () => {
+      throw createError({ statusCode: 500, statusMessage: 'Boom' })
+    }
     const wrapper = await submit('lector@bogdev.com.co')
     const status = wrapper.get('[role="status"]')
     expect(status.text()).toBe('✕ We could not subscribe you. Try again in a moment.')

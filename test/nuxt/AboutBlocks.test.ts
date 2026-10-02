@@ -36,7 +36,7 @@ describe('StrapiProfileBlock', () => {
     const links = wrapper.findAll('.bd-profile-actions a')
     expect(links.map(link => link.attributes('href'))).toEqual(['/blog', '#projects'])
     expect(links[0]!.classes()).toContain('bd-btn-primary')
-    expect(wrapper.get('.bd-plate-mascot').attributes('alt')).toBe("Illustration of a rufous-collared sparrow, the blog's mascot bird")
+    expect(wrapper.get('.bd-plate-mascot').attributes('alt')).toBe('Illustration of a rufous-collared sparrow, the blog\'s mascot bird')
     expect(wrapper.get('.bd-plate-label').text()).toBe('LÁM. 01')
   })
 
@@ -115,7 +115,7 @@ describe('StrapiOpenSourceBlock', () => {
 describe('StrapiContactBlock', () => {
   it('links the fediverse account and the social profiles with rel="me"', async () => {
     const wrapper = await mountSuspended(StrapiContactBlock, { props: { block: block<StrapiContact>('about.contact') } })
-    expect(wrapper.get('h2').text()).toBe("Let's talk.")
+    expect(wrapper.get('h2').text()).toBe('Let\'s talk.')
     expect(wrapper.get('.bd-contact-fedi a').attributes('href')).toBe('/#fediverso')
     const rows = wrapper.get('nav[aria-label="Social"]').findAll('a')
     expect(rows.map(row => row.get('.bd-home-eyebrow').text())).toEqual(['LinkedIn', 'GitHub', 'Codeberg', 'Mastodon'])

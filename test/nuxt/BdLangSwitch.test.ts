@@ -55,4 +55,3 @@ describe('BdLangSwitch', () => {
     await useNuxtApp().$i18n.setLocale('en')
   })
 })
-

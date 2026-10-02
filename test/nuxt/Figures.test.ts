@@ -29,7 +29,7 @@ describe('BdFigureCredit', () => {
       'https://commons.wikimedia.org/wiki/File:Paisaje_Sumapaz,_Colombia.jpg',
       'https://creativecommons.org/licenses/by-sa/4.0/deed.en',
     ])
-    expect(links[2]!.attributes()).toMatchObject({ rel: 'license noopener noreferrer', target: '_blank', 'aria-label': 'CC BY-SA 4.0 (opens in a new tab)' })
+    expect(links[2]!.attributes()).toMatchObject({ 'rel': 'license noopener noreferrer', 'target': '_blank', 'aria-label': 'CC BY-SA 4.0 (opens in a new tab)' })
     expect(links[0]!.attributes('rel')).toBe('noopener noreferrer')
   })
 

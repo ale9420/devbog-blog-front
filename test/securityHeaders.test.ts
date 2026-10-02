@@ -32,18 +32,18 @@ describe('contentSecurityPolicy', () => {
   }))
 
   it('allows scripts only from the site and the given hashes, without unsafe-inline', () => {
-    expect(directives.get('script-src')).toEqual(["'self'", "'sha256-abc='", "'sha256-def='"])
+    expect(directives.get('script-src')).toEqual(['\'self\'', '\'sha256-abc=\'', '\'sha256-def=\''])
   })
 
   it('allows images from the site and the media origins', () => {
-    expect(directives.get('img-src')).toEqual(["'self'", 'data:', 'blob:', 'https://api.bogdev.com.co', 'https://resources.bogdev.com.co'])
+    expect(directives.get('img-src')).toEqual(['\'self\'', 'data:', 'blob:', 'https://api.bogdev.com.co', 'https://resources.bogdev.com.co'])
   })
 
   it('blocks framing, plugins and foreign forms', () => {
-    expect(directives.get('frame-ancestors')).toEqual(["'none'"])
-    expect(directives.get('object-src')).toEqual(["'none'"])
-    expect(directives.get('form-action')).toEqual(["'self'"])
-    expect(directives.get('base-uri')).toEqual(["'self'"])
+    expect(directives.get('frame-ancestors')).toEqual(['\'none\''])
+    expect(directives.get('object-src')).toEqual(['\'none\''])
+    expect(directives.get('form-action')).toEqual(['\'self\''])
+    expect(directives.get('base-uri')).toEqual(['\'self\''])
   })
 
   it('embeds only the video players the sanitizer allows', () => {

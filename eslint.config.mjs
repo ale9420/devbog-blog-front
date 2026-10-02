@@ -11,6 +11,6 @@ export default withNuxt(
     },
   },
   {
-    ignores: ['test/**', 'docs/**', 'vitest.config.ts'],
+    ignores: ['docs/**'],
   },
 )

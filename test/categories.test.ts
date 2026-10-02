@@ -15,7 +15,7 @@ describe('categories', () => {
   })
 
   it('maps each category to its bird token', () => {
-    expect(Object.fromEntries(CATEGORIES.map((c) => [c, CATEGORY_INFO[c].token]))).toEqual({
+    expect(Object.fromEntries(CATEGORIES.map(c => [c, CATEGORY_INFO[c].token]))).toEqual({
       [Category.Privacy]: BirdToken.Pinchaflor,
       [Category.Diy]: BirdToken.Golondrina,
       [Category.Ai]: BirdToken.Chillon,

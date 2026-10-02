@@ -72,9 +72,9 @@ describe('HomeFediverse', () => {
   it('points to joinmastodon.org in the page language', async () => {
     const link = (await mountSuspended(HomeFediverse)).get('.bd-fedi-join a')
     expect(link.attributes()).toMatchObject({
-      href: 'https://joinmastodon.org/servers',
-      target: '_blank',
-      rel: 'noopener noreferrer',
+      'href': 'https://joinmastodon.org/servers',
+      'target': '_blank',
+      'rel': 'noopener noreferrer',
       'aria-label': 'Pick a server on joinmastodon.org (opens in a new tab)',
     })
 

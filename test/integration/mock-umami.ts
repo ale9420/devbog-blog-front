@@ -36,7 +36,7 @@ export async function startMockUmami(): Promise<MockUmamiResult> {
       response.end(JSON.stringify({ ok: true }))
     })
   })
-  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve))
   const { port } = server.address() as AddressInfo
   return { url: `http://127.0.0.1:${port}`, requests }
 }
