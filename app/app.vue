@@ -12,7 +12,7 @@ const hreflangLinks = computed(() => {
         ...Object.values(Locale).filter((code) => paths[code]).map((code) => ({ hreflang: code as string, path: paths[code] })),
         ...(fallback ? [{ hreflang: "x-default", path: fallback }] : []),
     ];
-    return hreflangs.map(({ hreflang, path }) => ({ rel: "alternate", hreflang, href: `${siteUrl.value}${path}` }));
+    return hreflangs.map(({ hreflang, path }) => ({ rel: "alternate" as const, hreflang, href: `${siteUrl.value}${path}` }));
 });
 
 useHead({
