@@ -1,0 +1,14 @@
+# Architecture Decision Records
+
+Decisions that shape the frontend and are expensive to undo. Each record says what was decided, why, what else was on the table and what it costs. Records are never rewritten: a decision that changes gets a new record that supersedes the old one.
+
+| # | Decision | Status | Date |
+| --- | --- | --- | --- |
+| [0001](0001-isr-without-cdn.md) | Cache pages with Nitro ISR, without a CDN | Accepted | 2026-09-02 |
+| [0002](0002-first-party-umami-proxy.md) | Serve Umami analytics first-party through a Nitro proxy | Accepted | 2026-09-30 |
+| [0003](0003-session-in-httponly-cookie.md) | Keep the Strapi JWT in an httpOnly cookie behind a server-side BFF | Accepted | 2026-09-30 |
+| [0004](0004-hash-based-csp.md) | Build the Content Security Policy from hashes of the rendered HTML | Accepted | 2026-10-02 |
+
+## Writing a new record
+
+Copy the structure of an existing record into `NNNN-short-title.md` with the next number: Context, Decision, Options considered, Trade-offs, Consequences. Add it to the table above. Status is `Proposed` until it is merged, then `Accepted`; when it is replaced, mark it `Superseded by NNNN`.
