@@ -28,5 +28,10 @@ jobs:
             n=$((n + 1))
             tag="$base.$n"
           done
-          gh release create "$tag" --repo "$REPO" --target "$GITHUB_SHA" --title "$tag" --generate-notes
+          gh api -X POST "repos/$REPO/releases/generate-notes" \
+            -f tag_name="$tag" \
+            -f target_commitish="$GITHUB_SHA" \
+            -f configuration_file_path=.github/release.yml \
+            -q .body > release-notes.md
+          gh release create "$tag" --repo "$REPO" --target "$GITHUB_SHA" --title "$tag" --notes-file release-notes.md
           echo "Released $tag at $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
