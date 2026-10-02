@@ -34,6 +34,11 @@ npm run test:e2e          # Run Playwright e2e tests (e2e/, starts mock Strapi +
 npm run generate     # Generate static output
 ```
 
+## Commits and Pull Requests
+
+- Commit messages in English; PR titles and descriptions in Spanish
+- Start every commit and PR title with a conventional prefix: `feat`, `fix`, `docs`, `refactor`, `style`, `test`, `ci`, `perf` or `chore`, with an optional scope (`fix(newsletter): …`). The PR title prefix sets the label that groups it in the release notes; use the `seguridad`/`security` scope for security fixes and `chore(deps)` for dependency updates
+
 ## Code Style Guidelines
 
 ### General Conventions
