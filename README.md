@@ -139,6 +139,8 @@ Set the variables from `.env.example` in the production environment (Dokploy) wi
 │   ├── plugins/               # Content Security Policy, runtime config check
 │   └── utils/strapi.ts        # strapiUrl() and strapiFetch(): the only way to call Strapi
 ├── docs/design/               # BogDev design system: DESIGN.md, tokens, reference canvases
+├── docs/adr/                  # Architecture decisions: ISR, Umami proxy, session cookie, CSP
+├── docs/api.md, security.md   # Server routes and security model
 ├── test/ e2e/                 # Vitest (unit, component, integration) and Playwright
 └── nuxt.config.ts             # Route rules (ISR, private pages, security headers), runtime config
 ```
